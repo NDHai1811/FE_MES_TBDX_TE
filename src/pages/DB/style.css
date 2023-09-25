@@ -1,0 +1,118 @@
+.ant-tabs-nav {
+    margin-bottom: 0px !important;
+}
+
+.ant-list-bordered.ant-list-sm .ant-list-item {
+    padding: 8px !important;
+}
+
+.ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-title {
+    margin: 0px;
+}
+
+.mdl-sx .ant-modal-content {
+    padding: 0;
+}
+
+.mdl-sx .ant-descriptions-item-label {
+    width: 24%;
+}
+
+.mdl-sx .ant-modal-header {
+    margin-bottom: 0px;
+}
+
+.mdl-sx .ant-modal-content {
+    padding: 0;
+}
+
+.mdl-sx .ant-modal-title {
+    color: #fff !important;
+    font-size: 1.5em;
+}
+
+.mdl-sx .ant-modal-close-x {
+    color: #fff;
+}
+
+.mdl-sx .ant-modal-header {
+    background: #90f;
+    padding: 12px 20px;
+}
+
+.mdl-sx .ant-descriptions-item-label {
+    color: #fff !important;
+    background-color: #9900ff !important;
+}
+
+.mdl-tb .ant-modal-title {
+    color: #fff !important;
+    font-size: 1.5em;
+}
+
+.mdl-tb .ant-modal-content {
+    padding: 0;
+}
+
+.mdl-tb .ant-modal-header {
+    background: #2462a3;
+    padding: 12px 20px;
+}
+
+.mdl-tb .ant-descriptions-item-label {
+    width: 26%;
+}
+
+.mdl-tb .ant-descriptions-item-label {
+    color: #fff !important;
+    background-color: #2462a3 !important;
+}
+
+.mdl-tb .ant-modal-close-x {
+    color: #fff;
+}
+
+.mdl-tb .ant-modal-header {
+    margin-bottom: 0px;
+}
+
+.mdl-cl .ant-modal-content {
+    padding: 0;
+}
+
+.mdl-cl .ant-modal-content {
+    padding: 0;
+}
+
+.mdl-cl .ant-modal-header {
+    background: #AA0000;
+    padding: 12px 20px;
+}
+
+.mdl-cl .ant-modal-title {
+    color: #fff !important;
+    font-size: 1.5em;
+}
+
+.mdl-cl .ant-descriptions-item-label {
+    color: #fff !important;
+    background-color:#AA0000 !important;
+}
+
+.mdl-cl .ant-modal-close-x {
+    color: #fff;
+}
+
+.mdl-cl .ant-modal-header {
+    margin-bottom: 0px;
+}
+
+.mdl-cl .ant-descriptions-item-label {
+    width: 24%;
+}
+.desciption-text span{
+    font-size: 1.5em;
+}
+.ant-modal-title{
+    font-size: 1.5em;
+}
