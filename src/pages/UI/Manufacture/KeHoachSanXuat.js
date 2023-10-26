@@ -282,7 +282,9 @@ const KeHoachSanXuat = () => {
             }
       }
       const insertRecord = () => {
-
+            setTitleMdlEdit('Thêm mới')
+            form.resetFields();
+            setOpenMdlEdit(true);
       }
       const [loadingExport, setLoadingExport] = useState(false);
       const [loading, setLoading] = useState(false);
@@ -440,67 +442,87 @@ const KeHoachSanXuat = () => {
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Thứ tự ưu tiên" name="thu_tu_uu_tien" className='mb-3' >
+                                    <Form.Item label="Thứ tự ưu tiên" name="thu_tu_uu_tien" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập thứ tự ưu tiên'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Thời gian bắt đầu" name="thoi_gian_bat_dau" className='mb-3'>
+                                    <Form.Item label="Ngày sản xuất (YYYY-MM-DD)" name="ngay_sx" className='mb-3'  rules={[{required: true}]}>
+                                          <Input placeholder='Nhập ngày sản xuất'></Input>
+                                    </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                    <Form.Item label="Ngày đặt hàng (YYYY-MM-DD)" name="ngay_dat_hang" className='mb-3'  rules={[{required: true}]}>
+                                          <Input placeholder='Nhập ngày đặt hàng'></Input>
+                                    </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                    <Form.Item label="Ngày giao hàng (YYYY-MM-DD)" name="ngay_giao_hang" className='mb-3' rules={[{required: true}]}>
+                                          <Input placeholder='Nhập ngày giao hàng'></Input>
+                                    </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                    <Form.Item label="Thời gian bắt đầu (YYYY-MM-DD HH:mm:ss)" name="thoi_gian_bat_dau" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='' ></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Thời gian kết thúc" name="thoi_gian_ket_thuc" className='mb-3'>
+                                    <Form.Item label="Thời gian kết thúc (YYYY-MM-DD HH:mm:ss)" name="thoi_gian_ket_thuc" className='mb-3' rules={[{required: true}]}>
                                           <Input ></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Công đoạn" name="cong_doan_sx" className='mb-3'>
+                                    <Form.Item label="Máy" name="machine_id" className='mb-3' rules={[{required: true}]}>
+                                          <Input placeholder='Nhập tên máy'></Input>
+                                    </Form.Item>
+                              </Col>
+                              <Col span={12}>
+                                    <Form.Item label="Công đoạn" name="cong_doan_sx" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập công đoạn'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Mã sản phẩm" name="product_id" className='mb-3'>
+                                    <Form.Item label="Mã sản phẩm" name="product_id" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập mã sản phẩm'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Khách hàng" name="khach_hang" className='mb-3'>
+                                    <Form.Item label="Khách hàng" name="khach_hang" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập khách hàng'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Ca sản xuất" name="ca_sx" className='mb-3'>
+                                    <Form.Item label="Ca sản xuất" name="ca_sx" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập ca sản xuất'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Lô sản xuất" name="lo_sx" className='mb-3'>
+                                    <Form.Item label="Lô sản xuất" name="lo_sx" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập lô sản xuất'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Số bát" name="so_bat" className='mb-3'>
+                                    <Form.Item label="Số bát" name="so_bat" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập số bát'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Số lượng nguyên liệu đầu vào (tờ)" name="sl_nvl" className='mb-3'>
+                                    <Form.Item label="Số lượng nguyên liệu đầu vào (tờ)" name="sl_nvl" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập số lượng nguyên liệu đầu vào (tờ)'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Kế hoạch SL thành phẩm (tờ)" name="sl_thanh_pham" className='mb-3'>
+                                    <Form.Item label="Kế hoạch SL thành phẩm (tờ)" name="sl_thanh_pham" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhập kế hoạch SL thành phẩm (tờ)'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="UPH" name="UPH" className='mb-3'>
+                                    <Form.Item label="UPH" name="UPH" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='UPH'></Input>
                                     </Form.Item>
                               </Col>
                               <Col span={12}>
-                                    <Form.Item label="Nhân lực" name="nhan_luc" className='mb-3'>
+                                    <Form.Item label="Nhân lực" name="nhan_luc" className='mb-3' rules={[{required: true}]}>
                                           <Input placeholder='Nhân lực'></Input>
                                     </Form.Item>
                               </Col>

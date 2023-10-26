@@ -16,36 +16,44 @@ const col_detailTable = [
         dataIndex: 'index',
         key: 'index',
         render: (value, record, index) => index + 1,
-        align: 'center'
+        align: 'center',
+        fixed: 'left',
     },
     {
         title: 'Ngày',
         dataIndex: 'ngay',
         key: 'ngay',
-        align: 'center'
+        align: 'center',
+        fixed: 'left',
     },
     {
         title: 'Mã khách hàng',
         dataIndex: 'ma_khach_hang',
         key: 'ma_khach_hang',
-        align: 'center'
+        align: 'center',
+        fixed: 'left',
     },
     {
         title: 'Tên khách hàng',
         dataIndex: 'ten_khach_hang',
         key: 'ten_khach_hang',
-        align: 'center'
-    }, {
+        align: 'center',
+        fixed: 'left',
+    },
+    {
         title: 'Mã hàng',
         dataIndex: 'product_id',
         key: 'product_id',
-        align: 'center'
+        align: 'center',
+        fixed: 'left',
     }, {
         title: 'Tên SP',
         dataIndex: 'ten_san_pham',
         key: 'name_product',
-        align: 'center'
-    }, {
+        align: 'center',
+        fixed: 'left',
+    },
+    {
         title: 'ĐVT',
         dataIndex: 'dvt',
         key: 'dvt',
@@ -343,7 +351,7 @@ const ThanhPhamGiay = (props) => {
                         pagination={false}
                         scroll={
                             {
-                                x: '180vw',
+                                x: '130vw',
                                 y: '80vh'
                             }
                         }

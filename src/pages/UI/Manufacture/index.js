@@ -26,7 +26,7 @@ const UIManufacture = (props) => {
     const [valueImportLsx, setValueImportLsx] = useState([]);
     const [dataLsx, setDataLsx] = useState([]);
     const [titleMdlEdit, setTitleMdlEdit] = useState('Cập nhật');
-    const [SLTT, setSLTT] = useState([]);
+    const [params, setParams] = useState({start_date: dayjs(), end_date: dayjs()});
     const [form] = Form.useForm();
     const setValueInput = (id, value) => {
         const check = valueImport.find((old_value) => old_value.id === id);
@@ -210,31 +210,11 @@ const UIManufacture = (props) => {
             title: 'Quy cách nguyên liệu (mm)',
             dataIndex: 'quy_cach',
             key: 'quy_cach',
-            onCell: (record, index) => {
-                if (mergeValue1.has(record.manvl)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => data.manvl === record.manvl).length;
-                    mergeValue1.add(record.manvl);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
         },
         {
             title: 'Số lượng nguyên liệu kho xuất (tờ)',
             dataIndex: 'sl_kho_xuat',
             key: 'sl_kho_xuat',
-            onCell: (record, index) => {
-                if (mergeValue2.has(record.manvl)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => data.manvl === record.manvl).length;
-                    mergeValue2.add(record.manvl);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
         },
         {
             title: 'Số lượng nhận thực tế (tờ)',
@@ -247,108 +227,43 @@ const UIManufacture = (props) => {
                     }
                 };
             },
-            onCell: (record, index) => {
-                if (mergeValue3.has(record.manvl)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => data.manvl === record.manvl).length;
-                    mergeValue3.add(record.manvl);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
+            
         },
         {
             title: 'Số lượng thiếu so với số lượng kho xuất(tờ)',
             dataIndex: 'so_luong_thieu',
             key: 'so_luong_thieu',
-            onCell: (record, index) => {
-                if (mergeValue4.has(record.manvl)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => data.manvl === record.manvl).length;
-                    mergeValue4.add(record.manvl);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
+            
         },
         {
             title: 'Lô sản xuất',
             dataIndex: 'lsx',
             key: 'lsx',
-            onCell: (record, index) => {
-                if (mergeValue5.has(record.lsx)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => (data.lsx === record.lsx && data.manvl === record.manvl)).length;
-                    mergeValue5.add(record.lsx);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
+            
         },
         {
             title: 'Số lượng kế hoạch',
             dataIndex: 'so_luong_ke_hoach',
             key: 'so_luong_ke_hoach',
-            onCell: (record, index) => {
-                if (mergeValue6.has(record.lsx)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => (data.lsx === record.lsx && data.manvl === record.manvl)).length;
-                    mergeValue6.add(record.lsx);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
+            
 
         },
         {
             title: 'Mã hàng',
             dataIndex: 'product_id',
             key: 'product_id',
-            onCell: (record, index) => {
-                if (mergeValue7.has(record.lsx)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => (data.lsx === record.lsx && data.manvl === record.manvl)).length;
-                    mergeValue7.add(record.lsx);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
+           
         },
 
         {
             title: 'Tên sản phẩm',
             dataIndex: 'ten_sp',
             key: 'ten_sp',
-            onCell: (record, index) => {
-                if (mergeValue8.has(record.lsx)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => (data.lsx === record.lsx && data.manvl === record.manvl)).length;
-                    mergeValue8.add(record.lsx);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
         },
         {
             title: 'Khách hàng',
             dataIndex: 'khach_hang',
             key: 'khach_hang',
-            onCell: (record, index) => {
-                if (mergeValue9.has(record.lsx)) {
-                    return { rowSpan: 0 };
-                } else {
-                    const rowCount = dataTable.filter((data) => (data.lsx === record.lsx && data.manvl === record.manvl)).length;
-                    mergeValue9.add(record.lsx);
-                    return { rowSpan: rowCount };
-                }
-                return {};
-            },
         },
         {
             title: 'Mã pallet',
@@ -379,19 +294,11 @@ const UIManufacture = (props) => {
     }
     const loadListTable = async () => {
         const res = await getListLot();
-        setDataTable(res.sort((a, b) => {
-            if (a.manvl < b.manvl) {
-                return -1;
-            }
-            if (a.manvl > b.manvl) {
-                return 1;
-            }
-            return 0;
-        }));
+        setDataTable(res);
     }
     useEffect(() => {
-        console.log(listPalletCheck);
-    }, [listPalletCheck])
+        console.log(dataTable);
+    }, [dataTable])
     useEffect(() => {
         (async () => {
             loadListTable();
@@ -401,7 +308,7 @@ const UIManufacture = (props) => {
     useEffect(() => {
         (async () => {
             if (openMdlNhap) {
-                setDataUpload(await getListMaterialLog());
+                setDataUpload(await getListMaterialLog(params));
             }
         })()
     }, [openMdlNhap])
@@ -471,10 +378,19 @@ const UIManufacture = (props) => {
         loadListTable();
     }
     const onFinishSearch = async (values) => {
+        setParams(values);
         values.start_date = dayjs(values.start_date).format('YYYY-MM-DD');
         values.end_date = dayjs(values.end_date).format('YYYY-MM-DD');
         const res = await getListLot(values);
-        setDataTable(res);
+        setDataTable(res.sort((a, b) => {
+            if (a.manvl < b.manvl) {
+                return -1;
+            }
+            if (a.manvl > b.manvl) {
+                return 1;
+            }
+            return 0;
+        }));
     }
     const editRecord = async () => {
         setTitleMdlEdit('Cập nhật')
@@ -559,7 +475,7 @@ const UIManufacture = (props) => {
                         </Col>
                     </Row>
                 </Form>
-                <Table columns={columns} dataSource={dataTable} bordered pagination={false} />
+                <Table columns={columns} dataSource={dataTable} bordered pagination={false} size='small' scroll={{x: '150vw', y: '50vh'}}/>
             </Card>
             <Modal title="Chia pallet" open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null} width={800} destroyOnClose>
                 <Table

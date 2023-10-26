@@ -164,21 +164,21 @@ const CheckSheet = (props) =>{
 
 
     return (
-            machine ? <Space direction="vertical">
+            machine ? <Space direction="vertical" style={{width:'100%'}}>
             {contextHolder}
             <Form>
             {machine &&
-                 <Table
-                 scroll={{
-                     x: 200,
-                     y: 350,
-                 }}
-                 pagination={false}
-                 bordered
-                 className='mb-4'
-                 columns={columns}
-                 dataSource={dataTable} />
-               }
+                <Table
+                scroll={{
+                    x: '100%',
+                    y: '50%',
+                }}
+                pagination={false}
+                bordered
+                className='mb-4'
+                columns={columns}
+                dataSource={dataTable} />
+            }
             </Form>
             <Button hidden={checkSheetWork.is_checked == true ?  true : false} onClick={() => save()} type="primary" size="large" style={{float:'right', marginRight:'100px'}}>Lưu</Button>
             </Space>

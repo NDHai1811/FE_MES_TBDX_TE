@@ -23,6 +23,10 @@ const items = [
                 label: 'Lịch sử sản xuất',
                 key:'manufacture/lich-su-san-xuat',
             },
+            {
+                label: 'Quản lý sản lượng',
+                key:'manufacture/quan-ly-san-luong',
+            },
         ],
         
         permission:'ui-sx'
@@ -92,7 +96,45 @@ const items = [
         ],
         permission:'ui-abnormal'
     },
-
+    {
+        label: 'Master Data',
+        key:'master-data',
+        children: [
+            {
+                label: 'Danh sách máy',
+                key:'master-data/may',
+            },
+            {
+                label: 'Spec sản phẩm',
+                key:'master-data/spec-product',
+            },
+            {
+                label: 'Danh sách lỗi',
+                key:'master-data/errors',
+            },
+            {
+                label: 'Danh sách chỉ tiêu kiểm tra',
+                key:'master-data/test_criteria',
+            },
+            {
+                label: 'Danh sách công đoạn',
+                key:'master-data/cong-doan',
+            },
+            {
+                label: 'Danh sách tài khoản',
+                key:'master-data/users',
+            },
+            {
+                label: 'Bộ phận',
+                key:'master-data/roles',
+            },
+            {
+                label: 'Quyền',
+                key:'master-data/permissions',
+            },
+        ], 
+        permission:'master'
+    },
 ]
 const HeaderUI = () => {
     const { userProfile } = useProfile();

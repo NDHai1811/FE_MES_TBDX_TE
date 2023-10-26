@@ -6,7 +6,7 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
 import EditableTable from '../../../components/Table/EditableTable';
-import { getInfoPallet, getLine, getPallet, inTem, scanPallet, updatePallet } from '../../../api/oi/manufacture';
+import { getInfoPallet, getLine, inTem, scanPallet, updatePallet } from '../../../api/oi/manufacture';
 import dayjs from "dayjs";
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration)
@@ -98,19 +98,12 @@ const Manufacture4 = (props) => {
     const [isScan, setIsScan] = useState(0);
     const [data, setData] = useState([]);
     const [options, setOption] = useState([]);
-    const [searchData, setSearchData] = useState([]);
     const [selectedLot, setSelectedLot] = useState();
     useEffect(()=>{
         (async ()=>{
             setLoading(true)
             const lineList = await getLine({type: 'sx'});
             setOption(lineList.success ? lineList.data : [])
-            const pallet = await getPallet();
-            if(pallet.success){
-                setSearchData(pallet.data.map(e=>{
-                    return {id: e.ma_pallet, name: e.ma_pallet}
-                }))
-            }
             const infoPallet = await getInfoPallet({type: 8});
             if(infoPallet.success){
                 setData(infoPallet.data.map(e=>{
@@ -300,7 +293,7 @@ const Manufacture4 = (props) => {
                             <SelectButton value={options.length > 0 && parseInt(line)} options={options} label="Chọn công đoạn" onChange={onChangeLine} />
                         </Col>
                         <Col span={20}>
-                            <ScanButton onScan={onScan} searchData={searchData} height={76}/>
+                            <ScanButton onScan={onScan} height={76}/>
                         </Col>
                         <Col span={24}>
                             <Table

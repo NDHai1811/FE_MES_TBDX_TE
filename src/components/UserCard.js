@@ -32,17 +32,17 @@ const UserCard = () =>{
         },
     ]
     var interval;
-    useEffect(() => {
-        interval = setInterval(async () => {
-            const res = await getStatusIOT();
-            if(res === 1){
-                setColor('green');
-            }else{
-                setColor('red');
-            }
-        }, 5000);
-        return () => clearInterval(interval);
-    }, []);
+    // useEffect(() => {
+    //     interval = setInterval(async () => {
+    //         const res = await getStatusIOT();
+    //         if(res === 1){
+    //             setColor('green');
+    //         }else{
+    //             setColor('red');
+    //         }
+    //     }, 5000);
+    //     return () => clearInterval(interval);
+    // }, []);
     return (
         <React.Fragment>
             <div className="justify-content-between d-flex w-100 mt-3 align-content-center flex-wrap">
@@ -54,7 +54,7 @@ const UserCard = () =>{
                         </Space>
                     </Button>
                 </Dropdown>
-                <div className="align-content-center d-flex flex-wrap">{clock.toLocaleString(['en-GB'], { hour12: false })} <div style={{width:'25px',height:'25px',background:color,borderRadius:'50%',marginLeft:'12px'}}></div></div>
+                <div className="align-content-center d-flex flex-wrap">{clock.toLocaleString(['en-GB'], { hour12: false })} <div style={{width:'25px',height:'25px',background:'green',borderRadius:'50%',marginLeft:'12px'}}></div></div>
             </div>
         </React.Fragment>
     )

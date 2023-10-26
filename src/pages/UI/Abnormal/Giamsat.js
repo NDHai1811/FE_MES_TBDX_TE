@@ -1,12 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { Button, Table, Card, Checkbox, message, Modal, Space, InputNumber, Form, Input, Col, Row, Select, DatePicker } from 'antd';
 import "../style.scss";
-import { getHistoryMonitor, getListLsxUseMaterial, getListMaterialLog, getListScenario, updateScenario } from '../../../api';
+import { exportHistoryMonitors, getHistoryMonitor, getListLsxUseMaterial, getListMaterialLog, getListScenario, updateScenario } from '../../../api';
 import background1 from "../../../assets/images/layout8.png";
 import CommentBoxUI from '../../../components/CommentBoxUI';
 import { useEffect } from 'react';
 import { getMonitor, getMonitorList } from '../../../api/db/main';
 import dayjs from "dayjs";
+import { baseURL } from '../../../config';
 const img = {
     width: '100%',
     display: 'flex',
@@ -53,10 +54,15 @@ const Giamsat = (props) => {
             key: 'content',
         },
         {
+            title: 'Giá trị',
+            dataIndex: 'value',
+            key: 'value',
+        },
+        {
             title: 'Tình trạng xử lý',
             dataIndex: 'status',
             key: 'status',
-            render: (value, item, index) => item.status == 0 ? 'Đang xử lý' : 'Đã xử lý'
+            render: (value, item, index) => item.status == 0 ? 'NG' : 'OK'
         }
 
     ];
@@ -163,6 +169,8 @@ const Giamsat = (props) => {
     useEffect(() => {
         (async () => {
             loadListTable();
+            form.setFieldValue('start_date',dayjs());
+            form.setFieldValue('end_date',dayjs());
         })()
     }, [])
     const option_type = [{
@@ -176,10 +184,10 @@ const Giamsat = (props) => {
         value: 'sx'
     }]
     const option_status = [{
-        label: 'Đang xử lý',
+        label: 'OK',
         value: 0
     }, {
-        label: 'Đã xử lý',
+        label: 'NG',
         value: 1
     }]
     const option_machine = [{
@@ -195,10 +203,19 @@ const Giamsat = (props) => {
         label: 'MÁY GẤP HỘP',
         value: 'ACE70CS'
     }]
+    const [exportLoading1, setExportLoading1] = useState(false);
+    const exportFile = async () => {
+        setExportLoading1(true);
+        console.log(form.getFieldsValue(true));
+        const res = await exportHistoryMonitors(form.getFieldsValue(true));
+        if (res.success) {
+            window.location.href = baseURL + res.data;
+        }
+        setExportLoading1(false);
+    }
     return (
         <React.Fragment>
             <Card className='mt-3' title="Lịch sử bất thường">
-
                 <Form layout={'vertical'} form={form} onFinish={onFinish}>
                     <Row gutter={[16, 16]}>
                         <Col span={4}>
@@ -227,7 +244,10 @@ const Giamsat = (props) => {
                             </Form.Item>
                         </Col>
                         <Col span={4}>
-                            <Button htmlType="submit" type="primary" style={{marginTop:'30px'}}>Truy vấn</Button>
+                            <Space>
+                                <Button htmlType="submit" type="primary" style={{marginTop:'30px'}}>Truy vấn</Button>
+                                <Button type="primary" style={{marginTop:'30px'}} onClick={exportFile} loading={exportLoading1}>Xuất Excel</Button>
+                            </Space>
                         </Col>
                     </Row>
                 </Form>

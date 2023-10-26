@@ -101,7 +101,7 @@ const col_detailTable = [
         key: 'fix_error',
         align: 'center'
     }, {
-        title: 'Biện phép phòng ngừa lỗi',
+        title: 'Biện pháp phòng ngừa lỗi',
         dataIndex: 'prevent_error',
         key: 'prevent_error',
         align: 'center'

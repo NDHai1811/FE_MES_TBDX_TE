@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { Layout, Table, Tag, Col, Row, Card, Space, Image, Tooltip, Button, List, Tabs, Badge, Modal, Descriptions, Divider } from 'antd';
+import { Layout, Col, Row, } from 'antd';
 import ReactFullscreen from 'react-easyfullscreen';
 import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import background1 from "../../assets/images/layout8.png";
 import CommentBox from '../../components/CommentBox';
-import { getMonitor, getMonitorList } from '../../api/db/main';
+import { getMonitor } from '../../api/db/main';
 import './style.css';
 
 const img = {
@@ -13,22 +12,7 @@ const img = {
   display: 'flex',
   height: '100vh'
 }
-const items = [
-  {
-    key: '1',
-    label: 'Product',
-    children: 'Cloud Database',
-    span: '1'
-  },
-  {
-    key: '2',
-    label: 'Billing Mode',
-    children: 'Prepaid',
-    span: '1'
-  },
-];
 const CanhBaoBatThuong = () => {
-  const history = useHistory();
   const [isFullCreen, setIsFullScreen] = useState(false);
   const [clock, setClock] = useState(new Date());
   const tick = () => {
@@ -37,34 +21,20 @@ const CanhBaoBatThuong = () => {
   useEffect(() => {
     setInterval(() => tick(), 1000);
   }, []);
-
-  const [dataList, setDataList] = useState([]);
-  const hanleGetMonitorList = async () => {
-    var res = await getMonitorList();
-    setDataList(res.data);
-  }
   const [demoMonitor, setDemoMonitor] = useState();
   const hanleGetMonitorSeparate = async () => {
     var res = await getMonitor();
     setDemoMonitor(res.data);
   }
   useEffect(() => {
-    hanleGetMonitorList();
     hanleGetMonitorSeparate();
   }, [])
   let interval1;
   useEffect(() => {
     interval1 = setInterval(async () => {
-      hanleGetMonitorList();
-    }, 5000)
-    return () => clearInterval(interval1);
-  }, [])
-  let interval2;
-  useEffect(() => {
-    interval2 = setInterval(async () => {
       hanleGetMonitorSeparate();
     }, 5000)
-    return () => clearInterval(interval2);
+    return () => clearInterval(interval1);
   }, [])
 
   const listMC = [
@@ -144,7 +114,7 @@ const CanhBaoBatThuong = () => {
               }
             </Row>
             <Row style={{ width: '100%', height: '80vh' }}>
-              <div style={{ position: 'relative', width: '100%', backgroundColor: 'white', float: 'right' }}>
+              <div style={{ position: 'relative', width: '100%', backgroundColor: 'white', float: 'right' }} >
                 {demoMonitor?.length > 0 ? (
                   demoMonitor.map((value)=> {
                     return <CommentBox title={value?.type?.toUpperCase()} content={value?.content} type={value?.type === 'sx' ? 'error' : (value?.type === 'cl' ? 'warning' : 'success')} color={value?.type === 'sx' ? '#90f' : (value?.type === 'cl' ? '#AA0000' : '#00f')} top={listMC.find((val)=>val.code === value?.machine_id && val.type === value.type)?.top} left={listMC.find((val)=>val.code == value?.machine_id && val.type === value.type)?.left} ></CommentBox>

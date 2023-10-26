@@ -52,8 +52,8 @@ export async function getInfoExportWareHouse() {
     const res = await axios.get('/warehouse/info-export');
     return res.data;
 }
-export async function getListMaterialLog() {
-    const res = await axios.get('/material/list-log');
+export async function getListMaterialLog(params) {
+    const res = await axios.get('/material/list-log', {params});
     return res.data;
 }
 export async function updateMaterialLog(params) {
@@ -100,7 +100,14 @@ export async function deleteWareHouseExport(params){
     const res = await axios.delete('/warehouse-export/destroy', {params: params});
     return res.data;
 }
-
+export async function updateWareHouseExport(params){
+    const res = await axios.post('/warehouse-export/update', params);
+    return res.data;
+}
+export async function createWareHouseExport(params){
+    const res = await axios.post('/warehouse-export/create', params);
+    return res.data;
+}
 export async function testUpdateTable(params){
     const res = await axios.post('/update/test', params);
     return res.data;
@@ -138,4 +145,222 @@ export async function exportBMCardWarehouse(params){
 export async function getStatusIOT(){
     const res = await axios.get('/iot/status');
     return res.data;
+}
+export async function prepareGT(params){
+    const res = await axios.get('/warehouse-export/get-thung', {params});
+    return res.data;
+}
+export async function gopThung(params){
+    const res = await axios.post('/warehouse-export/gop-thung', params);
+    return res.data;
+}
+export async function exportHistoryMonitors(params){
+    const res = await axios.get('/export/history-monitors', {params});
+    return res;
+}
+export async function taoTem(params){
+    const res = await axios.post('/tao-tem', params);
+    return res.data;
+}
+export async function listProduct(){
+    const res = await axios.get('/list-product');
+    return res.data;
+}
+
+//InfoCongDoan
+export async function getInfoCongDoan(params){
+    const res = await axios.get('/info-cong-doan/list', {params});
+    return res.data;
+}
+export async function updateInfoCongDoan(params){
+    const res = await axios.post('/info-cong-doan/update', params);
+    return res.data;
+}
+export async function exportInfoCongDoan(params){
+    const res = await axios.get('/info-cong-doan/export', {params});
+    return res;
+}
+
+//Machine
+export async function getMachine(params){
+    const res = await axios.get('/machine/list', {params});
+    return res.data;
+}
+export async function createMachine(params){
+    const res = await axios.post('/machine/create', params);
+    return res.data;
+}
+export async function updateMachine(params){
+    const res = await axios.patch('/machine/update', params);
+    return res.data;
+}
+export async function deleteMachine(params){
+    const res = await axios.post('/machine/delete', params);
+    return res.data;
+}
+export async function exportMachine(params){
+    const res = await axios.get('/machine/export', {params});
+    return res;
+}
+
+//Spec
+export async function getSpecProduct(params){
+    const res = await axios.get('/spec-product/list', {params});
+    return res.data;
+}
+export async function createSpecProduct(params){
+    const res = await axios.post('/spec-product/create', params);
+    return res.data;
+}
+export async function updateSpecProduct(params){
+    const res = await axios.patch('/spec-product/update', params);
+    return res.data;
+}
+export async function deleteSpecProduct(params){
+    const res = await axios.post('/spec-product/delete', params);
+    return res.data;
+}
+export async function exportSpecProduct(params){
+    const res = await axios.get('/spec-product/export', {params});
+    return res;
+}
+
+//Errors
+export async function getErrors(params){
+    const res = await axios.get('/errors/list', {params});
+    return res.data;
+}
+export async function createErrors(params){
+    const res = await axios.post('/errors/create', params);
+    return res.data;
+}
+export async function updateErrors(params){
+    const res = await axios.patch('/errors/update', params);
+    return res.data;
+}
+export async function deleteErrors(params){
+    const res = await axios.post('/errors/delete', params);
+    return res.data;
+}
+export async function exportErrors(params){
+    const res = await axios.get('/errors/export', {params});
+    return res;
+}
+
+//TestCriteria
+export async function getTestCriteria(params){
+    const res = await axios.get('/test_criteria/list', {params});
+    return res.data;
+}
+export async function createTestCriteria(params){
+    const res = await axios.post('/test_criteria/create', params);
+    return res.data;
+}
+export async function updateTestCriteria(params){
+    const res = await axios.patch('/test_criteria/update', params);
+    return res.data;
+}
+export async function deleteTestCriteria(params){
+    const res = await axios.post('/test_criteria/delete', params);
+    return res.data;
+}
+export async function exportTestCriteria(params){
+    const res = await axios.get('/test_criteria/export', {params});
+    return res;
+}
+
+//Line
+export async function getLine(params){
+    const res = await axios.get('/cong-doan/list', {params});
+    return res.data;
+}
+export async function createLine(params){
+    const res = await axios.post('/cong-doan/create', params);
+    return res.data;
+}
+export async function updateLine(params){
+    const res = await axios.patch('/cong-doan/update', params);
+    return res.data;
+}
+export async function deleteLine(params){
+    const res = await axios.post('/cong-doan/delete', params);
+    return res.data;
+}
+export async function exportLine(params){
+    const res = await axios.get('/cong-doan/export', {params});
+    return res;
+}
+
+//Users
+export async function getUsers(params){
+    const res = await axios.get('/users/list', {params});
+    return res.data;
+}
+export async function getUserRoles(params){
+    const res = await axios.get('/users/roles', {params});
+    return res.data;
+}
+export async function createUsers(params){
+    const res = await axios.post('/users/create', params);
+    return res.data;
+}
+export async function updateUsers(params){
+    const res = await axios.patch('/users/update', params);
+    return res.data;
+}
+export async function deleteUsers(params){
+    const res = await axios.post('/users/delete', params);
+    return res.data;
+}
+export async function exportUsers(params){
+    const res = await axios.get('/users/export', {params});
+    return res;
+}
+
+//Roles
+export async function getRoles(params){
+    const res = await axios.get('/roles/list', {params});
+    return res.data;
+}
+export async function getRolePermissions(params){
+    const res = await axios.get('/roles/permissions', {params});
+    return res.data;
+}
+export async function createRoles(params){
+    const res = await axios.post('/roles/create', params);
+    return res.data;
+}
+export async function updateRoles(params){
+    const res = await axios.patch('/roles/update', params);
+    return res.data;
+}
+export async function deleteRoles(params){
+    const res = await axios.post('/roles/delete', params);
+    return res.data;
+}
+export async function exportRoles(params){
+    const res = await axios.get('/roles/export', {params});
+    return res;
+}
+
+//Permissions
+export async function getPermissions(params){
+    const res = await axios.get('/permissions/list', {params});
+    return res.data;
+}
+export async function createPermissions(params){
+    const res = await axios.post('/permissions/create', params);
+    return res.data;
+}
+export async function updatePermissions(params){
+    const res = await axios.patch('/permissions/update', params);
+    return res.data;
+}
+export async function deletePermissions(params){
+    const res = await axios.post('/permissions/delete', params);
+    return res.data;
+}
+export async function exportPermissions(params){
+    const res = await axios.get('/permissions/export', {params});
+    return res;
 }

@@ -1,4 +1,4 @@
-import {Modal, Button, Card, Col, DatePicker, Divider, Form, Input, Layout, Radio, Row, Select, AutoComplete, Table, Tabs, Typography, Space, Spin} from "antd";
+import {Modal, Button, Card, Col, DatePicker, Divider, Form, Input, Layout, Radio, Row, Select, AutoComplete, Table, Tabs, Typography, Space, Spin, Checkbox, message} from "antd";
 import {Content} from "antd/es/layout/layout";
 import React, { useState, useEffect } from "react";
 import { Pie, Column ,Line} from '@ant-design/plots';
@@ -7,7 +7,7 @@ import {getErrors, getLines, getMachineOfLine, getCustomers,
     getProducts, getStaffs, getLoSanXuat, getWarehouses, getCaSanXuats , getPQCHistory, getDataFilterUI, getDetailDataError
 } from '../../../api/ui/main';
 import dayjs from "dayjs";
-import {exportPQC } from '../../../api/ui/export';
+import {exportPQC, exportQCHistory, exportReportQC } from '../../../api/ui/export';
 import { baseURL } from '../../../config';
 
 
@@ -153,6 +153,14 @@ const QualityPQC = (props) => {
             showModal();
         }
     }
+    const [messageApi, contextHolder] = message.useMessage();
+    const onChangeChecbox = (e, record) => {
+        if (e.target.checked) {
+            setSelectedLot(record.lot_id);
+        } else {
+            setSelectedLot();
+        }
+    }
     
     const columns2 = [
         {
@@ -160,13 +168,15 @@ const QualityPQC = (props) => {
             dataIndex: 'index',
             key: 'index',
             align: 'center',
-            render: (value, record, index) => index+1
+            render: (value, record, index) => index+1,
+            fixed: 'left'
         },
         {
             title: 'Ngày SX',
             dataIndex: 'ngay_sx',
             key: 'ngay_sx',
             align: 'center',
+            fixed: 'left'
         },
         {
             title: 'Ca',
@@ -241,15 +251,33 @@ const QualityPQC = (props) => {
             align: 'center',
         },
         {
+            title: 'Số lượng tem vàng',
+            dataIndex: 'sl_tem_vang',
+            key: 'sl_tem_vang',
+            align: 'center',
+        },
+        {
             title: 'Số lượng NG (SX tự KT)',
             dataIndex: 'sl_ng_sxkt',
             key: 'sl_ng_sxkt',
             align: 'center',
         },
         {
+            title: 'Công nhân SX',
+            dataIndex: 'user_sxkt',
+            key: 'user_sxkt',
+            align: 'center',
+        },
+        {
             title: 'Số lượng NG (PQC)',
             dataIndex: 'sl_ng_pqc',
             key: 'sl_ng_pqc',
+            align: 'center',
+        },
+        {
+            title: 'PQC kiểm tra',
+            dataIndex: 'user_pqc',
+            key: 'user_pqc',
             align: 'center',
         },
         {
@@ -328,6 +356,7 @@ const QualityPQC = (props) => {
 
     }, [data]);
     const [exportLoading, setExportLoading] = useState(false);
+    const [selectedLot, setSelectedLot] = useState();
     const exportFile = async () =>{
         setExportLoading(true);
         const res = await exportPQC(params);
@@ -338,14 +367,6 @@ const QualityPQC = (props) => {
     }
 
     const [loading, setLoading] = useState(false);
-    const columnDetailErrorDefault = [
-        {
-            title: 'Số lượng NG',
-            dataIndex: 'sl_ng',
-            key: 'sl_ng',
-            align: 'center',
-        },
-    ]
     const [columnDetailError, setColumnDetailError] = useState([
         {
             title: 'Tên lỗi',
@@ -361,8 +382,35 @@ const QualityPQC = (props) => {
         }
     ]);
     const [dataDetailError, setDataDetailError] = useState([]);
+    const [exportLoading1, setExportLoading1] = useState(false);
+    const exportFileDetail = async () =>{
+        setExportLoading1(true);
+        const res = await exportQCHistory(params);
+        if(res.success){
+            window.location.href = baseURL+res.data;
+        }
+        setExportLoading1(false);
+    }
+    const [isModalBCOpen, setIsModalBCOpen] = useState(false);
+    const showModalBC = () => {
+        setIsModalBCOpen(true);
+    };
+    const closeModalBC = () => {
+        setIsModalBCOpen(false);
+    };
+    const [formExportReport] = Form.useForm();
+    const [exportLoading2, setExportLoading2] = useState(false);
+    const exportReport = async (values) =>{
+        setExportLoading2(true);
+        const res = await exportReportQC(values);
+        if(res.success){
+            window.location.href = baseURL+res.data;
+        }
+        setExportLoading2(false);
+    }
     return (
         <React.Fragment>
+            {contextHolder}
             <Row style={{padding: '8px', height:'100vh'}} gutter={[8, 8]}>
                 <Col span={3}>
                     <Card style={{ height: '100%' }} bodyStyle={{paddingInline:0}}>
@@ -465,9 +513,15 @@ const QualityPQC = (props) => {
                             </Card>
                         </Col>
                         <Col span={24}>
-                            <Card title="Bảng chi tiết lỗi" style={{ height: '100%',padding: '0px'}} bodyStyle={{padding:12}} extra={<Button type='primary'loading={exportLoading} onClick={exportFile}>Xuất excel</Button>}>
+                            <Card title="Bảng chi tiết lỗi" style={{ height: '100%',padding: '0px'}} bodyStyle={{padding:12}} extra={
+                                <Space>
+                                    <Button type='primary' onClick={showModalBC}>Báo cáo</Button>
+                                    <Button type='primary'loading={exportLoading1} onClick={exportFileDetail}>Bảng kiểm tra</Button>
+                                    <Button type='primary'loading={exportLoading} onClick={exportFile}>Xuất excel</Button>
+                                </Space>
+                            }>
                                 <Spin spinning={loading}>
-                                    <Table bordered columns={columns2} dataSource={dataTable2} pagination={false} scroll={
+                                    <Table bordered size="small" columns={columns2} dataSource={dataTable2} pagination={false} scroll={
                                         {
                                             x: '120vw',
                                             y: '50vh'
@@ -491,6 +545,33 @@ const QualityPQC = (props) => {
                     </Col>
                 </Row>
                 
+            </Modal>
+            <Modal  title="Báo cáo" open={isModalBCOpen} onCancel={closeModalBC}
+            okText="Xuất báo cáo"
+            cancelText="Huỷ"
+            okButtonProps={{loading: exportLoading2}}
+            onOk={() => formExportReport.submit()}>
+                <Form layout="vertical" form={formExportReport} onFinish={exportReport}
+                initialValues={{
+                    day: dayjs(),
+                    week: dayjs(),
+                    month: dayjs(),
+                    year: dayjs(),
+                }}>
+                    <Form.Item label={'Ngày'} name={'day'} rules={[{required: true}]}>
+                        <DatePicker style={{width:'100%'}}></DatePicker>
+                    </Form.Item>
+                    <Form.Item label={'Tuần'} name={'week'} rules={[{required: true}]}>
+                        <DatePicker picker="week" style={{width:'100%'}}></DatePicker>
+                    </Form.Item>
+                    <Form.Item label={'Tháng'} name={'month'} rules={[{required: true}]}>
+                        <DatePicker picker="month" style={{width:'100%'}}></DatePicker>
+                    </Form.Item>
+                    <Form.Item label={'Năm'} name={'year'} rules={[{required: true}]}>
+                        <DatePicker picker="year" style={{width:'100%'}}></DatePicker>
+                    </Form.Item>
+                                    
+                </Form>
             </Modal>
         </React.Fragment>
     )

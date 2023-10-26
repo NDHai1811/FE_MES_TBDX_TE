@@ -1,6 +1,6 @@
 import { Card, Col, Divider, Row } from "antd";
 import { useEffect, useState } from "react";
-
+import "./scanner.scss"
 const above = {
       position: 'absolute',
       padding: '5px',
@@ -37,7 +37,7 @@ const st_message = {
 const CommentBox = (props) => {
       const { title = "",content="", type = "", top = '', left = '', onClick = null, color = '' } = props;
       return (
-            <div style={{ top: top, left: left, backgroundColor: color, ...above }}>
+            <div style={{ top: top, left: left, backgroundColor: color, ...above }} className="bounce-comment-box">
                   {/* <span style={{ border: "8px solid" + color, ...comment_box, }}></span> */}
                   <div style={st_message}>
                         <div style={{ height: '3vw', color: '#fff', textAlign: 'center', lineHeight: '3vw', fontSize: '18px' }}><span>{title?.toUpperCase()}</span>

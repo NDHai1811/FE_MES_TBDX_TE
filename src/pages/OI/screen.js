@@ -124,6 +124,11 @@ const Screen = (props) => {
                                             )
                                         // }
                                     })}
+                                    <Col span={12}>
+                                        <Link to={'tao-tem'}>
+                                            <Button type="primary" className='w-100'>Tạo tem</Button>
+                                        </Link>
+                                    </Col>
                                 </Row>
                                 <Row gutter={[16, 16]} className='mt-3'>
                                     {permissionUI.length > 0 && <Divider style={{margin:0}}>UI</Divider>}

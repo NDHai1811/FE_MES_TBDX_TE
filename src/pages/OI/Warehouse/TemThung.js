@@ -26,15 +26,15 @@ const PrintTemplate = ({ detail }) => {
           <tbody>
             <tr>
               <td colSpan={4}>
-              <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between">
                   <div className="flex-column">
                     <h5 style={{ marginLeft: '8px' }}>NO:</h5>
                     <h5 style={{ marginLeft: '8px' }}>{detail.lot_id}</h5>
                   </div>
-                  
+
                   {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
-                  <QRCode value={detail.lot_id} bordered={false} size={100}/>
-                  
+                  <QRCode style={{marginRight:'12px'}} value={detail.lot_id} bordered={false} size={100} type="svg" />
+
                 </div>
               </td>
             </tr>
@@ -46,7 +46,7 @@ const PrintTemplate = ({ detail }) => {
             </tr>
             <tr>
               <td>Ver/His</td>
-              <td>{(detail?.his && detail?.ver) && detail?.ver+'/'+detail?.his}</td>
+              <td>{(detail?.his && detail?.ver) && detail?.ver + '/' + detail?.his}</td>
               <td>Lô SX</td>
               <td>{detail.lo_sx}</td>
             </tr>

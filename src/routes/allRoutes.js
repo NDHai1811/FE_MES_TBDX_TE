@@ -30,6 +30,15 @@ import DashBoard from '../pages/DB'
 import Logout from "../pages/Authentication/Logout";
 import Kichban from "../pages/UI/Abnormal/Kichban";
 import Giamsat from "../pages/UI/Abnormal/Giamsat";
+import InTem from "../pages/OI/InTem";
+import Machine from "../pages/UI/MasterData/Machine";
+import SpecProduct from "../pages/UI/MasterData/SpecProduct";
+import Errors from "../pages/UI/MasterData/Errors";
+import TestCriteria from "../pages/UI/MasterData/TestCriteria";
+import Line from "../pages/UI/MasterData/Line";
+import Users from "../pages/UI/MasterData/Users";
+import Roles from "../pages/UI/MasterData/Roles";
+import Permissions from "../pages/UI/MasterData/Permissions";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -44,7 +53,7 @@ const authProtectedRoutes = [
   { path: ["/ui/manufacture/giay-bao-on"], component: UIManufacture },
   { path: ["/ui/manufacture/ke-hoach-san-xuat"], component: UIManufactureKHSX },
   { path: ["/ui/manufacture/lich-su-san-xuat"], component: UIManufactureLSSX },
-  { path: ["/ui/manufacture/giay-bao-on"], component: UIManufacture },
+  { path: ["/ui/manufacture/quan-ly-san-luong"], component: UIManufactureSL },
   { path: ["/ui/quality/PQC"], component: UIQualityPQC },
   { path: ["/ui/quality/OQC"], component: UIQualityOQC },
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
@@ -58,10 +67,21 @@ const authProtectedRoutes = [
   { path: ["/ui/abnormal/lich-su-bat-thuong"], component: Giamsat },
   
   //OI
+  { path: ["/tao-tem"], component: InTem },
   { path: ["/manufacture", "/manufacture/:line"], component: Manufacture },
   { path: ["/quality", "/quality/:line"], component: Quality },
   { path: ["/equipment", "/equipment/:line"], component: Equipment },
   { path: ["/warehouse", "/warehouse/:line"], component: Warehouse },
+
+  //Master Data
+  { path: ["/ui/master-data/may"], component: Machine },
+  { path: ["/ui/master-data/spec-product"], component: SpecProduct },
+  { path: ["/ui/master-data/errors"], component: Errors },
+  { path: ["/ui/master-data/test_criteria"], component: TestCriteria },
+  { path: ["/ui/master-data/cong-doan"], component: Line },
+  { path: ["/ui/master-data/users"], component: Users },
+  { path: ["/ui/master-data/roles"], component: Roles },
+  { path: ["/ui/master-data/permissions"], component: Permissions },
 ];
 
 const publicRoutes = [

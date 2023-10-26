@@ -31,12 +31,6 @@ const columnTable = [
         align: 'center'
     },
     {
-        title: 'Xưởng',
-        dataIndex: 'xuong_sx',
-        key: 'xuong_sx',
-        align: 'center'
-    },
-    {
         title: 'Công đoạn',
         dataIndex: 'cong_doan',
         key: 'cong_doan',
@@ -46,12 +40,6 @@ const columnTable = [
         title: 'Máy sản xuất',
         dataIndex: 'machine_name',
         key: 'machine_name',
-        align: 'center'
-    },
-    {
-        title: 'Mã máy',
-        dataIndex: 'machine_id',
-        key: 'machine_id',
         align: 'center'
     },
     {
@@ -114,7 +102,7 @@ const columnTable = [
         align: 'center',
         render: (value, record, index) => value != '' ? value : '-',
     }, {
-        title: 'Biện phép phòng ngừa lỗi',
+        title: 'Biện pháp phòng ngừa lỗi',
         dataIndex: 'phong_ngua',
         key: 'phong_ngua',
         align: 'center',
@@ -219,7 +207,7 @@ const Equipment1 = (props) => {
             console.log(data.perfomance[item]);
             return {
                 type: data.perfomance[item]['machine_name'],
-                value: data.perfomance[item]['thoi_gian_thuc_te'] == 0 ? 0 : parseInt((data.perfomance[item]['thoi_gian_thuc_te']/data.perfomance[item]['thoi_gian_kh'])*100),
+                value: data.perfomance[item]['percent'],
             }
         }));
 
@@ -247,17 +235,18 @@ const Equipment1 = (props) => {
         xField: 'type',
         yField: 'value',
         label: {
-            position: 'middle',
-            style: {
-                fill: '#FFFFFF',
-                opacity: 0.6,
-            },
+            position: 'top',
+            offsetY: 10,
+            formatter: (value)=>{console.log(value); return value.value ? `${value.value}%` : ''}
         },
         xAxis: {
             label: {
-                autoHide: true,
-                autoRotate: false,
+                autoHide: false,
+                autoRotate: true,
             },
+        },
+        yAxis: {
+            max: 100
         },
         meta: {
             type: {

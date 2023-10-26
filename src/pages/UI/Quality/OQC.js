@@ -96,6 +96,12 @@ const columns2 = [
         key: 'ket_luan',
         align: 'center',
     },
+    {
+        title: 'OQC',
+        dataIndex: 'nguoi_oqc',
+        key: 'nguoi_oqc',
+        align: 'center',
+    },
 ];
 const columns1 = [
     {

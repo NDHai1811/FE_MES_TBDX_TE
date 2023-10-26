@@ -5,7 +5,7 @@ import DataDetail from '../../../components/DataDetail';
 import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import SelectButton from '../../../components/Button/SelectButton';
-import { exportWareHouse, getDetailLot, getInfoExportWareHouse, getListCustomerExport, getProposeExportWareHouse, splitBarrel } from '../../../api';
+import { exportWareHouse, getDetailLot, getInfoExportWareHouse, getListCustomerExport, getProposeExportWareHouse, gopThung, prepareGT, splitBarrel } from '../../../api';
 import dayjs from "dayjs";
 import { useProfile } from '../../../components/hooks/UserHooks';
 import TemThung from './TemThung';
@@ -181,7 +181,8 @@ const Export = (props) => {
     }
     useEffect(() => {
         if (listTem.length > 0) {
-            handlePrint()
+            handlePrint();
+            setListTem([])
         }
     }, [listTem.length])
 
@@ -299,7 +300,6 @@ const Export = (props) => {
                     return old_data;
                 }
             })
-            console.log(new_data);
             setData(new_data);
             setRow2([
                 {
@@ -337,6 +337,33 @@ const Export = (props) => {
     const handlePrint = useReactToPrint({
         content: () => componentRef1.current
     });
+    const [openModalGT, setOpenModalGT] = useState(false);
+    const [formGT] = Form.useForm();
+    const selectedGT = Form.useWatch([], formGT);
+    const onFinishGT = async (values) =>{
+        if(values.sl_gop > values.sl_thung2){
+            message.info('Số lượng gộp không được lớn hơn thùng gộp');
+            return;
+        }
+        if(values.sl_gop <= 0){
+            message.info('Số lượng gộp phải lớn hơn 0');
+            return;
+        }
+        var res = await gopThung(values);
+        if(res){
+            setListTem(res);
+        }
+        formGT.resetFields();
+    }
+    const getDataThung = async () =>{
+        var res = await prepareGT(formGT.getFieldsValue(true));
+        if(res){
+            formGT.setFieldsValue(res)
+        }
+    }
+    useEffect(()=>{
+        console.log(selectedGT);
+    }, [selectedGT])
     return (
         <React.Fragment>
             <Row className='mt-3' gutter={[12, 12]}>
@@ -368,6 +395,12 @@ const Export = (props) => {
                     <DataDetail data={row2} />
                 </Col>
                 <Col span={4}>
+                    <div className='d-flex justify-content-between h-100 w-100'>
+                    <Button size='large' type='primary' style={{ height: '100%', width: '100%', marginRight: 12 }}
+                        onClick={() => {
+                            setOpenModalGT(true);
+                            form.resetFields();
+                        }}>Gộp thùng</Button>
                     <Button size='large' type='primary' style={{ height: '100%', width: '100%' }}
                         onClick={() => {
                             if (Object.keys(currentLot).length) {
@@ -377,12 +410,13 @@ const Export = (props) => {
                                 message.info('Chưa chọn thùng');
                             }
                         }}>Tách thùng</Button>
+                    </div>
                 </Col>
                 <Col span={24}>
                     <Table
                         scroll={{
                             x: 200,
-                            y: 350,
+                            y: '100%',
                         }}
                         rowClassName={(record, index) => record.status === 1 ? 'table-row-yellow' : record.status === 2 ? 'table-row-grey' : ''}
                         pagination={false}
@@ -412,6 +446,55 @@ const Export = (props) => {
                     <Space>
                         <Button type="primary" htmlType='submit'>In tem</Button>
                         <Button onClick={() => setOpenModal(false)}>Hủy</Button>
+                    </Space>
+                </Form>
+            </Modal>
+            <Modal title="Gộp thùng" open={openModalGT} footer={null} onCancel={() => { setOpenModalGT(false) }}>
+                <Form form={formGT} onFinish={onFinishGT} layout='vertical' initialValues={{
+                    thung1: '',
+                    thung2: '',
+                    sl_thung1: 0,
+                    sl_thung2: 0,
+                    sl_gop: 0
+                }}
+                validateMessages={{
+                    required: "Trường này là bắt buộc",
+                }}>
+                    <Form.Item name={'sl_thung1'} hidden><InputNumber /></Form.Item>
+                    <Form.Item name={'sl_thung2'} hidden><InputNumber /></Form.Item>
+                    <Form.Item name={'thung1'} label="Thùng được gộp" extra={"Số lượng: "+(selectedGT?.sl_thung1??0)} rules={[{ required: true }]}>
+                        <Input
+                            size="large"
+                            prefix={
+                                <QrcodeOutlined
+                                    style={{ fontSize: '24px', marginRight: '10px' }}
+                                />
+                            }
+                            placeholder={"Nhập mã QR hoặc nhập mã thùng"}
+                            onPressEnter={getDataThung}
+                            allowClear
+                        />
+                    </Form.Item>
+                    <Form.Item name={'thung2'} label="Thùng gộp" extra={"Số lượng: "+(selectedGT?.sl_thung2??0)} rules={[{ required: true }]}>
+                        <Input
+                            size="large"
+                            prefix={
+                                <QrcodeOutlined
+                                    style={{ fontSize: '24px', marginRight: '10px' }}
+                                />
+                            }
+                            onPressEnter={getDataThung}
+                            // onChange={(e) => { setSelectedGT({...selectedGT, thung2: e.target.value}) }}
+                            placeholder={"Nhập mã QR hoặc nhập mã thùng"}
+                            allowClear
+                        />
+                    </Form.Item>
+                    <Form.Item name={'sl_gop'} label="Số lượng gộp" rules={[{ required: true }]}>
+                        <InputNumber className='w-100' inputMode='numeric' min={0}/>
+                    </Form.Item>
+                    <Space>
+                        <Button type="primary" onClick={()=>formGT.submit()}>In tem</Button>
+                        <Button onClick={() => setOpenModalGT(false)}>Hủy</Button>
                     </Space>
                 </Form>
             </Modal>

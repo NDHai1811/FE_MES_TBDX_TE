@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { Layout, Table, Tag, Col, Row } from 'antd';
 import ReactFullscreen from 'react-easyfullscreen';
 import {FullscreenOutlined, FullscreenExitOutlined} from '@ant-design/icons';
-import { Column } from '@ant-design/plots';
 import {getProductFMB} from '../../api/db/main';
 import './THSX.css';
 
@@ -55,9 +54,9 @@ const colTable =[
         dataIndex: 'status',
         key: 'status',
         render:(value) => {
-            if(value == '1') return  <Tag color="#87d068" className='bd-custom'>Bằng thực tế</Tag>
-            else if(value == '2') return <Tag color="#faad14" className='bd-custom'>Chậm ít hơn 30'</Tag>
-           else if(value == '3') return <Tag color="#cd201f" className='bd-custom'>Chậm nhiều hơn 30'</Tag>
+            if(value == '1') return  <Tag color={'orange'} className='bd-custom'>VÀO HÀNG</Tag>
+            else if(value == '2') return <Tag color={'blue'} className='bd-custom'>SẢN XUẤT</Tag>
+            else if(value == '3') return <Tag color={'green'} className='bd-custom'>HOÀN THÀNH</Tag>
             else return <Tag color="#929292">Ko có K.Hoạch</Tag>
         },
         align:'center',

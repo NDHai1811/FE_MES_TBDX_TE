@@ -96,3 +96,8 @@ export async function getDetailDataError(params) {
       const res = await axios.get('qc/detail-data-error', {params});
       return res;
 }
+
+export async function exportKPI(params) {
+      const res = await axios.get('export/kpi', {params});
+      return res;
+}

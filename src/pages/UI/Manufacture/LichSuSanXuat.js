@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { DeleteOutlined, EditOutlined, UploadOutlined, PlusOutlined, FileExcelOutlined, PrinterOutlined } from '@ant-design/icons';
-import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Progress, Space, Spin } from 'antd';
+import { DatePicker, Col, Row, Card, Table, Layout, Divider, Button, Form, Select, Space, Spin } from 'antd';
 import "../style.scss";
 import {
-    getLines, getMachineOfLine, getCustomers, getProducts, getStaffs, getLoSanXuat,
-    getWarehouses, getCaSanXuats, getProduceHistory, getDataFilterUI
+    getLines, getCustomers, getProduceHistory, getDataFilterUI
 } from '../../../api/ui/main';
 import { exportProduceHistory, exportReportProduceHistory } from '../../../api/ui/export';
 import { baseURL } from '../../../config';
@@ -127,18 +125,20 @@ const columns3 = [
         dataIndex: 'index',
         key: 'index',
         align: 'center',
+        fixed: 'left',
         render: (value, record, index) => index + 1,
+    },
+    {
+        title: 'Tên sản phẩm',
+        dataIndex: 'ten_san_pham',
+        key: 'ten_san_pham',
+        align: 'center',
+        fixed: 'left'
     },
     {
         title: 'Ngày sản xuất',
         dataIndex: 'ngay_sx',
         key: 'ngay_sx',
-        align: 'center',
-    },
-    {
-        title: 'Xưởng',
-        dataIndex: 'xuong',
-        key: 'xuong',
         align: 'center',
     },
     {
@@ -154,21 +154,9 @@ const columns3 = [
         align: 'center',
     },
     {
-        title: 'Mã máy',
-        dataIndex: 'machine_id',
-        key: 'machine_id',
-        align: 'center',
-    },
-    {
         title: 'Khách hàng',
         dataIndex: 'khach_hang',
         key: 'khach_hang',
-        align: 'center',
-    },
-    {
-        title: 'Tên sản phẩm',
-        dataIndex: 'ten_san_pham',
-        key: 'ten_san_pham',
         align: 'center',
     },
     {
@@ -276,11 +264,8 @@ const columns3 = [
 const LichSuSanXuat = (props) => {
     document.title = "UI - Lịch sử sản xuất";
     const [listLines, setListLines] = useState([]);
-    const [listMachines, setListMachines] = useState([]);
-    const [listIdProducts, setListIdProducts] = useState([]);
     const [listNameProducts, setListNameProducts] = useState([]);
     const [listLoSX, setListLoSX] = useState([]);
-    const [listStaffs, setListStaffs] = useState([]);
     const [listCustomers, setListCustomers] = useState([]);
     const [selectedLine, setSelectedLine] = useState();
     const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
@@ -383,7 +368,7 @@ const LichSuSanXuat = (props) => {
     return (
         <React.Fragment>
             <Row style={{ padding: '8px', height: '100vh' }} gutter={[8, 8]}>
-                <Col span={3}>
+                <Col span={5}>
                     <Card style={{ height: '100%' }} bodyStyle={{ paddingInline: 0 }}>
                         <div className='mb-3'>
                             <Form style={{ margin: '0 15px' }} layout="vertical">
@@ -470,7 +455,7 @@ const LichSuSanXuat = (props) => {
                         </div>
                     </Card>
                 </Col>
-                <Col span={21}>
+                <Col span={19}>
                     <Card style={{ height: '100%' }} title="Lịch sử sản xuất" extra={
                         <Space>
                             <Button type="primary" onClick={reportProduceHistory} loading={exportLoading2}>Báo cáo truy vấn</Button>

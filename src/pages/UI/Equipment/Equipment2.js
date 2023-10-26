@@ -16,13 +16,23 @@ const col_detailTable = [
         dataIndex: 'index',
         key: 'index',
         render: (value, record, index) => index + 1,
-        align: 'center'
+        align: 'center',
+        fixed: 'left'
     },
     {
         title: 'Ngày sản xuất',
         dataIndex: 'ngay_sx',
         key: 'ngay_sx',
-        align: 'center'
+        align: 'center',
+        fixed: 'left'
+    },
+    {
+        title: 'Tên máy',
+        dataIndex: 'machine_name',
+        key: 'machine_name',
+        align: 'center',
+        render: (value,record,index)=>record?.machine.name,
+        fixed: 'left'
     },
     {
         title: 'Ca sản xuất',
@@ -31,36 +41,6 @@ const col_detailTable = [
         align: 'center',
         render: (value)=>parseInt(value) === 1 ? "Ca 1" : "Ca 2",
     },
-    {
-        title: 'Xưởng',
-        dataIndex: 'xuong',
-        key: 'xuong',
-        align: 'center',
-        render: (value)=>value ? value : "Giấy",
-    },
-    {
-        title: 'Lô sx',
-        dataIndex: 'lo_sx',
-        key: 'lo_sx',
-        align: 'center'
-    },
-    {
-        title: 'Mã thùng/pallet',
-        dataIndex: 'lot_id',
-        key: 'lot_id',
-        align: 'center'
-    },
-    
-    {
-        title: 'Mã máy',
-        dataIndex: 'machine_code',
-        key: 'machine_code',
-        align: 'center'
-    },
-    {
-        title: 'In',
-        align: 'center',
-        children: [
             {
                 title: 'Tốc độ',
                 dataIndex: 'speed',
@@ -71,7 +51,7 @@ const col_detailTable = [
                         props:{
                             style:{backgroundColor: value?.is_if ? '#ebebeb' : ''}
                         },
-                        children: value?.value ? Math.round(value?.value) : '-'
+                        children: value?.value ? Math.round(String(value?.value).replace(',','')) : '-'
                     }
                 }
             },
@@ -131,12 +111,6 @@ const col_detailTable = [
                     }
                 }
             },
-        ]
-    },
-    {
-        title: 'Phủ',
-        align: 'center',
-        children: [
             {
                 title: 'Công suất đèn UV1',
                 dataIndex: 'uv1',
@@ -179,12 +153,7 @@ const col_detailTable = [
                     }
                 }
             },
-        ]
-    },
-    {
-        title: 'Bế',
-        align: 'center',
-        children: [
+
             {
                 title: 'Áp lực bế',
                 dataIndex: 'p_be',
@@ -199,12 +168,6 @@ const col_detailTable = [
                     }
                 }
             },
-        ]
-    },
-    {
-        title: 'Gấp dán',
-        align: 'center',
-        children: [
             {
                 title: 'Áp lực băng tải 1',
                 dataIndex: 'p_conv1',
@@ -257,12 +220,10 @@ const col_detailTable = [
                         props:{
                             style:{backgroundColor: value?.is_if ? '#ebebeb' : ''}
                         },
-                        children: value?.value ? value?.value : '-'
+                        children: value?.value ? value?.value.replace(',','') : '-'
                     }
                 }
             },
-        ]
-    }, 
 ]
 
 const Equipment2 = (props) => {

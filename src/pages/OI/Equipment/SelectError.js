@@ -245,11 +245,11 @@ const SelectError = (props) => {
                 bordered={true}
                 options={optionsNameError}
                 value = {value}
-                filterOption={(inputValue, option) =>
-                    {
-                        return option.label.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                    }
-                }
+                // filterOption={(inputValue, option) =>
+                //     {
+                //         return option.label.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                //     }
+                // }
                 onSelect={onSelect}
                 onSearch={(value) => onInput(value, 'name_error')}
                 disabled={currentError?.status || !record.stopTime}

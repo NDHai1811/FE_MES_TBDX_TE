@@ -8,7 +8,7 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
 import EditableTable from '../../../components/Table/EditableTable';
-import { getInfoPallet, getLine, getLineOverall, getPallet, inTem, scanPallet } from '../../../api/oi/manufacture';
+import { getInfoPallet, getLine, getLineOverall, inTem, scanPallet } from '../../../api/oi/manufacture';
 import dayjs from 'dayjs';
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
@@ -19,7 +19,6 @@ const Manufacture2 = (props) => {
     const { line } = useParams();
     const history = useHistory();
     const [options, setOption] = useState([])
-    const [searchData, setSearchData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [row1, setRow1] = useState([
         {
@@ -83,12 +82,6 @@ const Manufacture2 = (props) => {
             setLoading(true)
             const lineList = await getLine({ type: 'sx' });
             setOption(lineList.data);
-            const pallet = await getPallet();
-            if (pallet.success) {
-                setSearchData(pallet.data.map(e => {
-                    return { id: e.ma_pallet, name: e.ma_pallet }
-                }))
-            }
             const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
             setRow1([
                 {
@@ -328,6 +321,12 @@ const Manufacture2 = (props) => {
             key: 'thuc_te',
             children: [
                 {
+                    title: 'TG bắt đầu',
+                    dataIndex: 'thoi_gian_bat_dau',
+                    key: 'thoi_gian_bat_dau',
+                    align: 'center',
+                },
+                {
                     title: 'Số lượng đầu vào (pcs)',
                     dataIndex: 'sl_dau_vao',
                     key: 'sl_dau_vao',
@@ -365,12 +364,6 @@ const Manufacture2 = (props) => {
             title: 'Tỉ lệ hoàn thành (%)',
             dataIndex: 'ti_le_ht',
             key: 'ti_le_ht',
-            align: 'center',
-        },
-        {
-            title: 'Tình trạng',
-            dataIndex: 'tinh_trang',
-            key: 'tinh_trang',
             align: 'center',
         },
     ];
@@ -429,38 +422,38 @@ const Manufacture2 = (props) => {
     var interval;
     useEffect(() => {
         interval = setInterval(async () => {
-            const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
-            setRow1([
-                {
-                    title: 'SL KH ngày',
-                    value: lineOverall.data.tong_sl_trong_ngay_kh
-                },
-                {
-                    title: 'SL T.Tế',
-                    value: lineOverall.data.tong_sl_thuc_te
-                },
-                {
-                    title: 'SL Tem vàng',
-                    value: lineOverall.data.tong_sl_tem_vang,
-                    bg: '#f7ac27'
-                },
-                {
-                    title: 'SL NG',
-                    value: lineOverall.data.tong_sl_ng,
-                    bg: '#fb4b50'
-                },
-                {
-                    title: 'Tỷ lệ hoàn thành (%)',
-                    value: `${(lineOverall.data.tong_sl_trong_ngay_kh ? parseInt((lineOverall.data.tong_sl_thuc_te / lineOverall.data.tong_sl_trong_ngay_kh) * 100) : 0)}%`,
-                },
-            ])
+            // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
+            // setRow1([
+            //     {
+            //         title: 'SL KH ngày',
+            //         value: lineOverall.data.tong_sl_trong_ngay_kh
+            //     },
+            //     {
+            //         title: 'SL T.Tế',
+            //         value: lineOverall.data.tong_sl_thuc_te
+            //     },
+            //     {
+            //         title: 'SL Tem vàng',
+            //         value: lineOverall.data.tong_sl_tem_vang,
+            //         bg: '#f7ac27'
+            //     },
+            //     {
+            //         title: 'SL NG',
+            //         value: lineOverall.data.tong_sl_ng,
+            //         bg: '#fb4b50'
+            //     },
+            //     {
+            //         title: 'Tỷ lệ hoàn thành (%)',
+            //         value: `${(lineOverall.data.tong_sl_trong_ngay_kh ? parseInt((lineOverall.data.tong_sl_thuc_te / lineOverall.data.tong_sl_trong_ngay_kh) * 100) : 0)}%`,
+            //     },
+            // ])
             const infoPallet = await getInfoPallet({ type: type.indexOf(parseInt(line)) });
             if (infoPallet.success) {
                 setData(infoPallet.data.map(e => {
                     return { ...e }
                 }))
             }
-        }, 5000);
+        }, 10000);
         return () => clearInterval(interval);
     }, [line]);
     // useEffect(() => {
@@ -479,7 +472,7 @@ const Manufacture2 = (props) => {
                         <DataDetail data={row1} />
                     </Col>
                     <Col span={24}>
-                        <ScanButton onScan={onScan} searchData={searchData} />
+                        <ScanButton onScan={onScan} />
                     </Col>
                     <Col span={20}>
                         <DataDetail data={row2} />

@@ -35,3 +35,11 @@ export async function exportReportProduceHistory(params) {
     const res = await axios.get('/export/report-produce-history', {params});
     return res;
 }
+export async function exportQCHistory(params) {
+    const res = await axios.get('/export/qc-history', {params});
+    return res;
+}
+export async function exportReportQC(params) {
+    const res = await axios.get('/export/report-qc', {params});
+    return res;
+}

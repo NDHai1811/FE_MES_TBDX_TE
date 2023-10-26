@@ -8,7 +8,7 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
 import EditableTable from '../../../components/Table/EditableTable';
-import { batDauTinhSanLuong, checkSanLuong, getInfoPallet, getLine, getLineOverall, getPallet, inTem, scanPallet, updateSanLuong } from '../../../api/oi/manufacture';
+import { batDauTinhSanLuong, checkSanLuong, getInfoPallet, getLine, getLineOverall, inTem, scanPallet, updateSanLuong } from '../../../api/oi/manufacture';
 import dayjs from 'dayjs';
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
@@ -19,7 +19,6 @@ const Manufacture5 = (props) => {
     const { line } = useParams();
     const history = useHistory();
     const [options, setOption] = useState([])
-    const [searchData, setSearchData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [row1, setRow1] = useState([
         {
@@ -83,12 +82,6 @@ const Manufacture5 = (props) => {
             setLoading(true)
             const lineList = await getLine({type: 'sx'});
             setOption(lineList.data);
-            const pallet = await getPallet();
-            if (pallet.success) {
-                setSearchData(pallet.data.map(e => {
-                    return { id: e.ma_pallet, name: e.ma_pallet }
-                }))
-            }
             const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
             setRow1([
                 {
@@ -534,7 +527,7 @@ const Manufacture5 = (props) => {
                             <DataDetail data={row1}/>
                         </Col>
                         <Col span={24}>
-                            <ScanButton onScan={onScan} searchData={searchData}/>
+                            <ScanButton onScan={onScan}/>
                         </Col>
                         <Col span={18}>
                             <DataDetail data={row2}/>

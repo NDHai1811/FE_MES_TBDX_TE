@@ -34,7 +34,7 @@ const PrintTemplate = ({ detail }) => {
                   </div>
                   
                   {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
-                  <QRCode value={detail.lot_id} bordered={false} size={100}/>
+                  <QRCode style={{marginRight:'12px'}} value={detail.lot_id} bordered={false} size={100} type="svg"/>
                   
                 </div>
               </td>

@@ -7,7 +7,7 @@ import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
-import { getInfoPallet, getLine, getLineOverall, getLineUser, getPallet, getTable, getTableChon, inTem, scanPallet, setAssignLineUser, setAssignTableUserWork } from '../../../api/oi/manufacture';
+import { getInfoPallet, getLine, getLineOverall, getLineUser, getTable, getTableChon, inTem, scanPallet, setAssignLineUser, setAssignTableUserWork } from '../../../api/oi/manufacture';
 import Tem from '../../UI/Manufacture/Tem';
 import { useReactToPrint } from 'react-to-print';
 import dayjs from "dayjs";
@@ -128,7 +128,6 @@ const Manufacture3 = (props) => {
     const history = useHistory();
     const [loading, setLoading] = useState(false);
     const [options, setOption] = useState([]);
-    const [searchData, setSearchData] = useState([]);
     const [data, setData] = useState([]);
     const [remain, setRemain] = useState(0);
     const [oldQuantity, setOldQuantity] = useState(0);
@@ -193,12 +192,6 @@ const Manufacture3 = (props) => {
             setLoading(true);
             const lineList = await getLine({ type: 'sx' });
             setOption(lineList.data);
-            const pallet = await getPallet();
-            if (pallet.success) {
-                setSearchData(pallet.data.map(e => {
-                    return { id: e.ma_pallet, name: e.ma_pallet }
-                }))
-            }
             const userData = await getLineUser();
             setUsers(userData.data.map(e => { return { ...e, label: e.name, value: e.id } }));
             const tableData = await getTable();
@@ -558,31 +551,31 @@ const Manufacture3 = (props) => {
     let interval;
     useEffect(() => {
         interval = setInterval(async () => {
-            const lineOverall = await getLineOverall({ type: 1, line_id: line })
-            setRow1([
-                {
-                    title: 'SL KH ngày',
-                    value: lineOverall.data.tong_sl_trong_ngay_kh
-                },
-                {
-                    title: 'SL T.Tế',
-                    value: lineOverall.data.tong_sl_thuc_te
-                },
-                {
-                    title: 'SL Tem vàng',
-                    value: lineOverall.data.tong_sl_tem_vang,
-                    bg: '#f7ac27'
-                },
-                {
-                    title: 'SL NG',
-                    value: lineOverall.data.tong_sl_ng,
-                    bg: '#fb4b50'
-                },
-                {
-                    title: 'Tỷ lệ hoàn thành (%)',
-                    value: `${(lineOverall.data.tong_sl_trong_ngay_kh ? parseInt((lineOverall.data.tong_sl_thuc_te / lineOverall.data.tong_sl_trong_ngay_kh) * 100) : 0)}%`,
-                },
-            ])
+            // const lineOverall = await getLineOverall({ type: 1, line_id: line })
+            // setRow1([
+            //     {
+            //         title: 'SL KH ngày',
+            //         value: lineOverall.data.tong_sl_trong_ngay_kh
+            //     },
+            //     {
+            //         title: 'SL T.Tế',
+            //         value: lineOverall.data.tong_sl_thuc_te
+            //     },
+            //     {
+            //         title: 'SL Tem vàng',
+            //         value: lineOverall.data.tong_sl_tem_vang,
+            //         bg: '#f7ac27'
+            //     },
+            //     {
+            //         title: 'SL NG',
+            //         value: lineOverall.data.tong_sl_ng,
+            //         bg: '#fb4b50'
+            //     },
+            //     {
+            //         title: 'Tỷ lệ hoàn thành (%)',
+            //         value: `${(lineOverall.data.tong_sl_trong_ngay_kh ? parseInt((lineOverall.data.tong_sl_thuc_te / lineOverall.data.tong_sl_trong_ngay_kh) * 100) : 0)}%`,
+            //     },
+            // ])
             const infoPallet = await getInfoPallet({ type: 7 });
             if (infoPallet.success) {
                 setData(infoPallet.data.map(e => {
@@ -704,7 +697,7 @@ const Manufacture3 = (props) => {
                         <DataDetail data={row1} />
                     </Col>
                     <Col span={24}>
-                        <ScanButton onScan={onScan} searchData={searchData} placeholder={"Quét mã QR hoặc nhập mã thùng"} />
+                        <ScanButton onScan={onScan} placeholder={"Quét mã QR hoặc nhập mã thùng"} />
                     </Col>
                     <Col span={20}>
                         <DataDetail data={row2} />

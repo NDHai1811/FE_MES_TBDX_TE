@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Layout, Divider, Button, Table, Menu, Card, Checkbox, DatePicker, Form, Input, Upload, message, Select, AutoComplete, Row, Space } from 'antd';
+import { Layout, Divider, Button, Table, Modal, Card, Checkbox, DatePicker, Form, Input, Upload, message, Select, Col, Row, Space } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { Column } from '@ant-design/plots';
 import "../style.scss";
 import { baseURL } from '../../../config';
-import { deleteWareHouseExport, getListLot, getListWarehouseExportPlan, store, testUpdateTable } from '../../../api';
+import { createWareHouseExport, deleteWareHouseExport, getListLot, getListWarehouseExportPlan, store, testUpdateTable, updateWareHouseExport } from '../../../api';
 import UISidebar from '../components/Sidebar';
 import { useHistory, useParams, withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 import EditableTable from '../../../components/Table/EditableTable';
@@ -63,6 +63,7 @@ const WarehouseExportPlan = (props) => {
             dataIndex: 'name1',
             key: 'name1',
             align: 'center',
+            fixed: 'left',
             render: (value, item, index) => <Checkbox value={item.id} onChange={onChangeChecbox} checked={listCheck.includes(item.id) ? true : false} ></Checkbox>
         },
         {
@@ -70,7 +71,8 @@ const WarehouseExportPlan = (props) => {
             dataIndex: 'khach_hang',
             key: 'khach_hang',
             align: 'center',
-            editable: true
+            // editable: true,
+            fixed: 'left',
         },
         {
             title: 'Ngày xuất hàng',
@@ -78,6 +80,7 @@ const WarehouseExportPlan = (props) => {
             key: 'ngay_xuat_hang',
             align: 'center',
             // editable: true,
+            fixed: 'left',
         },
         {
             title: 'Số lượng nợ đơn hàng',
@@ -87,21 +90,25 @@ const WarehouseExportPlan = (props) => {
                 dataIndex: 'product_id',
                 key: 'product_id',
                 align: 'center',
+                fixed: 'left',
             }, {
                 title: 'Tên sản phẩm',
                 dataIndex: 'ten_san_pham',
                 key: 'ten_san_pham',
                 align: 'center',
+                fixed: 'left',
             }, {
                 title: 'PO pending',
                 dataIndex: 'po_pending',
                 key: 'po_pendding',
                 align: 'center',
+                fixed: 'left',
             }, {
                 title: 'SL yêu cầu giao',
                 dataIndex: 'sl_yeu_cau_giao',
                 key: 'sl_yeu_cau_giao',
                 align: 'center',
+                fixed: 'left',
             }],
             key: 'abc'
         },
@@ -182,29 +189,19 @@ const WarehouseExportPlan = (props) => {
     const mergeColumn = ['khach_hang', 'cua_xuat_hang', 'dia_chi', 'ghi_chu'];
     const mergeValue = mergeColumn.map(e=>{return {key: e, set: new Set()}});
     useEffect(()=>{
-        mergeValue.map(e=>{return {key: e, set: new Set()}});
         (async ()=>{
             var res1 = await getCustomers();
             setListCustomers(res1.data.map(e => {
                 return { ...e, label: e.name, value: e.id }
             }));
-            // var res2 = await getProducts();
-            // setListIdProducts(res2.data.map(e => {
-            //     return { ...e, label: e.id, value: e.id }
-            // }));
-            // setListNameProducts(res2.data.map(e => {
-            //     return { ...e, label: e.name, value: e.id }
-            // }));
         })();
     }, [])
-    useEffect(()=>{
-        console.log(listCheck);
-    }, [listCheck])
     const isEditing = (col, record) => {
         return (col.editable === true && listCheck.includes(record.id));
     };
     const customColumns = columns.map(e=>{
-        if(mergeColumn.includes(e.dataIndex)){
+        if(mergeColumn.includes(e.key)){
+            console.log(e);
             return {
                 ...e,
                 onCell: (record) => {
@@ -214,7 +211,7 @@ const WarehouseExportPlan = (props) => {
                         editable: isEditing(e, record),
                         handleSave,
                     }
-                    const set = mergeValue.find(s=>s.key === e.dataIndex)?.set;
+                    const set = mergeValue.find(s=>s.key === e.key)?.set;
                     if (set?.has(record[mergedKey])) {
                         return { rowSpan: 0, ...props };
                     } else {
@@ -240,8 +237,6 @@ const WarehouseExportPlan = (props) => {
         }
     })
     const handleSave = async (row) =>{
-        // var res = await testUpdateTable(row);
-        // console.log(res);
         setData(prev=>prev.map(e=>{
             if(e.id === row.id){
                 return row;
@@ -252,7 +247,15 @@ const WarehouseExportPlan = (props) => {
     }
     const loadListTable = async () => {
         const res = await getListWarehouseExportPlan(params);
-        setData(res);
+        setData(res.sort((a, b)=>{
+            if (a[mergedKey] < b[mergedKey]) {
+                return -1;
+            }
+            if (a[mergedKey] > b[mergedKey]) {
+                return 1;
+            }
+            return 0;
+        }));
     }
     useEffect(() => {
         (async () => {
@@ -278,6 +281,36 @@ const WarehouseExportPlan = (props) => {
     const btn_click = () =>{
         loadListTable()
     }
+
+    const [titleMdlEdit, setTitleMdlEdit] = useState('Cập nhật');
+    const onEdit = () => {
+        if (listCheck.length > 1) {
+            message.info('Chỉ chọn 1 bản ghi để chỉnh sửa');
+        } else if (listCheck.length == 0) {
+            message.info('Chưa chọn bản ghi cần chỉnh sửa')
+        } else {
+            const result = data.find((record) => record.id === listCheck[0]);
+            form.setFieldsValue(result)
+            setOpenMdlEdit(true);
+            setTitleMdlEdit('Cập nhật');
+        }
+    }
+    const onInsert = () => {
+        setTitleMdlEdit('Thêm mới')
+        form.resetFields();
+        setOpenMdlEdit(true);
+    }
+    const [form] = Form.useForm();
+    const onFinish = async (values) => {
+        if (values.id) {
+            const res = await updateWareHouseExport(values);
+        } else {
+            const res = await createWareHouseExport(values);
+        }
+        setOpenMdlEdit(false);
+        loadListTable();
+    }
+    const [openMdlEdit, setOpenMdlEdit] = useState(false);
     return (
         <React.Fragment>
             {contextHolder}
@@ -384,8 +417,8 @@ const WarehouseExportPlan = (props) => {
                             <Button type="primary" loading={loading}>Upload excel</Button>
                         </Upload>
                         <Button type="primary" onClick={deleteRecord}>Delete</Button>
-                        <Button type="primary">Edit</Button>
-                        <Button type="primary">Insert</Button>
+                        <Button type="primary" onClick={onEdit}>Edit</Button>
+                        <Button type="primary" onClick={onInsert}>Insert</Button>
                     </Space>
                 }
                 style={{width:'100%'}}
@@ -396,7 +429,7 @@ const WarehouseExportPlan = (props) => {
                     dataSource={data}
                     scroll={
                         {
-                            x: '200vw',
+                            x: '130vw',
                             y: '55vh',
                         }
                     }
@@ -413,6 +446,113 @@ const WarehouseExportPlan = (props) => {
                         } /> */}
                 </Card>
             </Row>
+            <Modal title={titleMdlEdit} open={openMdlEdit} onCancel={() => setOpenMdlEdit(false)} footer={null} width={800}>
+                <Form style={{ margin: '0 15px' }}
+                    layout="vertical"
+                    form={form}
+                    onFinish={onFinish}>
+                    <Row gutter={[16, 16]}>
+                        <Col span={12} className='d-none'>
+                            <Form.Item name="id" className='mb-3 d-none'>
+                                <Input></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Khách hàng" name="khach_hang" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập khách hàng'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Ngày xuất hàng(YYYY-MM-DD HH:mm:ss)" name="ngay_xuat_hang" className='mb-3'  rules={[{required: true}]}>
+                                <Input placeholder='Nhập ngày xuất hàng'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Mã hàng" name="product_id" className='mb-3'  rules={[{required: true}]}>
+                                <Input placeholder='Nhập mã hàng'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Tên sản phẩm" name="ten_san_pham" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập tên sản phẩm'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="PO pending" name="po_pending" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='' ></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Số lượng yêu cầu giao" name="sl_yeu_cau_giao" className='mb-3' rules={[{required: true}]}>
+                                <Input ></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Đơn vị tính" name="dvt" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập đơn vị tính'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Tổng kg" name="tong_kg" className='mb-3'>
+                                <Input placeholder='Nhập tổng kg'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Quy cách" name="quy_cach" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập quy cách'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Số lượng thùng chẵn" name="sl_thung_chan" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập số lượng thùng chẵn'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Số lượng hàng lẻ" name="sl_hang_le" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập số lượng hàng lẻ'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Tồn kho" name="ton_kho" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập tồn kho'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Xác nhận sản xuất" name="xac_nhan_sx" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder=''></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Số lượng chênh lệch" name="sl_chenh_lech" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Nhập số lượng chênh lệch'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Số lượng thực xuất" name="sl_thuc_xuat" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder='Số lượng thực xuất'></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Cửa xuất hàng" name="cua_xuat_hang" className='mb-3' rules={[{required: true}]}>
+                                <Input placeholder=''></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Địa chỉ" name="dia_chi" className='mb-3'>
+                                <Input placeholder=''></Input>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Ghi chú" name="ghi_chu" className='mb-3'>
+                                <Input placeholder=''></Input>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Form.Item className='mb-0'>
+                            <Button type="primary" htmlType='submit' >Lưu lại</Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </React.Fragment>
     );
 };

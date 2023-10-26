@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Table, Tag, Col, Row, Card, Space, Title } from 'antd';
+import { Layout, Tag, Col, Row, Card } from 'antd';
 import ReactFullscreen from 'react-easyfullscreen';
 import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
-import { Column } from '@ant-design/plots';
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { getPerfomanceMachine } from '../../api/db/main';
 import { Gauge } from '@ant-design/charts';
-
 
 
 const HieuSuatThietBi = () => {
@@ -82,7 +79,7 @@ const HieuSuatThietBi = () => {
         statistic: {
           content: {
             formatter: ({ percent }) => {
-              return percent*100 + "%";
+              return parseInt(percent*100) + "%";
             },
             style: {
               fontSize: '36px',
