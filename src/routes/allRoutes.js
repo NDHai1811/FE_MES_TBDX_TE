@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 import Login from "../pages/Authentication/Login";
-import Screen from "../pages/OI/screen";
+import Screen from "../pages/screen";
 import UI from "../pages/UI";
 import Manufacture from "../pages/OI/Manufacture";
 import Quality from "../pages/OI/Quality";
@@ -12,7 +12,6 @@ import Warehouse from "../pages/OI/Warehouse";
 import UIManufacture from "../pages/UI/Manufacture";
 import UIManufactureKHSX from "../pages/UI/Manufacture/KeHoachSanXuat";
 import UIManufactureSL from "../pages/UI/Manufacture/SanLuong";
-import UIManufactureTD from "../pages/UI/Manufacture/TienDo";
 import UIManufactureLSSX from "../pages/UI/Manufacture/LichSuSanXuat";
 import UIQualityPQC from "../pages/UI/Quality/PQC";
 import UIQualityOQC from "../pages/UI/Quality/OQC";
@@ -21,8 +20,6 @@ import UIEquipment2 from "../pages/UI/Equipment/Equipment2";
 import UIKPI from "../pages/UI/KPI"
 import WarehouseExportPlan from "../pages/UI/Warehouse/WarehouseExportPlan";
 import ThanhPhamGiay from "../pages/UI/Warehouse/ThanhPhamGiay";
-import UISoDoCanhBao from "../pages/UI/SoDoCanhBao";
-import UIKichBanSuCo from "../pages/UI/KichBanSuCo";
 import DBTinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 import DBHieuSuatThietBi from "../pages/DB/HieuSuatThietBi";
 import DBCanhBaoBatThuong from "../pages/DB/CanhBaoBatThuong";
@@ -39,6 +36,16 @@ import Line from "../pages/UI/MasterData/Line";
 import Users from "../pages/UI/MasterData/Users";
 import Roles from "../pages/UI/MasterData/Roles";
 import Permissions from "../pages/UI/MasterData/Permissions";
+import ErrorMachines from "../pages/UI/MasterData/ErrorMachine";
+import Materials from "../pages/UI/MasterData/Material";
+import Warehouses from "../pages/UI/MasterData/Warehouse";
+import Cells from "../pages/UI/MasterData/Cells";
+import Khuon from "../pages/UI/MasterData/Khuon";
+import Jig from "../pages/UI/MasterData/Jig";
+import Maintenance from "../pages/UI/MasterData/Maintenance/";
+import CreateMaintenance from "../pages/UI/MasterData/Maintenance/form";
+import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
+import ChangePassword from "../pages/Authentication/ChangePassword";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -61,8 +68,6 @@ const authProtectedRoutes = [
   { path: ["/ui", "/ui/warehouse/ke-hoach-xuat-kho"], component: WarehouseExportPlan },
   { path: ["/ui/warehouse/thanh-pham-giay"], component: ThanhPhamGiay },
   { path: ["/ui/kpi"], component: UIKPI },
-  { path: ["/ui/so-do-canh-bao"], component: UISoDoCanhBao },
-  { path: ["/ui/kich-ban-su-co"], component: UIKichBanSuCo },
   { path: ["/ui/abnormal/kich-ban-bat-thuong"], component: Kichban },
   { path: ["/ui/abnormal/lich-su-bat-thuong"], component: Giamsat },
   
@@ -82,28 +87,21 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/users"], component: Users },
   { path: ["/ui/master-data/roles"], component: Roles },
   { path: ["/ui/master-data/permissions"], component: Permissions },
+  { path: ["/ui/master-data/error-machines"], component: ErrorMachines },
+  { path: ["/ui/master-data/material"], component: Materials },
+  { path: ["/ui/master-data/warehouse"], component: Warehouses },
+  { path: ["/ui/master-data/cell"], component: Cells },
+  { path: ["/ui/master-data/khuon"], component: Khuon },
+  { path: ["/ui/master-data/jig"], component: Jig },
+  { path: ["/ui/master-data/maintenance"], component: Maintenance },
+  { path: ["/ui/master-data/maintenance/create"], component: CreateMaintenance },
+  { path: ["/ui/master-data/maintenance/edit/:maintenanceId"], component: EditMaintenance },
 ];
 
 const publicRoutes = [
-  // // UI
-  // { path: ["/ui", "/ui/home"], component: UI },
-  // { path: ["/ui", "/ui/manufacture/:tab"], component: UIManufacture },
-  // { path: ["/ui", "/ui/quality"], component: UIQuality },
-  // { path: ["/ui", "/ui/equipment"], component: UIEquipment },
-  // { path: ["/ui", "/ui/warehouse"], component: UIWarehouse },
-  // //OI
-  // { path: ["/manufacture", "/manufacture/:line"], component: Manufacture },
-  // { path: ["/quality", "/quality/:line"], component: Quality },
-  // { path: ["/equipment", "/equipment/:machine"], component: Equipment },
-  // { path: ["/warehouse", "/warehouse/:line"], component: Warehouse },
-
-  
-  // {
-  //   path: "/",
-  //   component: () => <Redirect to="/login" />,
-  // },
   { path: "/login", component: Login },
   { path: "/logout", component: Logout },
+  { path: "/change-password", component: ChangePassword },
   // dashboard
   { path: ["/dashboard-slide", "/dashboard-slide/:screen"], component: DashBoard },
   { path: ["/dashboard/tinh-hinh-san-xuat"], component: DBTinhHinhSanXuat },

@@ -1,16 +1,15 @@
 import React from 'react';
-import { Button, Card, Col, Divider, Row, Typography } from 'antd';
+import { Button, Card, Col, Divider, Row, Typography, Space } from 'antd';
 //redux
 
 import { withRouter, Link } from "react-router-dom";
 
-import logo from "../../assets/images/logo.png";
-import { useProfile } from '../../components/hooks/UserHooks';
-import { LogoutOutlined } from '@ant-design/icons';
+import logo from "../assets/images/logo.png";
+import { useProfile } from '../components/hooks/UserHooks';
+import { LogoutOutlined, LockOutlined } from '@ant-design/icons';
 
 const Screen = (props) => {
     const { userProfile } = useProfile();
-    console.log(userProfile);
     const { Title } = Typography;
     document.title = "Danh sách màn hình";
     const dashboard = [
@@ -79,12 +78,20 @@ const Screen = (props) => {
             link: '/ui/kpi',
             permission: 'ui-kpi',
         },
+        {
+            title: 'Master Data',
+            link: '/ui/master-data/cong-doan',
+            permission: 'ui-master-data',
+        },
     ];
     const permissionOI = (listOI ?? []).filter(e=>(userProfile?.permission??[]).includes('*') || (userProfile?.permission??[]).includes(e.permission))
     const permissionUI = (listUI ?? []).filter(e=>(userProfile?.permission??[]).includes('*') || (userProfile?.permission??[]).includes(e.permission))
 
     const logout = () =>{
         window.location.href = '/logout';
+    }
+    const changePassword = () => {
+        window.location.href = '/change-password';
     }
     return (
         <React.Fragment>
@@ -146,9 +153,10 @@ const Screen = (props) => {
                                 </Row>
                             </div>
                             <Divider/>
-                            <div className="p-2 mt-3">
-                            <Button icon={<LogoutOutlined/>} onClick={logout} className='w-100'>Đăng xuất</Button>
-                            </div>
+                            <Space direction='vertical' style={{width:'100%'}}>
+                                <Button icon={<LogoutOutlined/>} onClick={logout} className='w-100'>Đăng xuất</Button>
+                                <Button icon={<LockOutlined />} onClick={changePassword} className='w-100'>Đổi mật khẩu</Button>
+                            </Space>
                         </Card>
                     </Col>
                 </Row>

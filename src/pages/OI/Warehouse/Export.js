@@ -155,7 +155,7 @@ const Export = (props) => {
             }
             return e;
         }));
-        setCurrentLot({});
+        setCurrentLot();
         setRow2([
             {
                 title: 'Mã hàng',
@@ -291,7 +291,7 @@ const Export = (props) => {
     const saveLogWareHouse = async (e) => {
         if (e.target.value === currentLot.vi_tri) {
             const res = await exportWareHouse({ lot_id: currentLot.lot_id, cell_id: e.target.value, khach_hang: currentKhachHang });
-            setCurrentLot({});
+            setCurrentLot();
             const new_data = data.filter((old_data)=>{
                 if (old_data.product_id === currentLot.product_id) {
                     old_data.thuc_te_xuat = old_data.thuc_te_xuat + currentLot.so_luong;
@@ -382,7 +382,7 @@ const Export = (props) => {
                             />
                         }
                         placeholder={"Nhập mã QR hoặc nhập mã thùng"}
-                        onPressEnter={Object.keys(currentLot).length ? saveLogWareHouse : getLotCurrent}
+                        onPressEnter={currentLot ? saveLogWareHouse : getLotCurrent}
                         onChange={(e) => { setValueQR(e.target.value) }}
                         value={valueQR}
                         allowClear
@@ -403,7 +403,7 @@ const Export = (props) => {
                         }}>Gộp thùng</Button>
                     <Button size='large' type='primary' style={{ height: '100%', width: '100%' }}
                         onClick={() => {
-                            if (Object.keys(currentLot).length) {
+                            if (currentLot) {
                                 setOpenModal(true);
                                 form.resetFields();
                             } else {

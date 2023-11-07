@@ -101,36 +101,87 @@ const items = [
         key:'master-data',
         children: [
             {
-                label: 'Danh sách máy',
-                key:'master-data/may',
-            },
-            {
-                label: 'Spec sản phẩm',
-                key:'master-data/spec-product',
-            },
-            {
-                label: 'Danh sách lỗi',
-                key:'master-data/errors',
-            },
-            {
-                label: 'Danh sách chỉ tiêu kiểm tra',
-                key:'master-data/test_criteria',
-            },
-            {
                 label: 'Danh sách công đoạn',
                 key:'master-data/cong-doan',
             },
             {
-                label: 'Danh sách tài khoản',
-                key:'master-data/users',
+                label: 'Máy và NVL',
+                children:[
+                    {
+                        label: 'Danh sách máy',
+                        key:'master-data/may',
+                    },
+                    {
+                        label: 'Spec sản phẩm',
+                        key:'master-data/spec-product',
+                    },
+                    {
+                        label: 'Nguyên vật liệu',
+                        key:'master-data/material',
+                    },
+                    
+                    {
+                        label: 'Khuôn',
+                        key:'master-data/khuon',
+                    },
+                    {
+                        label: 'JIG',
+                        key:'master-data/jig',
+                    },
+                ],
+            },
+            
+            {
+                label: 'Lỗi',
+                children:[
+                    {
+                        label: 'Danh sách lỗi',
+                        key:'master-data/errors',
+                    },
+                    {
+                        label: 'Danh sách chỉ tiêu kiểm tra',
+                        key:'master-data/test_criteria',
+                    },
+                    {
+                        label: 'Lỗi máy',
+                        key:'master-data/error-machines',
+                    },
+                ],
+            },
+            
+            {
+                label: 'Tổ chức',
+                children: [
+                    {
+                        label: 'Danh sách tài khoản',
+                        key:'master-data/users',
+                    },
+                    {
+                        label: 'Bộ phận',
+                        key:'master-data/roles',
+                    },
+                    {
+                        label: 'Quyền',
+                        key:'master-data/permissions',
+                    },
+                ]
             },
             {
-                label: 'Bộ phận',
-                key:'master-data/roles',
+                label: 'Kho',
+                children:[
+                    {
+                        label: 'Kho',
+                        key:'master-data/warehouse',
+                    },
+                    {
+                        label: 'Vị trí kho',
+                        key:'master-data/cell',
+                    },
+                ],
             },
             {
-                label: 'Quyền',
-                key:'master-data/permissions',
+                label: 'Bảo trì bảo dưỡng',
+                key:'master-data/maintenance',
             },
         ], 
         permission:'master'

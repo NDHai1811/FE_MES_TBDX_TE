@@ -1,7 +1,7 @@
 import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Upload, message, Checkbox, Space, Modal, Spin, Popconfirm } from 'antd';
 import { baseURL } from '../../../config';
 import React, { useState, useRef, useEffect } from 'react';
-import { exportMachine, getMachine, updateMachine, createMachine, deleteMachine } from '../../../api';
+import { exportMachines, getMachines, updateMachine, createMachine, deleteMachines } from '../../../api';
 
 const Machine = () => {
     document.title = "Quản lý máy"; 
@@ -21,7 +21,14 @@ const Machine = () => {
             fixed: 'left'
         },
         {
-            title: 'Tên ',
+            title: 'Mã máy',
+            dataIndex: 'id',
+            key: 'id',
+            align: 'center',
+            fixed: 'left'
+        },
+        {
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
             align: 'center',
@@ -31,12 +38,6 @@ const Machine = () => {
             title: 'Kiểu loại',
             dataIndex: 'kieu_loai',
             key: 'kieu_loai',
-            align: 'center',
-        },
-        {
-            title: 'Code',
-            dataIndex: 'code',
-            key: 'code',
             align: 'center',
         },
         {
@@ -98,22 +99,18 @@ const Machine = () => {
     ]
     const formFields = [
         {
+            title: 'Mã máy',
             key: 'id',
-            hidden: true,
+            required: true
         },
         {
-            title: 'Tên ',
+            title: 'Tên',
             key: 'name',
             required: true
         },
         {
             title: 'Kiểu loại',
             key: 'kieu_loai',
-            required: true
-        },
-        {
-            title: 'Code',
-            key: 'code',
             required: true
         },
         {
@@ -171,7 +168,7 @@ const Machine = () => {
     const [data, setData] = useState([]);
     const loadListTable = async (params) => {
         setLoading(true)
-        const res = await getMachine(params);
+        const res = await getMachines(params);
         setData(res.map(e=>{
             return {...e, key: e.id}
         }));
@@ -221,7 +218,7 @@ const Machine = () => {
 
     const deleteRecord = async () => {
         if (listCheck.length > 0) {
-            const res = await deleteMachine(listCheck);
+            const res = await deleteMachines(listCheck);
             setListCheck([]);
             loadListTable(params);
         } else {
@@ -248,7 +245,7 @@ const Machine = () => {
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () =>{
         setExportLoading(true);
-        const res = await exportMachine(params);
+        const res = await exportMachines(params);
         if(res.success){
             window.location.href = baseURL+res.data;
         }
@@ -266,27 +263,20 @@ const Machine = () => {
                     <Card style={{ height: '100%' }} bodyStyle={{padding:0}}>
                     <Divider>Tìm kiếm</Divider>
                     <div className='mb-3'>
-                        <Form style={{ margin: '0 15px' }} layout="vertical">
+                        <Form style={{ margin: '0 15px' }} layout="vertical" onFinish={btn_click}>
                             <Form.Item label="Mã" className='mb-3'>
                                 <Input allowClear onChange={(e)=>setParams({...params, code: e.target.value})} placeholder='Nhập mã'/>
                             </Form.Item>
                             <Form.Item label="Tên" className='mb-3'>
                                 <Input allowClear onChange={(e)=>setParams({...params, name: e.target.value})} placeholder='Nhập tên'/>
                             </Form.Item>
+                            <Form.Item style={{textAlign:'center'}}>
+                                <Button type='primary' htmlType='submit'
+                                    style={{ width: '80%' }}>
+                                    Tìm kiếm
+                                </Button>
+                            </Form.Item>
                         </Form>
-                    </div>
-
-                    <div style={
-                        {
-                            padding: '10px',
-                            textAlign: 'center'
-                        }
-                    }
-                        layout="vertical">
-                        <Button type='primary'
-                            style={{ width: '80%' }} onClick={btn_click}>
-                            Tìm kiếm
-                        </Button>
                     </div>
                     </Card>
                 </Col>
@@ -296,7 +286,7 @@ const Machine = () => {
                             <Upload
                                 showUploadList={false}
                                 name='files'
-                                action={baseURL + "/api/machine/import"}
+                                action={baseURL + "/api/machines/import"}
                                 headers={{
                                     authorization: 'authorization-text',
                                 }}

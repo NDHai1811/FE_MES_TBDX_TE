@@ -553,6 +553,7 @@ const Equipment2 = (props) => {
                             <Form style={{ margin: '0 15px' }} layout="vertical">
                                 <Form.Item label="Máy" className='mb-3'>
                                     <Select
+                                        allowClear
                                         placeholder="Nhập máy"
                                         options={listMachines}
                                         onChange={(value)=>setParams({...params, machine_code: value})}

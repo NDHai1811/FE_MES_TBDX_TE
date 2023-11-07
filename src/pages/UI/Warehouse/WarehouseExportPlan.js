@@ -5,8 +5,6 @@ import { Column } from '@ant-design/plots';
 import "../style.scss";
 import { baseURL } from '../../../config';
 import { createWareHouseExport, deleteWareHouseExport, getListLot, getListWarehouseExportPlan, store, testUpdateTable, updateWareHouseExport } from '../../../api';
-import UISidebar from '../components/Sidebar';
-import { useHistory, useParams, withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 import EditableTable from '../../../components/Table/EditableTable';
 import dayjs from "dayjs";
 import { getCustomers, getDataFilterUI, getProducts } from '../../../api/ui/main';

@@ -374,27 +374,20 @@ const SpecProduct = () => {
                     <Card style={{ height: '100%' }} bodyStyle={{padding:0}}>
                     <Divider>Tìm kiếm</Divider>
                     <div className='mb-3'>
-                        <Form style={{ margin: '0 15px' }} layout="vertical">
+                        <Form style={{ margin: '0 15px' }} layout="vertical" onFinish={btn_click}>
                             <Form.Item label="Mã" className='mb-3'>
                                 <Input allowClear onChange={(e)=>setParams({...params, id: e.target.value})} placeholder='Nhập mã'/>
                             </Form.Item>
                             <Form.Item label="Tên" className='mb-3'>
                                 <Input allowClear onChange={(e)=>setParams({...params, name: e.target.value})} placeholder='Nhập tên'/>
                             </Form.Item>
+                            <Form.Item style={{textAlign:'center'}}>
+                                <Button type='primary' htmlType='submit'
+                                    style={{ width: '80%' }}>
+                                    Tìm kiếm
+                                </Button>
+                            </Form.Item>
                         </Form>
-                    </div>
-
-                    <div style={
-                        {
-                            padding: '10px',
-                            textAlign: 'center'
-                        }
-                    }
-                        layout="vertical">
-                        <Button type='primary'
-                            style={{ width: '80%' }} onClick={btn_click}>
-                            Tìm kiếm
-                        </Button>
                     </div>
                     </Card>
                 </Col>

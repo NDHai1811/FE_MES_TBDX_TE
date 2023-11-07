@@ -182,24 +182,24 @@ export async function exportInfoCongDoan(params){
 }
 
 //Machine
-export async function getMachine(params){
-    const res = await axios.get('/machine/list', {params});
+export async function getMachines(params){
+    const res = await axios.get('/machines/list', {params});
     return res.data;
 }
 export async function createMachine(params){
-    const res = await axios.post('/machine/create', params);
+    const res = await axios.post('/machines/create', params);
     return res.data;
 }
 export async function updateMachine(params){
-    const res = await axios.patch('/machine/update', params);
+    const res = await axios.patch('/machines/update', params);
     return res.data;
 }
-export async function deleteMachine(params){
-    const res = await axios.post('/machine/delete', params);
+export async function deleteMachines(params){
+    const res = await axios.post('/machines/delete', params);
     return res.data;
 }
-export async function exportMachine(params){
-    const res = await axios.get('/machine/export', {params});
+export async function exportMachines(params){
+    const res = await axios.get('/machines/export', {params});
     return res;
 }
 
@@ -362,5 +362,163 @@ export async function deletePermissions(params){
 }
 export async function exportPermissions(params){
     const res = await axios.get('/permissions/export', {params});
+    return res;
+}
+
+//ErrorMachines
+export async function getErrorMachines(params){
+    const res = await axios.get('/error-machines/list', {params});
+    return res.data;
+}
+export async function createErrorMachines(params){
+    const res = await axios.post('/error-machines/create', params);
+    return res.data;
+}
+export async function updateErrorMachines(params){
+    const res = await axios.patch('/error-machines/update', params);
+    return res.data;
+}
+export async function deleteErrorMachines(params){
+    const res = await axios.post('/error-machines/delete', params);
+    return res.data;
+}
+export async function exportErrorMachines(params){
+    const res = await axios.get('/error-machines/export', {params});
+    return res;
+}
+
+//Materials
+export async function getMaterials(params){
+    const res = await axios.get('/material/list', {params});
+    return res.data;
+}
+export async function createMaterial(params){
+    const res = await axios.post('/material/create', params);
+    return res.data;
+}
+export async function updateMaterial(params){
+    const res = await axios.patch('/material/update', params);
+    return res.data;
+}
+export async function deleteMaterials(params){
+    const res = await axios.post('/material/delete', params);
+    return res.data;
+}
+export async function exportMaterials(params){
+    const res = await axios.get('/material/export', {params});
+    return res;
+}
+
+//Warehouses
+export async function getWarehouses(params){
+    const res = await axios.get('/warehouses/list', {params});
+    return res.data;
+}
+export async function createWarehouse(params){
+    const res = await axios.post('/warehouses/create', params);
+    return res.data;
+}
+export async function updateWarehouse(params){
+    const res = await axios.patch('/warehouses/update', params);
+    return res.data;
+}
+export async function deleteWarehouses(params){
+    const res = await axios.post('/warehouses/delete', params);
+    return res.data;
+}
+export async function exportWarehouses(params){
+    const res = await axios.get('/warehouses/export', {params});
+    return res;
+}
+
+//Cells
+export async function getCells(params){
+    const res = await axios.get('/cells/list', {params});
+    return res.data;
+}
+export async function createCell(params){
+    const res = await axios.post('/cells/create', params);
+    return res.data;
+}
+export async function updateCell(params){
+    const res = await axios.patch('/cells/update', params);
+    return res.data;
+}
+export async function deleteCells(params){
+    const res = await axios.post('/cells/delete', params);
+    return res.data;
+}
+export async function exportCells(params){
+    const res = await axios.get('/cells/export', {params});
+    return res;
+}
+
+//Khuon
+export async function getKhuon(params){
+    const res = await axios.get('/khuon/list', {params});
+    return res.data;
+}
+export async function createKhuon(params){
+    const res = await axios.post('/khuon/create', params);
+    return res.data;
+}
+export async function updateKhuon(params){
+    const res = await axios.patch('/khuon/update', params);
+    return res.data;
+}
+export async function deleteKhuon(params){
+    const res = await axios.post('/khuon/delete', params);
+    return res.data;
+}
+export async function exportKhuon(params){
+    const res = await axios.get('/khuon/export', {params});
+    return res;
+}
+
+//Jig
+export async function getJig(params){
+    const res = await axios.get('/jig/list', {params});
+    return res.data;
+}
+export async function createJig(params){
+    const res = await axios.post('/jig/create', params);
+    return res.data;
+}
+export async function updateJig(params){
+    const res = await axios.patch('/jig/update', params);
+    return res.data;
+}
+export async function deleteJig(params){
+    const res = await axios.post('/jig/delete', params);
+    return res.data;
+}
+export async function exportJig(params){
+    const res = await axios.get('/jig/export', {params});
+    return res;
+}
+
+//Maintenance
+export async function getMaintenance(params){
+    const res = await axios.get('/maintenance/list', {params});
+    return res.data;
+}
+export async function getMaintenanceDetail(params){
+    const res = await axios.get('/maintenance/detail', {params});
+    return res.data;
+}
+export async function createMaintenance(params){
+    const res = await axios.post('/maintenance/create', params);
+    return res.data;
+}
+export async function updateMaintenance(params){
+    const res = await axios.patch('/maintenance/update', params);
+    return res.data;
+}
+export async function deleteMaintenance(params){
+    const res = await axios.post('/maintenance/delete', params);
+    return res.data;
+}
+export async function exportMaintenance(params){
+    const res = await axios.get('/maintenance/export', {params});
     return res;
 }

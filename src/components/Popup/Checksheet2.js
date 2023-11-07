@@ -116,7 +116,7 @@ const Checksheet2 = (props) =>{
                                     <Row gutter={8} className={index === 0 ? '' : 'mt-2'}>
                                         <Col span={12} style={{paddingInline:4}} className='d-flex justify-content-center flex-wrap align-items-lg-center'>
                                             <div className='d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center p-2' style={{backgroundColor:'#EBEBEB', height:'100%', flexWrap:'wrap'}}>
-                                                {e.hang_muc}{e.tieu_chuan?.trim() && ('. ('+e.tieu_chuan+')')}
+                                                {e.hang_muc}{e.tieu_chuan.trim() && ('. ('+e.tieu_chuan+')')}
                                             </div>
                                         </Col>
                                         <Col span={12}>
