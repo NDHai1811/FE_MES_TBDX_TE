@@ -1,18 +1,21 @@
 import axios from "axios";
 
 export async function getLine(params) {
-      const res = await axios.get('/line/list', {params});
-      return res;
-  }
-
+  const res = await axios.get('/line/list', { params });
+  return res;
+}
+export async function getListMachine(params) {
+  const res = await axios.get('/machine/list', { params });
+  return res;
+}
 export async function getListMachineOfLine(params) {
-      const res = await axios.get('/line/list-machine', {params: params});
-      return res;
-  }
+  const res = await axios.get('/line/list-machine', { params: params });
+  return res;
+}
 
 export async function getCheckSheetOfMachine(params) {
-    const res = await axios.get('/line/machine/check-sheet', {params: params});
-    return res;
+  const res = await axios.get('/line/machine/check-sheet', { params: params });
+  return res;
 }
 
 export async function updateCheckSheetLog(params) {
@@ -20,13 +23,13 @@ export async function updateCheckSheetLog(params) {
   return res;
 }
 
-export async function getErrorOfLine(params){
-  const res = await axios.get('/line/error', {params: params});
+export async function getErrorOfLine(params) {
+  const res = await axios.get('/line/error', { params: params });
   return res;
 }
 
-export async function getMachineLog(params){
-  const res = await axios.get('/machine/logs', {params: params});
+export async function getMachineLog(params) {
+  const res = await axios.get('/machine/logs', { params: params });
   return res;
 }
 
@@ -36,7 +39,7 @@ export async function updateMachineLog(params) {
 }
 
 export async function getMachineParamtersData(params) {
-  const res = await axios.get('/machine/parameters', {params});
+  const res = await axios.get('/machine/parameters', { params });
   return res;
 }
 
@@ -46,6 +49,6 @@ export async function updateMachineParamtersData(params) {
 }
 
 export async function getMachineOverall(params) {
-  const res = await axios.get('/machine/overall', {params});
+  const res = await axios.get('/machine/overall', { params });
   return res;
 }
