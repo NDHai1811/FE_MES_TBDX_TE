@@ -13,58 +13,33 @@ import { useReactToPrint } from "react-to-print";
 
 const exportColumns = [
     {
-        title: 'STT',
-        dataIndex: 'index',
-        key: 'index',
-        align: 'center',
-        render: (value, item, index) => index + 1
-    },
-    {
-        title: 'Thời gian xuất',
-        dataIndex: 'thoi_gian_xuat',
-        key: 'thoi_gian_xuat',
-        align: 'center'
-    },
-    {
-        title: 'Mã hàng',
+        title: 'Số lot',
         dataIndex: 'product_id',
         key: 'product_id',
         align: 'center'
     },
     {
-        title: 'Tên sản phẩm',
+        title: 'Số MQL',
         dataIndex: 'ten_san_pham',
         key: 'ten_san_pham',
         align: 'center'
     },
     {
-        title: 'Mã thùng',
+        title: 'Số lượng',
         dataIndex: 'lot_id',
         key: 'lot_id',
         align: 'center'
     },
     {
-        title: 'Kế hoạch xuất',
+        title: 'Vị trí',
         dataIndex: 'ke_hoach_xuat',
         key: 'lot',
         align: 'center'
     },
     {
-        title: 'Thực tế xuất',
+        title: 'Người nhập',
         dataIndex: 'thuc_te_xuat',
         key: 'thuc_te_xuat',
-        align: 'center'
-    },
-    {
-        title: 'Vị trí',
-        dataIndex: 'vi_tri',
-        key: 'vi_tri',
-        align: 'center'
-    },
-    {
-        title: 'PIC',
-        dataIndex: 'pic',
-        key: 'pic',
         align: 'center'
     },
 ];
@@ -119,15 +94,11 @@ const Export = (props) => {
     ])
     const [row2, setRow2] = useState([
         {
-            title: 'Mã hàng',
+            title: 'Số lot',
             value: '',
         },
         {
-            title: 'Tên SP',
-            value: '',
-        },
-        {
-            title: 'Mã thùng',
+            title: 'Số MQL',
             value: '',
         },
         {
@@ -366,11 +337,11 @@ const Export = (props) => {
     }, [selectedGT])
     return (
         <React.Fragment>
-            <Row className='mt-3' gutter={[12, 12]}>
-                <Col span={4}>
-                    <SelectButton value={line} options={options} label="Chọn công đoạn" onChange={onChangeLine} />
+            <Row className='mt-3' gutter={[6, 6]}>
+                <Col span={6}>
+                    <SelectButton value={line} options={options} label="Chọn" onChange={onChangeLine} />
                 </Col>
-                <Col span={20}>
+                <Col span={18}>
                     <DataDetail data={row1} />
                 </Col>
                 <Col span={24}>
@@ -388,29 +359,11 @@ const Export = (props) => {
                         allowClear
                     />
                 </Col>
-                <Col span={4}>
+                <Col span={8}>
                     <SelectButton options={customersData} onChange={onChangeCustomer} label="Khách hàng" />
                 </Col>
                 <Col span={16}>
                     <DataDetail data={row2} />
-                </Col>
-                <Col span={4}>
-                    <div className='d-flex justify-content-between h-100 w-100'>
-                    <Button size='large' type='primary' style={{ height: '100%', width: '100%', marginRight: 12 }}
-                        onClick={() => {
-                            setOpenModalGT(true);
-                            form.resetFields();
-                        }}>Gộp thùng</Button>
-                    <Button size='large' type='primary' style={{ height: '100%', width: '100%' }}
-                        onClick={() => {
-                            if (Object.keys(currentLot).length) {
-                                setOpenModal(true);
-                                form.resetFields();
-                            } else {
-                                message.info('Chưa chọn thùng');
-                            }
-                        }}>Tách thùng</Button>
-                    </div>
                 </Col>
                 <Col span={24}>
                     <Table
@@ -432,72 +385,6 @@ const Export = (props) => {
                     />
                 </Col>
             </Row>
-            <div className="report-history-invoice">
-                <TemThung listCheck={listTem} ref={componentRef1} />
-            </div>
-            <Modal title="Tách thùng" open={openModal} footer={null} onCancel={() => { setOpenModal(false) }}>
-                <Form form={form} onFinish={onFinish} layout='vertical'>
-                    <Form.Item name={'export_quanlity'} label="Q.ty xuất">
-                        <InputNumber className='w-100' inputMode='numeric' onChange={(value) => { changeRemain(value) }} />
-                    </Form.Item>
-                    <Form.Item name={'remain_quanlity'} label="Q.ty còn">
-                        <InputNumber className='w-100' inputMode='numeric' disabled />
-                    </Form.Item>
-                    <Space>
-                        <Button type="primary" htmlType='submit'>In tem</Button>
-                        <Button onClick={() => setOpenModal(false)}>Hủy</Button>
-                    </Space>
-                </Form>
-            </Modal>
-            <Modal title="Gộp thùng" open={openModalGT} footer={null} onCancel={() => { setOpenModalGT(false) }}>
-                <Form form={formGT} onFinish={onFinishGT} layout='vertical' initialValues={{
-                    thung1: '',
-                    thung2: '',
-                    sl_thung1: 0,
-                    sl_thung2: 0,
-                    sl_gop: 0
-                }}
-                validateMessages={{
-                    required: "Trường này là bắt buộc",
-                }}>
-                    <Form.Item name={'sl_thung1'} hidden><InputNumber /></Form.Item>
-                    <Form.Item name={'sl_thung2'} hidden><InputNumber /></Form.Item>
-                    <Form.Item name={'thung1'} label="Thùng được gộp" extra={"Số lượng: "+(selectedGT?.sl_thung1??0)} rules={[{ required: true }]}>
-                        <Input
-                            size="large"
-                            prefix={
-                                <QrcodeOutlined
-                                    style={{ fontSize: '24px', marginRight: '10px' }}
-                                />
-                            }
-                            placeholder={"Nhập mã QR hoặc nhập mã thùng"}
-                            onPressEnter={getDataThung}
-                            allowClear
-                        />
-                    </Form.Item>
-                    <Form.Item name={'thung2'} label="Thùng gộp" extra={"Số lượng: "+(selectedGT?.sl_thung2??0)} rules={[{ required: true }]}>
-                        <Input
-                            size="large"
-                            prefix={
-                                <QrcodeOutlined
-                                    style={{ fontSize: '24px', marginRight: '10px' }}
-                                />
-                            }
-                            onPressEnter={getDataThung}
-                            // onChange={(e) => { setSelectedGT({...selectedGT, thung2: e.target.value}) }}
-                            placeholder={"Nhập mã QR hoặc nhập mã thùng"}
-                            allowClear
-                        />
-                    </Form.Item>
-                    <Form.Item name={'sl_gop'} label="Số lượng gộp" rules={[{ required: true }]}>
-                        <InputNumber className='w-100' inputMode='numeric' min={0}/>
-                    </Form.Item>
-                    <Space>
-                        <Button type="primary" onClick={()=>formGT.submit()}>In tem</Button>
-                        <Button onClick={() => setOpenModalGT(false)}>Hủy</Button>
-                    </Space>
-                </Form>
-            </Modal>
         </React.Fragment>
     );
 };

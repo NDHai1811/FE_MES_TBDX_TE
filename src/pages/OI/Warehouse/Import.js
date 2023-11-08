@@ -11,52 +11,34 @@ import dayjs from "dayjs";
 import { getInfoImportWareHouse, getListImportWareHouse, getProposeWareHouse, importWareHouse } from '../../../api';
 const importColumns = [
     {
-        title: 'STT',
+        title: 'Số lot',
         dataIndex: 'index',
         key: 'index',
         align: 'center',
         render: (value, record, index) => index + 1
     },
     {
-        title: 'Thời gian nhập',
+        title: 'Số MQL',
         dataIndex: 'thoi_gian_nhap',
         key: 'thoi_gian_nhap',
         align: 'center'
     },
     {
-        title: 'Lô sản xuất',
+        title: 'Số lượng',
         dataIndex: 'lo_sx',
         key: 'lo_sx',
         align: 'center'
     },
     {
-        title: 'Mã thùng',
+        title: 'Vị trí',
         dataIndex: 'lot_id',
         key: 'lot_id',
         align: 'center'
     },
     {
-        title: 'Tên sản phẩm',
+        title: 'Người nhập',
         dataIndex: 'ten_san_pham',
         key: 'ten_san_pham',
-        align: 'center'
-    },
-    {
-        title: 'Số lượng',
-        dataIndex: 'so_luong',
-        key: 'so_luong',
-        align: 'center'
-    },
-    {
-        title: 'Vị trí',
-        dataIndex: 'vi_tri',
-        key: 'vi_tri',
-        align: 'center'
-    },
-    {
-        title: 'Người nhập',
-        dataIndex: 'nguoi_nhap',
-        key: 'nguoi_nhap',
         align: 'center'
     },
 ];
@@ -87,21 +69,21 @@ const Import = (props) => {
     const [row1, setRow1] = useState([])
     const column2 = [
         {
+            title: 'Số lot',
+            dataIndex: 'ma_thung',
+            key: 'ma_thung',
+            align: 'center'
+        },
+        {
             title: 'Khách hàng',
             dataIndex: 'khach_hang',
             key: 'khach_hang',
             align: 'center'
         },
         {
-            title: 'Tên sản phẩm',
+            title: 'Số MQL',
             dataIndex: 'ten_san_pham',
             key: 'ten_san_pham',
-            align: 'center'
-        },
-        {
-            title: 'Mã thùng',
-            dataIndex: 'ma_thung',
-            key: 'ma_thung',
             align: 'center'
         },
         {
@@ -149,10 +131,10 @@ const Import = (props) => {
     return (
         <React.Fragment>
             <Row className='mt-3' gutter={[12, 12]}>
-                <Col span={4}>
-                    <SelectButton value={line} options={options} label="Chọn công đoạn" onChange={onChangeLine} />
+                <Col span={6}>
+                    <SelectButton value={line} options={options} label="Chọn" onChange={onChangeLine} />
                 </Col>
-                <Col span={20}>
+                <Col span={18}>
                     <DataDetail data={row1} />
                 </Col>
                 <Col span={24}>

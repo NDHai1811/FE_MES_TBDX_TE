@@ -1,90 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { CloseOutlined, PrinterOutlined, QrcodeOutlined, UserOutlined } from '@ant-design/icons';
-import { Layout, Row, Col, Divider, Button, Table, Modal, Select, Steps, Input, Space, Spin, Form, InputNumber, message } from 'antd';
-import { withRouter, Link } from "react-router-dom";
+import { Row, Col, Table, Modal, Spin, Form, InputNumber, message } from 'antd';
+import { withRouter } from "react-router-dom";
 import '../style.scss';
-import Checksheet1 from '../../../components/Popup/Checksheet1';
 import Checksheet2 from '../../../components/Popup/Checksheet2';
-import Checksheet3 from '../../../components/Popup/Checksheet3';
 import ScanButton from '../../../components/Button/ScanButton';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import DataDetail from '../../../components/DataDetail';
-import { getInfoPallet, getLine } from '../../../api/oi/manufacture';
+import { getLine } from '../../../api/oi/manufacture';
 import { getChecksheetList, getInfoPalletQC, getLoSXDetail, getQCOverall, inTemVang, scanError, scanPallet, updateSoLuongTemVang } from '../../../api/oi/quality';
-import QuanLyLoi from '../../../components/Popup/QuanLyLoi';
 import SelectButton from '../../../components/Button/SelectButton';
-import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
-import TemVang from './TemVang';
 import { useProfile } from '../../../components/hooks/UserHooks';
-const columns = [
-    {
-        title: 'Ngày sản xuất',
-        dataIndex: 'ngay_sx',
-        key: 'ngay_sx',
-        align: 'center'
-    },
-    {
-        title: 'Pallet',
-        dataIndex: 'lot_id',
-        key: 'lot_id',
-        align: 'center'
-    },
-    {
-        title: 'Mã SP',
-        dataIndex: 'ma_hang',
-        key: 'ma_hang',
-        align: 'center',
-    },
-    {
-        title: 'Tên SP',
-        dataIndex: 'ten_sp',
-        key: 'ten_sp',
-        align: 'center',
-    },
-    {
-        title: 'Lô sản xuất',
-        dataIndex: 'lo_sx',
-        key: 'lo_sx',
-        align: 'center'
-    },
-    {
-        title: 'Lượng Sản xuất',
-        dataIndex: 'luong_sx',
-        key: 'luong_sx',
-        align: 'center'
-    },
-    {
-        title: 'Số lượng OK',
-        dataIndex: 'sl_ok',
-        key: 'sl_ok',
-        align: 'center'
-    },
-    {
-        title: 'Tỉ lệ OK',
-        dataIndex: 'ti_le_ok',
-        key: 'ti_le_ok',
-        align: 'center',
-        render: (value, record)=>record.sl_dau_ra && `${(record.sl_dau_ra ? (record.sl_ok/record.sl_dau_ra) : 0).toFixed(2)*100}%`,
-    },
-    {
-        className: 'yellow',
-        title: 'SL tem vàng',
-        dataIndex: 'sl_tem_vang',
-        key: 'sl_tem_vang',
-        align: 'center',
-    },
-    {
-        title: 'SL NG',
-        dataIndex: 'sl_ng',
-        key: 'sl_ng',
-        align: 'center',
-        className: 'red'
-    },
-];
+
 const Quality = (props) => {
-    const [messageApi, contextHolder] = message.useMessage();
     document.title = "Kiểm tra chất lượng";
+    const [messageApi, contextHolder] = message.useMessage();
     const { line } = useParams();
     const history = useHistory();
     const [options, setOptions] = useState([]);
@@ -95,8 +26,102 @@ const Quality = (props) => {
         checksheet3: [],
     });
     const [selectedRow, setSelectedRow] = useState();
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([
+        {
+            lot_id:'xxxxxxxx.01',
+            san_luong:'100',
+            sl_loi:'0',
+            sl_ng:'0',
+            result:'OK'
+        },
+        {
+            lot_id:'xxxxxxxx.02',
+            san_luong:'100',
+            sl_loi:'0',
+            sl_ng:'0',
+            result:'OK'
+        },
+        {
+            lot_id:'xxxxxxxx.03',
+            san_luong:'100',
+            sl_loi:'0',
+            sl_ng:'0',
+            result:'OK'
+        },
+        {
+            lot_id:'xxxxxxxx.04',
+            san_luong:'100',
+            sl_loi:'0',
+            sl_ng:'0',
+            result:'OK'
+        },
+        {
+            lot_id:'xxxxxxxx.05',
+            san_luong:'100',
+            sl_loi:'0',
+            sl_ng:'0',
+            result:'OK'
+        },
+        {
+            lot_id:'xxxxxxxx.06',
+            san_luong:'100',
+            sl_loi:'0',
+            sl_ng:'0',
+            result:'OK'
+        },
+        {
+            lot_id:'xxxxxxxx.07',
+            san_luong:'100',
+            sl_loi:'1',
+            sl_ng:'100',
+            result:'NG'
+        },
+        {
+            lot_id:'xxxxxxxx.08',
+            san_luong:'100',
+            sl_loi:'1',
+            sl_ng:'100',
+            result:'NG'
+        },
+    ]);
     const { userProfile } = useProfile()
+    const columns = [
+        {
+            title: 'Số lot',
+            dataIndex: 'lot_id',
+            key: 'lot_id',
+            align: 'center',
+            width:'32%'
+        },
+        {
+            title: 'Sản lượng',
+            dataIndex: 'san_luong',
+            key: 'san_luong',
+            align: 'center',
+            width:'18%'
+        },
+        {
+            title: 'SL lỗi',
+            dataIndex: 'sl_loi',
+            key: 'sl_loi',
+            align: 'center',
+            width:'18%'
+        },
+        {
+            title: 'SL phế',
+            dataIndex: 'sl_ng',
+            key: 'sl_ng',
+            align: 'center',
+            width:'16%'
+        },
+        {
+            title: 'Phán định',
+            dataIndex: 'result',
+            key: 'result',
+            align: 'center',
+            width:'16%'
+        },
+    ];
     useEffect(()=>{
         setSelectedRow()
         if(line){
@@ -120,16 +145,17 @@ const Quality = (props) => {
                     },
                 ]);
                 const tableData = await getInfoPalletQC({type: 2, line_id: line});
-                if(tableData.success){
-                    setData(tableData.data)
-                }
+                // if(tableData.success){
+                //     setData(tableData.data)
+                // }
+
                 setRow2([
                     {
-                        title: 'Lô SX',
+                        title: 'Mã Lot',
                         value: '',
                     },
                     {
-                        title: 'Mã SP đang sản xuất',
+                        title: 'Mã lô',
                         value: '',
                     },
                     {
@@ -212,11 +238,11 @@ const Quality = (props) => {
         if(selectedRow){
             setRow2([
                 {
-                    title: 'Lô SX',
+                    title: 'Mã lot',
                     value: selectedRow?.lo_sx,
                 },
                 {
-                    title: 'Mã SP đang sản xuất',
+                    title: 'Mã lô',
                     value: selectedRow?.ma_hang,
                 },
                 {
@@ -242,11 +268,11 @@ const Quality = (props) => {
         }else{
             setRow2([
                 {
-                    title: 'Lô SX',
+                    title: 'Mã lot',
                     value: '',
                 },
                 {
-                    title: 'Mã SP đang sản xuất',
+                    title: 'Mã lô',
                     value: '',
                 },
                 {
@@ -282,11 +308,11 @@ const Quality = (props) => {
     ]);
     const [row2, setRow2] = useState([
         {
-            title: 'Lô SX',
+            title: 'Mã lot',
             value: '',
         },
         {
-            title: 'Mã SP đang sản xuất',
+            title: 'Mã lô',
             value: '',
         },
         {
@@ -342,82 +368,7 @@ const Quality = (props) => {
         setSelectedRowKeys([]);
     }
     const count = useRef(0);
-    const handlePrint = async () =>{
-        if(selectedRow){
-            var res = await inTemVang({lot_id: selectedRow.lot_id, line_id: line, sl_tem_vang: kvValue})
-            if(res.success){
-                let list = [];
-                if((Array.isArray(res.data))){
-                    res.data.map(lot=>{
-                        lot.new_id.forEach((e, index) => {
-                            list.push(
-                                {
-                                    ...res.data,
-                                    lot_id: e,
-                                    soluongtp: lot.new_sl[index],
-                                    product_id: res.data.ma_hang,
-                                    lsx: res.data.lo_sx,
-                                    cd_thuc_hien: options.find(e => e.value === parseInt(line))?.label,
-                                    cd_tiep_theo: line === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(line))+1]?.label
-                                }
-                            )
-                        })
-                    })
-                }else{
-                    res.data.new_id.forEach((e, index) => {
-                        list.push(
-                            {
-                                ...res.data,
-                                lot_id: e,
-                                soluongtp: res.data.new_sl[index],
-                                product_id: res.data.ma_hang,
-                                lsx: res.data.lo_sx,
-                                cd_thuc_hien: options.find(e => e.value === parseInt(line))?.label,
-                                cd_tiep_theo: line === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(line))+1]?.label
-                            }
-                        )
-                    })
-                }
-                setListCheck(list)
-                
-                const tableData = await getInfoPalletQC({type: 2, line_id: line});
-                if(tableData.success){
-                    setData(tableData.data)
-                }
-                print();
-            }
-        }
-    }
     const [listCheck, setListCheck] = useState([]);
-    const componentRef1 = useRef();
-    const print = useReactToPrint({
-        content: () => componentRef1.current
-    });
-
-    const onSubmit = async () =>{
-        form.resetFields();
-        setKvValue('');
-        setOpenKV(false)
-        const overall = await getQCOverall({line_id: line});
-        setRow1([
-            {
-                title: 'Kế hoạch',
-                value: overall.data.ke_hoach,
-            },
-            {
-                title: 'Mục tiêu',
-                value: overall.data.muc_tieu,
-            },
-            {
-                title: 'Kết quả',
-                value: overall.data.ket_qua,
-            },
-        ]);
-        const tableData = await getInfoPalletQC({type: 2, line_id: line});
-        if(tableData.success){
-            setData(tableData.data)
-        }
-    }
     const [errorList, setErrorList] = useState([]);
     const errorColumn = [
         {
@@ -451,7 +402,7 @@ const Quality = (props) => {
             <Spin spinning={loading}>
                 <Row gutter={12} className='mt-3'>
                     <Col span={6}>
-                    <SelectButton value={options.length > 0 && parseInt(line)} options={options} label="Chọn công đoạn" onChange={onChangeLine} />
+                    <SelectButton value={options.length > 0 && parseInt(line)} options={options} label="Máy" onChange={onChangeLine} />
                     </Col>
                     <Col span={18}>
                         <DataDetail data={row1} />
@@ -468,31 +419,15 @@ const Quality = (props) => {
                     </Col>
                 </Row>
 
-                <Row className='mt-3' style={{ justifyContent: 'space-between' }} gutter={12}>
-                    <Col span={4} >
-                        <Checksheet2 text="Chỉ tiêu KT1" checksheet={chitieu.checksheet1} changeVariable={count.current} lotId={selectedRow?.lot_id} disabled={!qcPermission.length}/>
+                <Row className='mt-3' style={{ justifyContent: 'space-between' }} gutter={6}>
+                    <Col span={8} >
+                        <Checksheet2 text="KT kích thước" checksheet={chitieu.checksheet1} changeVariable={count.current} lotId={selectedRow?.lot_id} />
                     </Col>
-                    <Col span={4}>
-                        <Checksheet2 text="Chỉ tiêu KT2" checksheet={chitieu.checksheet2} changeVariable={count.current} lotId={selectedRow?.lot_id} disabled={!qcPermission.length}/>
+                    <Col span={9}>
+                        <Checksheet2 text="KT ngoại quan" checksheet={chitieu.checksheet2} changeVariable={count.current} lotId={selectedRow?.lot_id} disabled={false}/>
                     </Col>
-                    <Col span={4}>
-                        <Checksheet2 text="Chỉ tiêu KT3" checksheet={chitieu.checksheet3} changeVariable={count.current} lotId={selectedRow?.lot_id} disabled={!qcPermission.length}/>
-                    </Col>
-                    <Col span={4}>
-                        <QuanLyLoi text="Quản lý lỗi" lotId={selectedRow?.lot_id} onSubmit={onSubmit}/>
-                    </Col>
-                    <Col span={4}>
-                        <Button className='w-100 text-wrap h-100' style={(selectedRow && qcPermission.length) && selectedRow && { backgroundColor: '#f7ac27', color: '#ffffff' }} disabled={!selectedRow || !qcPermission.length} size='large' onClick={()=>setOpenKV(true)}>
-                            Khoanh vùng
-                        </Button>
-                    </Col>
-                    <Col span={4}>
-                        <Button className='w-100 text-wrap h-100' style={qcPermission.length && { backgroundColor: '#f7ac27', color: '#ffffff' }} size='large' onClick={handlePrint} disabled={!qcPermission.length}>
-                            In tem vàng
-                        </Button>
-                        <div className="report-history-invoice">
-                            <TemVang listCheck={listCheck} ref={componentRef1} />
-                        </div>
+                    <Col span={7}>
+                        <Checksheet2 text="Phán định" checksheet={chitieu.checksheet3} changeVariable={count.current} lotId={selectedRow?.lot_id} disabled={false}/>
                     </Col>
                 </Row>
 

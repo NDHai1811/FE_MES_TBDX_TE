@@ -1,314 +1,497 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { CloseOutlined, ExclamationCircleOutlined, PrinterOutlined, QrcodeOutlined } from '@ant-design/icons';
-import { Layout, Row, Col, Divider, Button, Table, Modal, Select, Steps, Input, Radio, Form, InputNumber, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { CloseOutlined, PrinterOutlined, QrcodeOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Table,Spin, Checkbox } from 'antd';
+import DataDetail from '../../../components/DataDetail';
 import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
-import EditableTable from '../../../components/Table/EditableTable';
-import { getInfoPallet, getLine, inTem, scanPallet, updatePallet } from '../../../api/oi/manufacture';
-import dayjs from "dayjs";
-import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration)
-function MyComponent(props) {
-    const {record} = props;
-    const [time, setTime] = useState(
-        record.thoi_gian_bat_dau ?
-        record.thoi_gian_xuat_kho_bao_on 
-        ? 
-        dayjs(record.thoi_gian_xuat_kho_bao_on).diff(dayjs(record.thoi_gian_bat_dau))
-        : 
-        dayjs().diff(dayjs(record.thoi_gian_bat_dau), 'ms')
-        : 0
-    );
-    var interval;
-    useEffect(() => {
-        if((record.thoi_gian_bat_dau) && !(record.thoi_gian_xuat_kho_bao_on)){
-            interval = setInterval(() => {
-                setTime(dayjs().diff(dayjs(record.thoi_gian_bat_dau), 'ms'));
-            }, 1000);
-        }
-        return () => clearInterval(interval);
-    }, [record.thoi_gian_xuat_kho_bao_on, record.thoi_gian_bat_dau]);
-    const totalSeconds = Math.floor(time / 1000)
-    const totalMinutes = Math.floor(totalSeconds / 60)
-    const totalHours = Math.floor(totalMinutes / 60)
-    // return dayjs.duration(time).format('HH:mm:ss')
-    return `${("0" + totalHours).slice(-2)}:${("0" + (totalMinutes % 60)).slice(-2)}:${("0" + (totalSeconds % 60)).slice(-2)}`;
-}
-const columns1 = [
-    {
-        title: 'Lô sản xuất',
-        dataIndex: 'lo_sx',
-        key: 'lo_sx',
-        align: 'center'
-    },
-    {
-        title: 'Mã Pallet',
-        dataIndex: 'lot_id',
-        key: 'lot_id',
-        align: 'center'
-    },
-    {
-        title: 'Mã hàng',
-        dataIndex: 'ma_hang',
-        key: 'ma_hang',
-        align: 'center'
-    },
-    {
-        title: 'Tên sản phẩm',
-        dataIndex: 'ten_sp',
-        key: 'ten_sp',
-        align: 'center'
-    },
-    {
-        title: 'Số lượng kế hoạch',
-        dataIndex: 'sl_ke_hoach',
-        key: 'sl_ke_hoach',
-        align: 'center'
-    },
-    {
-        title: 'Số lượng/pallet',
-        dataIndex: 'dinh_muc',
-        key: 'dinh_muc',
-        align: 'center'
-    },
-    {
-        title: 'Độ ẩm giấy',
-        dataIndex: 'do_am_giay',
-        key: 'do_am_giay',
-        align: 'center'
-    },
-    {
-        title: 'Thời gian bảo ôn',
-        dataIndex: 'thoi_gian_bao_on',
-        key: 'thoi_gian_bao_on',
-        align: 'center',
-        render: (value, record)=> (!value && record) ? <MyComponent record={record}/> : value
-    },
-];
+import { getInfoPallet, getLine, getLineOverall, inTem, scanPallet } from '../../../api/oi/manufacture';
+import { useReactToPrint } from 'react-to-print';
+import Tem from '../../UI/Manufacture/Tem';
+import { useRef } from 'react';
 
 const Manufacture1 = (props) => {
     document.title = "Sản xuất";
-    const [modal, contextHolder] = Modal.useModal();
-    const {line} = useParams();
+    const { line } = useParams();
     const history = useHistory();
+    const [options, setOption] = useState([{label:'Sóng',value:'1'},{label:'In',value:'2'},{label:'Dán',value:'3'}])
     const [loading, setLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isScan, setIsScan] = useState(0);
-    const [data, setData] = useState([]);
-    const [options, setOption] = useState([]);
-    const [selectedLot, setSelectedLot] = useState();
-    useEffect(()=>{
-        (async ()=>{
-            setLoading(true)
-            const lineList = await getLine({type: 'sx'});
-            setOption(lineList.success ? lineList.data : [])
-            const infoPallet = await getInfoPallet({type: 1});
-            if(infoPallet.success){
-                setData(infoPallet.data.map(e=>{
-                    return {...e}
-                }))
-            }
-            setLoading(false)
-        })()
-    }, [])
-    
-    useEffect(() => {
-        if (isScan === 1) {
-            setIsModalOpen(true);
-        } else if (isScan === 2) {
-            setIsModalOpen(false);
-        }
-    }, [isScan])
-    const onChangeLine = (value) =>{
-        history.push('/manufacture/'+value)
-    }
-    const onScan = async (result) =>{
-        if(passedProduct.length > 0){
-            var res = await inTem({lot_id: result, line_id: line})
-            if(res.success) setPassedProduct([]);
-        }else{
-            var res = await scanPallet({lot_id: result, line_id: line})
-        }
-        const infoPallet = await getInfoPallet({type: 1});
-        if(infoPallet.success){
-            setData(infoPallet.data)
-        }
-    }
-    
-    const [passedProduct, setPassedProduct] = useState([]);
-
-    const rowClassName = (record, index) => {
-        var status = '';
-        if(dayjs().diff(dayjs(record?.thoi_gian_bat_dau), 'h') >= record?.thoi_gian_bao_on_tieu_chuan && record.do_am_giay){
-            status = 'table-row-green';
-        }
-        if(record?.thoi_gian_xuat_kho_bao_on){
-            status = 'table-row-grey';
-        }
-        return 'editable-row ' + status
-    }
-
-    const updateData = async(params) => {
-        
-        var res = await updatePallet(params);
-        if(res.success){
-            const infoPallet = await getInfoPallet({type: 1});
-            if(infoPallet.success){
-                setData(infoPallet.data)
-            }
-        }
-    }
-  
-    const mergeValue = new Set();
-    useEffect(() => {
-        mergeValue.clear();
-    }, []);
-    const columns2 = [
+    const [row1, setRow1] = useState([
         {
-            title: 'Lô sản xuất',
-            dataIndex: 'lo_sx',
-            key: 'lo_sx',
-            align: 'center',
+            title: 'KH ca',
+            value: '10.000'
         },
         {
-            title: 'Mã pallet',
+            title: 'SL T.Tế',
+            value: '1.000'
+        },
+        {
+            title: 'SL Tem vàng',
+            value: '',
+            bg: '#f7ac27'
+        },
+        {
+            title: 'SL NG',
+            value: '',
+            bg: '#fb4b50'
+        },
+        {
+            title: 'Tỷ lệ hoàn thành (%)',
+            value: '',
+        },
+    ])
+    const [row2, setRow2] = useState([
+        {
+            title: 'Mã Palet',
+            value: ''
+        },
+        {
+            title: 'Tên sản phẩm',
+            value: ''
+        },
+        {
+            title: 'UPH (Ấn định)',
+            value: ''
+        },
+        {
+            title: 'UPH (Thực tế)',
+            value: ''
+        },
+        {
+            title: 'SL đầu ra (KH)',
+            value: ''
+        },
+        {
+            title: 'SL đầu ra (TT)',
+            value: ''
+        },
+        {
+            title: 'SL đầu ra (TT OK)',
+            value: ''
+        },
+    ]);
+    const type = [0, 9, 10, 11, 12, 13, 14, 15, 21, 22];
+    const [selectedLot, setSelectedLot] = useState();
+    const [listCheck, setListCheck] = useState([]);
+    useEffect(() => {
+        (async () => {
+            setLoading(true)
+            const lineList = await getLine({ type: 'sx' });
+            // setOption(lineList.data);
+            // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
+            setRow1([
+                {
+                    title: 'KH ca',
+                    value: '10.000',
+                },
+                {
+                    title: 'Sản lượng',
+                    value: '1000',
+                },
+                {
+                    title: 'HT KH ca',
+                    value: '10%',
+                },
+                {
+                    title: 'Phế SX',
+                    value: '10',
+                    bg: '#fb4b50'
+                },
+                
+            ])
+            setRow2([
+                {
+                    title: 'Số lot',
+                    value: 'xxxxxx.01'
+                },
+                {
+                    title: 'KH ĐH',
+                    value: '700'
+                },
+                {
+                    title: 'Sản lượng',
+                    value: '200'
+                },
+                {
+                    title: 'HT ĐH',
+                    value: '28%'
+                },
+                {
+                    title: 'Phế SX',
+                    value: '10'
+                },
+            ]);
+            setLoading(false)
+        })()
+    }, [line])
+    const [data, setData] = useState([
+        {
+            lot_id:'xxxxxxxx.01',
+            dinh_muc:'100',
+            so_luong:'-',
+            sl_ok:'-',
+            sl_ng:'-'
+        },
+        {
+            lot_id:'xxxxxxxx.02',
+            dinh_muc:'100',
+            so_luong:'-',
+            sl_ok:'-',
+            sl_ng:'-'
+        },
+        {
+            lot_id:'xxxxxxxx.03',
+            dinh_muc:'100',
+            so_luong:'-',
+            sl_ok:'-',
+            sl_ng:'-'
+        },
+        {
+            lot_id:'xxxxxxxx.04',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'yyyyyyyyy.05',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'yyyyyyyyy.06',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'yyyyyyyyy.07',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.08',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.09',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.10',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.11',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.12',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.13',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.14',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.15',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        },
+        {
+            lot_id:'zzzzzzzzz.16',
+            dinh_muc:'100',
+            so_luong:'200',
+            sl_ok:'100',
+            sl_ng:'0'
+        }
+    ]);
+    const onChangeLine = (value) => {
+        history.push('/manufacture/' + value)
+    }
+    const onScan = async (result) => {
+        var res = await scanPallet({ lot_id: result, line_id: line });
+        if (res.success) {
+            if (row2[0].value !== '') {
+                setRow2([
+                    {
+                        title: 'Mã lot',
+                        value: ''
+                    },
+                    {
+                        title: 'Tên sản phẩm',
+                        value: ''
+                    },
+                    {
+                        title: 'UPH (Ấn định)',
+                        value: ''
+                    },
+                    {
+                        title: 'UPH (Thực tế)',
+                        value: ''
+                    },
+                    {
+                        title: 'SL đầu ra (KH)',
+                        value: ''
+                    },
+                    {
+                        title: 'SL đầu ra (TT)',
+                        value: ''
+                    },
+                    {
+                        title: 'SL đầu ra (TT OK)',
+                        value: ''
+                    },
+                ]);
+            }
+            const infoPallet = await getInfoPallet({ line_id: line });
+            if (infoPallet.success) {
+                // setData(infoPallet.data);
+            }
+        }
+    }
+
+    const rowClassName = (record, index) => {
+        if(index === 0){
+            return 'table-row-green';
+        }
+        if(index === 1 || index === 2){
+            return '';
+        }
+        return record.status === 0 ? 'table-row-green' : 'table-row-grey'
+    }
+    const onClickRow = (row) => {
+        setSelectedLot(row)
+    }
+    useEffect(() => {
+        if (selectedLot) {
+            setRow2([
+                {
+                    title: 'Số Lot',
+                    value: selectedLot.lot_id
+                },
+                {
+                    title: 'KH ĐH',
+                    value: selectedLot.ten_sp
+                },
+                {
+                    title: 'Sản lượng',
+                    value: selectedLot.uph_an_dinh
+                },
+                {
+                    title: 'HT ĐH',
+                    value: selectedLot.uph_thuc_te
+                },
+                {
+                    title: 'Phế SX',
+                    value: selectedLot.sl_dau_ra_kh
+                },
+            ]);
+        }
+
+        else {
+            setRow2([
+                {
+                    title: 'Mã Palet',
+                    value: ''
+                },
+                {
+                    title: 'Tên sản phẩm',
+                    value: ''
+                },
+                {
+                    title: 'UPH (Ấn định)',
+                    value: ''
+                },
+                {
+                    title: 'UPH (Thực tế)',
+                    value: ''
+                },
+                {
+                    title: 'SL đầu ra (KH)',
+                    value: ''
+                },
+                {
+                    title: 'SL đầu ra (TT)',
+                    value: ''
+                },
+                {
+                    title: 'SL đầu ra (TT OK)',
+                    value: ''
+                },
+            ]);
+            setListCheck([])
+        }
+    }, [selectedLot])
+    const columns = [
+        {
+            title: 'Tem tổng',
+            dataIndex: 'index',
+            key: 'index',
+            align: 'center',
+            width:'12%',
+            render: (value, record, index) => <Checkbox></Checkbox>
+        },
+        {
+            title: 'Số lot',
             dataIndex: 'lot_id',
             key: 'lot_id',
             align: 'center'
         },
         {
-            title: 'Mã hàng',
-            dataIndex: 'ma_hang',
-            key: 'ma_hang',
-            align: 'center'
-        },
-        {
-            title: 'Tên sản phẩm',
-            dataIndex: 'ten_sp',
-            key: 'ten_sp',
-            align: 'center'
-        },
-        {
-            title: 'Số lượng/pallet',
+            title: 'Sl/Lot',
             dataIndex: 'dinh_muc',
             key: 'dinh_muc',
-            align: 'center'
-        },
-        {
-            title: 'Số lượng kế hoạch',
-            dataIndex: 'sl_ke_hoach',
-            key: 'sl_ke_hoach',
-            align: 'center'
-        },
-        {
-            title: 'Thời gian bắt đầu',
-            dataIndex: 'thoi_gian_bat_dau',
-            key: 'thoi_gian_bat_dau',
             align: 'center',
-            render: (value)=>value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ''
+            width:'14%'
         },
         {
-            title: 'Thời gian bảo ôn',
-            dataIndex: 'thoi_gian_bao_on',
-            key: 'thoi_gian_bao_on',
+            title: 'Sản lượng',
+            dataIndex: 'so_luong',
+            key: 'so_luong',
             align: 'center',
-            render: (value, record)=>(!value && record) ? <MyComponent record={record} setData={setData}/> : value
-            
+            width:'14%'
         },
         {
-            title: 'Nhiệt độ phòng',
-            dataIndex: 'nhiet_do_phong',
-            key: 'nhiet_do_phong',
-            align: 'center'
-        },
-        {
-            title: 'Độ ẩm phòng',
-            dataIndex: 'do_am_phong',
-            key: 'do_am_phong',
-            align: 'center'
-        },
-        {
-            title: 'Độ ẩm giấy',
-            dataIndex: 'do_am_giay',
-            key: 'do_am_giay',
+            title: 'SL OK',
+            dataIndex: 'sl_ok',
+            key: 'sl_ok',
             align: 'center',
-            render:(value, record)=> !value && !record.thoi_gian_xuat_kho_bao_on && (selectedLot?.lot_id === record?.lot_id) ? 
-            <Input
-            inputMode='numeric'
-            // bordered={false}
-            onPressEnter={(event)=>{
-                if(!isNaN(event.target.value)){
-                    updateData({do_am_giay: event.target.value, lot_id: record.lot_id, line_id: line})
-                }
-            }}
-            onBlur={(event)=>{
-                if(!isNaN(event.target.value)){
-                    updateData({do_am_giay: event.target.value, lot_id: record.lot_id, line_id: line})
-                }
-            }}
-            style={{overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width:'100%'}}
-            /> 
-            : 
-            value
+            width:'14%'
         },
         {
-            title: 'Thời gian xuất kho bảo ôn',
-            dataIndex: 'thoi_gian_xuat_kho_bao_on',
-            key: 'thoi_gian_xuat_kho_bao_on',
+            title: 'Phế SX',
+            dataIndex: 'sl_ng',
+            key: 'sl_ng',
             align: 'center',
-            render: (value)=>value ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ''
-        },
-        {
-            title: 'Số lượng đã xuất',
-            dataIndex: 'sl_da_xuat',
-            key: 'sl_da_xuat',
-            align: 'center',
-            editable: true,
-        },
-        {
-            title: 'Số lượng còn lại',
-            dataIndex: 'sl_con_lai',
-            key: 'sl_con_lai',
-            align: 'center',
-            editable: true,
-        },
+            width:'14%',
+        }
     ];
-    const onClickRow = (row) => {
-        if(dayjs().diff(dayjs(row?.thoi_gian_bat_dau), 'h') >= row?.thoi_gian_bao_on_tieu_chuan && !row?.thoi_gian_xuat_kho_bao_on){
-            setSelectedLot(row);
+    const componentRef1 = useRef();
+    const handlePrint = async () => {
+        console.log(selectedLot);
+        if (selectedLot) {
+            var res = await inTem({ lot_id: selectedLot.lot_id, line_id: line });
+            if (res.success) {
+                console.log(line);
+                let list = [];
+                if((Array.isArray(res.data))){
+                    res.data.map(lot=>{
+                        lot.lot_id.forEach((e, index) => {
+                            list.push(
+                                {
+                                    ...selectedLot,
+                                    lot_id: e,
+                                    soluongtp: lot.so_luong[index],
+                                    product_id: selectedLot.ma_hang,
+                                    lsx: selectedLot.lo_sx,
+                                    cd_thuc_hien: options.find(e => e.value === parseInt(line))?.label,
+                                    cd_tiep_theo: line === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(line))+1]?.label
+                                }
+                            )
+                        })
+                    })
+                }else{
+                    res.data.lot_id.forEach((e, index) => {
+                        list.push(
+                            {
+                                ...selectedLot,
+                                lot_id: e,
+                                soluongtp: res.data.so_luong[index],
+                                product_id: selectedLot.ma_hang,
+                                lsx: selectedLot.lo_sx,
+                                cd_thuc_hien: options.find(e => e.value === parseInt(line))?.label,
+                                cd_tiep_theo: line === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(line))+1]?.label
+                            }
+                        )
+                    })
+                }
+                setListCheck(list);
+            }
         }
     }
 
-    useEffect(()=>{
-        selectedLot && selectedLot?.do_am_giay && setPassedProduct([selectedLot])
-    }, [selectedLot])
+    const print = useReactToPrint({
+        content: () => componentRef1.current
+    });
+    useEffect(() => {
+        if (listCheck.length > 0) {
+            print();
+        }
+    }, [listCheck])
+    var interval;
+    // useEffect(() => {
+    //     interval = setInterval(async () => {
+    //         const infoPallet = await getInfoPallet({ line_id: line });
+    //         if (infoPallet.success) {
+    //             // setData(infoPallet.data.map(e => {
+    //             //     return { ...e }
+    //             // }))
+    //         }
+    //     }, 10000);
+    //     return () => clearInterval(interval);
+    // }, [line]);
     return (
-            <React.Fragment>
-                <Spin spinning={loading}>
-                    {contextHolder}
-                    <Row className='mt-3' gutter={[12, 12]}>
-                        <Col span={4}>
-                            <SelectButton value={options.length > 0 && parseInt(line)} options={options} label="Chọn công đoạn" onChange={onChangeLine} />
-                        </Col>
-                        <Col span={20}>
-                            <ScanButton onScan={onScan} height={76}/>
-                        </Col>
-                        <Col span={24}>
-                            <Table
-                            scroll={{
-                                x: 200,
-                                y: 350,
-                            }}
-                            rowClassName={rowClassName}
-                            pagination={false}
-                            bordered
-                            columns={columns1}
-                            dataSource={passedProduct} />
-                        </Col>
-                        <Col span={24}>
-                            <Table
+        <React.Fragment>
+            <Spin spinning={loading}>
+                <Row className='mt-3' gutter={[2, 12]}>
+                    <Col span={5}>
+                        <SelectButton options={options} label="Máy"/>
+                    </Col>
+                    <Col span={19}>
+                        <DataDetail data={row1} />
+                    </Col>
+                    <Col span={16}>
+                        <ScanButton onScan={onScan} />
+                    </Col>
+                    <Col span={5}>
+                        <Button size='large' type='primary' style={{ height: '100%', width: '100%' }} onClick={handlePrint}>Đầu vào</Button>
+                    </Col>
+                    <Col span={3}>
+                        <Button size='large' type='primary' style={{ height: '100%', width: '100%' }} onClick={handlePrint} icon={<PrinterOutlined/>}></Button>
+                        <div className="report-history-invoice">
+                            <Tem listCheck={listCheck} ref={componentRef1} />
+                        </div>
+                    </Col>
+                    <Col span={24}>
+                        <DataDetail data={row2} />
+                    </Col>
+                    
+                    <Col span={24}>
+                        <Table
                             scroll={{
                                 x: 200,
                                 y: 350,
@@ -322,14 +505,13 @@ const Manufacture1 = (props) => {
                                     onClick: (event) => onClickRow(record)
                                 };
                             }}
-                            columns={columns2}
+                            columns={columns}
                             dataSource={data} />
-                        </Col>
-                    </Row>
-                </Spin>
-            </React.Fragment>
+                    </Col>
+                </Row>
+            </Spin>
+        </React.Fragment>
     );
 };
 
 export default Manufacture1;
-

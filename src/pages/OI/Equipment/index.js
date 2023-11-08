@@ -124,13 +124,10 @@ const Equipment = (props) => {
     return (
         <React.Fragment>
             <Row className='mt-3' gutter={[8, 8]}>
-                <Col span={4}>
-                    <SelectButton value={optionsLine.length > 0 && line && parseInt(line)} options={optionsLine} label="Chọn công đoạn" onChange={(value) => onChangeLine(value)} />
+                <Col span={6}>
+                    <SelectButton value={machine} options={optionsMachine} label="Máy" onChange={(value) => setMachine(value)} labelInValue={true}/>
                 </Col>
-                <Col span={4}>
-                    <SelectButton value={machine} options={optionsMachine} label="Chọn máy" onChange={(value) => setMachine(value)} labelInValue={true}/>
-                </Col>
-                <Col span={16}>
+                <Col span={18}>
                     <DataDetail data={row1} />
                 </Col>
                 <Col span={24}>

@@ -32,29 +32,18 @@ const UserCard = () =>{
         },
     ]
     var interval;
-    // useEffect(() => {
-    //     interval = setInterval(async () => {
-    //         const res = await getStatusIOT();
-    //         if(res === 1){
-    //             setColor('green');
-    //         }else{
-    //             setColor('red');
-    //         }
-    //     }, 5000);
-    //     return () => clearInterval(interval);
-    // }, []);
     return (
         <React.Fragment>
             <div className="justify-content-between d-flex w-100 mt-3 align-content-center flex-wrap">
                 <Dropdown menu={{items:itemsDropdown}} placement="bottomLeft" arrow trigger={'click'}>
-                    <Button type="text" className="h-100" size="large">
+                    <Button type="text" className="h-100 p-0" size="large">
                         <Space>
                             <Avatar src={userProfile?.avatar} icon={<UserOutlined />}></Avatar>
                             <span>{userProfile?.name ?? ''}</span>
                         </Space>
                     </Button>
                 </Dropdown>
-                <div className="align-content-center d-flex flex-wrap">{clock.toLocaleString(['en-GB'], { hour12: false })} <div style={{width:'25px',height:'25px',background:'green',borderRadius:'50%',marginLeft:'12px'}}></div></div>
+                <div className="align-content-center d-flex flex-wrap">{clock.toLocaleString(['en-GB'], { hour12: false })} </div>
             </div>
         </React.Fragment>
     )

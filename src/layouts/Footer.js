@@ -52,7 +52,7 @@ const Footer = () => {
                 display:'flex', 
                 justifyContent:'space-around', 
                 padding:8, 
-                backgroundColor:'#2462A3', 
+                backgroundColor:'#0454a2', 
                 color:'white', 
                 width: '100%',
                 borderRadius: '15px 15px 0 0', 

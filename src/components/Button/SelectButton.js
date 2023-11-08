@@ -12,7 +12,7 @@ const SelectButton = (props) =>{
     } = props;
     return (
         <div style={{ borderRadius: '8px', textAlign: 'center', background: '#fff', boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', height:'100%' }} className='d-flex flex-column'>
-            <div style={{ background: '#2462a3', color: '#fff', padding: '8px 0px', borderRadius: '8px 8px 0px 8px', minHeight:40 }}>
+            <div style={{ background: '#0454a2', color: '#fff', padding: '8px 0px', borderRadius: '8px 8px 0px 8px', minHeight:40 }}>
                 {label}
             </div>
             <div style={{ textAlign: 'center', height:'100%', display:'flex', alignItems:'center' }}>
