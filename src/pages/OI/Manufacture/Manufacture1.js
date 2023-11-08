@@ -80,7 +80,7 @@ const Manufacture1 = (props) => {
             setLoading(true)
             const listMachine = await getListMachine();
             console.log(listMachine);
-            setOption(listMachine);
+            setOption(listMachine.data);
             // const lineList = await getLine({ type: 'sx' });
             // setOption(lineList.data);
             // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
