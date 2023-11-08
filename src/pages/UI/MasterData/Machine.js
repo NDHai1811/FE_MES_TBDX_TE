@@ -265,7 +265,7 @@ const Machine = () => {
                     <div className='mb-3'>
                         <Form style={{ margin: '0 15px' }} layout="vertical" onFinish={btn_click}>
                             <Form.Item label="Mã" className='mb-3'>
-                                <Input allowClear onChange={(e)=>setParams({...params, code: e.target.value})} placeholder='Nhập mã'/>
+                                <Input allowClear onChange={(e)=>setParams({...params, id: e.target.value})} placeholder='Nhập mã'/>
                             </Form.Item>
                             <Form.Item label="Tên" className='mb-3'>
                                 <Input allowClear onChange={(e)=>setParams({...params, name: e.target.value})} placeholder='Nhập tên'/>
