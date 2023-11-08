@@ -1,22 +1,22 @@
-import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Upload, message, Checkbox, Space, Modal, Spin, Popconfirm, Badge } from 'antd';
+import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Upload, message, Checkbox, Space, Modal, Spin, Popconfirm, InputNumber } from 'antd';
 import { baseURL } from '../../../config';
 import React, { useState, useRef, useEffect } from 'react';
-import { createUsers, deleteUsers, exportUsers, getUserRoles, getUsers, updateUsers } from '../../../api';
+import { createCell, deleteCells, exportCells, getCells, updateCell } from '../../../api';
 
-const Users = () => {
-    document.title = "Quản lý tài khoản"; 
+const Cells = () => {
+    document.title = "Quản lý kho"; 
     const [listCheck, setListCheck] = useState([]);
     const [openMdl, setOpenMdl] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [form] = Form.useForm();
     const [params, setParams] = useState({});
-    const [roles, setRoles] = useState([]);
     const col_detailTable = [
         {
-            title: 'Tài khoản',
-            dataIndex: 'username',
-            key: 'username',
+            title: 'Mã',
+            dataIndex: 'id',
+            key: 'id',
             align: 'center',
+            fixed: 'left'
         },
         {
             title: 'Tên',
@@ -25,37 +25,48 @@ const Users = () => {
             align: 'center',
         },
         {
-            title: 'Bộ phận',
-            dataIndex: 'roles',
-            key: 'roles',
+            title: 'Kệ',
+            dataIndex: 'sheft_id',
+            key: 'sheft_id',
             align: 'center',
-            render: (value) => <Space wrap style={{justifyContent:'center'}}>{(value ?? []).map(e=>
-                <Badge count={e?.name}></Badge>
-            )}</Space>
+        },
+        {
+            title: 'Number of bin',
+            dataIndex: 'number_of_bin',
+            key: 'number_of_bin',
+            align: 'center',
+        },
+        {
+            title: 'Mã hàng',
+            dataIndex: 'product_id',
+            key: 'product_id',
+            align: 'center',
         },
     ]
     const formFields = [
         {
+            title: 'Mã',
             key: 'id',
-            hidden: true
-        },
-        {
-            title: 'Tài khoản',
-            key: 'username',
-            required: true
+            required: true,
         },
         {
             title: 'Tên',
             key: 'name',
-            required: true
+            required: true,
         },
         {
-            title: 'Bộ phận',
-            key: 'roles',
-            select: {
-                mode: 'multiple',
-                options: roles
-            }
+            title: 'Kệ',
+            key: 'sheft_id',
+            required: true,
+        },
+        {
+            title: 'Number of bin',
+            key: 'number_of_bin',
+            isInputNumber: true,
+        },
+        {
+            title: 'Mã hàng',
+            key: 'product_id',
         },
     ]
 
@@ -66,7 +77,7 @@ const Users = () => {
     const [data, setData] = useState([]);
     const loadListTable = async (params) => {
         setLoading(true)
-        const res = await getUsers(params);
+        const res = await getCells(params);
         setData(res.map(e=>{
             return {...e, key: e.id}
         }));
@@ -75,8 +86,6 @@ const Users = () => {
     useEffect(() => {
         (async () => {
             loadListTable(params);
-            var res = await getUserRoles();
-            setRoles(res);
         })()
     }, [])
 
@@ -99,7 +108,7 @@ const Users = () => {
     const onFinish = async (values) => {
         console.log(values);
         if(isEdit){
-            const res = await updateUsers(values);
+            const res = await updateCell(values);
             console.log(res);
             if(res){
                 form.resetFields();
@@ -107,7 +116,7 @@ const Users = () => {
                 loadListTable(params);
             }
         }else{
-            const res = await createUsers(values);
+            const res = await createCell(values);
             console.log(res);
             if(res){
                 form.resetFields();
@@ -119,7 +128,7 @@ const Users = () => {
 
     const deleteRecord = async () => {
         if (listCheck.length > 0) {
-            const res = await deleteUsers(listCheck);
+            const res = await deleteCells(listCheck);
             setListCheck([]);
             loadListTable(params);
         } else {
@@ -132,8 +141,7 @@ const Users = () => {
             message.info('Chọn 1 bản ghi để chỉnh sửa');
         } else {
             const result = data.find((record) => record.id === listCheck[0]);
-            console.log(result?.roles.map(e=>e.id));
-            form.setFieldsValue({...result, roles: result?.roles.map(e=>e.id)});
+            form.setFieldsValue({...result});
             setOpenMdl(true);
         }
     }
@@ -147,7 +155,7 @@ const Users = () => {
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () =>{
         setExportLoading(true);
-        const res = await exportUsers(params);
+        const res = await exportCells(params);
         if(res.success){
             window.location.href = baseURL+res.data;
         }
@@ -166,8 +174,11 @@ const Users = () => {
                     <Divider>Tìm kiếm</Divider>
                     <div className='mb-3'>
                         <Form style={{ margin: '0 15px' }} layout="vertical" onFinish={btn_click}>
+                            <Form.Item label="Mã" className='mb-3'>
+                                <Input allowClear onChange={(e)=>setParams({...params, id: e.target.value})} placeholder='Nhập mã'/>
+                            </Form.Item>
                             <Form.Item label="Tên" className='mb-3'>
-                                <Input allowClear onChange={(e)=>setParams({...params, name: e.target.value})} placeholder='Nhập mã'/>
+                                <Input allowClear onChange={(e)=>setParams({...params, name: e.target.value})} placeholder='Nhập tên'/>
                             </Form.Item>
                             <Form.Item style={{textAlign:'center'}}>
                                 <Button type='primary' htmlType='submit'
@@ -180,12 +191,12 @@ const Users = () => {
                     </Card>
                 </Col>
                 <Col span={21}>
-                    <Card style={{ height: '100%' }} title="Quản lý tài khoản" extra={
+                    <Card style={{ height: '100%' }} title="Quản lý vị trí kho" extra={
                         <Space>
                             <Upload
                                 showUploadList={false}
                                 name='files'
-                                action={baseURL + "/api/users/import"}
+                                action={baseURL + "/api/cells/import"}
                                 headers={{
                                     authorization: 'authorization-text',
                                 }}
@@ -229,7 +240,7 @@ const Users = () => {
                     }>
                         <Spin spinning={loading}>
                         <Table size='small' bordered
-                            pagination={{position: ['topRight', 'bottomRight']}}
+                            pagination={false}
                             scroll={
                                 {
                                     x: '100%',
@@ -250,21 +261,39 @@ const Users = () => {
                 onFinish={onFinish}>
                 <Row gutter={[16, 16]}>
                     {formFields.map(e=>{
-                        if(e.key !== 'select' && e.key !== 'stt') return <Col span={!e.hidden ? 12 : 0}>
-                            <Form.Item name={e.key} className='mb-3' label={e.title} hidden={e.hidden} rules={[{required: e.required}]}>
-                                {!e.isTrueFalse ?
-                                        e.select ?
-                                        <Select mode={e.select.mode} options={e.select.options}/>
-                                        :
-                                        <Input disabled={e.disabled || (isEdit && e.key === 'id')}></Input>
-                                    :
-                                    <Select>
-                                        <Select.Option value={1}>Có</Select.Option>
-                                        <Select.Option value={0}>Không</Select.Option>
-                                    </Select>
-                                }
-                            </Form.Item>
-                        </Col>
+                        if(e.key !== 'select' && e.key !== 'stt'){
+                            if(e?.children?.length > 0){
+                                return e.children.map((c, index)=>{
+                                    return <Col span={!c.hidden ? 12 / e.children.length : 0}>
+                                            <Form.Item name={[e.key, c.key]} className='mb-3' label={e.title + " - " + c.title} hidden={c.hidden} rules={[{required: c.required}]}>
+                                                {!c.isTrueFalse ?
+                                                    c.isInputNumber ? <Input disabled={c.disabled || (isEdit && c.key === 'id')}></Input> : <InputNumber inputMode='numeric' min={0}/>
+                                                    :
+                                                    <Select>
+                                                        <Select.Option value={1}>Có</Select.Option>
+                                                        <Select.Option value={0}>Không</Select.Option>
+                                                    </Select>
+                                                }
+                                            </Form.Item>
+                                        </Col>
+                                    }
+                                )
+                            }else{
+                                return <Col span={!e.hidden ? 12 : 0}>
+                                    <Form.Item name={e.key} className='mb-3' label={e.title} hidden={e.hidden} rules={[{required: e.required}]}>
+                                        {!e.isTrueFalse ?
+                                            !e.isInputNumber ? <Input disabled={e.disabled || (isEdit && e.key === 'id')}></Input> : <InputNumber inputMode='numeric' min={0} style={{width: '100%'}} defaultValue={0}/>
+                                            :
+                                            <Select>
+                                                <Select.Option value={1}>Có</Select.Option>
+                                                <Select.Option value={0}>Không</Select.Option>
+                                            </Select>
+                                        }
+                                    </Form.Item>
+                                </Col>
+                            }
+                        }
+                        
                     })}
                 </Row>
                 <Form.Item className='mb-0'>
@@ -275,4 +304,4 @@ const Users = () => {
     </>
 }
 
-export default Users;
+export default Cells;

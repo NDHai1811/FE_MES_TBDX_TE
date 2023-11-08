@@ -11,6 +11,9 @@ import logo from "../../assets/images/logo.png";
 import background1 from "../../assets/images/bg2.jpg";
 
 const Login = (props) => {
+    useEffect(()=>{
+        localStorage.removeItem('authUser');
+    }, [])
     const dispatch = useDispatch();
     const { error } = useSelector(state => ({
         error: state.Login.error,

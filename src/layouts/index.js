@@ -7,10 +7,8 @@ import Header from './Header';
 import HeaderUI from './HeaderUI';
 import UserCard from '../components/UserCard';
 import './layoutStyle.scss';
-import UIHeader from '../pages/UI/components/Header';
+
 const Layout = (props) => {
-    const path = window.location.pathname;
-    console.log(path.split('/'));
     return (
         <React.Fragment>
             { window.location.pathname === '/login' &&
@@ -20,7 +18,6 @@ const Layout = (props) => {
                 </div>
             </div>}
             { !window.location.pathname.toLocaleLowerCase().includes('/ui') ?
-                
                     !window.location.pathname.toLocaleLowerCase().includes('/dashboard') && !window.location.pathname.toLocaleLowerCase().includes('/screen') ?
                     <div id="layout-wrapper" style={{height:'100%'}}> 
                         <Header/>
@@ -34,18 +31,13 @@ const Layout = (props) => {
                     </div> 
                     :
                     <div>{props.children}</div>
-
-                
-                
                 :
                 <div id="layout-wrapper" style={{height:'100%', minHeight:'100vh'}}>
                     <HeaderUI/>   
                     <div>{props.children}</div>
                 </div>
-
             } 
         </React.Fragment>
-
     );
 };
 

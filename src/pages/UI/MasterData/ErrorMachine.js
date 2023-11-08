@@ -1,37 +1,53 @@
-import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Upload, message, Checkbox, Space, Modal, Spin, Popconfirm, Badge } from 'antd';
+import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Upload, message, Checkbox, Space, Modal, Spin, Popconfirm } from 'antd';
 import { baseURL } from '../../../config';
 import React, { useState, useRef, useEffect } from 'react';
-import { createUsers, deleteUsers, exportUsers, getUserRoles, getUsers, updateUsers } from '../../../api';
+import { createErrorMachines, deleteErrorMachines, exportErrorMachines, getErrorMachines, updateErrorMachines } from '../../../api';
 
-const Users = () => {
-    document.title = "Quản lý tài khoản"; 
+const ErrorMachines = () => {
+    document.title = "Quản lý lỗi máy"; 
     const [listCheck, setListCheck] = useState([]);
     const [openMdl, setOpenMdl] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [form] = Form.useForm();
     const [params, setParams] = useState({});
-    const [roles, setRoles] = useState([]);
     const col_detailTable = [
         {
-            title: 'Tài khoản',
-            dataIndex: 'username',
-            key: 'username',
+            title: 'Mã lỗi ',
+            dataIndex: 'code',
+            key: 'code',
+            align: 'center',
+            fixed: 'left'
+        },
+        {
+            title: 'Nội dung',
+            dataIndex: 'noi_dung',
+            key: 'noi_dung',
             align: 'center',
         },
         {
-            title: 'Tên',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Công đoạn',
+            dataIndex: 'line',
+            key: 'line',
+            align: 'center',
+            render: (value, item, index) => value?.name,
+        },
+        {
+            title: 'Nguyên nhân',
+            dataIndex: 'nguyen_nhan',
+            key: 'nguyen_nhan',
             align: 'center',
         },
         {
-            title: 'Bộ phận',
-            dataIndex: 'roles',
-            key: 'roles',
+            title: 'Khắc phục',
+            dataIndex: 'khac_phuc',
+            key: 'khac_phuc',
             align: 'center',
-            render: (value) => <Space wrap style={{justifyContent:'center'}}>{(value ?? []).map(e=>
-                <Badge count={e?.name}></Badge>
-            )}</Space>
+        },
+        {
+            title: 'Phòng ngừa',
+            dataIndex: 'phong_ngua',
+            key: 'phong_ngua',
+            align: 'center',
         },
     ]
     const formFields = [
@@ -40,22 +56,34 @@ const Users = () => {
             hidden: true
         },
         {
-            title: 'Tài khoản',
-            key: 'username',
+            title: 'Mã lỗi ',
+            key: 'code',
             required: true
         },
         {
-            title: 'Tên',
-            key: 'name',
+            title: 'Nội dung',
+            key: 'noi_dung',
             required: true
         },
         {
-            title: 'Bộ phận',
-            key: 'roles',
-            select: {
-                mode: 'multiple',
-                options: roles
-            }
+            title: 'Công đoạn',
+            key: 'line',
+            required: true
+        },
+        {
+            title: 'Nguyên nhân',
+            key: 'nguyen_nhan',
+            required: true
+        },
+        {
+            title: 'Khắc phục',
+            key: 'khac_phuc',
+            required: true
+        },
+        {
+            title: 'Phòng ngừa',
+            key: 'phong_ngua',
+            required: true
         },
     ]
 
@@ -66,7 +94,7 @@ const Users = () => {
     const [data, setData] = useState([]);
     const loadListTable = async (params) => {
         setLoading(true)
-        const res = await getUsers(params);
+        const res = await getErrorMachines(params);
         setData(res.map(e=>{
             return {...e, key: e.id}
         }));
@@ -75,8 +103,6 @@ const Users = () => {
     useEffect(() => {
         (async () => {
             loadListTable(params);
-            var res = await getUserRoles();
-            setRoles(res);
         })()
     }, [])
 
@@ -99,7 +125,7 @@ const Users = () => {
     const onFinish = async (values) => {
         console.log(values);
         if(isEdit){
-            const res = await updateUsers(values);
+            const res = await updateErrorMachines(values);
             console.log(res);
             if(res){
                 form.resetFields();
@@ -107,7 +133,7 @@ const Users = () => {
                 loadListTable(params);
             }
         }else{
-            const res = await createUsers(values);
+            const res = await createErrorMachines(values);
             console.log(res);
             if(res){
                 form.resetFields();
@@ -119,7 +145,7 @@ const Users = () => {
 
     const deleteRecord = async () => {
         if (listCheck.length > 0) {
-            const res = await deleteUsers(listCheck);
+            const res = await deleteErrorMachines(listCheck);
             setListCheck([]);
             loadListTable(params);
         } else {
@@ -132,8 +158,7 @@ const Users = () => {
             message.info('Chọn 1 bản ghi để chỉnh sửa');
         } else {
             const result = data.find((record) => record.id === listCheck[0]);
-            console.log(result?.roles.map(e=>e.id));
-            form.setFieldsValue({...result, roles: result?.roles.map(e=>e.id)});
+            form.setFieldsValue({...result, line: result?.line?.name});
             setOpenMdl(true);
         }
     }
@@ -147,7 +172,7 @@ const Users = () => {
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () =>{
         setExportLoading(true);
-        const res = await exportUsers(params);
+        const res = await exportErrorMachines(params);
         if(res.success){
             window.location.href = baseURL+res.data;
         }
@@ -166,8 +191,11 @@ const Users = () => {
                     <Divider>Tìm kiếm</Divider>
                     <div className='mb-3'>
                         <Form style={{ margin: '0 15px' }} layout="vertical" onFinish={btn_click}>
-                            <Form.Item label="Tên" className='mb-3'>
-                                <Input allowClear onChange={(e)=>setParams({...params, name: e.target.value})} placeholder='Nhập mã'/>
+                            <Form.Item label="Công đoạn" className='mb-3'>
+                                <Input allowClear onChange={(e)=>setParams({...params, line: e.target.value})} placeholder='Nhập mã'/>
+                            </Form.Item>
+                            <Form.Item label="Mã lỗi" className='mb-3'>
+                                <Input allowClear onChange={(e)=>setParams({...params, code: e.target.value})} placeholder='Nhập tên'/>
                             </Form.Item>
                             <Form.Item style={{textAlign:'center'}}>
                                 <Button type='primary' htmlType='submit'
@@ -180,12 +208,12 @@ const Users = () => {
                     </Card>
                 </Col>
                 <Col span={21}>
-                    <Card style={{ height: '100%' }} title="Quản lý tài khoản" extra={
+                    <Card style={{ height: '100%' }} title="Quản lý thông số sản phẩm" extra={
                         <Space>
                             <Upload
                                 showUploadList={false}
                                 name='files'
-                                action={baseURL + "/api/users/import"}
+                                action={baseURL + "/api/error-machines/import"}
                                 headers={{
                                     authorization: 'authorization-text',
                                 }}
@@ -232,7 +260,7 @@ const Users = () => {
                             pagination={{position: ['topRight', 'bottomRight']}}
                             scroll={
                                 {
-                                    x: '100%',
+                                    x: '130vw',
                                     y: '80vh'
                                 }
                             }
@@ -253,10 +281,7 @@ const Users = () => {
                         if(e.key !== 'select' && e.key !== 'stt') return <Col span={!e.hidden ? 12 : 0}>
                             <Form.Item name={e.key} className='mb-3' label={e.title} hidden={e.hidden} rules={[{required: e.required}]}>
                                 {!e.isTrueFalse ?
-                                        e.select ?
-                                        <Select mode={e.select.mode} options={e.select.options}/>
-                                        :
-                                        <Input disabled={e.disabled || (isEdit && e.key === 'id')}></Input>
+                                    <Input disabled={e.disabled || (isEdit && e.key === 'id')}></Input>
                                     :
                                     <Select>
                                         <Select.Option value={1}>Có</Select.Option>
@@ -275,4 +300,4 @@ const Users = () => {
     </>
 }
 
-export default Users;
+export default ErrorMachines;

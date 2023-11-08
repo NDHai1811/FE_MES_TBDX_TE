@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, useLocation } from "react-router-dom";
 
 //Layouts
 import VerticalLayout from "../layouts/index";
@@ -7,11 +7,13 @@ import VerticalLayout from "../layouts/index";
 import { authProtectedRoutes, publicRoutes } from "./allRoutes";
 import { AuthProtected, AccessRoute } from './AuthProtected';
 import NonAuthLayout from '../layouts/NonAuthLayout';
+import { useProfile } from '../components/hooks/UserHooks';
 
 const Index = () => {
+    const location = useLocation();
+    const { userProfile } = useProfile();
     const availablePublicRoutesPaths = publicRoutes.map((r) => r.path);
     const availableAuthRoutesPath = authProtectedRoutes.map((r) => r.path);
-    console.log(availablePublicRoutesPaths, availableAuthRoutesPath);
     return (
         <React.Fragment>
             <Switch>
