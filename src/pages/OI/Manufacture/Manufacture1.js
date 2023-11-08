@@ -10,12 +10,13 @@ import { getInfoPallet, getLine, getLineOverall, inTem, scanPallet } from '../..
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
 import { useRef } from 'react';
+import { getListMachine } from '../../../api/oi/equipment';
 
 const Manufacture1 = (props) => {
     document.title = "Sản xuất";
     const { line } = useParams();
     const history = useHistory();
-    const [options, setOption] = useState([{label:'Sóng',value:'1'},{label:'In',value:'2'},{label:'Dán',value:'3'}])
+    const [options, setOption] = useState([]);
     const [loading, setLoading] = useState(false);
     const [row1, setRow1] = useState([
         {
@@ -77,7 +78,10 @@ const Manufacture1 = (props) => {
     useEffect(() => {
         (async () => {
             setLoading(true)
-            const lineList = await getLine({ type: 'sx' });
+            const listMachine = await getListMachine();
+            console.log(listMachine);
+            setOption(listMachine);
+            // const lineList = await getLine({ type: 'sx' });
             // setOption(lineList.data);
             // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
             setRow1([
@@ -323,36 +327,36 @@ const Manufacture1 = (props) => {
         }
 
         else {
-            setRow2([
-                {
-                    title: 'Mã Palet',
-                    value: ''
-                },
-                {
-                    title: 'Tên sản phẩm',
-                    value: ''
-                },
-                {
-                    title: 'UPH (Ấn định)',
-                    value: ''
-                },
-                {
-                    title: 'UPH (Thực tế)',
-                    value: ''
-                },
-                {
-                    title: 'SL đầu ra (KH)',
-                    value: ''
-                },
-                {
-                    title: 'SL đầu ra (TT)',
-                    value: ''
-                },
-                {
-                    title: 'SL đầu ra (TT OK)',
-                    value: ''
-                },
-            ]);
+            // setRow2([
+            //     {
+            //         title: 'Mã Palet',
+            //         value: ''
+            //     },
+            //     {
+            //         title: 'Tên sản phẩm',
+            //         value: ''
+            //     },
+            //     {
+            //         title: 'UPH (Ấn định)',
+            //         value: ''
+            //     },
+            //     {
+            //         title: 'UPH (Thực tế)',
+            //         value: ''
+            //     },
+            //     {
+            //         title: 'SL đầu ra (KH)',
+            //         value: ''
+            //     },
+            //     {
+            //         title: 'SL đầu ra (TT)',
+            //         value: ''
+            //     },
+            //     {
+            //         title: 'SL đầu ra (TT OK)',
+            //         value: ''
+            //     },
+            // ]);
             setListCheck([])
         }
     }, [selectedLot])

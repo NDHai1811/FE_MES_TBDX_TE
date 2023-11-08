@@ -8,7 +8,7 @@ import ScanButton from '../../../components/Button/ScanButton';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import DataDetail from '../../../components/DataDetail';
 import { getLine } from '../../../api/oi/manufacture';
-import { getChecksheetList, getInfoPalletQC, getLoSXDetail, getQCOverall, inTemVang, scanError, scanPallet, updateSoLuongTemVang } from '../../../api/oi/quality';
+import { getChecksheetList, getInfoPalletQC, getLoSXDetail, getQCOverall, scanError, scanPallet, updateSoLuongTemVang } from '../../../api/oi/quality';
 import SelectButton from '../../../components/Button/SelectButton';
 import { useRef } from 'react';
 import { useProfile } from '../../../components/hooks/UserHooks';
@@ -127,24 +127,24 @@ const Quality = (props) => {
         if(line){
             (async ()=>{
                 setLoading(true);
-                const lineList = await getLine({type: 'cl'});
-                setOptions(lineList.data);
-                const overall = await getQCOverall({line_id: line});
-                setRow1([
-                    {
-                        title: 'Kế hoạch',
-                        value: overall.data.ke_hoach,
-                    },
-                    {
-                        title: 'Mục tiêu',
-                        value: overall.data.muc_tieu,
-                    },
-                    {
-                        title: 'Kết quả',
-                        value: overall.data.ket_qua,
-                    },
-                ]);
-                const tableData = await getInfoPalletQC({type: 2, line_id: line});
+                // const lineList = await getLine({type: 'cl'});
+                // setOptions(lineList.data);
+                // const overall = await getQCOverall({line_id: line});
+                // setRow1([
+                //     {
+                //         title: 'Kế hoạch',
+                //         value: overall.data.ke_hoach,
+                //     },
+                //     {
+                //         title: 'Mục tiêu',
+                //         value: overall.data.muc_tieu,
+                //     },
+                //     {
+                //         title: 'Kết quả',
+                //         value: overall.data.ket_qua,
+                //     },
+                // ]);
+                // const tableData = await getInfoPalletQC({type: 2, line_id: line});
                 // if(tableData.success){
                 //     setData(tableData.data)
                 // }
@@ -190,33 +190,33 @@ const Quality = (props) => {
         })
         setSelectedRowKeys([])
     }, [line])
-    useEffect(()=>{
-        if(selectedRow){
-            (async ()=>{
-                var res = await getChecksheetList({line_id: line, lot_id: selectedRow.lot_id});
-                let checksheet = {...chitieu};
-                Object.keys(res?.data?.chi_tieu).forEach(key => {
-                    switch (key) {
-                        case 'kich-thuoc':
-                            checksheet.checksheet1.key = {key: key, title: res?.data?.chi_tieu[key] ? res?.data?.chi_tieu[key] : '1'};
-                            checksheet.checksheet1.data = res.data.data[key]
-                            break;
-                        case 'dac-tinh':
-                            checksheet.checksheet2.key = {key: key, title: res?.data?.chi_tieu[key] ? res?.data?.chi_tieu[key] : '2'};
-                            checksheet.checksheet2.data = res.data.data[key]
-                            break;
-                        case 'ngoai-quan':
-                            checksheet.checksheet3.key = {key: key, title: res?.data?.chi_tieu[key] ? res?.data?.chi_tieu[key] : '3'};
-                            checksheet.checksheet3.data = res.data.data[key]
-                            break;
-                        default:
-                            break;
-                    }
-                })
-                setChiTieu(checksheet);
-            })()
-        }
-    }, [selectedRow])
+    // useEffect(()=>{
+    //     if(selectedRow){
+    //         (async ()=>{
+    //             var res = await getChecksheetList({line_id: line, lot_id: selectedRow.lot_id});
+    //             let checksheet = {...chitieu};
+    //             Object.keys(res?.data?.chi_tieu).forEach(key => {
+    //                 switch (key) {
+    //                     case 'kich-thuoc':
+    //                         checksheet.checksheet1.key = {key: key, title: res?.data?.chi_tieu[key] ? res?.data?.chi_tieu[key] : '1'};
+    //                         checksheet.checksheet1.data = res.data.data[key]
+    //                         break;
+    //                     case 'dac-tinh':
+    //                         checksheet.checksheet2.key = {key: key, title: res?.data?.chi_tieu[key] ? res?.data?.chi_tieu[key] : '2'};
+    //                         checksheet.checksheet2.data = res.data.data[key]
+    //                         break;
+    //                     case 'ngoai-quan':
+    //                         checksheet.checksheet3.key = {key: key, title: res?.data?.chi_tieu[key] ? res?.data?.chi_tieu[key] : '3'};
+    //                         checksheet.checksheet3.data = res.data.data[key]
+    //                         break;
+    //                     default:
+    //                         break;
+    //                 }
+    //             })
+    //             setChiTieu(checksheet);
+    //         })()
+    //     }
+    // }, [selectedRow])
     const onChangeLine = (value) => {
         history.push('/quality/' + value)
     }
