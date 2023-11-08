@@ -12,6 +12,7 @@ import { getChecksheetList, getInfoPalletQC, getLoSXDetail, getQCOverall, scanEr
 import SelectButton from '../../../components/Button/SelectButton';
 import { useRef } from 'react';
 import { useProfile } from '../../../components/hooks/UserHooks';
+import { getListMachine } from '../../../api/oi/equipment';
 
 const Quality = (props) => {
     document.title = "Kiểm tra chất lượng";
@@ -127,6 +128,8 @@ const Quality = (props) => {
         if(line){
             (async ()=>{
                 setLoading(true);
+                const listMachine = await getListMachine();
+                setOptions(listMachine.data);
                 // const lineList = await getLine({type: 'cl'});
                 // setOptions(lineList.data);
                 // const overall = await getQCOverall({line_id: line});
@@ -402,7 +405,7 @@ const Quality = (props) => {
             <Spin spinning={loading}>
                 <Row gutter={12} className='mt-3'>
                     <Col span={6}>
-                    <SelectButton value={options.length > 0 && parseInt(line)} options={options} label="Máy" onChange={onChangeLine} />
+                    <SelectButton value={options.length > 0 && line} options={options} label="Máy" onChange={onChangeLine} />
                     </Col>
                     <Col span={18}>
                         <DataDetail data={row1} />

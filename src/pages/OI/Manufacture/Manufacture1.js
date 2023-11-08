@@ -79,7 +79,6 @@ const Manufacture1 = (props) => {
         (async () => {
             setLoading(true)
             const listMachine = await getListMachine();
-            console.log(listMachine);
             setOption(listMachine.data);
             // const lineList = await getLine({ type: 'sx' });
             // setOption(lineList.data);
