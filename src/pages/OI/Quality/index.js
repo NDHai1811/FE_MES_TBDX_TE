@@ -102,12 +102,6 @@ const Quality = (props) => {
     ]
     const checkingTable = [
         {
-            title: 'Vị trí',
-            dataIndex: 'position',
-            key: 'position',
-            align: 'center',
-        },
-        {
             title: 'Số Lot',
             dataIndex: 'lot_id',
             key: 'lot_id',
@@ -382,7 +376,7 @@ const Quality = (props) => {
                 <Modal title="Phán định" open={openModal2} onCancel={()=>setOpenModal2(false)}
                 okText={"Xác nhận"}
                 okButtonProps={{
-                    onClick: ()=>form2.submit(),
+                    onClick: ()=>form1.submit(),
                 }}>
                     <Form
                     form={form2}

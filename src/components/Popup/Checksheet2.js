@@ -16,9 +16,20 @@ const Checksheet2 = (props) =>{
     
     const onFinish = async (values) =>{
         if(selectedLot?.lot_id){
+            Object.keys(values['data']).forEach(key => {
+                const isNullish = Object.values(values['data'][key]).every(value => {
+                    if (!value) {
+                      return true;
+                    }
+                    return false;
+                });
+                if (isNullish) {
+                    delete values['data'][key];
+                }
+            });
             console.log(values);
-            // closeModal();
-            // onSubmit(values);
+            closeModal();
+            onSubmit({"kich-thuoc":values});
         }
     }
     useEffect(()=>{
@@ -30,7 +41,14 @@ const Checksheet2 = (props) =>{
     useEffect(()=>{
         form.resetFields();
     }, [checksheet, line])
-
+    const hanleClickOk = () =>{
+        form.setFieldValue('result', 1);
+        form.submit();
+    } 
+    const hanleClickNG = () =>{
+        form.setFieldValue('result', 2);
+        form.submit();
+    }
     return (
         <React.Fragment>
             <Button disabled={!selectedLot?.lot_id} danger={selectedLot?.result===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.result===0 ? () => {setOpen(true)} : null}>
@@ -40,20 +58,21 @@ const Checksheet2 = (props) =>{
                 title={"Kiểm tra kích thước"}
                 open={open}  
                 onCancel={closeModal}
-                okText={"Xác nhận"}
-                okButtonProps={{
-                    onClick: ()=>form.submit(),
-                }}
+                footer={
+                    <div className='justify-content-between d-flex'>
+                        <strong>Kết luận</strong>
+                        <Space>
+                            <Button type='primary' style={{backgroundColor:'#55c32a'}} onClick={hanleClickOk}>Duyệt</Button>
+                            <Button type='primary' style={{backgroundColor:'#fb4b50'}} onClick={hanleClickNG}>NG</Button>
+                        </Space>
+                    </div>
+                }
                 width={700}
             >
                 <Form
                     form={form}
                     onFinish={onFinish}
-                    initialValues={{
-                        // data: checksheet.map(e=>{return {[e.key]: {value: '', result: ''}}})
-                    }}
                     colon={false}
-                    // {...formItemLayout}
                 >
                     <Form.List name={'data'}>
                         {(fields, { add, remove }, { errors }) => 
@@ -72,11 +91,7 @@ const Checksheet2 = (props) =>{
                                             </Form.Item>
                                         </Col>
                                         <Col span={6}>
-                                            <Form.Item noStyle shouldUpdate={(prev, cur)=> {
-                                                const prevValue = prev.data;
-                                                console.log(prev.data[index], cur.data[index])
-                                                // prevVal?.data[e.key]?.value !== curVal?.data[e.key]?.value
-                                            }}>
+                                            <Form.Item noStyle shouldUpdate={(prevVal, curVal)=> true}>
                                             {({ getFieldValue }) =>
                                                 <Form.Item name={[e.key, 'result']} noStyle className='w-100 h-100'>
                                                     {!getFieldValue(['data',e.key, "value"]) ? 
@@ -120,6 +135,7 @@ const Checksheet2 = (props) =>{
                         })}
                     </Form.List>
                     <Divider></Divider>
+                    <Form.Item name={'result'} hidden><Input/></Form.Item>
                 </Form>
             </Modal>
         </React.Fragment>

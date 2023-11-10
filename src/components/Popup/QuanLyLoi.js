@@ -1,4 +1,4 @@
-import { Form, Modal, Row, Col, Button, Divider, Radio, Space, InputNumber } from 'antd';
+import { Form, Modal, Row, Col, Button, Divider, Radio, Space, InputNumber, Input } from 'antd';
 import React, { useState } from 'react';
 import './popupStyle.scss'
 import ScanButton from '../Button/ScanButton';
@@ -24,19 +24,27 @@ const QuanLyLoi = (props) => {
     const [form] = Form.useForm();
     const onFinish = async (values) =>{
         if(selectedLot?.lot_id){
-            Object.keys(values['ngoai-quan']).forEach(key => {
-                if (values['ngoai-quan'][key] == null) {
-                    delete values['ngoai-quan'][key];
+            Object.keys(values['data']).forEach(key => {
+                if (values['data'][key] == null) {
+                    delete values['data'][key];
                 }
             });
             console.log(values);
-            onSubmit(values);
+            onSubmit({"ngoai-quan":values});
             closeModal()
         }
     }
     useEffect(()=>{
         form.resetFields();
     }, [errorsList, line])
+    const hanleClickOk = () =>{
+        form.setFieldValue('result', 1);
+        form.submit();
+    } 
+    const hanleClickNG = () =>{
+        form.setFieldValue('result', 2);
+        form.submit();
+    }
     return (
         <React.Fragment>
             <Button disabled={!selectedLot?.lot_id}  type={'default'} danger={selectedLot?.result===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.result===0 ? () => {setOpen(true)} : null}>
@@ -46,10 +54,15 @@ const QuanLyLoi = (props) => {
                 title="Bảng quản lý lỗi"
                 open={open}
                 onCancel={closeModal}
-                okText={"Xác nhận"}
-                okButtonProps={{
-                    onClick: ()=>form.submit(),
-                }}
+                footer={
+                    <div className='justify-content-between d-flex'>
+                        <strong>Kết luận</strong>
+                        <Space>
+                            <Button type='primary' style={{backgroundColor:'#55c32a'}} onClick={hanleClickOk}>Duyệt</Button>
+                            <Button type='primary' style={{backgroundColor:'#fb4b50'}} onClick={hanleClickNG}>NG</Button>
+                        </Space>
+                    </div>
+                }
             >
                 <Form
                     form={form}
@@ -57,9 +70,8 @@ const QuanLyLoi = (props) => {
                     initialValues={{
                     }}
                     colon={false}
-                    // {...formItemLayout}
                 >
-                    <Form.List name={'ngoai-quan'}>
+                    <Form.List name={'data'}>
                     {(fields, { add, remove }, { errors }) => 
                     errorsList.map((e, index) => {
                         return (
@@ -78,6 +90,7 @@ const QuanLyLoi = (props) => {
                         )
                     })}
                     </Form.List>
+                    <Form.Item name={'result'} hidden><Input/></Form.Item>
                 </Form>
             </Modal>
         </React.Fragment>
