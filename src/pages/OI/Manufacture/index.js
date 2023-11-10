@@ -11,20 +11,21 @@ import Manufacture4 from './Manufacture4';
 import Manufacture5 from './Manufacture5';
 const Manufacture = (props) => {
     document.title = "Sản xuất";
-    const {line} = useParams();
+    const {machine_id} = useParams();
     const history = useHistory();
     useEffect(()=>{
         const screen = JSON.parse(localStorage.getItem('screen'));
-        localStorage.setItem('screen', JSON.stringify({...screen, manufacture: line ?? ''}))
-        if(line == undefined){history.push('/manufacture/9')}
-    }, [line])
+        localStorage.setItem('screen', JSON.stringify({...screen, manufacture: machine_id ?? ''}))
+        if(!machine_id){history.push('/manufacture/S01')}
+    }, [machine_id])
     return (
             <React.Fragment>
-                {line === '9' && <Manufacture1/>}
+                <Manufacture1/>
+                {/* {line === '9' && <Manufacture1/>}
                 {line === '21' && <Manufacture4/>}
                 {['10', '11', '12', '13'].includes(line) && <Manufacture2/>}
                 {line === '15' && <Manufacture3/>}
-                {['22', '14'].includes(line) && <Manufacture5/>}
+                {['22', '14'].includes(line) && <Manufacture5/>} */}
             </React.Fragment>
     );
 };

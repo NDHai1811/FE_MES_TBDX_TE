@@ -4,10 +4,6 @@ export async function getLine(params) {
   const res = await axios.get('/line/list', { params });
   return res;
 }
-export async function getListMachine(params) {
-  const res = await axios.get('/machine/list', { params });
-  return res;
-}
 export async function getListMachineOfLine(params) {
   const res = await axios.get('/line/list-machine', { params: params });
   return res;
