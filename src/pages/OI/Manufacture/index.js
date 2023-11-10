@@ -11,13 +11,13 @@ import Manufacture4 from './Manufacture4';
 import Manufacture5 from './Manufacture5';
 const Manufacture = (props) => {
     document.title = "Sản xuất";
-    const {line} = useParams();
+    const {machine_id} = useParams();
     const history = useHistory();
     useEffect(()=>{
         const screen = JSON.parse(localStorage.getItem('screen'));
-        localStorage.setItem('screen', JSON.stringify({...screen, manufacture: line ?? ''}))
-        if(line == undefined){history.push('/manufacture/9')}
-    }, [line])
+        localStorage.setItem('screen', JSON.stringify({...screen, manufacture: machine_id ?? ''}))
+        if(!machine_id){history.push('/manufacture/S01')}
+    }, [machine_id])
     return (
             <React.Fragment>
                 <Manufacture1/>

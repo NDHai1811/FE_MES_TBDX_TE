@@ -10,11 +10,11 @@ import { getInfoPallet, getLineOverall, getLotByMachine, inTem, scanPallet } fro
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
 import { useRef } from 'react';
-import { getListMachine } from '../../../api/oi/equipment';
+import { getListMachine } from '../../../api';
 
 const Manufacture1 = (props) => {
     document.title = "Sản xuất";
-    const { line } = useParams();
+    const { machine_id } = useParams();
     const history = useHistory();
     const [options, setOption] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -85,7 +85,7 @@ const Manufacture1 = (props) => {
             setData(listLot.data);
             // const lineList = await getLine({ type: 'sx' });
             // setOption(lineList.data);
-            // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(line)), line_id: line })
+            // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(machine_id)), line_id: machine_id })
             setRow1([
                 {
                     title: 'KH ca',
@@ -130,13 +130,13 @@ const Manufacture1 = (props) => {
             ]);
             setLoading(false)
         })()
-    }, [line])
+    }, [machine_id])
 
     const onChangeLine = (value) => {
         history.push('/manufacture/' + value)
     }
     const onScan = async (result) => {
-        var res = await scanPallet({ lot_id: result, line_id: line });
+        var res = await scanPallet({ lot_id: result, line_id: machine_id });
         if (res.success) {
             if (row2[0].value !== '') {
                 setRow2([
@@ -170,7 +170,7 @@ const Manufacture1 = (props) => {
                     },
                 ]);
             }
-            const infoPallet = await getInfoPallet({ line_id: line });
+            const infoPallet = await getInfoPallet({ line_id: machine_id });
             if (infoPallet.success) {
                 // setData(infoPallet.data);
             }
@@ -297,9 +297,9 @@ const Manufacture1 = (props) => {
     const handlePrint = async () => {
         console.log(selectedLot);
         if (selectedLot) {
-            var res = await inTem({ lot_id: selectedLot.lot_id, line_id: line });
+            var res = await inTem({ lot_id: selectedLot.lot_id, line_id: machine_id });
             if (res.success) {
-                console.log(line);
+                console.log(machine_id);
                 let list = [];
                 if((Array.isArray(res.data))){
                     res.data.map(lot=>{
@@ -311,8 +311,8 @@ const Manufacture1 = (props) => {
                                     soluongtp: lot.so_luong[index],
                                     product_id: selectedLot.ma_hang,
                                     lsx: selectedLot.lo_sx,
-                                    cd_thuc_hien: options.find(e => e.value === parseInt(line))?.label,
-                                    cd_tiep_theo: line === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(line))+1]?.label
+                                    cd_thuc_hien: options.find(e => e.value === parseInt(machine_id))?.label,
+                                    cd_tiep_theo: machine_id === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(machine_id))+1]?.label
                                 }
                             )
                         })
@@ -326,8 +326,8 @@ const Manufacture1 = (props) => {
                                 soluongtp: res.data.so_luong[index],
                                 product_id: selectedLot.ma_hang,
                                 lsx: selectedLot.lo_sx,
-                                cd_thuc_hien: options.find(e => e.value === parseInt(line))?.label,
-                                cd_tiep_theo: line === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(line))+1]?.label
+                                cd_thuc_hien: options.find(e => e.value === parseInt(machine_id))?.label,
+                                cd_tiep_theo: machine_id === '22' ? 'Bế' : options[options.findIndex(e=>e.value === parseInt(machine_id))+1]?.label
                             }
                         )
                     })
@@ -348,7 +348,7 @@ const Manufacture1 = (props) => {
     var interval;
     // useEffect(() => {
     //     interval = setInterval(async () => {
-    //         const infoPallet = await getInfoPallet({ line_id: line });
+    //         const infoPallet = await getInfoPallet({ line_id: machine_id });
     //         if (infoPallet.success) {
     //             // setData(infoPallet.data.map(e => {
     //             //     return { ...e }
@@ -356,13 +356,13 @@ const Manufacture1 = (props) => {
     //         }
     //     }, 10000);
     //     return () => clearInterval(interval);
-    // }, [line]);
+    // }, [machine_id]);
     return (
         <React.Fragment>
             <Spin spinning={loading}>
                 <Row className='mt-3' gutter={[2, 12]}>
                     <Col span={5}>
-                        <SelectButton options={options} label="Máy"/>
+                        <SelectButton options={options} label="Máy" value={machine_id} onChange={onChangeLine}/>
                     </Col>
                     <Col span={19}>
                         <DataDetail data={row1} />

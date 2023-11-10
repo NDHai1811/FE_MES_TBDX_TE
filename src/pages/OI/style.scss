@@ -18,6 +18,9 @@ thead td[class*="ant-table-cell ant-table-cell-scrollbar"]{
 .table-row-grey {
     background-color: #EBEBEB;
 }
+.table-row-red {
+    background-color: rgb(236, 20, 110);
+}
 .table-row-green {
     background-color: #9eff7c
 }
@@ -31,4 +34,8 @@ thead th[class*= "yellow"]{
 
 thead th[class*= "red"]{
     background-color: #fb4b50 !important;
+}
+.ant-table-wrapper .ant-table-tbody >tr.ant-table-row:hover>td{
+    background-color: unset;
+    cursor: pointer;
 }
