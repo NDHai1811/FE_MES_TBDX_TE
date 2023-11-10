@@ -20,11 +20,12 @@ const Manufacture = (props) => {
     }, [line])
     return (
             <React.Fragment>
-                {line === '9' && <Manufacture1/>}
+                <Manufacture1/>
+                {/* {line === '9' && <Manufacture1/>}
                 {line === '21' && <Manufacture4/>}
                 {['10', '11', '12', '13'].includes(line) && <Manufacture2/>}
                 {line === '15' && <Manufacture3/>}
-                {['22', '14'].includes(line) && <Manufacture5/>}
+                {['22', '14'].includes(line) && <Manufacture5/>} */}
             </React.Fragment>
     );
 };

@@ -74,3 +74,9 @@ export async function batDauTinhSanLuong(params) {
     const res = await axios.post('/lot/bat-dau-tinh-dan-luong', params);
     return res;
 }
+
+
+export async function getLotByMachine() {
+    const res = await axios.get('/oi/manufacture/list-lot');
+    return res;
+}
