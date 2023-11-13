@@ -238,7 +238,7 @@ const Quality = (props) => {
 
     async function getData(){
         setLoading(true);
-        var machines = await getListMachine();
+        var machines = await getListMachine(); //Lấy dữ liệu danh sách lot QC
         setData(data);
         if(data.length > 0 && data[0].result === 0){
             setSelectedRow(data[0]);
