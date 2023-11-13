@@ -79,7 +79,7 @@ const Manufacture1 = (props) => {
         (async () => {
             setLoading(true)
             const listMachine = await getListMachine();
-            setOption(listMachine.data);
+            setOption(listMachine);
             const listLot = await getLotByMachine();
             console.log(listLot);
             setData(listLot.data);
@@ -121,7 +121,7 @@ const Manufacture1 = (props) => {
                 },
                 {
                     title: 'HT ĐH',
-                    value: '28%'
+                    value: listLot.data.length > 0 ? listLot.data[0].so_luong : '-'
                 },
                 {
                     title: 'Phế SX',
