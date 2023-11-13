@@ -5,10 +5,6 @@ import DataDetail from '../../../components/DataDetail';
 import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import Manufacture1 from './Manufacture1';
-import Manufacture2 from './Manufacture2';
-import Manufacture3 from './Manufacture3';
-import Manufacture4 from './Manufacture4';
-import Manufacture5 from './Manufacture5';
 const Manufacture = (props) => {
     document.title = "Sản xuất";
     const {machine_id} = useParams();

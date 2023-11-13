@@ -4,7 +4,7 @@ import { Button, Card, Col, Divider, Row, Typography, Space } from 'antd';
 
 import { withRouter, Link } from "react-router-dom";
 
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/logo.jpg";
 import { useProfile } from '../components/hooks/UserHooks';
 import { LogoutOutlined, LockOutlined } from '@ant-design/icons';
 
@@ -100,8 +100,8 @@ const Screen = (props) => {
                     <Col md={12} lg={12} xl={8}>
                         <Card className="mt-4">
                             <div className="text-center mt-2">
-                                <img className='mb-3' src={logo} />
-                                <Title level={4}>Công ty bao bì Thăng Long</Title>
+                                <img className='mb-3 w-25' src={logo} />
+                                <Title level={4}>CÔNG TY CỔ PHẦN BAO BÌ GIẤY THÁI BÌNH DƯƠNG XANH</Title>
                             </div>
                             <div className="p-2 mt-3">
                                 <Row gutter={[16, 16]}>
@@ -131,11 +131,6 @@ const Screen = (props) => {
                                             )
                                         // }
                                     })}
-                                    <Col span={12}>
-                                        <Link to={'tao-tem'}>
-                                            <Button type="primary" className='w-100'>Tạo tem</Button>
-                                        </Link>
-                                    </Col>
                                 </Row>
                                 <Row gutter={[16, 16]} className='mt-3'>
                                     {permissionUI.length > 0 && <Divider style={{margin:0}}>UI</Divider>}

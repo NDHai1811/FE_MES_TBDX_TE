@@ -2,7 +2,7 @@ import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, 
 import { baseURL } from '../../config';
 import React, { useState, useRef, useEffect } from 'react';
 import { createUsers, deleteUsers, exportUsers, getUserRoles, getUsers, updateUsers } from '../../api';
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/logo.jpg";
 import background1 from "../../assets/images/bg2.jpg";
 import { UserOutlined } from '@ant-design/icons';
 import { useProfile } from '../../components/hooks/UserHooks';
@@ -42,7 +42,7 @@ const ChangePassword = () => {
                         <div className="text-center mt-3">
                             <img className='mb-3' src={logo} />
                         </div>
-                        <h6 className='text-center text-primary mb-0'>Công cổ phần sản xuất và NXK bao bì Thăng Long</h6>
+                        <h6 className='text-center text-primary mb-0'>CÔNG TY CỔ PHẦN BAO BÌ GIẤY THÁI BÌNH DƯƠNG XANH</h6>
                         <div className="p-2 mt-3 text-center">
                             <Form layout="vertical" onFinish={onFinish} form={form}>
                                 <Form.Item className="mb-4"  name="username" label="Đổi mật khẩu">

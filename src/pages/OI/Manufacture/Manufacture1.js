@@ -6,7 +6,7 @@ import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
-import { getInfoPallet, getLine, getLineOverall, inTem, scanPallet } from '../../../api/oi/manufacture';
+import { getInfoPallet, getLineOverall, getLotByMachine, inTem, scanPallet } from '../../../api/oi/manufacture';
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
 import { useRef } from 'react';
@@ -18,6 +18,9 @@ const Manufacture1 = (props) => {
     const history = useHistory();
     const [options, setOption] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
+    const [selectedLot, setSelectedLot] = useState();
+    const [listCheck, setListCheck] = useState([]);
     const [row1, setRow1] = useState([
         {
             title: 'KH ca',
@@ -72,15 +75,14 @@ const Manufacture1 = (props) => {
             value: ''
         },
     ]);
-    const type = [0, 9, 10, 11, 12, 13, 14, 15, 21, 22];
-    const [selectedLot, setSelectedLot] = useState();
-    const [listCheck, setListCheck] = useState([]);
     useEffect(() => {
         (async () => {
             setLoading(true)
             const listMachine = await getListMachine();
-            console.log(listMachine);
             setOption(listMachine);
+            const listLot = await getLotByMachine();
+            console.log(listLot);
+            setData(listLot.data);
             // const lineList = await getLine({ type: 'sx' });
             // setOption(lineList.data);
             // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(machine_id)), line_id: machine_id })
@@ -107,142 +109,29 @@ const Manufacture1 = (props) => {
             setRow2([
                 {
                     title: 'Số lot',
-                    value: 'xxxxxx.01'
+                    value: listLot.data.length > 0 ? listLot.data[0].lot_id : '-'
                 },
                 {
                     title: 'KH ĐH',
-                    value: '700'
+                    value: listLot.data.length > 0 ? '700' : '-'
                 },
                 {
                     title: 'Sản lượng',
-                    value: '200'
+                    value: listLot.data.length > 0 ? listLot.data[0].so_luong : '-'
                 },
                 {
                     title: 'HT ĐH',
-                    value: '28%'
+                    value: listLot.data.length > 0 ? listLot.data[0].so_luong : '-'
                 },
                 {
                     title: 'Phế SX',
-                    value: '10'
+                    value: listLot.data.length > 0 ? listLot.data[0].sl_ng : '-'
                 },
             ]);
             setLoading(false)
         })()
     }, [machine_id])
-    const [data, setData] = useState([
-        {
-            lot_id:'xxxxxxxx.01',
-            dinh_muc:'100',
-            so_luong:'-',
-            sl_ok:'-',
-            sl_ng:'-'
-        },
-        {
-            lot_id:'xxxxxxxx.02',
-            dinh_muc:'100',
-            so_luong:'-',
-            sl_ok:'-',
-            sl_ng:'-'
-        },
-        {
-            lot_id:'xxxxxxxx.03',
-            dinh_muc:'100',
-            so_luong:'-',
-            sl_ok:'-',
-            sl_ng:'-'
-        },
-        {
-            lot_id:'xxxxxxxx.04',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'yyyyyyyyy.05',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'yyyyyyyyy.06',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'yyyyyyyyy.07',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.08',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.09',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.10',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.11',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.12',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.13',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.14',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.15',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        },
-        {
-            lot_id:'zzzzzzzzz.16',
-            dinh_muc:'100',
-            so_luong:'200',
-            sl_ok:'100',
-            sl_ng:'0'
-        }
-    ]);
+
     const onChangeLine = (value) => {
         history.push('/manufacture/' + value)
     }
