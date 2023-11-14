@@ -8,16 +8,16 @@ import SelectButton from '../../../components/Button/SelectButton';
 import { useProfile } from '../../../components/hooks/UserHooks';
 import { getListMachine } from '../../../api';
 import QuanLyLoi from '../../../components/Popup/QuanLyLoi';
-import { sendQCResult } from '../../../api/oi/quality';
+import { getLotQCList, sendQCResult } from '../../../api/oi/quality';
 
 const Quality = (props) => {
     document.title = "Kiểm tra chất lượng";
     const [messageApi, contextHolder] = message.useMessage();
-    const { line } = useParams();
+    const { machine_id } = useParams();
     const history = useHistory();
     const [machines, setMachines] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [selectedRow, setSelectedRow] = useState();
+    const [selectedLot, setSelectedRow] = useState();
     const [data, setData] = useState([
         {
             lot_id:'xxxxxxxx.01',
@@ -87,8 +87,8 @@ const Quality = (props) => {
         },
         {
             title: 'SL lỗi',
-            dataIndex: 'sl_ng',
-            key: 'sl_ng',
+            dataIndex: 'sl_loi',
+            key: 'sl_loi',
             align: 'center',
             width: (100/3)+'%'
         },
@@ -100,6 +100,7 @@ const Quality = (props) => {
             width: (100/3)+'%'
         },
     ]
+    const [overall, setOverall] = useState([{so_luong: 0, sl_loi: 0, sl_ng: 0 }]);
     const checkingTable = [
         {
             title: 'Số Lot',
@@ -180,8 +181,8 @@ const Quality = (props) => {
         },
         {
             title: 'Phán định',
-            dataIndex: 'result',
-            key: 'result',
+            dataIndex: 'phan_dinh',
+            key: 'phan_dinh',
             align: 'center',
             width:'16%',
             render: (value) => {
@@ -203,7 +204,7 @@ const Quality = (props) => {
         },
     ];
     const rowClassName = (record, index) => {
-        if(record.lot_id === selectedRow?.lot_id){
+        if(record.lot_id === selectedLot?.lot_id){
             return 'table-row-green';
         }
         switch (record.result) {
@@ -238,10 +239,17 @@ const Quality = (props) => {
 
     async function getData(){
         setLoading(true);
-        var machines = await getListMachine(); //Lấy dữ liệu danh sách lot QC
-        setData(data);
-        if(data.length > 0 && data[0].result === 0){
-            setSelectedRow(data[0]);
+        var res = await getLotQCList({machine_id}); //Lấy dữ liệu danh sách lot QC
+        console.log(res);
+        setData(res);
+        if(res.length > 0){
+            if(selectedLot){
+                setSelectedRow(res.find(e=>e?.lot_id === selectedLot?.lot_id));
+            }else{
+                if(res[0]?.phan_dinh === 0){
+                    setSelectedRow(res[0]);
+                }
+            }
         }
         setLoading(false);
     }
@@ -252,28 +260,28 @@ const Quality = (props) => {
         })()
     }, [])
     useEffect(()=>{
-        if(line){
+        if(machine_id){
             getData()
             const screen = JSON.parse(localStorage.getItem('screen'));
-            localStorage.setItem('screen', JSON.stringify({...screen, quality: line ? line : ''}))
+            localStorage.setItem('screen', JSON.stringify({...screen, quality: machine_id ? machine_id : ''}))
         }else{
             history.push('/quality/S01')
         }
-    }, [line])
+    }, [machine_id])
     const onChangeLine = (value) => {
         history.push('/quality/' + value)
     }
     const [form1] = Form.useForm();
     const [form2] = Form.useForm();
     const onSubmitSLP = async (values) =>{
-        if(selectedRow?.lot_id){
+        if(selectedLot?.lot_id){
             onSubmitResult(values);
         }
         setOpenModal1(false)
         form1.resetFields();
     }
     const onSubmitPhanDinh = async (values) =>{
-        if(selectedRow?.lot_id){
+        if(selectedLot?.lot_id){
             onSubmitResult(values);
         }
         setOpenModal2(false)
@@ -284,7 +292,7 @@ const Quality = (props) => {
     const [openModal2, setOpenModal2] = useState(false);
 
     const onSubmitResult = async (values) => {
-        var res = await sendQCResult({machine_id: line, lot_id: selectedRow?.lot_id, data:values});
+        var res = await sendQCResult({machine_id: machine_id, lot_id: selectedLot?.lot_id, data:values});
         getData()
     }
     return (
@@ -293,18 +301,17 @@ const Quality = (props) => {
             <Spin spinning={loading}>
                 <Row gutter={[2, 12]} className='mt-3'>
                     <Col span={6}>
-                    <SelectButton value={machines.length > 0 && machines.some(e=>e.value === line) && line} options={machines} label="Vị trí" onChange={onChangeLine} />
+                    <SelectButton value={machines.length > 0 && machines.some(e=>e.value === machine_id) && machine_id} options={machines} label="Vị trí" onChange={onChangeLine} />
                     </Col>
                     <Col span={18}>
                         <Table
-                            rowClassName={(record, index) => 'table-row-light'}
+                            className='custom-table'
                             locale={{emptyText: 'Trống'}}
                             pagination={false}
                             bordered={true}
                             columns={overallColumns}
-                            dataSource={[]}
+                            dataSource={overall}
                             size='small'
-                            style={{borderRadius: 12}}
                         />
                     </Col>
                 </Row>
@@ -312,12 +319,12 @@ const Quality = (props) => {
                 <Row className='mt-3' style={{ justifyContent: 'space-between' }}>
                     <Col span={24}>
                         <Table
-                            rowClassName={(record, index) => 'table-row-light'}
+                            className='custom-table'
                             locale={{emptyText: 'Trống'}}
                             pagination={false}
                             bordered={true}
                             columns={checkingTable}
-                            dataSource={selectedRow ? [selectedRow] : []}
+                            dataSource={selectedLot ? [selectedLot] : []}
                             size='small'
                         />
                     </Col>
@@ -325,16 +332,16 @@ const Quality = (props) => {
 
                 <Row className='mt-3' style={{ justifyContent: 'space-between' }} gutter={6}>
                     <Col span={6} >
-                        <Button disabled={!selectedRow?.lot_id} type={'default'} danger={selectedRow?.result===2} size='large' className='w-100 text-wrap h-100' onClick={selectedRow?.result===0 ?() => { setOpenModal1(true); form1.resetFields()} : null}>KT số lượng phế</Button>
+                        <Button disabled={!selectedLot?.lot_id} type={'default'} danger={selectedLot?.phan_dinh===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.phan_dinh===0 ?() => { setOpenModal1(true); form1.resetFields()} : null}>KT số lượng phế</Button>
                     </Col>
                     <Col span={6} >
-                        <QuanLyLoi text="KT ngoại quan" selectedLot={selectedRow} onSubmit={onSubmitResult}/>
+                        <QuanLyLoi text="KT ngoại quan" selectedLot={selectedLot} onSubmit={onSubmitResult}/>
                     </Col>
                     <Col span={6}>
-                        <Checksheet2 text="KT kích thước" selectedLot={selectedRow} onSubmit={onSubmitResult}/>
+                        <Checksheet2 text="KT kích thước" selectedLot={selectedLot} onSubmit={onSubmitResult}/>
                     </Col>
                     <Col span={6}>
-                        <Button disabled={!selectedRow?.lot_id} type={'default'} danger={selectedRow?.result===2} size='large' className='w-100 text-wrap h-100' onClick={selectedRow?.result===0 ? () =>{ setOpenModal2(true); form2.resetFields()} : null}>Phán định</Button>
+                        <Button disabled={!selectedLot?.lot_id} type={'default'} danger={selectedLot?.phan_dinh===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.phan_dinh===0 ? () =>{ setOpenModal2(true); form2.resetFields()} : null}>Phán định</Button>
                     </Col>
                 </Row>
 
@@ -343,7 +350,7 @@ const Quality = (props) => {
                     // scroll={{ y: '50vh' }}
                     pagination={false}
                     bordered={true}
-                    className='mt-3 mb-3'
+                    className='mt-3 mb-3 selectable-table'
                     columns={columns}
                     dataSource={data}
                     size='small'

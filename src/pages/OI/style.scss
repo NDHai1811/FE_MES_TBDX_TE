@@ -35,7 +35,19 @@ thead th[class*= "yellow"]{
 thead th[class*= "red"]{
     background-color: #fb4b50 !important;
 }
-.ant-table-wrapper .ant-table-tbody >tr.ant-table-row:hover>td{
+.ant-table-wrapper.selectable-table .ant-table-tbody >tr.ant-table-row:hover>td{
     background-color: unset;
     cursor: pointer;
+}
+.ant-table-wrapper.custom-table .ant-table{
+    border-radius: 8px !important;
+}
+.ant-table-wrapper.custom-table .ant-table-tbody >tr >td{
+    border-bottom: 0;
+}
+.ant-table-wrapper.custom-table .ant-table.ant-table-bordered >.ant-table-container{
+    border-inline-start: 0;
+}
+.ant-table-wrapper.custom-table td:last-child{
+    border-inline-end: 0 !important;
 }

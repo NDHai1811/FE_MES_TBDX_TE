@@ -46,6 +46,7 @@ import Maintenance from "../pages/UI/MasterData/Maintenance/";
 import CreateMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import ChangePassword from "../pages/Authentication/ChangePassword";
+import Orders from "../pages/UI/MasterData/Orders";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -74,7 +75,7 @@ const authProtectedRoutes = [
   //OI
   { path: ["/tao-tem"], component: InTem },
   { path: ["/manufacture", "/manufacture/:machine_id"], component: Manufacture },
-  { path: ["/quality", "/quality/:line"], component: Quality },
+  { path: ["/quality", "/quality/:machine_id"], component: Quality },
   { path: ["/equipment", "/equipment/:line"], component: Equipment },
   { path: ["/warehouse", "/warehouse/:line"], component: Warehouse },
 
@@ -96,6 +97,7 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/maintenance"], component: Maintenance },
   { path: ["/ui/master-data/maintenance/create"], component: CreateMaintenance },
   { path: ["/ui/master-data/maintenance/edit/:maintenanceId"], component: EditMaintenance },
+  { path: ["/ui/master-data/orders"], component: Orders },
 ];
 
 const publicRoutes = [

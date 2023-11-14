@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { getChecksheetList } from '../../api/oi/quality';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 const Checksheet2 = (props) =>{
-    const {line} = useParams();
+    const {machine_id} = useParams();
     const {text, selectedLot, onSubmit} = props;
     const closeModal = () =>{
         setOpen(false);
@@ -33,14 +33,16 @@ const Checksheet2 = (props) =>{
         }
     }
     useEffect(()=>{
-        (async ()=>{
-            var res = await getChecksheetList();
-            setChecksheet(res.data);
-        })()
+        if(selectedLot){
+            (async ()=>{
+                var res = await getChecksheetList({machine_id, lot_id: selectedLot.lot});
+                setChecksheet(res.data);
+            })()
+        }
     }, [selectedLot])
     useEffect(()=>{
         form.resetFields();
-    }, [checksheet, line])
+    }, [checksheet, machine_id])
     const hanleClickOk = () =>{
         form.setFieldValue('result', 1);
         form.submit();
@@ -51,7 +53,7 @@ const Checksheet2 = (props) =>{
     }
     return (
         <React.Fragment>
-            <Button disabled={!selectedLot?.lot_id} danger={selectedLot?.result===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.result===0 ? () => {setOpen(true)} : null}>
+            <Button disabled={!selectedLot?.lot_id} danger={selectedLot?.phan_dinh===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.phan_dinh===0 ? () => {setOpen(true)} : null}>
                 {text}
             </Button>
             <Modal 

@@ -5,6 +5,11 @@ export async function scanPalletQC(params) {
     return res;
 }
 
+export async function getLotQCList(params) {
+    const res = await axios.get('/qc/lot/list', {params});
+    return res.data;
+}
+
 export async function getChecksheetList(params) {
     const res = await axios.get('/qc/checksheet/list', {params: params});
     return res;

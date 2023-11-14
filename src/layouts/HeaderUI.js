@@ -125,8 +125,8 @@ const items = [
                         key:'master-data/khuon',
                     },
                     {
-                        label: 'JIG',
-                        key:'master-data/jig',
+                        label: 'Đơn hàng',
+                        key:'master-data/orders',
                     },
                 ],
             },

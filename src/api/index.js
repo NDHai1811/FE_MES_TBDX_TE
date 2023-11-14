@@ -522,3 +522,25 @@ export async function exportMaintenance(params){
     const res = await axios.get('/maintenance/export', {params});
     return res;
 }
+
+//Orders
+export async function getOrders(params){
+    const res = await axios.get('/orders/list', {params});
+    return res.data;
+}
+export async function createOrder(params){
+    const res = await axios.post('/orders/create', params);
+    return res.data;
+}
+export async function updateOrder(params){
+    const res = await axios.patch('/orders/update', params);
+    return res.data;
+}
+export async function deleteOrders(params){
+    const res = await axios.post('/orders/delete', params);
+    return res.data;
+}
+export async function exportOrders(params){
+    const res = await axios.get('/orders/export', {params});
+    return res;
+}

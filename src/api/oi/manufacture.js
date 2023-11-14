@@ -75,8 +75,11 @@ export async function batDauTinhSanLuong(params) {
     return res;
 }
 
-
-export async function getLotByMachine() {
-    const res = await axios.get('/oi/manufacture/list-lot');
+export async function getLotByMachine(params) {
+    const res = await axios.get('/oi/manufacture/list-lot', {params});
+    return res;
+}
+export async function checkMaterialPosition(params) {
+    const res = await axios.get('/oi/manufacture/check-material-position', {params});
     return res;
 }

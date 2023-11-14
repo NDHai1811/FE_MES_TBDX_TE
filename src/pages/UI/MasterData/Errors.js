@@ -16,12 +16,11 @@ const Errors = () => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            fixed: 'left'
         },
         {
-            title: 'Nội dung',
-            dataIndex: 'noi_dung',
-            key: 'noi_dung',
+            title: 'Tên lỗi',
+            dataIndex: 'name',
+            key: 'name',
             align: 'center',
         },
         {
@@ -31,24 +30,6 @@ const Errors = () => {
             align: 'center',
             render: (value, item, index) => value?.name,
         },
-        {
-            title: 'Nguyên nhân',
-            dataIndex: 'nguyen_nhan',
-            key: 'nguyen_nhan',
-            align: 'center',
-        },
-        {
-            title: 'Khắc phục',
-            dataIndex: 'khac_phuc',
-            key: 'khac_phuc',
-            align: 'center',
-        },
-        {
-            title: 'Phòng ngừa',
-            dataIndex: 'phong_ngua',
-            key: 'phong_ngua',
-            align: 'center',
-        },
     ]
     const formFields = [
         {
@@ -57,28 +38,13 @@ const Errors = () => {
             required: true
         },
         {
-            title: 'Nội dung',
-            key: 'noi_dung',
+            title: 'Tên lỗi',
+            key: 'name',
             required: true
         },
         {
             title: 'Công đoạn',
             key: 'line',
-            required: true
-        },
-        {
-            title: 'Nguyên nhân',
-            key: 'nguyen_nhan',
-            required: true
-        },
-        {
-            title: 'Khắc phục',
-            key: 'khac_phuc',
-            required: true
-        },
-        {
-            title: 'Phòng ngừa',
-            key: 'phong_ngua',
             required: true
         },
     ]
@@ -204,7 +170,7 @@ const Errors = () => {
                     </Card>
                 </Col>
                 <Col span={21}>
-                    <Card style={{ height: '100%' }} title="Quản lý thông số sản phẩm" extra={
+                    <Card style={{ height: '100%' }} title="Quản lý lỗi công đoạn" extra={
                         <Space>
                             <Upload
                                 showUploadList={false}
@@ -254,12 +220,6 @@ const Errors = () => {
                         <Spin spinning={loading}>
                         <Table size='small' bordered
                             pagination={{position: ['topRight', 'bottomRight']}}
-                            scroll={
-                                {
-                                    x: '130vw',
-                                    y: '80vh'
-                                }
-                            }
                             columns={col_detailTable}
                             dataSource={data} 
                             rowSelection={rowSelection}/>

@@ -6,7 +6,7 @@ import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
-import { getInfoPallet, getLineOverall, getLotByMachine, inTem, scanPallet } from '../../../api/oi/manufacture';
+import { checkMaterialPosition, getInfoPallet, getLineOverall, getLotByMachine, inTem, scanPallet } from '../../../api/oi/manufacture';
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
 import { useRef } from 'react';
@@ -21,113 +21,78 @@ const Manufacture1 = (props) => {
     const [data, setData] = useState([]);
     const [selectedLot, setSelectedLot] = useState();
     const [listCheck, setListCheck] = useState([]);
-    const [row1, setRow1] = useState([
+    const overallColumns = [
         {
             title: 'KH ca',
-            value: '10.000'
+            dataIndex: 'kh_ca',
+            key: 'kh_ca',
+            align: 'center',
+            width: (100/4)+'%'
         },
         {
-            title: 'SL T.Tế',
-            value: '1.000'
+            title: 'Sản lượng',
+            dataIndex: 'so_luong',
+            key: 'so_luong',
+            align: 'center',
+            width: (100/4)+'%'
         },
         {
-            title: 'SL Tem vàng',
-            value: '',
-            bg: '#f7ac27'
+            title: 'HT KH ca',
+            dataIndex: 'ht_kh_ca',
+            key: 'ht_kh_ca',
+            align: 'center',
+            width: (100/4)+'%'
         },
         {
-            title: 'SL NG',
-            value: '',
-            bg: '#fb4b50'
+            title: 'Phế SX',
+            dataIndex: 'phe_sx',
+            key: 'phe_sx',
+            align: 'center',
+            width: (100/4)+'%'
+        },
+    ]
+    const [overall, setOverall] = useState([{kh_ca: 0, so_luong: 0, ht_kh_ca: 0, phe_sx: 0}]);
+    const producingColumns = [
+        {
+            title: 'Số Lot',
+            dataIndex: 'lot_id',
+            key: 'lot_id',
+            align: 'center',
+            width: '30%'
         },
         {
-            title: 'Tỷ lệ hoàn thành (%)',
-            value: '',
-        },
-    ])
-    const [row2, setRow2] = useState([
-        {
-            title: 'Mã Palet',
-            value: ''
+            title: 'KH ĐH',
+            dataIndex: 'kh_dh',
+            key: 'kh_dh',
+            align: 'center',
         },
         {
-            title: 'Tên sản phẩm',
-            value: ''
+            title: 'Sản lượng',
+            dataIndex: 'so_luong',
+            key: 'so_luong',
+            align: 'center',
         },
         {
-            title: 'UPH (Ấn định)',
-            value: ''
+            title: 'HT ĐH',
+            dataIndex: 'hd_dh',
+            key: 'hd_dh',
+            align: 'center',
         },
         {
-            title: 'UPH (Thực tế)',
-            value: ''
+            title: 'Phế SX',
+            dataIndex: 'phe_sx',
+            key: 'phe_sx',
+            align: 'center',
         },
-        {
-            title: 'SL đầu ra (KH)',
-            value: ''
-        },
-        {
-            title: 'SL đầu ra (TT)',
-            value: ''
-        },
-        {
-            title: 'SL đầu ra (TT OK)',
-            value: ''
-        },
-    ]);
+    ]
     useEffect(() => {
         (async () => {
             setLoading(true)
             const listMachine = await getListMachine();
             setOption(listMachine);
-            const listLot = await getLotByMachine();
+            const listLot = await getLotByMachine({machine_id});
             console.log(listLot);
             setData(listLot.data);
-            // const lineList = await getLine({ type: 'sx' });
-            // setOption(lineList.data);
-            // const lineOverall = await getLineOverall({ type: type.indexOf(parseInt(machine_id)), line_id: machine_id })
-            setRow1([
-                {
-                    title: 'KH ca',
-                    value: '10.000',
-                },
-                {
-                    title: 'Sản lượng',
-                    value: '1000',
-                },
-                {
-                    title: 'HT KH ca',
-                    value: '10%',
-                },
-                {
-                    title: 'Phế SX',
-                    value: '10',
-                    bg: '#fb4b50'
-                },
-                
-            ])
-            setRow2([
-                {
-                    title: 'Số lot',
-                    value: listLot.data.length > 0 ? listLot.data[0].lot_id : '-'
-                },
-                {
-                    title: 'KH ĐH',
-                    value: listLot.data.length > 0 ? '700' : '-'
-                },
-                {
-                    title: 'Sản lượng',
-                    value: listLot.data.length > 0 ? listLot.data[0].so_luong : '-'
-                },
-                {
-                    title: 'HT ĐH',
-                    value: listLot.data.length > 0 ? listLot.data[0].so_luong : '-'
-                },
-                {
-                    title: 'Phế SX',
-                    value: listLot.data.length > 0 ? listLot.data[0].sl_ng : '-'
-                },
-            ]);
             setLoading(false)
         })()
     }, [machine_id])
@@ -138,38 +103,6 @@ const Manufacture1 = (props) => {
     const onScan = async (result) => {
         var res = await scanPallet({ lot_id: result, line_id: machine_id });
         if (res.success) {
-            if (row2[0].value !== '') {
-                setRow2([
-                    {
-                        title: 'Mã lot',
-                        value: ''
-                    },
-                    {
-                        title: 'Tên sản phẩm',
-                        value: ''
-                    },
-                    {
-                        title: 'UPH (Ấn định)',
-                        value: ''
-                    },
-                    {
-                        title: 'UPH (Thực tế)',
-                        value: ''
-                    },
-                    {
-                        title: 'SL đầu ra (KH)',
-                        value: ''
-                    },
-                    {
-                        title: 'SL đầu ra (TT)',
-                        value: ''
-                    },
-                    {
-                        title: 'SL đầu ra (TT OK)',
-                        value: ''
-                    },
-                ]);
-            }
             const infoPallet = await getInfoPallet({ line_id: machine_id });
             if (infoPallet.success) {
                 // setData(infoPallet.data);
@@ -178,77 +111,22 @@ const Manufacture1 = (props) => {
     }
 
     const rowClassName = (record, index) => {
-        if(index === 0){
+        if(record.lot_id === selectedLot?.lot_id){
             return 'table-row-green';
         }
-        if(index === 1 || index === 2){
-            return '';
-        }
-        return record.status === 0 ? 'table-row-green' : 'table-row-grey'
+        return '';
     }
     const onClickRow = (row) => {
-        setSelectedLot(row)
+        if(row?.lot_id !== selectedLot?.lot_id){
+            checkPosition(row)
+        }
     }
-    useEffect(() => {
-        if (selectedLot) {
-            setRow2([
-                {
-                    title: 'Số Lot',
-                    value: selectedLot.lot_id
-                },
-                {
-                    title: 'KH ĐH',
-                    value: selectedLot.ten_sp
-                },
-                {
-                    title: 'Sản lượng',
-                    value: selectedLot.uph_an_dinh
-                },
-                {
-                    title: 'HT ĐH',
-                    value: selectedLot.uph_thuc_te
-                },
-                {
-                    title: 'Phế SX',
-                    value: selectedLot.sl_dau_ra_kh
-                },
-            ]);
+    const checkPosition = async (record) => {
+        var res = await checkMaterialPosition({plan_id: record?.plan_id});
+        if(res?.success){
+            setSelectedLot(record);
         }
-
-        else {
-            // setRow2([
-            //     {
-            //         title: 'Mã Palet',
-            //         value: ''
-            //     },
-            //     {
-            //         title: 'Tên sản phẩm',
-            //         value: ''
-            //     },
-            //     {
-            //         title: 'UPH (Ấn định)',
-            //         value: ''
-            //     },
-            //     {
-            //         title: 'UPH (Thực tế)',
-            //         value: ''
-            //     },
-            //     {
-            //         title: 'SL đầu ra (KH)',
-            //         value: ''
-            //     },
-            //     {
-            //         title: 'SL đầu ra (TT)',
-            //         value: ''
-            //     },
-            //     {
-            //         title: 'SL đầu ra (TT OK)',
-            //         value: ''
-            //     },
-            // ]);
-            setListCheck([])
-        }
-    }, [selectedLot])
+    }
     const columns = [
         {
             title: 'Tem tổng',
@@ -365,7 +243,15 @@ const Manufacture1 = (props) => {
                         <SelectButton options={options} label="Máy" value={machine_id} onChange={onChangeLine}/>
                     </Col>
                     <Col span={19}>
-                        <DataDetail data={row1} />
+                        <Table
+                            className='custom-table'
+                            locale={{emptyText: 'Trống'}}
+                            pagination={false}
+                            bordered={true}
+                            columns={overallColumns}
+                            dataSource={overall}
+                            size='small'
+                        />
                     </Col>
                     <Col span={16}>
                         <ScanButton onScan={onScan} />
@@ -380,15 +266,23 @@ const Manufacture1 = (props) => {
                         </div>
                     </Col>
                     <Col span={24}>
-                        <DataDetail data={row2} />
+                        <Table
+                            className='custom-table'
+                            locale={{emptyText: 'Trống'}}
+                            pagination={false}
+                            bordered={true}
+                            columns={producingColumns}
+                            dataSource={selectedLot ? [selectedLot] : []}
+                            size='small'
+                        />
                     </Col>
                     
                     <Col span={24}>
                         <Table
-                            scroll={{
-                                x: 200,
-                                y: 350,
-                            }}
+                            // scroll={{
+                            //     x: 200,
+                            //     y: 350,
+                            // }}
                             size='small'
                             rowClassName={rowClassName}
                             pagination={false}
@@ -398,6 +292,8 @@ const Manufacture1 = (props) => {
                                     onClick: (event) => onClickRow(record)
                                 };
                             }}
+                            className='selectable-table'
+                            style={{cursor:'pointer'}}
                             columns={columns}
                             dataSource={data} />
                     </Col>
