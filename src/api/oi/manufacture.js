@@ -25,11 +25,6 @@ export async function updatePallet(params) {
     return res;
 }
 
-export async function getLineOverall(params) {
-    const res = await axios.get('/line/overall', {params: params});
-    return res;
-}
-
 export async function getTable(params) {
     const res = await axios.get('/line/table/list', {params: params});
     return res;
@@ -82,4 +77,8 @@ export async function getLotByMachine(params) {
 export async function checkMaterialPosition(params) {
     const res = await axios.get('/oi/manufacture/check-material-position', {params});
     return res;
+}
+export async function getManufactureOverall(params) {
+    const res = await axios.get('/oi/manufacture/overall', {params: params});
+    return res.data;
 }

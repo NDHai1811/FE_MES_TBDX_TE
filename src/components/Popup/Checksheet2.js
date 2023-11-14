@@ -29,7 +29,7 @@ const Checksheet2 = (props) =>{
             });
             console.log(values);
             closeModal();
-            onSubmit({"kich-thuoc":values});
+            onSubmit({"kich_thuoc":values});
         }
     }
     useEffect(()=>{

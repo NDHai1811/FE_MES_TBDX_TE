@@ -4,7 +4,7 @@ import './popupStyle.scss'
 import ScanButton from '../Button/ScanButton';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useEffect } from 'react';
-import { getChecksheetList, scanError, sendResultError } from '../../api/oi/quality';
+import {  getErrorList } from '../../api/oi/quality';
 const QuanLyLoi = (props) => {
     const {machine_id} = useParams();
     const { text, selectedLot, onSubmit } = props;
@@ -15,7 +15,7 @@ const QuanLyLoi = (props) => {
     useEffect(()=>{
         if(machine_id){
             (async () => {
-                var res = await scanError({machine_id});
+                var res = await getErrorList({machine_id});
                 if(res.success){
                     setErrorsList(res.data)
                 }
@@ -32,7 +32,7 @@ const QuanLyLoi = (props) => {
                 }
             });
             console.log(values);
-            onSubmit({"ngoai-quan":values});
+            onSubmit({"ngoai_quan":values});
             closeModal()
         }
     }
@@ -79,8 +79,8 @@ const QuanLyLoi = (props) => {
                         return (
                             <Row gutter={8} className={'mt-2'}>
                                 <Col span={12} style={{ paddingInline: 4 }} className='d-flex justify-content-center flex-wrap align-items-lg-center'>
-                                    <div className='d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center' style={{ backgroundColor: '#EBEBEB', height: '100%' }}>
-                                        {e.noi_dung}
+                                    <div className='d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center' style={{ backgroundColor: '#EBEBEB', height: '100%', flexWrap: 'wrap'}}>
+                                        {e.name}
                                     </div>
                                 </Col>
                                 <Col span={12}>

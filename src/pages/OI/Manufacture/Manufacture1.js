@@ -6,7 +6,7 @@ import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import ScanButton from '../../../components/Button/ScanButton';
 import SelectButton from '../../../components/Button/SelectButton';
-import { checkMaterialPosition, getInfoPallet, getLineOverall, getLotByMachine, inTem, scanPallet } from '../../../api/oi/manufacture';
+import { checkMaterialPosition, getInfoPallet, getLineOverall, getLotByMachine, getManufactureOverall, inTem, scanPallet } from '../../../api/oi/manufacture';
 import { useReactToPrint } from 'react-to-print';
 import Tem from '../../UI/Manufacture/Tem';
 import { useRef } from 'react';
@@ -88,8 +88,8 @@ const Manufacture1 = (props) => {
     useEffect(() => {
         (async () => {
             setLoading(true)
-            const listMachine = await getListMachine();
-            setOption(listMachine);
+            setOption(await getListMachine());
+            setOverall(await getManufactureOverall({machine_id}));
             const listLot = await getLotByMachine({machine_id});
             console.log(listLot);
             setData(listLot.data);

@@ -8,7 +8,7 @@ import SelectButton from '../../../components/Button/SelectButton';
 import { useProfile } from '../../../components/hooks/UserHooks';
 import { getListMachine } from '../../../api';
 import QuanLyLoi from '../../../components/Popup/QuanLyLoi';
-import { getLotQCList, sendQCResult } from '../../../api/oi/quality';
+import { getLotQCList, getQCOverall, sendQCResult } from '../../../api/oi/quality';
 
 const Quality = (props) => {
     document.title = "Kiểm tra chất lượng";
@@ -226,19 +226,14 @@ const Quality = (props) => {
         // setSelectedRow(record);
     }
     const onDBClickRow = (event, record, index) => {
-        if(record.result === 0){
+        if(record.phan_dinh === 0){
             setSelectedRow(record);
-            // setData(prev=>{
-            //     const newData = [...prev];
-            //     newData.splice(index, 1);
-            //     newData.unshift(record)
-            //     return newData;
-            // })
         }
     }
 
     async function getData(){
         setLoading(true);
+        setOverall(await getQCOverall({machine_id}));
         var res = await getLotQCList({machine_id}); //Lấy dữ liệu danh sách lot QC
         console.log(res);
         setData(res);
@@ -250,6 +245,8 @@ const Quality = (props) => {
                     setSelectedRow(res[0]);
                 }
             }
+        }else{
+            setSelectedRow();
         }
         setLoading(false);
     }
@@ -391,7 +388,7 @@ const Quality = (props) => {
                         result: 0
                     }}
                     onFinish={onSubmitPhanDinh}>
-                        <Form.Item name={'phan-dinh'}>
+                        <Form.Item name={'phan_dinh'}>
                             <Radio.Group size='large'
                             style={{float:'right', width:'100%', height:'100%'}}
                             className='d-flex'
