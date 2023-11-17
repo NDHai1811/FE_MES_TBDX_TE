@@ -207,7 +207,7 @@ const Quality = (props) => {
         if(record.lot_id === selectedLot?.lot_id){
             return 'table-row-green';
         }
-        switch (record.result) {
+        switch (record.phan_dinh) {
             case 0:
                 return ''
                 break;
@@ -239,11 +239,16 @@ const Quality = (props) => {
         setData(res);
         if(res.length > 0){
             if(selectedLot){
-                setSelectedRow(res.find(e=>e?.lot_id === selectedLot?.lot_id));
-            }else{
-                if(res[0]?.phan_dinh === 0){
-                    setSelectedRow(res[0]);
+                var checkingLot = res.find(e=>e?.lot_id === selectedLot?.lot_id);
+                if(checkingLot?.phan_dinh === 0){
+                    setSelectedRow(checkingLot);
+                }else{
+                    if(res[0]?.phan_dinh === 0) setSelectedRow(res[0])
+                    else setSelectedRow();
                 }
+            }else{
+                if(res[0]?.phan_dinh === 0) setSelectedRow(res[0]);
+                else setSelectedRow();
             }
         }else{
             setSelectedRow();
@@ -289,7 +294,7 @@ const Quality = (props) => {
     const [openModal2, setOpenModal2] = useState(false);
 
     const onSubmitResult = async (values) => {
-        var res = await sendQCResult({machine_id: machine_id, lot_id: selectedLot?.lot_id, data:values});
+        var res = await sendQCResult({...values, machine_id: machine_id, lot_id: selectedLot?.lot_id});
         getData()
     }
     return (
@@ -380,7 +385,7 @@ const Quality = (props) => {
                 <Modal title="Phán định" open={openModal2} onCancel={()=>setOpenModal2(false)}
                 okText={"Xác nhận"}
                 okButtonProps={{
-                    onClick: ()=>form1.submit(),
+                    onClick: ()=>form2.submit(),
                 }}>
                     <Form
                     form={form2}

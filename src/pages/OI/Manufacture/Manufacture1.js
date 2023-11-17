@@ -86,15 +86,18 @@ const Manufacture1 = (props) => {
         },
     ]
     useEffect(() => {
-        (async () => {
-            setLoading(true)
-            setOption(await getListMachine());
-            setOverall(await getManufactureOverall({machine_id}));
-            const listLot = await getLotByMachine({machine_id});
-            console.log(listLot);
-            setData(listLot.data);
-            setLoading(false)
-        })()
+        if(machine_id){
+            (async () => {
+                setLoading(true)
+                setOption(await getListMachine());
+                setOverall(await getManufactureOverall({machine_id}));
+                const listLot = await getLotByMachine({machine_id});
+                console.log(listLot);
+                setData(listLot.data);
+                setLoading(false)
+            })()
+        }
+        
     }, [machine_id])
 
     const onChangeLine = (value) => {
