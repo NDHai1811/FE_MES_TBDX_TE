@@ -294,7 +294,7 @@ const Quality = (props) => {
     const [openModal2, setOpenModal2] = useState(false);
 
     const onSubmitResult = async (values) => {
-        var res = await sendQCResult({...values, machine_id: machine_id, lot_id: selectedLot?.lot_id});
+        var res = await sendQCResult({machine_id: machine_id, lot_id: selectedLot?.lot_id, data: values});
         getData()
     }
     return (

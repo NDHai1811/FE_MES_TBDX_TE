@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CloseOutlined, PrinterOutlined, QrcodeOutlined } from '@ant-design/icons';
-import { Row, Col, Button, Table,Spin, Checkbox } from 'antd';
+import { Row, Col, Button, Table,Spin, Checkbox, Modal } from 'antd';
 import DataDetail from '../../../components/DataDetail';
 import '../style.scss';
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
@@ -94,6 +94,9 @@ const Manufacture1 = (props) => {
                 const listLot = await getLotByMachine({machine_id});
                 console.log(listLot);
                 setData(listLot.data);
+                if(listLot.data.length > 0){
+                    checkPosition(listLot.data[0])
+                }
                 setLoading(false)
             })()
         }
@@ -114,9 +117,15 @@ const Manufacture1 = (props) => {
     }
 
     const rowClassName = (record, index) => {
-        if(record.lot_id === selectedLot?.lot_id){
+        if(selectedLot?.lot_id === record.lot_id){
             return 'table-row-green';
         }
+        if(record.status === 3){
+            return 'table-row-pink';
+        }  
+        if(record.status === 4){
+            return 'table-row-grey';
+        }  
         return '';
     }
     const onClickRow = (row) => {
@@ -124,10 +133,16 @@ const Manufacture1 = (props) => {
             checkPosition(row)
         }
     }
+    const [modal, contextHolder] = Modal.useModal();
+    const config = {
+        title: 'Đã xảy ra lỗi!',
+    };
     const checkPosition = async (record) => {
         var res = await checkMaterialPosition({plan_id: record?.plan_id});
         if(res?.success){
             setSelectedLot(record);
+        }else{
+            modal.info(config);
         }
     }
     const columns = [
@@ -226,20 +241,10 @@ const Manufacture1 = (props) => {
             print();
         }
     }, [listCheck])
-    var interval;
-    // useEffect(() => {
-    //     interval = setInterval(async () => {
-    //         const infoPallet = await getInfoPallet({ line_id: machine_id });
-    //         if (infoPallet.success) {
-    //             // setData(infoPallet.data.map(e => {
-    //             //     return { ...e }
-    //             // }))
-    //         }
-    //     }, 10000);
-    //     return () => clearInterval(interval);
-    // }, [machine_id]);
+    
     return (
         <React.Fragment>
+            {contextHolder}
             <Spin spinning={loading}>
                 <Row className='mt-3' gutter={[2, 12]}>
                     <Col span={5}>
@@ -292,7 +297,7 @@ const Manufacture1 = (props) => {
                             bordered
                             onRow={(record, rowIndex) => {
                                 return {
-                                    onClick: (event) => onClickRow(record)
+                                    onDoubleClick: (event) => onClickRow(record)
                                 };
                             }}
                             className='selectable-table'

@@ -47,6 +47,7 @@ const QuanLyLoi = (props) => {
         form.setFieldValue('result', 2);
         form.submit();
     }
+    const onScan = () =>{}
     return (
         <React.Fragment>
             <Button disabled={!selectedLot?.lot_id}  type={'default'} danger={selectedLot?.phan_dinh===2} size='large' className='w-100 text-wrap h-100' onClick={selectedLot?.phan_dinh===0 ? () => {setOpen(true)} : null}>
@@ -66,6 +67,7 @@ const QuanLyLoi = (props) => {
                     </div>
                 }
             >
+                <ScanButton placeholder={'Nhập mã lỗi hoặc quét mã QR'} onScan={onScan} />
                 <Form
                     form={form}
                     onFinish={onFinish}

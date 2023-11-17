@@ -19,10 +19,19 @@ thead td[class*="ant-table-cell ant-table-cell-scrollbar"]{
     background-color: #EBEBEB;
 }
 .table-row-red {
-    background-color: rgb(236, 20, 110);
+    background-color: #ec1414;
+    color: white
+}
+.table-row-pink {
+    background-color: #e63b82;
+    color: white
 }
 .table-row-green {
     background-color: #9eff7c
+}
+.table-row-blue {
+    background-color: #2878f0;
+    color: white
 }
 .table-row-yellow {
     background-color: #fdfdb4
