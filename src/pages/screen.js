@@ -47,7 +47,12 @@ const Screen = (props) => {
       permission: "oi-tb",
     },
     {
-      title: "Kho",
+      title: "Kho NVL",
+      link: "/warehouse",
+      permission: "oi-kho",
+    },
+    {
+      title: "Kho TP",
       link: "/warehouse",
       permission: "oi-kho",
     },

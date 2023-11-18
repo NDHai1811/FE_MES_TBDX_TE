@@ -1,69 +1,93 @@
 import React, { useEffect, useState } from "react";
-import {
-  CloseOutlined,
-  PrinterOutlined,
-  QrcodeOutlined,
-} from "@ant-design/icons";
-import {
-  Layout,
-  Row,
-  Col,
-  Divider,
-  Button,
-  Table,
-  Modal,
-  Select,
-  Steps,
-  Input,
-  Radio,
-  message,
-} from "antd";
-import { withRouter, Link } from "react-router-dom";
-import DataDetail from "../../../components/DataDetail";
+import { QrcodeOutlined } from "@ant-design/icons";
+import { Row, Col, Table, message } from "antd";
 import "../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import ScanButton from "../../../components/Button/ScanButton";
 import SelectButton from "../../../components/Button/SelectButton";
-import dayjs from "dayjs";
+import { warehousNvlData } from "./mock-data";
 import {
   getInfoImportWareHouse,
   getListImportWareHouse,
-  getProposeWareHouse,
   importWareHouse,
 } from "../../../api";
+
+const columnDetail = [
+  {
+    title: "Mã cuộn TBDX",
+    dataIndex: "ma_cuon_tbdx",
+    key: "ma_cuon_tbdx",
+    align: "center",
+  },
+  {
+    title: "Số kg",
+    dataIndex: "so_kg",
+    key: "so_kg",
+    align: "center",
+  },
+  {
+    title: "Vị trí đề xuất",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+];
+
 const importColumns = [
   {
-    title: "Số lot",
-    dataIndex: "index",
-    key: "index",
-    align: "center",
-    render: (value, record, index) => index + 1,
-  },
-  {
-    title: "Số MQL",
-    dataIndex: "thoi_gian_nhap",
-    key: "thoi_gian_nhap",
+    title: "Thời gian nhập",
+    dataIndex: "time",
+    key: "time",
     align: "center",
   },
   {
-    title: "Số lượng",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
+    title: "Nhà cung cấp",
+    dataIndex: "nha_cung_cap",
+    key: "nha_cung_cap",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn TBDX",
+    dataIndex: "ma_cuon_tbdx",
+    key: "ma_cuon_tbdx",
+    align: "center",
+  },
+  {
+    title: "Loại giấy",
+    dataIndex: "loai_giay",
+    key: "loai_giay",
+    align: "center",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "dinh_luong",
+    key: "dinh_luong",
+    align: "center",
+  },
+  {
+    title: "Số kg",
+    dataIndex: "so_kg",
+    key: "so_kg",
     align: "center",
   },
   {
     title: "Vị trí",
-    dataIndex: "lot_id",
-    key: "lot_id",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
     align: "center",
   },
   {
     title: "Người nhập",
-    dataIndex: "ten_san_pham",
-    key: "ten_san_pham",
+    dataIndex: "nguoi_nhap",
+    key: "nguoi_nhap",
     align: "center",
   },
 ];
@@ -71,10 +95,11 @@ const Import = (props) => {
   document.title = "Kho";
   const { line } = useParams();
   const history = useHistory();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isScan, setIsScan] = useState(0);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isScan, setIsScan] = useState(0);
   const [dataTable, setDataTable] = useState([]);
-  const [lotID, setLotID] = useState([]);
+  // const [lotID, setLotID] = useState([]);
+  const [selectedItem, setSelectedItem] = useState([]);
   const [valueQR, setValueQR] = useState("");
   const options = [
     {
@@ -89,46 +114,40 @@ const Import = (props) => {
   const onChangeLine = (value) => {
     history.push("/warehouse/" + value);
   };
-  const [currentLot, setCurrentLot] = useState([]);
+  const [currentLot, setCurrentLot] = useState([{}]);
 
   const [row1, setRow1] = useState([]);
   const column2 = [
     {
-      title: "Số lot",
+      title: "Số KG nhập trong ngày",
       dataIndex: "ma_thung",
       key: "ma_thung",
       align: "center",
     },
     {
-      title: "Khách hàng",
+      title: "Số cuộn nhập trong ngày",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
     },
     {
-      title: "Số MQL",
+      title: "Số KG tồn trong kho",
       dataIndex: "ten_san_pham",
       key: "ten_san_pham",
       align: "center",
     },
     {
-      title: "Số lượng",
+      title: "Số cuộn tồn trong kho",
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
     },
-    {
-      title: "Vị trí đề xuất",
-      dataIndex: "vi_tri_de_xuat",
-      key: "vi_tri_de_xuat",
-      align: "center",
-    },
   ];
-  const getLotCurrent = async (e) => {
-    const res = await getProposeWareHouse({ lot_id: e.target.value });
-    setCurrentLot(res);
-    setValueQR("");
-  };
+  // const getLotCurrent = async (e) => {
+  //   const res = await getProposeWareHouse({ lot_id: e.target.value });
+  //   setCurrentLot(res);
+  //   setValueQR("");
+  // };
   const loadListTable = async () => {
     setDataTable(await getListImportWareHouse());
   };
@@ -150,6 +169,10 @@ const Import = (props) => {
     }
   };
 
+  const onSelectItem = (val) => {
+    setSelectedItem([val]);
+  };
+
   useEffect(() => {
     (async () => {
       loadListTable();
@@ -159,34 +182,13 @@ const Import = (props) => {
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[12, 12]}>
-        <Col span={6}>
+        <Col span={24}>
           <SelectButton
             value={line}
             options={options}
             label="Chọn"
             onChange={onChangeLine}
-          />
-        </Col>
-        <Col span={18}>
-          <DataDetail data={row1} />
-        </Col>
-        <Col span={24}>
-          <Input
-            size="large"
-            prefix={
-              <QrcodeOutlined
-                style={{ fontSize: "24px", marginRight: "10px" }}
-              />
-            }
-            placeholder={"Nhập mã QR hoặc nhập mã thùng"}
-            onChange={(e) => {
-              setValueQR(e.target.value);
-            }}
-            onPressEnter={
-              currentLot.length ? saveLotInWareHouse : getLotCurrent
-            }
-            value={valueQR}
-            allowClear
+            style={{ width: "100%" }}
           />
         </Col>
         <Col span={24}>
@@ -200,9 +202,25 @@ const Import = (props) => {
             }
             pagination={false}
             bordered
-            className="mb-4"
+            className="mb-1"
             columns={column2}
             dataSource={currentLot}
+          />
+        </Col>
+        <Col span={24}>
+          <Table
+            rowClassName={(record, index) =>
+              record.status === 1
+                ? "table-row-yellow"
+                : record.status === 2
+                ? "table-row-grey"
+                : "table-row-green"
+            }
+            pagination={false}
+            bordered
+            className="mb-1"
+            columns={columnDetail}
+            dataSource={selectedItem}
           />
         </Col>
         <Col span={24}>
@@ -221,7 +239,12 @@ const Import = (props) => {
             bordered
             className="mb-4"
             columns={importColumns}
-            dataSource={dataTable}
+            dataSource={warehousNvlData}
+            onRow={(record) => {
+              return {
+                onClick: () => onSelectItem(record),
+              };
+            }}
           />
         </Col>
       </Row>

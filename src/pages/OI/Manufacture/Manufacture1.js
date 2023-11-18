@@ -20,6 +20,59 @@ import Tem from "../../UI/Manufacture/Tem";
 import { getMachines } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 
+const mockData = [
+  {
+    lo_sx: "S231017",
+    ma_lot: "S231017.04",
+    sl_lot: "300",
+    quy_cach: "DxRxC",
+    san_luong: "200",
+    sl_sau_qc: "",
+    phe_qc: "",
+    phe_sx: "",
+  },
+  {
+    lo_sx: "S231017",
+    ma_lot: "S231017.05",
+    sl_lot: "300",
+    quy_cach: "DxRxC",
+    san_luong: "200",
+    sl_sau_qc: "",
+    phe_qc: "",
+    phe_sx: "",
+  },
+  {
+    lo_sx: "S231017",
+    ma_lot: "S231017.06",
+    sl_lot: "300",
+    quy_cach: "DxRxC",
+    san_luong: "200",
+    sl_sau_qc: "",
+    phe_qc: "",
+    phe_sx: "",
+  },
+  {
+    lo_sx: "S231017",
+    ma_lot: "S231017.03",
+    sl_lot: "300",
+    quy_cach: "DxRxC",
+    san_luong: "300",
+    sl_sau_qc: "Chờ QC",
+    phe_qc: "",
+    phe_sx: "",
+  },
+  {
+    lo_sx: "S231017",
+    ma_lot: "",
+    sl_lot: "300",
+    quy_cach: "DxRxC",
+    san_luong: "300",
+    sl_sau_qc: "299",
+    phe_qc: "1",
+    phe_sx: "",
+  },
+];
+
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
@@ -33,38 +86,38 @@ const Manufacture1 = (props) => {
   const [row1, setRow1] = useState([
     {
       title: "KH ca",
-      value: 0,
+      value: "10000",
     },
     {
       title: "Sản lượng ca",
-      value: 0,
+      value: "1100",
     },
     {
       title: "% KH ca",
-      value: 0,
+      value: "11%",
     },
     {
       title: "Tổng Phế",
-      value: 0,
+      value: "4",
       bg: "#fb4b50",
     },
   ]);
   const [row2, setRow2] = useState([
     {
       title: "Mã lot",
-      value: "-",
+      value: "S231017.04",
     },
     {
       title: "S.L thực",
-      value: "-",
+      value: "200",
     },
     {
       title: "Phế SX",
-      value: "-",
+      value: "4",
     },
     {
       title: "Số lg 1 MQL",
-      value: "-",
+      value: "1800",
     },
     {
       title: "Số m còn lại",
@@ -72,10 +125,9 @@ const Manufacture1 = (props) => {
     },
     {
       title: "T/g hoàn thành",
-      value: "-",
+      value: "15:50:00",
     },
   ]);
-
 
   useEffect(() => {
     getOverAllDetail();
@@ -93,19 +145,19 @@ const Manufacture1 = (props) => {
         setRow1([
           {
             title: "KH ca",
-            value: kh_ca || 0,
+            value: "10000",
           },
           {
             title: "Sản lượng ca",
-            value: so_luong || 0,
+            value: "1100",
           },
           {
             title: "% KH ca",
-            value: ht_kh_ca || 0,
+            value: "11%",
           },
           {
             title: "Tổng Phế",
-            value: phe_sx || 0,
+            value: "4",
             bg: "#fb4b50",
           },
         ]);
@@ -246,58 +298,58 @@ const Manufacture1 = (props) => {
   const columns = [
     {
       title: "Lô SX",
-      dataIndex: "index",
-      key: "index",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
       align: "center",
       width: "15%",
-      render: (value, record, index) => <Checkbox></Checkbox>,
+      // render: (value, record, index) => <Checkbox></Checkbox>,
     },
     {
       title: "Mã Lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      dataIndex: "ma_lot",
+      key: "ma_lot",
       align: "center",
       width: "14%",
     },
     {
       title: "Sl/Lot",
-      dataIndex: "dinh_muc",
-      key: "dinh_muc",
+      dataIndex: "sl_lot",
+      key: "sl_lot",
       align: "center",
       width: "14%",
     },
     {
       title: "Quy cách",
-      dataIndex: "so_luong",
-      key: "so_luong",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
       align: "center",
       width: "14%",
     },
     {
       title: "Sản lượng",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
+      dataIndex: "san_luong",
+      key: "san_luong",
       align: "center",
       width: "14%",
     },
     {
       title: "S.L sau QC",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "sl_sau_qc",
+      key: "sl_sau_qc",
       align: "center",
       width: "14%",
     },
     {
       title: "Phế QC",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "phe_qc",
+      key: "phe_qc",
       align: "center",
       width: "14%",
     },
     {
       title: "Phế SX",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "phe_sx",
+      key: "phe_sx",
       align: "center",
       width: "14%",
     },
@@ -429,7 +481,7 @@ const Manufacture1 = (props) => {
                 };
               }}
               columns={columns}
-              dataSource={data}
+              dataSource={mockData}
             />
           </Col>
         </Row>
