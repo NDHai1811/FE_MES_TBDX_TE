@@ -20,15 +20,6 @@ export async function scanError(params) {
   return res;
 }
 
-export async function getQCOverall(params) {
-  const res = await axios.get("/qc/overall", { params });
-  return res;
-}
-
-export async function sendQCResult(params) {
-  const res = await axios.post("/qc/save-result", params);
-  return res;
-}
 
 export async function getErrorList(params) {
   const res = await axios.get("oi/qc/error/list", { params: params });

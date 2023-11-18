@@ -524,12 +524,6 @@ export async function exportMaintenance(params) {
   const res = await axios.get("/maintenance/export", { params });
   return res;
 }
-<<<<<<< HEAD
-=======
-export async function exportMaintenance(params){
-    const res = await axios.get('/maintenance/export', {params});
-    return res;
-}
 
 //Orders
 export async function getOrders(params){
@@ -552,4 +546,3 @@ export async function exportOrders(params){
     const res = await axios.get('/orders/export', {params});
     return res;
 }
->>>>>>> 567bdb8a8678c7727f84e3561b459c519b3ff50d

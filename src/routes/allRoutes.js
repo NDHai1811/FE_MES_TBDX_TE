@@ -77,16 +77,11 @@ const authProtectedRoutes = [
 
   //OI
   { path: ["/tao-tem"], component: InTem },
-<<<<<<< HEAD
   {
     path: ["/manufacture", "/manufacture/:machine_id"],
     component: Manufacture,
   },
   { path: ["/quality", "/quality/:line"], component: Quality },
-=======
-  { path: ["/manufacture", "/manufacture/:machine_id"], component: Manufacture },
-  { path: ["/quality", "/quality/:machine_id"], component: Quality },
->>>>>>> 567bdb8a8678c7727f84e3561b459c519b3ff50d
   { path: ["/equipment", "/equipment/:line"], component: Equipment },
   { path: ["/warehouse", "/warehouse/:line"], component: Warehouse },
 
@@ -106,7 +101,6 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/khuon"], component: Khuon },
   { path: ["/ui/master-data/jig"], component: Jig },
   { path: ["/ui/master-data/maintenance"], component: Maintenance },
-<<<<<<< HEAD
   {
     path: ["/ui/master-data/maintenance/create"],
     component: CreateMaintenance,
@@ -115,11 +109,6 @@ const authProtectedRoutes = [
     path: ["/ui/master-data/maintenance/edit/:maintenanceId"],
     component: EditMaintenance,
   },
-=======
-  { path: ["/ui/master-data/maintenance/create"], component: CreateMaintenance },
-  { path: ["/ui/master-data/maintenance/edit/:maintenanceId"], component: EditMaintenance },
-  { path: ["/ui/master-data/orders"], component: Orders },
->>>>>>> 567bdb8a8678c7727f84e3561b459c519b3ff50d
 ];
 
 const publicRoutes = [

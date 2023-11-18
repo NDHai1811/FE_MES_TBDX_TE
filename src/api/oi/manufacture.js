@@ -60,10 +60,6 @@ export async function batDauTinhSanLuong(params) {
   return await axios.post("/lot/bat-dau-tinh-dan-luong", params);
 }
 
-export async function getLotByMachine() {
-  return await axios.get("/oi/manufacture/list-lot");
-}
-
 export const getOverAll = async (params) => {
   return await axios.get("/oi/manufacture/overall", params);
 };
