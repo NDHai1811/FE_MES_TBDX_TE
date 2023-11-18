@@ -1,41 +1,41 @@
-thead[class*="ant-table-thead"] th{
-    background-color: #0454a2 !important;
-    color: white !important;
+thead[class*="ant-table-thead"] th {
+  background-color: #0454a2 !important;
+  color: white !important;
 }
 thead td[class*="ant-table-selection-column"] {
-    background-color: #0454a2 !important;
-    color: white !important;
+  background-color: #0454a2 !important;
+  color: white !important;
 }
-thead td[class*="ant-table-cell ant-table-cell-scrollbar"]{
-    background-color: #0454a2 !important;
+thead td[class*="ant-table-cell ant-table-cell-scrollbar"] {
+  background-color: #0454a2 !important;
 }
 .table-row-light {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 .table-row-dark {
-    background-color: #fbfbfb;
+  background-color: #fbfbfb;
 }
 .table-row-grey {
-    background-color: #EBEBEB;
+  background-color: #ebebeb;
 }
 .table-row-red {
-    background-color: rgb(236, 20, 110);
+  background-color: rgb(236, 20, 110);
 }
 .table-row-green {
-    background-color: #9eff7c
+  background-color: #9eff7c;
 }
 .table-row-yellow {
-    background-color: #fdfdb4
+  background-color: #fdfdb4;
 }
 
-thead th[class*= "yellow"]{
-    background-color: #f7ac27 !important;
+thead th[class*="yellow"] {
+  background-color: #f7ac27 !important;
 }
 
-thead th[class*= "red"]{
-    background-color: #fb4b50 !important;
+thead th[class*="red"] {
+  background-color: #fb4b50 !important;
 }
-.ant-table-wrapper .ant-table-tbody >tr.ant-table-row:hover>td{
-    background-color: unset;
-    cursor: pointer;
+.ant-table-wrapper .ant-table-tbody > tr.ant-table-row:hover > td {
+  background-color: unset;
+  cursor: pointer;
 }

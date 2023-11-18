@@ -8,7 +8,7 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "http://127.0.0.1:8000/api",
+    API_URL: "https://bemes.ouransoft.vn/api",
   },
-  baseURL: "http://127.0.0.1:8000",
-}
+  baseURL: "https://bemes.ouransoft.vn/",
+};

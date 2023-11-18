@@ -1,6 +1,6 @@
 import axios from "axios";
-import { api } from "../config"; 
-import {message as messAPI} from "antd";
+import { api } from "../config";
+import { message as messAPI } from "antd";
 // default
 axios.defaults.baseURL = api.API_URL;
 // content type
@@ -14,26 +14,33 @@ axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 // intercepting to capture errors
 const msgKey = Math.random().toString();
 const conf = {
-    key: msgKey,
-    content: 'Đang xử lý...',
+  key: msgKey,
+  content: "Đang xử lý...",
 };
-axios.interceptors.request.use(function (config) {
-  if(config.url !== '/notification/list'){
-    // messAPI.loading(conf);
+axios.interceptors.request.use(
+  function (config) {
+    if (config.url !== "/notification/list") {
+      // messAPI.loading(conf);
+    }
+
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
   }
-  
-  return config;
-}, function (error) {
-  return Promise.reject(error);
-});
+);
 axios.interceptors.response.use(
   function (response) {
-    if(response.data.success && (response.data.message !== '' && response.data.message !== 'success')){
+    if (
+      response.data.success &&
+      response.data.message !== "" &&
+      response.data.message !== "success"
+    ) {
       messAPI.destroy(msgKey);
-      messAPI.success({...conf, content: response.data.message});
-    }else if(!response.data.success && response.data.message !== ''){
+      messAPI.success({ ...conf, content: response.data.message });
+    } else if (!response.data.success && response.data.message !== "") {
       messAPI.destroy(msgKey);
-      messAPI.error({...conf, content: response.data.message});
+      messAPI.error({ ...conf, content: response.data.message });
     }
     return response.data ? response.data : response;
   },
@@ -45,7 +52,7 @@ axios.interceptors.response.use(
         message = "Internal Server Error";
         break;
       case 401:
-        return window.location.href = '/login';
+        return (window.location.href = "/login");
         break;
       case 404:
         message = "Sorry! the data you are looking for could not be found";
@@ -53,7 +60,7 @@ axios.interceptors.response.use(
       default:
         message = error.message || error;
     }
-    messAPI.error({...conf, content: error.message});
+    messAPI.error({ ...conf, content: error.message });
     return Promise.reject(message);
   }
 );
@@ -64,7 +71,6 @@ axios.interceptors.response.use(
 const setAuthorization = (token) => {
   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 };
-
 
 class APIClient {
   /**
@@ -80,12 +86,13 @@ class APIClient {
     let paramKeys = [];
 
     if (params) {
-      Object.keys(params).map(key => {
-        paramKeys.push(key + '=' + params[key]);
+      Object.keys(params).map((key) => {
+        paramKeys.push(key + "=" + params[key]);
         return paramKeys;
       });
 
-      const queryString = paramKeys && paramKeys.length ? paramKeys.join('&') : "";
+      const queryString =
+        paramKeys && paramKeys.length ? paramKeys.join("&") : "";
       response = axios.get(`${url}?${queryString}`, params);
     } else {
       response = await axios.get(`${url}`);

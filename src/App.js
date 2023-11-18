@@ -1,8 +1,7 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import './assets/scss/themes.scss';
-import Route from './routes';
+import React from "react";
+import "./App.css";
+import "./assets/scss/themes.scss";
+import Route from "./routes";
 
 function App() {
   return (

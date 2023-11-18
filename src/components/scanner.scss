@@ -1,97 +1,98 @@
 #html5qr-code-full-region {
-    img[alt="Info icon"] {
-        display: none;
-    }
+  img[alt="Info icon"] {
+    display: none;
+  }
 }
 #html5-qrcode-button-camera-permission {
-    text-indent: -9999px;
-    line-height: 0;
-    margin-bottom: 10px;
+  text-indent: -9999px;
+  line-height: 0;
+  margin-bottom: 10px;
 }
 #html5-qrcode-button-camera-permission:after {
-    content: "Yêu cầu truy cập máy ảnh";
-    text-indent: 0;
-    display: block;
-    line-height: initial;
+  content: "Yêu cầu truy cập máy ảnh";
+  text-indent: 0;
+  display: block;
+  line-height: initial;
 }
 #html5-qrcode-anchor-scan-type-change {
-    font-size: 0;
+  font-size: 0;
 }
 #html5-qrcode-anchor-scan-type-change:after {
-    font-size: 1rem;
-    content: "Sử dụng hình ảnh có sẵn";
-    cursor: pointer;
+  font-size: 1rem;
+  content: "Sử dụng hình ảnh có sẵn";
+  cursor: pointer;
 }
 #html5-qrcode-button-file-selection {
-    text-indent: -9999px;
-    line-height: 0;
-    margin-bottom: 0 !important;
+  text-indent: -9999px;
+  line-height: 0;
+  margin-bottom: 0 !important;
 }
 #html5-qrcode-button-file-selection:after {
-    content: "Chọn hình ảnh";
-    text-indent: 0;
-    display: block;
-    line-height: initial;
+  content: "Chọn hình ảnh";
+  text-indent: 0;
+  display: block;
+  line-height: initial;
 }
 
 #html5qr-code-full-region__dashboard_section {
-    div:first-of-type {
-        div:last-of-type {
-            div {
-            text-indent: -9999px;
-            line-height: 0;
-            }
-            div:after {
-            content: "Hoặc thả hình ảnh vào đây để quét";
-            text-indent: 0;
-            display: block;
-            line-height: initial;
-            }
-        }
+  div:first-of-type {
+    div:last-of-type {
+      div {
+        text-indent: -9999px;
+        line-height: 0;
+      }
+      div:after {
+        content: "Hoặc thả hình ảnh vào đây để quét";
+        text-indent: 0;
+        display: block;
+        line-height: initial;
+      }
     }
+  }
 }
 #html5qr-code-full-region__header_message {
-    text-indent: -9999px;
-    line-height: 0;
+  text-indent: -9999px;
+  line-height: 0;
 }
 #html5qr-code-full-region__header_message:after {
-    content: "Không tìm thấy máy ảnh";
-    text-indent: 0;
-    display: block;
-    line-height: initial;
+  content: "Không tìm thấy máy ảnh";
+  text-indent: 0;
+  display: block;
+  line-height: initial;
 }
 #html5-qrcode-button-camera-start {
-    text-indent: -9999px;
-    line-height: 0;
+  text-indent: -9999px;
+  line-height: 0;
 }
 #html5-qrcode-button-camera-start:after {
-    content: "Bắt đầu quét";
-    text-indent: 0;
-    display: block;
-    line-height: initial;
+  content: "Bắt đầu quét";
+  text-indent: 0;
+  display: block;
+  line-height: initial;
 }
 #html5-qrcode-button-camera-stop {
-    text-indent: -9999px;
-    line-height: 0;
+  text-indent: -9999px;
+  line-height: 0;
 }
 #html5-qrcode-button-camera-stop:after {
-    content: "Dừng quét";
-    text-indent: 0;
-    display: block;
-    line-height: initial;
+  content: "Dừng quét";
+  text-indent: 0;
+  display: block;
+  line-height: initial;
 }
 .bounce-comment-box {
-    animation: MoveUpDown 1.6s linear infinite;
-    position: absolute;
-    left: 0;
-    // bottom: 0;
+  animation: MoveUpDown 1.6s linear infinite;
+  position: absolute;
+  left: 0;
+  // bottom: 0;
 }
 
 @keyframes MoveUpDown {
-    0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
-    }
-    50% {
+  }
+  50% {
     transform: translateY(-20px);
-    }
+  }
 }
