@@ -92,14 +92,20 @@ const importColumns = [
   },
 ];
 const Import = (props) => {
-  document.title = "Kho";
+  document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
   // const [isModalOpen, setIsModalOpen] = useState(false);
   // const [isScan, setIsScan] = useState(0);
   const [dataTable, setDataTable] = useState([]);
   // const [lotID, setLotID] = useState([]);
-  const [selectedItem, setSelectedItem] = useState([]);
+  const [selectedItem, setSelectedItem] = useState([
+    {
+      ma_cuon_tbdx: "456",
+      so_kg: "1800",
+      vi_tri: "A01",
+    },
+  ]);
   const [valueQR, setValueQR] = useState("");
   const options = [
     {
@@ -114,32 +120,39 @@ const Import = (props) => {
   const onChangeLine = (value) => {
     history.push("/warehouse/" + value);
   };
-  const [currentLot, setCurrentLot] = useState([{}]);
+  const [currentLot, setCurrentLot] = useState([
+    {
+      soKgNhapTrongNgay: 0,
+      soCuonNhapTrongNgay: 0,
+      soKgTonTrongKho: 0,
+      soCuonTonTrongKho: 0,
+    },
+  ]);
 
   const [row1, setRow1] = useState([]);
   const column2 = [
     {
       title: "Số KG nhập trong ngày",
-      dataIndex: "ma_thung",
-      key: "ma_thung",
+      dataIndex: "soKgNhapTrongNgay",
+      key: "soKgNhapTrongNgay",
       align: "center",
     },
     {
       title: "Số cuộn nhập trong ngày",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      dataIndex: "soCuonNhapTrongNgay",
+      key: "soCuonNhapTrongNgay",
       align: "center",
     },
     {
       title: "Số KG tồn trong kho",
-      dataIndex: "ten_san_pham",
-      key: "ten_san_pham",
+      dataIndex: "soKgTonTrongKho",
+      key: "soKgTonTrongKho",
       align: "center",
     },
     {
       title: "Số cuộn tồn trong kho",
-      dataIndex: "so_luong",
-      key: "so_luong",
+      dataIndex: "soCuonTonTrongKho",
+      key: "soCuonTonTrongKho",
       align: "center",
     },
   ];
@@ -148,37 +161,39 @@ const Import = (props) => {
   //   setCurrentLot(res);
   //   setValueQR("");
   // };
-  const loadListTable = async () => {
-    setDataTable(await getListImportWareHouse());
-  };
-  const loadInfo = async () => {
-    setRow1(await getInfoImportWareHouse());
-  };
-  const saveLotInWareHouse = async (e) => {
-    if (e.target.value === currentLot[0].vi_tri_de_xuat) {
-      const res = await importWareHouse({
-        lot_id: currentLot[0].ma_thung,
-        cell_id: e.target.value,
-      });
-      loadListTable();
-      loadInfo();
-      setCurrentLot([]);
-      setValueQR("");
-    } else {
-      message.error("Không đúng vị trí đề xuất");
-    }
-  };
+
+  // const loadListTable = async () => {
+  //   setDataTable(await getListImportWareHouse());
+  // };
+
+  // const loadInfo = async () => {
+  //   setRow1(await getInfoImportWareHouse());
+  // };
+
+  // const saveLotInWareHouse = async (e) => {
+  //   if (e.target.value === currentLot[0].vi_tri_de_xuat) {
+  //     const res = await importWareHouse({
+  //       lot_id: currentLot[0].ma_thung,
+  //       cell_id: e.target.value,
+  //     });
+  //     loadListTable();
+  //     loadInfo();
+  //     setCurrentLot([]);
+  //     setValueQR("");
+  //   } else {
+  //     message.error("Không đúng vị trí đề xuất");
+  //   }
+  // };
 
   const onSelectItem = (val) => {
     setSelectedItem([val]);
   };
 
-  useEffect(() => {
-    (async () => {
-      loadListTable();
-      loadInfo();
-    })();
-  }, []);
+  // useEffect(() => {
+  //   loadListTable();
+  //   loadInfo();
+  // }, []);
+
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[12, 12]}>

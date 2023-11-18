@@ -431,21 +431,21 @@ const Manufacture1 = (props) => {
             gutter={20}
             style={{ display: "flex", justifyContent: "space-between" }}
           >
-            <Col span={9}>
+            <Col span={8}>
               <DatePicker
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
               />
             </Col>
-            <Col span={9}>
+            <Col span={8}>
               <DatePicker
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
               />
             </Col>
-            <Col span={3}>
+            <Col span={4}>
               <Button
                 size="medium"
                 type="primary"
@@ -453,7 +453,7 @@ const Manufacture1 = (props) => {
                 icon={<QrcodeOutlined />}
               />
             </Col>
-            <Col span={3}>
+            <Col span={4}>
               <Button
                 size="medium"
                 type="primary"

@@ -9,6 +9,7 @@ const Header = () => {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
+    const isImport = window.location.href.split("/")[4];
     switch (window.location.href.split("/")[3]) {
       case "manufacture":
         setTitle("Quản lý sản xuất");
@@ -20,7 +21,7 @@ const Header = () => {
         setTitle("Quản lý thiết bị");
         break;
       case "warehouse":
-        setTitle("Quản lý kho");
+        setTitle(`Quản lý kho ${isImport === "nhap" ? "NVL" : "TP"}`);
         break;
       default:
         setTitle("Quản lý sản xuất");
