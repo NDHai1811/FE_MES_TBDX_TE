@@ -5,6 +5,7 @@ import {
   SettingOutlined,
   StarOutlined,
   ToolOutlined,
+  AppstoreAddOutlined,
 } from "@ant-design/icons";
 import { Button, Menu, Layout } from "antd";
 import React, { useEffect, useState } from "react";

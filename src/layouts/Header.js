@@ -21,7 +21,7 @@ const Header = () => {
         setTitle("Quản lý thiết bị");
         break;
       case "warehouse":
-        setTitle(`Quản lý kho ${isImport === "nhap" ? "NVL" : "TP"}`);
+        setTitle(`Quản lý kho TP`);
         break;
       default:
         setTitle("Quản lý sản xuất");

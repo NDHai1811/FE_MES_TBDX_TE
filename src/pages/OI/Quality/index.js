@@ -26,7 +26,6 @@ import { sendQCResult } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 
-
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
   const [messageApi, contextHolder] = message.useMessage();
@@ -140,8 +139,12 @@ const Quality = (props) => {
       key: "sl_ng",
       align: "center",
       render: () => {
-        <Checksheet2 text="KT kích thước" selectedLot={selectedRow} onSubmit={onSubmitResult}/>
-      }
+        <Checksheet2
+          text="KT kích thước"
+          selectedLot={selectedRow}
+          onSubmit={onSubmitResult}
+        />;
+      },
     },
     {
       title: "Kiểm tra ngoại quan",
@@ -376,6 +379,9 @@ const Quality = (props) => {
               locale={{ emptyText: "Trống" }}
               pagination={false}
               bordered={true}
+              scroll={{
+                x: window.screen.width,
+              }}
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"
@@ -383,7 +389,11 @@ const Quality = (props) => {
           </Col>
         </Row>
 
-        <Row className="mt-3" gutter={16} style={{ justifyContent: "space-between" }}>
+        <Row
+          className="mt-3"
+          gutter={16}
+          style={{ justifyContent: "space-between" }}
+        >
           <Col span={8}>
             <DatePicker
               placeholder="Từ ngày"

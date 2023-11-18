@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { QrcodeOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
 import { Row, Col, Table } from "antd";
-import "../style.scss";
+import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import SelectButton from "../../../components/Button/SelectButton";
-import { warehousNvlData } from "./mock-data";
+import SelectButton from "../../../../components/Button/SelectButton";
+import { warehousExportTPData } from "../mock-data";
 
 const columnDetail = [
   {
-    title: "Mã cuộn TBDX",
-    dataIndex: "ma_cuon_tbdx",
-    key: "ma_cuon_tbdx",
+    title: "Số pallet",
+    dataIndex: "so_pallet",
+    key: "so_pallet",
     align: "center",
   },
   {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
+    title: "Số MQL",
+    dataIndex: "so_mql",
+    key: "so_mql",
     align: "center",
   },
   {
@@ -27,6 +26,26 @@ const columnDetail = [
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
+  },
+  {
+    title: "Số lượng",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+  {
+    title: "Tách",
+    dataIndex: "tach",
+    key: "tach",
+    align: "center",
+    render: (_, record) => <input type="checkbox" checked />,
+  },
+  {
+    title: "Gộp",
+    dataIndex: "gop",
+    key: "gop",
+    align: "center",
+    render: (_, record) => <input type="checkbox" checked={false} />,
   },
 ];
 
@@ -38,45 +57,45 @@ const importColumns = [
     align: "center",
   },
   {
-    title: "Nhà cung cấp",
-    dataIndex: "nha_cung_cap",
-    key: "nha_cung_cap",
+    title: "Số pallet",
+    dataIndex: "so_pallet",
+    key: "so_pallet",
     align: "center",
   },
   {
-    title: "Mã cuộn TBDX",
-    dataIndex: "ma_cuon_tbdx",
-    key: "ma_cuon_tbdx",
-    align: "center",
-  },
-  {
-    title: "Loại giấy",
-    dataIndex: "loai_giay",
-    key: "loai_giay",
-    align: "center",
-  },
-  {
-    title: "Khổ",
-    dataIndex: "kho",
-    key: "kho",
-    align: "center",
-  },
-  {
-    title: "Định lượng",
-    dataIndex: "dinh_luong",
-    key: "dinh_luong",
-    align: "center",
-  },
-  {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
+    title: "Số xe",
+    dataIndex: "so_xe",
+    key: "so_xe",
     align: "center",
   },
   {
     title: "Vị trí",
     dataIndex: "vi_tri",
     key: "vi_tri",
+    align: "center",
+  },
+  {
+    title: "Số MQL",
+    dataIndex: "so_mql",
+    key: "so_mql",
+    align: "center",
+  },
+  {
+    title: "Số lượng",
+    dataIndex: "so_luong",
+    key: "so_luong",
+    align: "center",
+  },
+  {
+    title: "Số đơn hàng",
+    dataIndex: "so_don_hang",
+    key: "so_don_hang",
+    align: "center",
+  },
+  {
+    title: "Khach hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
     align: "center",
   },
   {
@@ -89,27 +108,21 @@ const importColumns = [
 
 const column2 = [
   {
-    title: "Số KG nhập trong ngày",
-    dataIndex: "soKgNhapTrongNgay",
-    key: "soKgNhapTrongNgay",
+    title: "Số Pallet nhập trong ngày",
+    dataIndex: "soPalletNhapTrongNgay",
+    key: "soPalletNhapTrongNgay",
     align: "center",
   },
   {
-    title: "Số cuộn nhập trong ngày",
-    dataIndex: "soCuonNhapTrongNgay",
-    key: "soCuonNhapTrongNgay",
+    title: "Số Pallet xuất trong ngày",
+    dataIndex: "soPalletXuatTrongNgay",
+    key: "soPalletXuatTrongNgay",
     align: "center",
   },
   {
-    title: "Số KG tồn trong kho",
-    dataIndex: "soKgTonTrongKho",
-    key: "soKgTonTrongKho",
-    align: "center",
-  },
-  {
-    title: "Số cuộn tồn trong kho",
-    dataIndex: "soCuonTonTrongKho",
-    key: "soCuonTonTrongKho",
+    title: "Tổng Pallet tồn trong kho",
+    dataIndex: "soPalletTonTrongKho",
+    key: "soPalletTonTrongKho",
     align: "center",
   },
 ];
@@ -129,68 +142,29 @@ const Import = (props) => {
   document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [isScan, setIsScan] = useState(0);
-  // const [dataTable, setDataTable] = useState([]);
-  // const [lotID, setLotID] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
-      ma_cuon_tbdx: "456",
-      so_kg: "1800",
+      so_pallet: "T300/3",
+      so_mql: "10",
+      so_luong: "150",
       vi_tri: "A01",
     },
   ]);
-  // const [valueQR, setValueQR] = useState("");
 
   const onChangeLine = (value) => {
     history.push("/warehouse/" + value);
   };
   const [currentLot, setCurrentLot] = useState([
     {
-      soKgNhapTrongNgay: 0,
-      soCuonNhapTrongNgay: 0,
-      soKgTonTrongKho: 0,
-      soCuonTonTrongKho: 0,
+      soPalletNhapTrongNgay: 0,
+      soPalletXuatTrongNgay: 0,
+      soPalletTonTrongKho: 0,
     },
   ]);
-
-  // const getLotCurrent = async (e) => {
-  //   const res = await getProposeWareHouse({ lot_id: e.target.value });
-  //   setCurrentLot(res);
-  //   setValueQR("");
-  // };
-
-  // const loadListTable = async () => {
-  //   setDataTable(await getListImportWareHouse());
-  // };
-
-  // const loadInfo = async () => {
-  //   setRow1(await getInfoImportWareHouse());
-  // };
-
-  // const saveLotInWareHouse = async (e) => {
-  //   if (e.target.value === currentLot[0].vi_tri_de_xuat) {
-  //     const res = await importWareHouse({
-  //       lot_id: currentLot[0].ma_thung,
-  //       cell_id: e.target.value,
-  //     });
-  //     loadListTable();
-  //     loadInfo();
-  //     setCurrentLot([]);
-  //     setValueQR("");
-  //   } else {
-  //     message.error("Không đúng vị trí đề xuất");
-  //   }
-  // };
 
   const onSelectItem = (val) => {
     setSelectedItem([val]);
   };
-
-  // useEffect(() => {
-  //   loadListTable();
-  //   loadInfo();
-  // }, []);
 
   return (
     <React.Fragment>
@@ -228,6 +202,9 @@ const Import = (props) => {
                 ? "table-row-grey"
                 : "table-row-green"
             }
+            scroll={{
+              x: window.screen.width,
+            }}
             pagination={false}
             bordered
             className="mb-1"
@@ -251,7 +228,7 @@ const Import = (props) => {
             bordered
             className="mb-4"
             columns={importColumns}
-            dataSource={warehousNvlData}
+            dataSource={warehousExportTPData}
             onRow={(record) => {
               return {
                 onClick: () => onSelectItem(record),

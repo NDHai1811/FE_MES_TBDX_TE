@@ -105,7 +105,7 @@ const Manufacture1 = (props) => {
   const [row2, setRow2] = useState([
     {
       title: "Mã lot",
-      value: "S231017.04",
+      value: "S231",
     },
     {
       title: "S.L thực",
@@ -229,6 +229,9 @@ const Manufacture1 = (props) => {
     }
     if (index === 1 || index === 2) {
       return "";
+    }
+    if (record.sl_sau_qc === "Chờ QC") {
+      return "table-row-pink";
     }
     return record.status === 0 ? "table-row-green" : "table-row-grey";
   };
@@ -427,25 +430,29 @@ const Manufacture1 = (props) => {
             <DataDetail data={row2} />
           </Col>
           <Row
+            gutter={4}
             className="mt-1"
-            gutter={20}
-            style={{ display: "flex", justifyContent: "space-between" }}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
           >
-            <Col span={8}>
+            <Col span={9}>
               <DatePicker
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
               />
             </Col>
-            <Col span={8}>
+            <Col span={9}>
               <DatePicker
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
               />
             </Col>
-            <Col span={4}>
+            <Col span={3}>
               <Button
                 size="medium"
                 type="primary"
@@ -453,7 +460,7 @@ const Manufacture1 = (props) => {
                 icon={<QrcodeOutlined />}
               />
             </Col>
-            <Col span={4}>
+            <Col span={3}>
               <Button
                 size="medium"
                 type="primary"

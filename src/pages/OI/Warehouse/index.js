@@ -18,8 +18,8 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import Import from "./Import";
-import Export from "./Export";
+import Import from "./finished-product/import";
+import Export from "./finished-product/export";
 const { Header, Content } = Layout;
 const data = [
   {
