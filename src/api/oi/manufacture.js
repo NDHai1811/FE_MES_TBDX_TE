@@ -67,3 +67,15 @@ export async function getLotByMachine() {
 export const getOverAll = async (params) => {
   return await axios.get("/oi/manufacture/overall", params);
 };
+export async function getLotByMachine(params) {
+    const res = await axios.get('/oi/manufacture/list-lot', {params});
+    return res;
+}
+export async function checkMaterialPosition(params) {
+    const res = await axios.get('/oi/manufacture/check-material-position', {params});
+    return res;
+}
+export async function getManufactureOverall(params) {
+    const res = await axios.get('/oi/manufacture/overall', {params: params});
+    return res.data;
+}

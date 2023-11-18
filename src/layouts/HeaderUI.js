@@ -7,6 +7,7 @@ import { useProfile } from "../components/hooks/UserHooks";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const items = [
+<<<<<<< HEAD
   {
     label: "Sản xuất",
     key: "manufacture",
@@ -28,6 +29,197 @@ const items = [
         key: "manufacture/quan-ly-san-luong",
       },
     ],
+=======
+    {
+        label: 'Sản xuất',
+        key:'manufacture',
+        children: [
+            {
+                label: 'Quản lý giấy và bảo ôn',
+                key:'manufacture/giay-bao-on',
+            },
+            {
+                label: 'Kế hoạch sản xuất',
+                key:'manufacture/ke-hoach-san-xuat',
+            },
+            {
+                label: 'Lịch sử sản xuất',
+                key:'manufacture/lich-su-san-xuat',
+            },
+            {
+                label: 'Quản lý sản lượng',
+                key:'manufacture/quan-ly-san-luong',
+            },
+        ],
+        
+        permission:'ui-sx'
+    },
+    {
+        label: 'Chất lượng',
+        key:'quality',
+        children:[
+            {
+                label: 'PQC',
+                key:'quality/PQC',
+            },
+            {
+                label: 'OQC',
+                key:'quality/OQC',
+            }
+        ],
+        permission:'ui-cl'
+    },
+    {
+        label: 'Thiết bị',
+        key:'equipment',
+        children:[
+            {
+                label: 'Thống kê lỗi',
+                key:'equipment/thong-ke-loi',
+            },
+            {
+                label: 'Thông số máy',
+                key:'equipment/thong-so-may',
+            }
+        ],
+        permission:'ui-tb'
+    }, 
+    {
+        label: 'Kho',
+        key:'warehouse',
+        children:[
+            {
+                label: 'Quản lý kho thành phẩm giấy',
+                key:'warehouse/thanh-pham-giay',
+            },
+            {
+                label: 'Kế hoạch xuất kho',
+                key:'warehouse/ke-hoach-xuat-kho',
+            }
+        ],
+        permission:'ui-kho'
+    },
+    {
+        label: 'KPI',
+        key:'kpi',
+        permission:'ui-kpi'
+    },
+    {
+        label: 'Giám sát bất thường',
+        key:'abnormal',
+        children:[
+            {
+                label: 'Kịch bản bất thường',
+                key:'abnormal/kich-ban-bat-thuong',
+            },
+            {
+                label: 'Lịch sử bất thường',
+                key:'abnormal/lich-su-bat-thuong',
+            }
+        ],
+        permission:'ui-abnormal'
+    },
+    {
+        label: 'Master Data',
+        key:'master-data',
+        children: [
+            {
+                label: 'Danh sách công đoạn',
+                key:'master-data/cong-doan',
+            },
+            {
+                label: 'Máy và NVL',
+                children:[
+                    {
+                        label: 'Danh sách máy',
+                        key:'master-data/may',
+                    },
+                    {
+                        label: 'Spec sản phẩm',
+                        key:'master-data/spec-product',
+                    },
+                    {
+                        label: 'Nguyên vật liệu',
+                        key:'master-data/material',
+                    },
+                    
+                    {
+                        label: 'Khuôn',
+                        key:'master-data/khuon',
+                    },
+                    {
+                        label: 'Đơn hàng',
+                        key:'master-data/orders',
+                    },
+                ],
+            },
+            
+            {
+                label: 'Lỗi',
+                children:[
+                    {
+                        label: 'Danh sách lỗi',
+                        key:'master-data/errors',
+                    },
+                    {
+                        label: 'Danh sách chỉ tiêu kiểm tra',
+                        key:'master-data/test_criteria',
+                    },
+                    {
+                        label: 'Lỗi máy',
+                        key:'master-data/error-machines',
+                    },
+                ],
+            },
+            
+            {
+                label: 'Tổ chức',
+                children: [
+                    {
+                        label: 'Danh sách tài khoản',
+                        key:'master-data/users',
+                    },
+                    {
+                        label: 'Bộ phận',
+                        key:'master-data/roles',
+                    },
+                    {
+                        label: 'Quyền',
+                        key:'master-data/permissions',
+                    },
+                ]
+            },
+            {
+                label: 'Kho',
+                children:[
+                    {
+                        label: 'Kho',
+                        key:'master-data/warehouse',
+                    },
+                    {
+                        label: 'Vị trí kho',
+                        key:'master-data/cell',
+                    },
+                ],
+            },
+            {
+                label: 'Bảo trì bảo dưỡng',
+                key:'master-data/maintenance',
+            },
+        ], 
+        permission:'master'
+    },
+]
+const HeaderUI = () => {
+    const { userProfile } = useProfile();
+    const [clock, setClock] = useState(new Date())
+    useEffect(()=>{
+        setInterval(() => tick(), 1000);
+    }, [])
+    const tick = () => {
+        setClock(new Date());
+    }
+>>>>>>> 567bdb8a8678c7727f84e3561b459c519b3ff50d
 
     permission: "ui-sx",
   },

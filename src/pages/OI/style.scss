@@ -19,10 +19,23 @@ thead td[class*="ant-table-cell ant-table-cell-scrollbar"] {
   background-color: #ebebeb;
 }
 .table-row-red {
+<<<<<<< HEAD
   background-color: rgb(236, 20, 110);
+=======
+    background-color: #ec1414;
+    color: white
+}
+.table-row-pink {
+    background-color: #e63b82;
+    color: white
+>>>>>>> 567bdb8a8678c7727f84e3561b459c519b3ff50d
 }
 .table-row-green {
   background-color: #9eff7c;
+}
+.table-row-blue {
+    background-color: #2878f0;
+    color: white
 }
 .table-row-yellow {
   background-color: #fdfdb4;
@@ -39,3 +52,22 @@ thead th[class*="red"] {
   background-color: unset;
   cursor: pointer;
 }
+<<<<<<< HEAD
+=======
+.ant-table-wrapper.selectable-table .ant-table-tbody >tr.ant-table-row:hover>td{
+    background-color: unset;
+    cursor: pointer;
+}
+.ant-table-wrapper.custom-table .ant-table{
+    border-radius: 8px !important;
+}
+.ant-table-wrapper.custom-table .ant-table-tbody >tr >td{
+    border-bottom: 0;
+}
+.ant-table-wrapper.custom-table .ant-table.ant-table-bordered >.ant-table-container{
+    border-inline-start: 0;
+}
+.ant-table-wrapper.custom-table td:last-child{
+    border-inline-end: 0 !important;
+}
+>>>>>>> 567bdb8a8678c7727f84e3561b459c519b3ff50d
