@@ -1,5 +1,5 @@
 import { Html5Qrcode } from "html5-qrcode";
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 
 const qrConfig = { fps: 10, qrbox: { width: 200, height: 200 } };
 const brConfig = { fps: 10, qrbox: { width: 300, height: 150 } };
@@ -18,11 +18,7 @@ const ScanQR = (props) => {
   useEffect(() => {
     if (props.isScan === 1) {
       html5QrCode
-        .start(
-          { facingMode: "environment" },
-          qrConfig,
-          qrCodeSuccessCallback
-        )
+        .start({ facingMode: "environment" }, qrConfig, qrCodeSuccessCallback)
         .then(() => {
           // const oldRegion = document.getElementById("qr-shaded-region");
           // if (oldRegion) oldRegion.innerHTML = "";
@@ -31,7 +27,7 @@ const ScanQR = (props) => {
     if (props.isScan === 2) {
       handleStop();
     }
-  }, [props.isScan])
+  }, [props.isScan]);
 
   const handleStop = () => {
     try {
@@ -47,8 +43,6 @@ const ScanQR = (props) => {
       console.log(err);
     }
   };
-  return (
-    <div id="reader" width="100%"></div>
-  );
-}
-export default ScanQR
+  return <div id="reader" width="100%"></div>;
+};
+export default ScanQR;

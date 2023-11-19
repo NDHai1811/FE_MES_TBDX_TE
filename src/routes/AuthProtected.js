@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
-import {setAuthorization} from "../helpers/api_helper";
+import { setAuthorization } from "../helpers/api_helper";
 import { useDispatch } from "react-redux";
 
 import { useProfile } from "../components/hooks/UserHooks";
@@ -9,13 +9,12 @@ import { logoutUser } from "../store/actions";
 
 import { setUserProfile } from "../store/actions";
 
-
 const AuthProtected = (props) => {
   const dispatch = useDispatch();
   const { userProfile } = useProfile();
   useEffect(() => {
     if (userProfile) {
-      dispatch(setUserProfile(JSON.parse(localStorage.getItem("authUser"))))
+      dispatch(setUserProfile(JSON.parse(localStorage.getItem("authUser"))));
       setAuthorization(userProfile.token);
     } else if (!userProfile) {
       dispatch(logoutUser());
@@ -38,8 +37,13 @@ const AccessRoute = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props => {
-        return (<> <Component {...props} /> </>);
+      render={(props) => {
+        return (
+          <>
+            {" "}
+            <Component {...props} />{" "}
+          </>
+        );
       }}
     />
   );

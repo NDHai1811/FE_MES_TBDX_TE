@@ -1,7 +1,7 @@
 import React from "react";
 import Barcode from "react-barcode";
 import styled from "styled-components";
-import './style.css';
+import "./style.css";
 import { QRCode, Space } from "antd";
 
 const PageBreakWrapper = styled.div`
@@ -28,13 +28,18 @@ const PrintTemplate = ({ detail }) => {
               <td colSpan={4}>
                 <div className="d-flex justify-content-between">
                   <div className="flex-column">
-                    <h5 style={{ marginLeft: '8px' }}>NO:</h5>
-                    <h5 style={{ marginLeft: '8px' }}>{detail.lot_id}</h5>
+                    <h5 style={{ marginLeft: "8px" }}>NO:</h5>
+                    <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5>
                   </div>
 
                   {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
-                  <QRCode style={{marginRight:'12px'}} value={detail.lot_id} bordered={false} size={100} type="svg" />
-
+                  <QRCode
+                    style={{ marginRight: "12px" }}
+                    value={detail.lot_id}
+                    bordered={false}
+                    size={100}
+                    type="svg"
+                  />
                 </div>
               </td>
             </tr>
@@ -46,13 +51,15 @@ const PrintTemplate = ({ detail }) => {
             </tr>
             <tr>
               <td>Ver/His</td>
-              <td>{(detail?.his && detail?.ver) && detail?.ver + '/' + detail?.his}</td>
+              <td>
+                {detail?.his && detail?.ver && detail?.ver + "/" + detail?.his}
+              </td>
               <td>Lô SX</td>
               <td>{detail.lo_sx}</td>
             </tr>
             <tr>
               <td>Công đoạn thực hiện</td>
-              <td>{detail.cd_thuc_hien ? detail.cd_thuc_hien : 'Kho'}</td>
+              <td>{detail.cd_thuc_hien ? detail.cd_thuc_hien : "Kho"}</td>
               <td>Thời gian SX</td>
               <td>{detail.tg_sx}</td>
             </tr>
@@ -64,14 +71,12 @@ const PrintTemplate = ({ detail }) => {
             </tr>
             <tr>
               <td>Công đoạn tiếp theo</td>
-              <td>{detail.cd_tiep_theo ? detail.cd_tiep_theo : 'Kho'}</td>
+              <td>{detail.cd_tiep_theo ? detail.cd_tiep_theo : "Kho"}</td>
               <td>Người sản xuất</td>
-              <td>{detail.nguoi_sx ? detail.nguoi_sx : ''}</td>
+              <td>{detail.nguoi_sx ? detail.nguoi_sx : ""}</td>
             </tr>
             <tr>
-              <td colSpan={4}>
-                Ghi chú
-              </td>
+              <td colSpan={4}>Ghi chú</td>
             </tr>
           </tbody>
         </table>
@@ -88,10 +93,6 @@ export default class TemThung extends React.Component {
       const tempTemplate = <PrintTemplate detail={detail} />;
       printingPages.push(tempTemplate);
     }
-    return (
-      <div>
-        {printingPages}
-      </div>
-    );
+    return <div>{printingPages}</div>;
   }
 }
