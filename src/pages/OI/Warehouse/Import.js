@@ -143,7 +143,7 @@ const Import = (props) => {
   // const [valueQR, setValueQR] = useState("");
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/" + value);
+    history.push("/warehouse/kho-nvl/" + value);
   };
   const [currentLot, setCurrentLot] = useState([
     {

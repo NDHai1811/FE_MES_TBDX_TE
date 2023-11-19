@@ -1,18 +1,8 @@
-import {
-  Form,
-  Modal,
-  Row,
-  Col,
-  Button,
-  Divider,
-  Radio,
-  Space,
-  Input,
-} from "antd";
+import { Form, Modal, Row, Col, Button, Divider, Radio, Space } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
 import { useEffect } from "react";
-import { getChecksheetList, sendResultChecksheet } from "../../api/oi/quality";
+import { sendResultChecksheet } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Checksheet1 = (props) => {
   const { line } = useParams();
@@ -39,7 +29,7 @@ const Checksheet1 = (props) => {
     values.lot_id = lotId;
     values.line_id = line;
     console.log(values);
-    var res = await sendResultChecksheet(values);
+    // var res = await sendResultChecksheet(values);
     setIsSubmited(true);
     closeModal();
     // }else{

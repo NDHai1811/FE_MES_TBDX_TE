@@ -2,32 +2,16 @@ import {
   Layout,
   Divider,
   Button,
-  Table,
-  Menu,
-  Card,
-  Checkbox,
   DatePicker,
   Form,
   Input,
   theme,
-  Col,
   Select,
   AutoComplete,
 } from "antd";
-import React, { useEffect, useState } from "react";
-const { Header, Sider, Content } = Layout;
+import React, { useState } from "react";
+const { Sider } = Layout;
 
-const siderStyle = {
-  textAlign: "center",
-  lineHeight: "120px",
-  color: "#fff",
-  backgroundColor: "#fff",
-};
-const options = [
-  { label: "Thiết bị số 1", value: "Apple" },
-  { label: "Thiết bị số 2", value: "Pear" },
-  { label: "Thiết bị số 3", value: "Orange" },
-];
 const { RangePicker } = DatePicker;
 
 const SidebarUI = () => {

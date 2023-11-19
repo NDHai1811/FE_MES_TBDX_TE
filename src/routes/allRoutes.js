@@ -8,6 +8,7 @@ import Manufacture from "../pages/OI/Manufacture";
 import Quality from "../pages/OI/Quality";
 import Equipment from "../pages/OI/Equipment";
 import Warehouse from "../pages/OI/Warehouse";
+import WarehouseTP from "../pages/OI/Warehouse/finished-product";
 
 import UIManufacture from "../pages/UI/Manufacture";
 import UIManufactureKHSX from "../pages/UI/Manufacture/KeHoachSanXuat";
@@ -46,7 +47,6 @@ import Maintenance from "../pages/UI/MasterData/Maintenance/";
 import CreateMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import ChangePassword from "../pages/Authentication/ChangePassword";
-import Orders from "../pages/UI/MasterData/Orders";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -83,7 +83,8 @@ const authProtectedRoutes = [
   },
   { path: ["/quality", "/quality/:line"], component: Quality },
   { path: ["/equipment", "/equipment/:line"], component: Equipment },
-  { path: ["/warehouse", "/warehouse/:line"], component: Warehouse },
+  { path: ["/warehouse", "/warehouse/kho-nvl/:line"], component: Warehouse },
+  { path: ["/warehouse", "/warehouse/kho-tp/:line"], component: WarehouseTP },
 
   //Master Data
   { path: ["/ui/master-data/may"], component: Machine },

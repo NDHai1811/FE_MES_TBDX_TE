@@ -1,23 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { QrcodeOutlined } from "@ant-design/icons";
-import {
-  Row,
-  Col,
-  Button,
-  Table,
-  Modal,
-  Input,
-  Form,
-  InputNumber,
-  message,
-  Space,
-  Select,
-} from "antd";
-import {
-  useHistory,
-  useParams,
-} from "react-router-dom/cjs/react-router-dom.min";
-import dayjs from "dayjs";
+import { Row, Col, Button, Input, Form, InputNumber, Select } from "antd";
 import TemThung from "./Warehouse/TemThung";
 import { useReactToPrint } from "react-to-print";
 import { listProduct, taoTem } from "../../api";

@@ -1,37 +1,29 @@
 import axios from "axios";
 
 export async function scanPalletQC(params) {
-  const res = await axios.post("/qc/scanPallet", params);
-  return res;
+  return await axios.post("/qc/scanPallet", params);
 }
 
 export async function getLotQCList(params) {
-  const res = await axios.get("oi/qc/lot/list", { params });
-  return res.data;
+  return await axios.get("oi/qc/lot/list", { params });
 }
 
 export async function getChecksheetList(params) {
-  const res = await axios.get("/oi/qc/checksheet/list", { params: params });
-  return res;
+  return await axios.get("/oi/qc/checksheet/list", { params: params });
 }
 
 export async function scanError(params) {
-  const res = await axios.get("/qc/error/list", { params: params });
-  return res;
+  return await axios.get("/qc/error/list", { params: params });
 }
 
-
 export async function getErrorList(params) {
-  const res = await axios.get("oi/qc/error/list", { params: params });
-  return res;
+  return await axios.get("oi/qc/error/list", { params: params });
 }
 
 export async function getQCOverall(params) {
-  const res = await axios.get("oi/qc/overall", { params });
-  return res.data;
+  return await axios.get("oi/qc/overall", { params });
 }
 
 export async function sendQCResult(params) {
-  const res = await axios.post("oi/qc/save-result", params);
-  return res;
+  return await axios.post("oi/qc/save-result", params);
 }

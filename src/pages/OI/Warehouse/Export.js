@@ -166,7 +166,7 @@ const Export = (props) => {
   };
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/" + value);
+    history.push("/warehouse/kho-nvl/" + value);
   };
   const [customers, setCustomers] = useState([]);
   const [row1, setRow1] = useState([

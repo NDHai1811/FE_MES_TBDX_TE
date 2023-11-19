@@ -132,7 +132,7 @@ const Import = (props) => {
   ]);
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/" + value);
+    history.push("/warehouse/kho-tp/" + value);
   };
   const [currentLot, setCurrentLot] = useState([
     {
