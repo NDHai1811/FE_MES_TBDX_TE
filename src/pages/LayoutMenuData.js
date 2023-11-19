@@ -17,8 +17,6 @@ const Navdata = () => {
   const [isMachine, setIsMachine] = useState(false);
   const [isMaintenancePlan, setIsMaintenancePlan] = useState(false);
   const [isTrouble, setIsTrouble] = useState(false);
-  const [isInspection, setIsInspection] = useState(false);
-  const [isSparePart, setIsSparePart] = useState(false);
   const [isLibrary, setIsLibrary] = useState(false);
 
   const [isShowSystem, setIsShowSystem] = useState(false);

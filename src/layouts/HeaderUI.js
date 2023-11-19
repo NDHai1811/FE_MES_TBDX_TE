@@ -198,16 +198,13 @@ const HeaderUI = () => {
   };
 
   const [ui, setUI] = useState(window.location.pathname.split("/ui/")[1]);
-  const [userInfo, setUserInfo] = useState();
   const history = useHistory();
   const selectMenu = (key) => {
     let r = "/ui/" + key.key;
     history.push(r);
     setUI(key.key);
   };
-  useEffect(() => {
-    console.log(ui);
-  }, [ui]);
+
   const logout = () => {
     window.location.href = "/logout";
   };

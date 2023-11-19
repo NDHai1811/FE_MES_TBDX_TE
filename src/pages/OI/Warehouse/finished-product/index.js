@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
-import "../style.scss";
+import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import Import from "./Import";
-import Export from "./Export";
+import Import from "./import";
+import Export from "./export";
 
-const Warehouse = (props) => {
+const WarehouseTP = (props) => {
   document.title = "Kho";
   const { line } = useParams();
   const history = useHistory();
 
   useEffect(() => {
     if (!line) {
-      history.push("/warehouse/kho-nvl/nhap");
+      history.push("/warehouse/kho-tp/nhap");
     }
   }, [line]);
   return (
@@ -26,4 +26,4 @@ const Warehouse = (props) => {
   );
 };
 
-export default withRouter(Warehouse);
+export default withRouter(WarehouseTP);

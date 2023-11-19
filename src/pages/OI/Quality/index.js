@@ -13,6 +13,7 @@ import {
   DatePicker,
 } from "antd";
 import { withRouter } from "react-router-dom";
+import moment from "moment";
 import "../style.scss";
 import { PrinterOutlined } from "@ant-design/icons";
 import {
@@ -26,6 +27,15 @@ import { sendQCResult } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 
+const mockData = [
+  {
+    tong_lot_kiem: "100",
+    so_lot_dat: "99",
+    tong_phe: "80",
+    ti_le: "99.98%",
+  },
+];
+
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
   const [messageApi, contextHolder] = message.useMessage();
@@ -34,6 +44,7 @@ const Quality = (props) => {
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
+  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([
     {
       lot_id: "xxxxxxxx.01",
@@ -97,29 +108,29 @@ const Quality = (props) => {
   const overallColumns = [
     {
       title: "Tổng Lot Kiểm",
-      dataIndex: "so_luong",
-      key: "so_luong",
+      dataIndex: "tong_lot_kiem",
+      key: "tong_lot_kiem",
       align: "center",
       width: 100 / 4 + "%",
     },
     {
       title: "Số Lot Đạt",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "so_lot_dat",
+      key: "so_lot_dat",
       align: "center",
       width: 100 / 4 + "%",
     },
     {
       title: "Tổng phế (SX+OC)",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "tong_phe",
+      key: "tong_phe",
       align: "center",
       width: 100 / 4 + "%",
     },
     {
       title: "Tỉ lệ thành phẩm OK",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "ti_le",
+      key: "ti_le",
       align: "center",
       width: 100 / 4 + "%",
     },
@@ -138,19 +149,30 @@ const Quality = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      render: () => {
+      width: "20%",
+      render: () => (
         <Checksheet2
-          text="KT kích thước"
+          text="Kiểm tra"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
-        />;
-      },
+          onClose={() => setOpenModal(false)}
+        />
+      ),
     },
     {
       title: "Kiểm tra ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
+      width: "20%",
+      render: () => (
+        <Checksheet2
+          text="Kiểm tra"
+          selectedLot={selectedRow}
+          onSubmit={onSubmitResult}
+          onClose={() => setOpenModal(false)}
+        />
+      ),
     },
     {
       title: "Số phế",
@@ -162,6 +184,7 @@ const Quality = (props) => {
         <InputNumber
           defaultValue={text}
           onChange={(value) => handleInputChange(record, value)}
+          placeholder="Nhập số lượng"
         />
       ),
     },
@@ -365,9 +388,12 @@ const Quality = (props) => {
               pagination={false}
               bordered={true}
               columns={overallColumns}
-              dataSource={[]}
+              dataSource={mockData}
               size="small"
               style={{ borderRadius: 12 }}
+              scroll={{
+                x: window.screen.width,
+              }}
             />
           </Col>
         </Row>
@@ -399,6 +425,7 @@ const Quality = (props) => {
               placeholder="Từ ngày"
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
+              defaultValue={moment()}
             />
           </Col>
           <Col span={8}>
@@ -406,6 +433,7 @@ const Quality = (props) => {
               placeholder="Đến ngày"
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
+              defaultValue={moment()}
             />
           </Col>
           <Col span={8}>
@@ -507,6 +535,14 @@ const Quality = (props) => {
             </Form.Item>
           </Form>
         </Modal>
+        {openModal && (
+          <Checksheet2
+            text="KT kích thước"
+            selectedLot={selectedRow}
+            onSubmit={onSubmitResult}
+            onClose={() => setOpenModal(false)}
+          />
+        )}
       </Spin>
     </React.Fragment>
   );

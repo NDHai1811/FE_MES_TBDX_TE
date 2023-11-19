@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { Row, Col, Button, Table, Spin, Checkbox, DatePicker } from "antd";
+import moment from 'moment';
 
 import DataDetail from "../../../components/DataDetail";
 import "../style.scss";
@@ -145,20 +146,20 @@ const Manufacture1 = (props) => {
         setRow1([
           {
             title: "KH ca",
-            value: "10000",
+            value: kh_ca,
           },
           {
-            title: "S.L ca",
-            value: "1100",
+            title: "Sản lượng ca",
+            value: so_luong,
           },
           {
             title: "% KH ca",
-            value: "11%",
+            value: ht_kh_ca,
           },
           {
             title: "Tổng Phế",
             value: "4",
-            bg: "#fb4b50",
+            bg: phe_sx,
           },
         ]);
       })
@@ -265,36 +266,6 @@ const Manufacture1 = (props) => {
         },
       ]);
     } else {
-      // setRow2([
-      //     {
-      //         title: 'Mã Palet',
-      //         value: ''
-      //     },
-      //     {
-      //         title: 'Tên sản phẩm',
-      //         value: ''
-      //     },
-      //     {
-      //         title: 'UPH (Ấn định)',
-      //         value: ''
-      //     },
-      //     {
-      //         title: 'UPH (Thực tế)',
-      //         value: ''
-      //     },
-      //     {
-      //         title: 'SL đầu ra (KH)',
-      //         value: ''
-      //     },
-      //     {
-      //         title: 'SL đầu ra (TT)',
-      //         value: ''
-      //     },
-      //     {
-      //         title: 'SL đầu ra (TT OK)',
-      //         value: ''
-      //     },
-      // ]);
       setListCheck([]);
     }
   }, [selectedLot]);
@@ -340,7 +311,7 @@ const Manufacture1 = (props) => {
       dataIndex: "sl_sau_qc",
       key: "sl_sau_qc",
       align: "center",
-      width: "14%",
+      width: "25%",
     },
     {
       title: "Phế QC",
@@ -427,7 +398,12 @@ const Manufacture1 = (props) => {
             <DataDetail data={row1} />
           </Col>
           <Col span={24}>
-            <DataDetail data={row2} />
+            <DataDetail
+              data={row2}
+              scroll={{
+                x: window.screen.width,
+              }}
+            />
           </Col>
           <Row
             gutter={4}
@@ -443,6 +419,7 @@ const Manufacture1 = (props) => {
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
+                defaultValue={moment()}
               />
             </Col>
             <Col span={9}>
@@ -450,6 +427,7 @@ const Manufacture1 = (props) => {
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
+                defaultValue={moment()}
               />
             </Col>
             <Col span={3}>

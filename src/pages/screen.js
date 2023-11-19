@@ -48,12 +48,12 @@ const Screen = (props) => {
     },
     {
       title: "Kho NVL",
-      link: "/warehouse",
+      link: "/warehouse/kho-nvl/nhap",
       permission: "oi-kho",
     },
     {
       title: "Kho TP",
-      link: "/warehouse",
+      link: "/warehouse/kho-tp/nhap",
       permission: "oi-kho",
     },
   ];
