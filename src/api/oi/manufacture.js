@@ -61,7 +61,7 @@ export async function batDauTinhSanLuong(params) {
 }
 
 export const getOverAll = async (params) => {
-  return await axios.get("/oi/manufacture/overall", params);
+  return await axios.get("/oi/manufacture/overall", {params});
 };
 export async function getLotByMachine(params) {
   return await axios.get("/oi/manufacture/list-lot", { params });
