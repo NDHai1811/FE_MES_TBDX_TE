@@ -80,7 +80,7 @@ const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const history = useHistory();
-
+  const [params, setParams] = useState({machine_id: machine_id, start_date: dayjs(), end_date: dayjs()})
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -133,12 +133,13 @@ const Manufacture1 = (props) => {
   ]);
 
   useEffect(() => {
-    getOverAllDetail();
+    setParams({...params, machine_id: machine_id})
   }, [machine_id]);
 
-  useEffect(() => {
+  useEffect(()=>{
+    getOverAllDetail();
     getListLotDetail();
-  }, [machine_id]);
+  }, params)
 
   useEffect(() => {
     getMachineList();
@@ -146,7 +147,7 @@ const Manufacture1 = (props) => {
 
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll({ machine_id, start_date: dayjs(), end_date: dayjs() })
+    getOverAll(params)
       .then((res) => {
         const { kh_ca, so_luong, ht_kh_ca, phe_sx } = res.data?.[0] || {};
         setRow1([
@@ -186,7 +187,7 @@ const Manufacture1 = (props) => {
 
   const getListLotDetail = () => {
     setLoading(true);
-    getLotByMachine({ machine_id, start_date: dayjs(), end_date: dayjs() })
+    getLotByMachine(params)
       .then((res) => {
         setData(res.data);
       })
@@ -243,16 +244,16 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (index === 0) {
+    if (record.status === 1 || index === 0) {
       return "table-row-green";
     }
-    if (index === 1 || index === 2) {
-      return "";
-    }
-    if (record.sl_sau_qc === "Chờ QC") {
+    if (record.status === 3) {
       return "table-row-pink";
     }
-    return record.status === 0 ? "table-row-green" : "table-row-grey";
+    if (record.status === 4) {
+      return "table-row-grey";
+    }
+    return "";
   };
 
   const onClickRow = (row) => {
@@ -352,54 +353,26 @@ const Manufacture1 = (props) => {
   ];
   const componentRef1 = useRef();
   const handlePrint = async () => {
-    if (selectedLot) {
-      var res = await inTem({
-        lot_id: selectedLot.lot_id,
-        line_id: machine_id,
-      });
-      if (res.success) {
-        let list = [];
-        const data = Array.isArray(res.data) ? res.data : [res.data];
-        data.forEach((lot) => {
-          const newItems = lot.lot_id.map((e, index) => ({
-            ...selectedLot,
-            lot_id: e,
-            soluongtp: lot.so_luong[index],
-            product_id: selectedLot.ma_hang,
-            lsx: selectedLot.lo_sx,
-            cd_thuc_hien: options.find((e) => e.value === parseInt(machine_id))
-              ?.label,
-            cd_tiep_theo:
-              machine_id === "22"
-                ? "Bế"
-                : options[
-                    options.findIndex((e) => e.value === parseInt(machine_id)) +
-                      1
-                  ]?.label,
-          }));
-          list = [...list, ...newItems];
-        });
-        setListCheck(list);
-      }
+    if(listCheck.length > 0){
+      print();
     }
   };
 
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  useEffect(() => {
-    if (listCheck.length > 0) {
-      print();
-    }
-  }, [listCheck]);
+  // useEffect(() => {
+  //   if (listCheck.length > 0) {
+  //     print();
+  //   }
+  // }, [listCheck]);
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRows)
     },
-    getCheckboxProps: (record) => ({
-      disabled: record.status === 1 || record.status === 2,
-      status: record.status
-    }),
+    getCheckboxProps: (record) => {
+      return {disabled: record.status !== 4}
+    },
   };
   return (
     <React.Fragment>
