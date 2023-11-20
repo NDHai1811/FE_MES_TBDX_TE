@@ -119,7 +119,7 @@ const Screen = (props) => {
                 </Title>
               </div>
               <div className="p-2 mt-3">
-                {/* <Row gutter={[16, 16]}>
+                <Row gutter={[16, 16]}>
                   {dashboard.length > 0 && (
                     <Divider style={{ margin: 0 }}>DASHBOARD</Divider>
                   )}
@@ -136,7 +136,7 @@ const Screen = (props) => {
                     );
                     // }
                   })}
-                </Row> */}
+                </Row>
                 <Row gutter={[16, 16]} className="mt-3">
                   {permissionOI.length > 0 && (
                     <Divider style={{ margin: 0 }}>OI</Divider>
@@ -155,7 +155,7 @@ const Screen = (props) => {
                     // }
                   })}
                 </Row>
-                {/* <Row gutter={[16, 16]} className="mt-3">
+                <Row gutter={[16, 16]} className="mt-3">
                   {permissionUI.length > 0 && (
                     <Divider style={{ margin: 0 }}>UI</Divider>
                   )}
@@ -172,7 +172,7 @@ const Screen = (props) => {
                     );
                     // }
                   })}
-                </Row> */}
+                </Row>
               </div>
               <Divider />
               <Space direction="vertical" style={{ width: "100%" }}>
