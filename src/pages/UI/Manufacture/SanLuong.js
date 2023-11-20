@@ -118,8 +118,8 @@ const SanLuong = () => {
     },
     {
       title: "Công đoạn",
-      dataIndex: "line",
-      key: "line",
+      dataIndex: "machine",
+      key: "machine",
       align: "center",
       render: (value, item, index) => value.name,
       fixed: "left",
