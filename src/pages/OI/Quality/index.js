@@ -312,7 +312,7 @@ const Quality = (props) => {
     setLoading(true);
     var res = await getLotQCList({machine_id: line, start_date: dayjs(), end_date: dayjs()});
     setData(res.data);
-    if (res.data.length > 0 && res.data[0].result === 0) {
+    if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
     }
     setLoading(false);
