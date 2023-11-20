@@ -23,10 +23,11 @@ import {
 import SelectButton from "../../../components/Button/SelectButton";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getListMachine } from "../../../api";
-import { sendQCResult } from "../../../api/oi/quality";
+import { getLotQCList, sendQCResult } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
+import dayjs from "dayjs";
 
 const mockData = [
   {
@@ -237,6 +238,7 @@ const Quality = (props) => {
       key: "sl_ng",
       align: "center",
       width: "16%",
+      render: (value, record, index) => value ? value : record.phan_dinh !== 0 ? value : "-"
     },
     {
       title: "Phế QC",
@@ -244,11 +246,12 @@ const Quality = (props) => {
       key: "sl_ng",
       align: "center",
       width: "16%",
+      render: (value, record, index) => value ? value : record.phan_dinh !== 0 ? value : "-"
     },
     {
       title: "Phán định",
-      dataIndex: "result",
-      key: "result",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
       align: "center",
       width: "16%",
       render: (value) => {
@@ -307,10 +310,10 @@ const Quality = (props) => {
 
   async function getData() {
     setLoading(true);
-    var machines = await getListMachine();
-    setData(data);
-    if (data.length > 0 && data[0].result === 0) {
-      setSelectedRow(data[0]);
+    var res = await getLotQCList({machine_id: line, start_date: dayjs(), end_date: dayjs()});
+    setData(res.data);
+    if (res.data.length > 0 && res.data[0].result === 0) {
+      setSelectedRow(res.data[0]);
     }
     setLoading(false);
   }
@@ -426,7 +429,7 @@ const Quality = (props) => {
               placeholder="Từ ngày"
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
-              defaultValue={moment()}
+              defaultValue={dayjs()}
             />
           </Col>
           <Col span={8}>
@@ -434,7 +437,7 @@ const Quality = (props) => {
               placeholder="Đến ngày"
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
-              defaultValue={moment()}
+              defaultValue={dayjs()}
             />
           </Col>
           <Col span={8}>

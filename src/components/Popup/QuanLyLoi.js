@@ -27,14 +27,14 @@ const QuanLyLoi = (props) => {
         setOpen(false);
     };
     const [errorsList, setErrorsList] = useState([]);
-    useEffect(() => {
-        (async () => {
-            var res = await scanError();
-            if (res.success) {
-                setErrorsList(res.data);
-            }
-        })();
-    }, [line]);
+    // useEffect(() => {
+    //     (async () => {
+    //         var res = await scanError();
+    //         if (res.success) {
+    //             setErrorsList(res.data);
+    //         }
+    //     })();
+    // }, [line]);
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
     const onFinish = async (values) => {
@@ -60,6 +60,12 @@ const QuanLyLoi = (props) => {
         form.setFieldValue("result", 2);
         form.submit();
     };
+    const onScan = async (result) =>{
+        var res = await scanError({machine_id: line, error_id: result});
+        if (res.success) {
+            setErrorsList([...errorsList, res.data]);
+        }
+    }
     return (
         <React.Fragment>
             <Button
@@ -104,6 +110,7 @@ const QuanLyLoi = (props) => {
                     </div>
                 }
             >
+                <ScanButton placeholder={'Nhập mã lỗi hoặc quét mã QR'} onScan={onScan} />
                 <Form form={form} onFinish={onFinish} initialValues={{}} colon={false}>
                     <Form.List name={"data"}>
                         {(fields, { add, remove }, { errors }) =>
@@ -116,10 +123,10 @@ const QuanLyLoi = (props) => {
                                             className="d-flex justify-content-center flex-wrap align-items-lg-center"
                                         >
                                             <div
-                                                className="d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center"
+                                                className="d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center flex-wrap"
                                                 style={{ backgroundColor: "#EBEBEB", height: "100%" }}
                                             >
-                                                {e.noi_dung}
+                                                {e.name}
                                             </div>
                                         </Col>
                                         <Col span={12}>

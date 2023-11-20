@@ -21,6 +21,7 @@ import { useReactToPrint } from "react-to-print";
 import Tem from "../../UI/Manufacture/Tem";
 import { getMachines } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
+import dayjs from "dayjs";
 
 const mockData = [
   {
@@ -145,7 +146,7 @@ const Manufacture1 = (props) => {
 
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll({ machine_id })
+    getOverAll({ machine_id, start_date: dayjs(), end_date: dayjs() })
       .then((res) => {
         const { kh_ca, so_luong, ht_kh_ca, phe_sx } = res.data?.[0] || {};
         setRow1([
@@ -185,7 +186,7 @@ const Manufacture1 = (props) => {
 
   const getListLotDetail = () => {
     setLoading(true);
-    getLotByMachine({ machine_id })
+    getLotByMachine({ machine_id, start_date: dayjs(), end_date: dayjs() })
       .then((res) => {
         setData(res.data);
       })
@@ -322,6 +323,7 @@ const Manufacture1 = (props) => {
       key: "san_luong",
       align: "center",
       width: "14%",
+      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
     },
     {
       title: "S.L sau QC",
@@ -329,6 +331,7 @@ const Manufacture1 = (props) => {
       key: "sl_ok",
       align: "center",
       width: "25%",
+      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
     },
     {
       title: "Phế QC",
@@ -336,6 +339,7 @@ const Manufacture1 = (props) => {
       key: "sl_ng_qc",
       align: "center",
       width: "14%",
+      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
     },
     {
       title: "Phế SX",
@@ -343,6 +347,7 @@ const Manufacture1 = (props) => {
       key: "sl_ng_sx",
       align: "center",
       width: "14%",
+      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
     },
   ];
   const componentRef1 = useRef();
@@ -387,18 +392,15 @@ const Manufacture1 = (props) => {
       print();
     }
   }, [listCheck]);
-  var interval;
-  // useEffect(() => {
-  //     interval = setInterval(async () => {
-  //         const infoPallet = await getInfoPallet({ line_id: machine_id });
-  //         if (infoPallet.success) {
-  //             // setData(infoPallet.data.map(e => {
-  //             //     return { ...e }
-  //             // }))
-  //         }
-  //     }, 10000);
-  //     return () => clearInterval(interval);
-  // }, [machine_id]);
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRows)
+    },
+    getCheckboxProps: (record) => ({
+      disabled: record.status === 1 || record.status === 2,
+      status: record.status
+    }),
+  };
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -436,7 +438,7 @@ const Manufacture1 = (props) => {
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
-                defaultValue={moment()}
+                defaultValue={dayjs()}
               />
             </Col>
             <Col span={9}>
@@ -444,7 +446,7 @@ const Manufacture1 = (props) => {
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
-                defaultValue={moment()}
+                defaultValue={dayjs()}
               />
             </Col>
             <Col span={3}>
@@ -477,13 +479,14 @@ const Manufacture1 = (props) => {
               rowClassName={rowClassName}
               pagination={false}
               bordered
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => onClickRow(record),
-                };
-              }}
+              rowSelection={rowSelection}
+              // onRow={(record, rowIndex) => {
+              //   return {
+              //     onClick: (event) => onClickRow(record),
+              //   };
+              // }}
               columns={columns}
-              dataSource={data}
+              dataSource={data.map((e, index)=>{return {...e, key: index}})}
             />
           </Col>
         </Row>
