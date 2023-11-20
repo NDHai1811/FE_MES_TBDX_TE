@@ -1,39 +1,38 @@
 .print-only {
+  display: none;
+}
+
+.report-history-invoice {
+  display: none;
+}
+
+@media print {
+  .no-print {
     display: none;
   }
-  
-  .report-history-invoice {
-    display: none;
+
+  .print-only {
+    display: block;
+    width: 100%;
+    align-items: center;
   }
-  
-  @media print {
-    .no-print {
-      display: none;
-    }
-  
-    .print-only {
-      display: block;
-      width: 100%;
-      align-items: center;
-    }
-  
-    td {
-      border: 1px solid black;
-      min-height: 150px;
-      max-width: 136px;
-      font-size: 14px;
-      word-wrap: break-word;
-    }
-  
-  
-    table {
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: auto;
-      margin-bottom: auto;
-      background-color: #fff;
-      width: 454px;
-      height: 378px;
-      border-collapse: collapse;
-    }
+
+  td {
+    border: 1px solid black;
+    min-height: 150px;
+    max-width: 136px;
+    font-size: 14px;
+    word-wrap: break-word;
   }
+
+  table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    background-color: #fff;
+    width: 454px;
+    height: 378px;
+    border-collapse: collapse;
+  }
+}

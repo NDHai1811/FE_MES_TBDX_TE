@@ -1,29 +1,39 @@
-.ant-radio-group-solid .negative-radio.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-    color: #fff;
-    background: #fb4b50;
-    border-color: #fb4b50;
+.ant-radio-group-solid
+  .negative-radio.ant-radio-button-wrapper-checked:not(
+    .ant-radio-button-wrapper-disabled
+  ) {
+  color: #fff;
+  background: #fb4b50;
+  border-color: #fb4b50;
 }
-.ant-radio-group-solid .positive-radio.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-    color: #fff;
-    background: #55c32a;
-    border-color: #55c32a;
+.ant-radio-group-solid
+  .positive-radio.ant-radio-button-wrapper-checked:not(
+    .ant-radio-button-wrapper-disabled
+  ) {
+  color: #fff;
+  background: #55c32a;
+  border-color: #55c32a;
 }
-.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
-    background-color: unset;
+.ant-radio-button-wrapper-checked:not(
+    .ant-radio-button-wrapper-disabled
+  )::before {
+  background-color: unset;
 }
-.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover::before {
-    background-color: unset;
+.ant-radio-button-wrapper-checked:not(
+    .ant-radio-button-wrapper-disabled
+  ):hover::before {
+  background-color: unset;
 }
 .positive-radio.ant-radio-button-wrapper:hover {
-    position: relative;
-    color: #55c32a;
+  position: relative;
+  color: #55c32a;
 }
 .negative-radio.ant-radio-button-wrapper:hover {
-    position: relative;
-    color: #fb4b50;
+  position: relative;
+  color: #fb4b50;
 }
 
 .gutter-box {
-    padding: 8px 0;
-    background: #00a0e9;
+  padding: 8px 0;
+  background: #00a0e9;
 }

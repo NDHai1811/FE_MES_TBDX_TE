@@ -1,21 +1,19 @@
-import {
-    SET_PROFILE_USER
-} from "./actionType";
+import { SET_PROFILE_USER } from "./actionType";
 
 const INIT_STATE = {
-    userInfo: {},
+  userInfo: {},
 };
 
 const User = (state = INIT_STATE, action) => {
-    switch (action.type) {
-        case SET_PROFILE_USER:
-            return {
-                ...state,
-                userInfo: action.payload,
-            };
-        default:
-            return { ...state };
-    }
+  switch (action.type) {
+    case SET_PROFILE_USER:
+      return {
+        ...state,
+        userInfo: action.payload,
+      };
+    default:
+      return { ...state };
+  }
 };
 
 export default User;

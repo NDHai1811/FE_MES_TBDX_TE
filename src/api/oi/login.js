@@ -1,10 +1,8 @@
 import axios from "axios";
 
 export async function login(params) {
-    const res = await axios.post('/login');
-    return res;
+  return await axios.post("/login");
 }
 export async function changePassword(params) {
-    const res = await axios.post('/user/password/update', params);
-    return res;
+  return await axios.post("/user/password/update", params);
 }

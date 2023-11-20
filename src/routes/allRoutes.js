@@ -8,6 +8,7 @@ import Manufacture from "../pages/OI/Manufacture";
 import Quality from "../pages/OI/Quality";
 import Equipment from "../pages/OI/Equipment";
 import Warehouse from "../pages/OI/Warehouse";
+import WarehouseTP from "../pages/OI/Warehouse/finished-product";
 
 import UIManufacture from "../pages/UI/Manufacture";
 import UIManufactureKHSX from "../pages/UI/Manufacture/KeHoachSanXuat";
@@ -17,13 +18,13 @@ import UIQualityPQC from "../pages/UI/Quality/PQC";
 import UIQualityOQC from "../pages/UI/Quality/OQC";
 import UIEquipment1 from "../pages/UI/Equipment/Equipment1";
 import UIEquipment2 from "../pages/UI/Equipment/Equipment2";
-import UIKPI from "../pages/UI/KPI"
+import UIKPI from "../pages/UI/KPI";
 import WarehouseExportPlan from "../pages/UI/Warehouse/WarehouseExportPlan";
 import ThanhPhamGiay from "../pages/UI/Warehouse/ThanhPhamGiay";
 import DBTinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 import DBHieuSuatThietBi from "../pages/DB/HieuSuatThietBi";
 import DBCanhBaoBatThuong from "../pages/DB/CanhBaoBatThuong";
-import DashBoard from '../pages/DB'
+import DashBoard from "../pages/DB";
 import Logout from "../pages/Authentication/Logout";
 import Kichban from "../pages/UI/Abnormal/Kichban";
 import Giamsat from "../pages/UI/Abnormal/Giamsat";
@@ -46,7 +47,6 @@ import Maintenance from "../pages/UI/MasterData/Maintenance/";
 import CreateMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import ChangePassword from "../pages/Authentication/ChangePassword";
-import Orders from "../pages/UI/MasterData/Orders";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -66,18 +66,25 @@ const authProtectedRoutes = [
   { path: ["/ui/quality/OQC"], component: UIQualityOQC },
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
   { path: ["/ui/equipment/thong-so-may"], component: UIEquipment2 },
-  { path: ["/ui", "/ui/warehouse/ke-hoach-xuat-kho"], component: WarehouseExportPlan },
+  {
+    path: ["/ui", "/ui/warehouse/ke-hoach-xuat-kho"],
+    component: WarehouseExportPlan,
+  },
   { path: ["/ui/warehouse/thanh-pham-giay"], component: ThanhPhamGiay },
   { path: ["/ui/kpi"], component: UIKPI },
   { path: ["/ui/abnormal/kich-ban-bat-thuong"], component: Kichban },
   { path: ["/ui/abnormal/lich-su-bat-thuong"], component: Giamsat },
-  
+
   //OI
   { path: ["/tao-tem"], component: InTem },
-  { path: ["/manufacture", "/manufacture/:machine_id"], component: Manufacture },
-  { path: ["/quality", "/quality/:machine_id"], component: Quality },
+  {
+    path: ["/manufacture", "/manufacture/:machine_id"],
+    component: Manufacture,
+  },
+  { path: ["/quality", "/quality/:line"], component: Quality },
   { path: ["/equipment", "/equipment/:line"], component: Equipment },
-  { path: ["/warehouse", "/warehouse/:line"], component: Warehouse },
+  { path: ["/warehouse", "/warehouse/kho-nvl/:line"], component: Warehouse },
+  { path: ["/warehouse", "/warehouse/kho-tp/:line"], component: WarehouseTP },
 
   //Master Data
   { path: ["/ui/master-data/may"], component: Machine },
@@ -95,9 +102,14 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/khuon"], component: Khuon },
   { path: ["/ui/master-data/jig"], component: Jig },
   { path: ["/ui/master-data/maintenance"], component: Maintenance },
-  { path: ["/ui/master-data/maintenance/create"], component: CreateMaintenance },
-  { path: ["/ui/master-data/maintenance/edit/:maintenanceId"], component: EditMaintenance },
-  { path: ["/ui/master-data/orders"], component: Orders },
+  {
+    path: ["/ui/master-data/maintenance/create"],
+    component: CreateMaintenance,
+  },
+  {
+    path: ["/ui/master-data/maintenance/edit/:maintenanceId"],
+    component: EditMaintenance,
+  },
 ];
 
 const publicRoutes = [
@@ -105,7 +117,10 @@ const publicRoutes = [
   { path: "/logout", component: Logout },
   { path: "/change-password", component: ChangePassword },
   // dashboard
-  { path: ["/dashboard-slide", "/dashboard-slide/:screen"], component: DashBoard },
+  {
+    path: ["/dashboard-slide", "/dashboard-slide/:screen"],
+    component: DashBoard,
+  },
   { path: ["/dashboard/tinh-hinh-san-xuat"], component: DBTinhHinhSanXuat },
   { path: ["/dashboard/hieu-suat-thiet-bi"], component: DBHieuSuatThietBi },
   { path: ["/dashboard/canh-bao-bat-thuong"], component: DBCanhBaoBatThuong },

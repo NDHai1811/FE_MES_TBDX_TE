@@ -15,7 +15,7 @@ const Logout = (props) => {
   }));
 
   useEffect(() => {
-    localStorage.removeItem('authUser');
+    localStorage.removeItem("authUser");
     dispatch(logoutUser());
   }, [dispatch]);
 

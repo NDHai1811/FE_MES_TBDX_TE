@@ -138,12 +138,11 @@ export const UPDATE_CONFIG = "/config/update";
 //Users
 export const GET_ALL_USERS = "/users";
 
-//Role 
+//Role
 export const GET_ROLE_LIST = "/role/index";
 export const ADD_NEW_ROLE = "/role/store";
 export const UPDATE_ROLE = "/role/update";
 export const DELETE_ROLE = "/role/destroy";
-
 
 export const DELETE_FILE = "/delete_file";
 export const GET_ALL_EQUIPMENTS = "/equipments";

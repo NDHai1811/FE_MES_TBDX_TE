@@ -1,28 +1,42 @@
-.ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected::after, .ant-menu-light>.ant-menu.ant-menu-horizontal >.ant-menu-item-selected::after, .ant-menu-light.ant-menu-horizontal >.ant-menu-submenu-selected::after, .ant-menu-light>.ant-menu.ant-menu-horizontal >.ant-menu-submenu-selected::after {
-    border-bottom-width: 2px;
-    border-bottom-color: #ffffff;
+.ant-menu-light.ant-menu-horizontal > .ant-menu-item-selected::after,
+.ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-item-selected::after,
+.ant-menu-light.ant-menu-horizontal > .ant-menu-submenu-selected::after,
+.ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-submenu-selected::after {
+  border-bottom-width: 2px;
+  border-bottom-color: #ffffff;
 }
-.ant-menu-light.ant-menu-horizontal >.ant-menu-item-selected, .ant-menu-light>.ant-menu.ant-menu-horizontal >.ant-menu-item-selected, .ant-menu-light.ant-menu-horizontal >.ant-menu-submenu-selected, .ant-menu-light>.ant-menu.ant-menu-horizontal >.ant-menu-submenu-selected {
-    color: #ffffff;
-    background-color: transparent;
+.ant-menu-light.ant-menu-horizontal > .ant-menu-item-selected,
+.ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-item-selected,
+.ant-menu-light.ant-menu-horizontal > .ant-menu-submenu-selected,
+.ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-submenu-selected {
+  color: #ffffff;
+  background-color: transparent;
 }
-.ant-menu-light .ant-menu-item:hover:not(.ant-menu-item-selected):not(.ant-menu-submenu-selected){
-    color: #fff;
+.ant-menu-light
+  .ant-menu-item:hover:not(.ant-menu-item-selected):not(
+    .ant-menu-submenu-selected
+  ) {
+  color: #fff;
 }
-.ant-menu-light.ant-menu-horizontal >.ant-menu-item:hover::after,.ant-menu-light.ant-menu-horizontal >.ant-menu-item-active::after{
-    border-bottom-color: #fff;
+.ant-menu-light.ant-menu-horizontal > .ant-menu-item:hover::after,
+.ant-menu-light.ant-menu-horizontal > .ant-menu-item-active::after {
+  border-bottom-color: #fff;
 }
-::-webkit-scrollbar{
-    width: 5px;
-    height: 5px;
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 1px #B9b9b9; 
-    border-radius: 3px;
-  }
-   
-  /* Handle */
+  box-shadow: inset 0 0 1px #b9b9b9;
+  border-radius: 3px;
+}
+
+/* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #B9b9b9; 
-    border-radius: 3px;
-  }
+  background: #b9b9b9;
+  border-radius: 3px;
+}
