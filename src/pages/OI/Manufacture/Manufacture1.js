@@ -477,11 +477,11 @@ const Manufacture1 = (props) => {
               rowClassName={rowClassName}
               pagination={false}
               bordered
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => onClickRow(record),
-                };
-              }}
+              // onRow={(record, rowIndex) => {
+              //   return {
+              //     onClick: (event) => onClickRow(record),
+              //   };
+              // }}
               columns={columns}
               dataSource={data}
             />
