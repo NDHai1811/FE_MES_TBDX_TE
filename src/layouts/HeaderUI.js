@@ -12,20 +12,12 @@ const items = [
     key: "manufacture",
     children: [
       {
-        label: "Quản lý giấy và bảo ôn",
-        key: "manufacture/giay-bao-on",
-      },
-      {
         label: "Kế hoạch sản xuất",
         key: "manufacture/ke-hoach-san-xuat",
       },
       {
         label: "Lịch sử sản xuất",
         key: "manufacture/lich-su-san-xuat",
-      },
-      {
-        label: "Quản lý sản lượng",
-        key: "manufacture/quan-ly-san-luong",
       },
     ],
 

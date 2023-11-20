@@ -13,6 +13,7 @@ import {
   Space,
   Spin,
 } from "antd";
+import { Column } from "@ant-design/plots";
 import "../style.scss";
 import {
   getLines,
@@ -38,7 +39,7 @@ const columns1 = [
     align: "center",
   },
   {
-    title: "Số lượng đầu ra OK (thực tế)",
+    title: "Số lượng sau QC (thực tế)",
     dataIndex: "sl_dau_ra_thuc_te_ok",
     key: "sl_dau_ra_thuc_te_ok",
     align: "center",
@@ -56,84 +57,11 @@ const columns1 = [
     align: "center",
   },
   {
-    title: "Số lượng tem vàng",
-    dataIndex: "sl_tem_vang",
-    key: "sl_tem_vang",
-    className: "yellow",
-    align: "center",
-  },
-  {
-    title: "Số lượng NG",
+    title: "Số phế",
     dataIndex: "sl_ng",
     key: "sl_ng",
     className: "red",
     align: "center",
-  },
-];
-
-const columns2 = [
-  {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    width: "16%",
-  },
-  {
-    title: "In",
-    dataIndex: "in",
-    key: "in",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
-  },
-  {
-    title: "In lưới",
-    dataIndex: "in-luoi",
-    key: "in-luoi",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
-  },
-  {
-    title: "Phủ",
-    dataIndex: "phu",
-    key: "phu",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
-  },
-  {
-    title: "Bế",
-    dataIndex: "be",
-    key: "be",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
-  },
-  {
-    title: "Bóc",
-    dataIndex: "boc",
-    key: "boc",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
-  },
-  {
-    title: "Gấp dán 2",
-    dataIndex: "gap-dan",
-    key: "gap-dan",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
-  },
-  {
-    title: "Chọn",
-    dataIndex: "chon",
-    key: "chon",
-    align: "center",
-    width: "12%",
-    render: (value, record, index) => value,
   },
 ];
 
@@ -144,72 +72,48 @@ const columns3 = [
     key: "index",
     align: "center",
     fixed: "left",
+    width:'3%',
     render: (value, record, index) => index + 1,
   },
   {
-    title: "Tên sản phẩm",
-    dataIndex: "ten_san_pham",
-    key: "ten_san_pham",
+    title: "Máy",
+    dataIndex: "machine_id",
+    key: "machine_id",
     align: "center",
     fixed: "left",
-  },
-  {
-    title: "Ngày sản xuất",
-    dataIndex: "ngay_sx",
-    key: "ngay_sx",
-    align: "center",
-  },
-  {
-    title: "Công đoạn",
-    dataIndex: "cong_doan",
-    key: "cong_doan",
-    align: "center",
-  },
-  {
-    title: "Máy sản xuất",
-    dataIndex: "machine",
-    key: "machine",
-    align: "center",
+    width:'4%',
   },
   {
     title: "Khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
+    fixed: "left",
   },
   {
-    title: "Mã hàng",
-    dataIndex: "product_id",
-    key: "product_id",
+    title: "Đơn hàng",
+    dataIndex: "don_hang",
+    key: "don_hang",
     align: "center",
+    fixed: "left",
   },
   {
     title: "Lô sản xuất",
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
+    fixed: "left",
   },
   {
-    title: "Mã pallet/thùng",
-    dataIndex: "lot_id",
-    key: "lot_id",
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
     align: "center",
+    fixed: "left",
   },
   {
     title: "Kế hoạch",
     children: [
-      {
-        title: "Thời gian bắt đầu",
-        dataIndex: "thoi_gian_bat_dau_kh",
-        key: "thoi_gian_bat_dau_kh",
-        align: "center",
-      },
-      {
-        title: "Thời gian kết thúc",
-        dataIndex: "thoi_gian_ket_thuc_kh",
-        key: "thoi_gian_ket_thuc_kh",
-        align: "center",
-      },
       {
         title: "Số lượng đầu vào",
         dataIndex: "sl_dau_vao_kh",
@@ -240,42 +144,36 @@ const columns3 = [
         align: "center",
       },
       {
-        title: "Thời gian chạy sản lượng",
-        dataIndex: "thoi_gian_chay_san_luong",
-        key: "thoi_gian_chay_san_luong",
-        align: "center",
-      },
-      {
-        title: "Số lượng đầu vào thực tế",
-        dataIndex: "sl_dau_vao_hang_loat",
-        key: "sl_dau_vao_hang_loat",
-        align: "center",
-      },
-      {
-        title: "Số lượng đầu ra thực tế",
+        title: "Sản lượng đếm được",
         dataIndex: "sl_dau_ra_hang_loat",
         key: "sl_dau_ra_hang_loat",
         align: "center",
       },
       {
-        title: "Số lượng đầu ra OK",
+        title: "Sản lượng sau QC",
         dataIndex: "sl_dau_ra_ok",
         key: "sl_dau_ra_ok",
         align: "center",
       },
       {
-        title: "Số lượng tem vàng",
-        dataIndex: "sl_tem_vang",
-        key: "sl_tem_vang",
+        title: "Số lượng phế",
+        dataIndex: "sl_ng",
+        key: "sl_ng",
         align: "center",
       },
       {
-        title: "Số lượng NG",
+        title: "Tỉ lệ đầu ra/Đầu vào",
         dataIndex: "sl_ng",
         key: "sl_ng",
         align: "center",
       },
     ],
+  },
+  {
+    title: "Cycle time lý thuyết",
+    dataIndex: "cycle_time",
+    key: "cycle_time",
+    align: "center",
   },
 ];
 
@@ -287,22 +185,66 @@ const LichSuSanXuat = (props) => {
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const dataChart = [
+    {
+      year: "In",
+      value: 3,
+      type: "Còn lại kế hoạch",
+    },
+    {
+      year: "Bế",
+      value: 4,
+      type: "Còn lại kế hoạch",
+    }
+  ];
+  const config = {
+    showTitle: true,
+    title: {
+      visible: false,
+      text: "Your Stats",
+    },
+    data: dataChart,
+    isStack: true,
+    xField: "year",
+    yField: "value",
+    seriesField: "type",
+    label: {
+      style: {
+        color: "black",
+        fontWeight: "700",
+      },
+      position: "middle",
+      layout: [
+        {
+          type: "interval-adjust-position",
+        },
+        {
+          type: "interval-hide-overlap",
+        },
+        {
+          type: "adjust-color",
+        },
+      ],
+    },
+    colorField: "type", // or seriesField in some cases
+    color: ["#bebebe", "#6ab0ed"],
+  };
   useEffect(() => {
     (async () => {
-      const res1 = await getLines();
-      setListLines(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      const res5 = await getCustomers();
-      setListCustomers(
-        res5.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
+      // const res1 = await getLines();
+      // setListLines(
+      //   res1.data.map((e) => {
+      //     return { ...e, label: e.name, value: e.id };
+      //   })
+      // );
+      // const res5 = await getCustomers();
+      // setListCustomers(
+      //   res5.data.map((e) => {
+      //     return { ...e, label: e.name, value: e.id };
+      //   })
+      // );
     })();
-    btn_click();
+    // btn_click();
   }, []);
 
   useEffect(() => {
@@ -311,19 +253,19 @@ const LichSuSanXuat = (props) => {
 
   useEffect(() => {
     (async () => {
-      var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-      if (res.success) {
-        setListNameProducts(
-          res.data.product.map((e) => {
-            return { ...e, label: e.name, value: e.id };
-          })
-        );
-        setListLoSX(
-          Object.values(res.data.lo_sx).map((e) => {
-            return { label: e, value: e };
-          })
-        );
-      }
+      // var res = await getDataFilterUI({ khach_hang: params.khach_hang });
+      // if (res.success) {
+      //   setListNameProducts(
+      //     res.data.product.map((e) => {
+      //       return { ...e, label: e.name, value: e.id };
+      //     })
+      //   );
+      //   setListLoSX(
+      //     Object.values(res.data.lo_sx).map((e) => {
+      //       return { label: e, value: e };
+      //     })
+      //   );
+      // }
     })();
   }, [params.khach_hang]);
 
@@ -540,36 +482,33 @@ const LichSuSanXuat = (props) => {
             }
           >
             <Spin spinning={loading}>
-              <Table
-                className="mb-3"
-                size="small"
-                bordered
-                pagination={false}
-                columns={columns1}
-                dataSource={dataTable1}
-              />
-              <Table
-                className="mb-3"
-                size="small"
-                bordered
-                pagination={false}
-                scroll={{
-                  x: "100%",
-                  y: "15vh",
-                }}
-                columns={columns2}
-                dataSource={dataTable2}
-              />
+              <Row>
+                <Col span={12}>
+                  <Table
+                    className="mb-3"
+                    size="small"
+                    bordered
+                    pagination={false}
+                    columns={columns1}
+                    dataSource={[]}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Column {...config}/>
+                </Col>
+                <Col span={6}>
+                </Col>
+              </Row>
               <Table
                 size="small"
                 bordered
                 pagination={false}
                 scroll={{
-                  x: "150vw",
+                  x: "130vw",
                   y: "50vh",
                 }}
                 columns={columns3}
-                dataSource={dataTable3}
+                dataSource={[]}
               />
             </Spin>
           </Card>

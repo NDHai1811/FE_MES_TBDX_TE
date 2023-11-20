@@ -10,9 +10,7 @@ import Equipment from "../pages/OI/Equipment";
 import Warehouse from "../pages/OI/Warehouse";
 import WarehouseTP from "../pages/OI/Warehouse/finished-product";
 
-import UIManufacture from "../pages/UI/Manufacture";
 import UIManufactureKHSX from "../pages/UI/Manufacture/KeHoachSanXuat";
-import UIManufactureSL from "../pages/UI/Manufacture/SanLuong";
 import UIManufactureLSSX from "../pages/UI/Manufacture/LichSuSanXuat";
 import UIQualityPQC from "../pages/UI/Quality/PQC";
 import UIQualityOQC from "../pages/UI/Quality/OQC";
@@ -58,10 +56,8 @@ const authProtectedRoutes = [
 
   // UI
   { path: ["/ui", "/ui/home"], component: UI },
-  { path: ["/ui/manufacture/giay-bao-on"], component: UIManufacture },
   { path: ["/ui/manufacture/ke-hoach-san-xuat"], component: UIManufactureKHSX },
   { path: ["/ui/manufacture/lich-su-san-xuat"], component: UIManufactureLSSX },
-  { path: ["/ui/manufacture/quan-ly-san-luong"], component: UIManufactureSL },
   { path: ["/ui/quality/PQC"], component: UIQualityPQC },
   { path: ["/ui/quality/OQC"], component: UIQualityOQC },
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
