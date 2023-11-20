@@ -72,7 +72,7 @@ const columns3 = [
     key: "index",
     align: "center",
     fixed: "left",
-    width:'3%',
+    width: '3%',
     render: (value, record, index) => index + 1,
   },
   {
@@ -81,7 +81,7 @@ const columns3 = [
     key: "machine_id",
     align: "center",
     fixed: "left",
-    width:'4%',
+    width: '4%',
   },
   {
     title: "Khách hàng",
@@ -101,6 +101,13 @@ const columns3 = [
     title: "Lô sản xuất",
     dataIndex: "lo_sx",
     key: "lo_sx",
+    align: "center",
+    fixed: "left",
+  },
+  {
+    title: "Lot sản xuất",
+    dataIndex: "lot_id",
+    key: "lot_id",
     align: "center",
     fixed: "left",
   },
@@ -187,14 +194,14 @@ const LichSuSanXuat = (props) => {
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const dataChart = [
     {
-      year: "In",
-      value: 3,
-      type: "Còn lại kế hoạch",
+      label: "Kế hoạch",
+      value: 1000,
+      type: "1"
     },
     {
-      year: "Bế",
-      value: 4,
-      type: "Còn lại kế hoạch",
+      label: "Thực tế",
+      value: 900,
+      type: "2"
     }
   ];
   const config = {
@@ -204,30 +211,71 @@ const LichSuSanXuat = (props) => {
       text: "Your Stats",
     },
     data: dataChart,
+    height: 200,
+    minColumnWidth: 40,
+    maxColumnWidth: 40,
     isStack: true,
-    xField: "year",
+    xField: "label",
     yField: "value",
     seriesField: "type",
+    legend: false,
     label: {
       style: {
         color: "black",
         fontWeight: "700",
       },
       position: "middle",
-      layout: [
-        {
-          type: "interval-adjust-position",
-        },
-        {
-          type: "interval-hide-overlap",
-        },
-        {
-          type: "adjust-color",
-        },
-      ],
     },
     colorField: "type", // or seriesField in some cases
-    color: ["#bebebe", "#6ab0ed"],
+    color: ({ type }) => {
+      if (type === '1') {
+        return "#ccae70";
+      }
+
+      return '#5B8FF9';
+    },
+  };
+  const dataChart1 = [
+    {
+      label: "Mục tiêu",
+      value: 105,
+      type: "1"
+    },
+    {
+      label: "Thực tế",
+      value: 108,
+      type: "2"
+    }
+  ];
+  const config1 = {
+    showTitle: true,
+    title: {
+      visible: false,
+      text: "Your Stats",
+    },
+    data: dataChart1,
+    height: 200,
+    minColumnWidth: 40,
+    maxColumnWidth: 40,
+    isStack: true,
+    xField: "label",
+    yField: "value",
+    seriesField: "type",
+    legend: false,
+    label: {
+      style: {
+        color: "black",
+        fontWeight: "700",
+      },
+      position: "middle",
+    },
+    colorField: "type", // or seriesField in some cases
+    color: ({ type }) => {
+      if (type === '1') {
+        return "#ccae70";
+      }
+      return '#5B8FF9';
+    },
   };
   useEffect(() => {
     (async () => {
@@ -271,15 +319,105 @@ const LichSuSanXuat = (props) => {
 
   const [dataTable1, setDataTable1] = useState([
     {
-      chenh_lech: 0,
-      sl_dau_ra_kh: 0,
-      sl_dau_ra_thuc_te_ok: 0,
-      sl_ng: 0,
+      chenh_lech: -200,
+      sl_dau_ra_kh: 1000,
+      sl_dau_ra_thuc_te_ok: 800,
+      sl_ng: 200,
       sl_tem_vang: 0,
-      ty_le: 0,
+      ty_le: '80%',
     },
   ]);
-  const [dataTable2, setDataTable2] = useState([]);
+  const [dataTable2, setDataTable2] = useState([
+    {
+      machine_id: 'S01',
+      khach_hang: 'SHG',
+      don_hang: 'SBF',
+      lo_sx: 'S2023112',
+      lot_id: 'S20231120001',
+      quy_cach: "50x40x60",
+      sl_dau_vao_kh: '100',
+      sl_dau_ra_kh: '100',
+      thoi_gian_bat_dau:'20/11/2023',
+      thoi_gian_ket_thuc:'20/11/2023',
+      sl_dau_ra_hang_loat:'100',
+      sl_ok:'100',
+      sl_ng:'0',
+    },
+    {
+      machine_id: 'S01',
+      khach_hang: 'BKF',
+      don_hang: 'SBF',
+      lo_sx: 'S2023112',
+      lot_id: 'S20231120001',
+      quy_cach: "50x40x60",
+      sl_dau_vao_kh: '100',
+      sl_dau_ra_kh: '100',
+      thoi_gian_bat_dau:'20/11/2023',
+      thoi_gian_ket_thuc:'20/11/2023',
+      sl_dau_ra_hang_loat:'100',
+      sl_ok:'100',
+      sl_ng:'0',
+    }, {
+      machine_id: 'S01',
+      khach_hang: 'SHB',
+      don_hang: 'SBF',
+      lo_sx: 'S2023112',
+      lot_id: 'S20231120006',
+      quy_cach: "50x40x60",
+      sl_dau_vao_kh: '100',
+      sl_dau_ra_kh: '100',
+      thoi_gian_bat_dau:'20/11/2023',
+      thoi_gian_ket_thuc:'20/11/2023',
+      sl_dau_ra_hang_loat:'100',
+      sl_ok:'100',
+      sl_ng:'0',
+    },
+    {
+      machine_id: 'S01',
+      khach_hang: 'NKM',
+      don_hang: 'SBF',
+      lo_sx: 'S2023112',
+      lot_id: 'S20231120007',
+      quy_cach: "50x40x60",
+      sl_dau_vao_kh: '100',
+      sl_dau_ra_kh: '100',
+      thoi_gian_bat_dau:'20/11/2023',
+      thoi_gian_ket_thuc:'20/11/2023',
+      sl_dau_ra_hang_loat:'100',
+      sl_ok:'100',
+      sl_ng:'0',
+    },
+    {
+      machine_id: 'S01',
+      khach_hang: 'SSC',
+      don_hang: 'SBF',
+      lo_sx: 'S2023112',
+      lot_id: 'S20231120008',
+      quy_cach: "50x40x60",
+      sl_dau_vao_kh: '100',
+      sl_dau_ra_kh: '100',
+      thoi_gian_bat_dau:'20/11/2023',
+      thoi_gian_ket_thuc:'20/11/2023',
+      sl_dau_ra_hang_loat:'100',
+      sl_ok:'100',
+      sl_ng:'0',
+    },
+    {
+      machine_id: 'S01',
+      khach_hang: 'NHH',
+      don_hang: 'SBF',
+      lo_sx: 'S2023112',
+      lot_id: 'S20231120010',
+      quy_cach: "50x70x80",
+      sl_dau_vao_kh: '100',
+      sl_dau_ra_kh: '100',
+      thoi_gian_bat_dau:'20/11/2023',
+      thoi_gian_ket_thuc:'20/11/2023',
+      sl_dau_ra_hang_loat:'100',
+      sl_ok:'100',
+      sl_ng:'0',
+    }
+  ]);
   const [dataTable3, setDataTable3] = useState([]);
 
   function btn_click() {
@@ -342,7 +480,7 @@ const LichSuSanXuat = (props) => {
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
-        <Col span={5}>
+        <Col span={4}>
           <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -386,7 +524,25 @@ const LichSuSanXuat = (props) => {
             </div>
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
+
               <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item label="Máy" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Chọn máy"
+                    onChange={(value) =>
+                      setParams({ ...params, khach_hang: value })
+                    }
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={listCustomers}
+                  />
+                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
@@ -458,10 +614,10 @@ const LichSuSanXuat = (props) => {
             </div>
           </Card>
         </Col>
-        <Col span={19}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Lịch sử sản xuất"
+            title="Tiến độ"
             extra={
               <Space>
                 <Button
@@ -482,21 +638,24 @@ const LichSuSanXuat = (props) => {
             }
           >
             <Spin spinning={loading}>
-              <Row>
-                <Col span={12}>
+              <Row gutter={[20, 20]} className="mb-2">
+                <Col span={14}>
                   <Table
                     className="mb-3"
                     size="small"
                     bordered
                     pagination={false}
                     columns={columns1}
-                    dataSource={[]}
+                    dataSource={dataTable1}
                   />
                 </Col>
-                <Col span={6}>
-                  <Column {...config}/>
+                <Col span={5} className="p-3">
+                  <h6 className="mb-4 text-center">Hoàn thành kế hoạch</h6>
+                  <Column {...config} />
                 </Col>
-                <Col span={6}>
+                <Col span={5} className="p-3">
+                  <h6 className="mb-4 text-center">Cycle time</h6>
+                  <Column {...config1} />
                 </Col>
               </Row>
               <Table
@@ -508,7 +667,7 @@ const LichSuSanXuat = (props) => {
                   y: "50vh",
                 }}
                 columns={columns3}
-                dataSource={[]}
+                dataSource={dataTable2}
               />
             </Spin>
           </Card>
