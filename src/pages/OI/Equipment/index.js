@@ -5,15 +5,13 @@ import DataDetail from "../../../components/DataDetail";
 import SelectButton from "../../../components/Button/SelectButton";
 import "../style.scss";
 import { useHistory, useParams } from "react-router-dom";
-import CheckSheet from "./Checksheet";
-import SelectError from "./SelectError";
-import Measurement from "./Measurement";
+import Error from "./error";
 import {
   getLine,
   getListMachineOfLine,
-  getMachineOverall,
   getMachines,
 } from "../../../api/oi/equipment";
+import Mapping from "./mapping";
 
 const Equipment = (props) => {
   document.title = "Thiết bị";
@@ -64,40 +62,6 @@ const Equipment = (props) => {
   }, [listMachine]);
 
   useEffect(() => {
-    if (machine) {
-      (async () => {
-        var res = await getMachineOverall({ machine_id: machine?.value });
-        if (res.success) {
-          const totalSeconds = Math.floor(
-            res.data.tg_dung ? parseInt(res.data.tg_dung) : 0 / 1000
-          );
-          const totalMinutes = Math.floor(totalSeconds / 60);
-          const totalHours = Math.floor(totalMinutes / 60);
-          // return dayjs.duration(time).format('HH:mm:ss')
-
-          setRow1([
-            {
-              title: "Tổng TG dừng",
-              value: `${("0" + totalHours).slice(-2)}:${(
-                "0" +
-                (totalMinutes % 60)
-              ).slice(-2)}:${("0" + (totalSeconds % 60)).slice(-2)}`,
-            },
-            {
-              title: "Tổng số lần dừng",
-              value: res.data.so_lan_dung,
-            },
-            {
-              title: "Tổng số lỗi",
-              value: res.data.so_loi,
-            },
-          ]);
-        }
-      })();
-    }
-  }, [machine]);
-
-  useEffect(() => {
     getMachineList();
   }, []);
 
@@ -109,33 +73,37 @@ const Equipment = (props) => {
 
   const [row1, setRow1] = useState([
     {
-      title: "Tổng TG dừng",
+      title: "OEE",
       value: "0",
     },
     {
-      title: "Tổng số lần dừng",
+      title: "Tỷ lệ vận hành",
       value: "0",
     },
     {
-      title: "Tổng số lỗi",
+      title: "Dừng máy KH",
+      value: "0",
+    },
+    {
+      title: "Dừng máy BT",
       value: "0",
     },
   ]);
   const items = [
     {
       key: 1,
-      label: `Check sheet`,
-      children: <CheckSheet line={line} machine={machine} />,
+      label: `Mapping và thông số`,
+      children: <Mapping />,
     },
     {
       key: 2,
-      label: `Chọn lỗi`,
-      children: <SelectError line={line} machine={machine} />,
+      label: `Sự cố`,
+      children: <Error line={line} machine={machine} />,
     },
     {
       key: 3,
-      label: `Thông số đo`,
-      children: <Measurement machine={machine} />,
+      label: `Bảo dưỡng`,
+      children: <Mapping />,
     },
   ];
   const onChangeLine = (value) => {
@@ -148,7 +116,7 @@ const Equipment = (props) => {
           <SelectButton
             value={machine}
             options={machines}
-            label="Máy"
+            label="Công đoạn"
             onChange={(value) => setMachine(value)}
             labelInValue={true}
           />
