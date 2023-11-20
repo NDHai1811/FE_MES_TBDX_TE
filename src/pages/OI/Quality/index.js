@@ -26,6 +26,7 @@ import { getListMachine } from "../../../api";
 import { sendQCResult } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
+import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
 
 const mockData = [
   {
@@ -166,7 +167,7 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <Checksheet2
+        <QuanLyLoi
           text="Kiểm tra"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
