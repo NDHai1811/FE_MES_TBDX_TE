@@ -292,7 +292,7 @@ const Equipment = (props) => {
                 ]}
               />
             </Form.Item>
-            <Form.Item label="Máy" className="mb-3">
+            <Form.Item label="Công đoạn" className="mb-3">
               <Select
                 defaultValue="Máy 1"
                 options={[
