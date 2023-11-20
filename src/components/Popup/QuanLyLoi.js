@@ -71,11 +71,11 @@ const QuanLyLoi = (props) => {
             <Button
                 disabled={!selectedLot?.lot_id}
                 type={"default"}
-                danger={selectedLot?.result === 2}
+                danger={selectedLot?.phan_dinh === 2}
                 size="large"
                 className="w-100 text-wrap h-100"
                 onClick={
-                    selectedLot?.result === 0
+                    selectedLot?.phan_dinh === 0
                         ? () => {
                             setOpen(true);
                         }

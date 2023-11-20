@@ -64,11 +64,11 @@ const Checksheet2 = (props) => {
         <React.Fragment>
             <Button
                 disabled={!selectedLot?.lot_id}
-                danger={selectedLot?.result === 2}
+                danger={selectedLot?.phan_dinh === 2}
                 size="large"
                 className="w-100 text-wrap h-100"
                 onClick={
-                    selectedLot?.result === 0
+                    selectedLot?.phan_dinh === 0
                         ? () => {
                             setOpen(true);
                         }
@@ -78,7 +78,7 @@ const Checksheet2 = (props) => {
                 {text}
             </Button>
             <Modal
-                title={"Kiểm tra kích thước"}
+                title={"Kiểm tra"}
                 open={open}
                 onCancel={closeModal}
                 footer={

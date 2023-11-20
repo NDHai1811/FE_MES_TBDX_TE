@@ -23,7 +23,7 @@ import {
 import SelectButton from "../../../components/Button/SelectButton";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getListMachine } from "../../../api";
-import { getLotQCList, sendQCResult } from "../../../api/oi/quality";
+import { getLotQCList, getQCOverall, sendQCResult } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
@@ -105,6 +105,8 @@ const Quality = (props) => {
       result: 1,
     },
   ]);
+  const [params, setParams] = useState([]);
+  const [overall, setOverall] = useState([])
   const { userProfile } = useProfile();
 
   const overallColumns = [
@@ -148,8 +150,8 @@ const Quality = (props) => {
     },
     {
       title: "Kiểm tra tính năng",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "sl_tinh_nang",
+      key: "sl_tinh_nang",
       align: "center",
       width: "20%",
       render: () => (
@@ -178,8 +180,8 @@ const Quality = (props) => {
     },
     {
       title: "Số phế",
-      dataIndex: "sl_kich_thuoc",
-      key: "sl_kich_thuoc",
+      dataIndex: "sl_ng_qc",
+      key: "sl_ng_qc",
       align: "center",
       width: "14%",
       render: (text, record) => (
@@ -192,8 +194,8 @@ const Quality = (props) => {
     },
     {
       title: "Phán định",
-      dataIndex: "result",
-      key: "result",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
       align: "center",
       render: (value) => {
         switch (value) {
@@ -310,9 +312,11 @@ const Quality = (props) => {
 
   async function getData() {
     setLoading(true);
+    var overall = await getQCOverall({machine_id: line, start_date: dayjs(), end_date: dayjs()});
+    setOverall(overall.data);
     var res = await getLotQCList({machine_id: line, start_date: dayjs(), end_date: dayjs()});
     setData(res.data);
-    if (res.data.length > 0 && res.data[0].result === 0) {
+    if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
     }
     setLoading(false);
@@ -392,7 +396,7 @@ const Quality = (props) => {
               pagination={false}
               bordered={true}
               columns={overallColumns}
-              dataSource={mockData}
+              dataSource={overall}
               size="small"
               style={{ borderRadius: 12 }}
               scroll={{
@@ -430,6 +434,7 @@ const Quality = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
+              onChange={(value)=>value.isValid() && setParams({...params, start_date: value})}
             />
           </Col>
           <Col span={8}>
@@ -438,6 +443,7 @@ const Quality = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
+              onChange={(value)=>value.isValid() && setParams({...params, end_date: value})}
             />
           </Col>
           <Col span={8}>
