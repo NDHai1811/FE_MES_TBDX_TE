@@ -2,7 +2,7 @@ import { CloseOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { Col, Layout, Row, Menu, Avatar, Space, Button, Dropdown } from "antd";
 import React, { useEffect, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import logolight from "../assets/images/logo.png";
+import logolight from "../assets/images/logo.jpg";
 import { useProfile } from "../components/hooks/UserHooks";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -43,11 +43,11 @@ const items = [
     key: "equipment",
     children: [
       {
-        label: "Thống kê lỗi",
+        label: "Lịch sử sự cố thiết bị",
         key: "equipment/thong-ke-loi",
       },
       {
-        label: "Thông số máy",
+        label: "Thông số thiết bị",
         key: "equipment/thong-so-may",
       },
     ],
@@ -225,7 +225,10 @@ const HeaderUI = () => {
         <Row style={{ alignItems: "center" }}>
           <Col span={4}>
             <div className="demo-logo" style={{ display: "flex" }}>
-              <img style={{ height: "80%" }} src={logolight} />
+              <img
+                style={{ height: "3.5em", margin: "auto 0" }}
+                src={logolight}
+              />
             </div>
           </Col>
           <Col span={14}>
