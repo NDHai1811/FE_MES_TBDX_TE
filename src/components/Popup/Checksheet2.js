@@ -44,7 +44,7 @@ const Checksheet2 = (props) => {
   };
   useEffect(() => {
     (async () => {
-      var res = await getChecksheetList();
+      var res = await getChecksheetList(line);
       setChecksheet(res.data);
     })();
   }, [selectedLot]);
