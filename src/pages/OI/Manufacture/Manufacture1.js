@@ -90,7 +90,7 @@ const Manufacture1 = (props) => {
       value: "10000",
     },
     {
-      title: "Sản lượng ca",
+      title: "S.L ca",
       value: "1100",
     },
     {
@@ -117,7 +117,7 @@ const Manufacture1 = (props) => {
       value: "4",
     },
     {
-      title: "Số lg 1 MQL",
+      title: "S.L 1 MQL",
       value: "1800",
     },
     {
@@ -125,7 +125,7 @@ const Manufacture1 = (props) => {
       value: "-",
     },
     {
-      title: "T/g hoàn thành",
+      title: "T/g HT",
       value: "15:50:00",
     },
   ]);

@@ -9,7 +9,8 @@ export async function getLotQCList(params) {
 }
 
 export async function getChecksheetList(params) {
-  return await axios.get("/oi/qc/checksheet/list", { params: params });
+  var res = await axios.get("/oi/qc/checksheet/list", { params: params });
+  return res;
 }
 
 export async function scanError(params) {

@@ -10,5 +10,5 @@ module.exports = {
   api: {
     API_URL: "https://bemes.ouransoft.vn/api",
   },
-  baseURL: "https://bemes.ouransoft.vn/",
-};
+  baseURL: "https://bemes.ouransoft.vn",
+}
