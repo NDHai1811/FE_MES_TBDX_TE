@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, Checkbox, DatePicker } from "antd";
+import { Row, Col, Button, Table, Spin, Checkbox, DatePicker, Modal } from "antd";
 import moment from 'moment';
 
 import DataDetail from "../../../components/DataDetail";
@@ -12,7 +12,6 @@ import {
 import SelectButton from "../../../components/Button/SelectButton";
 import {
   getInfoPallet,
-  inTem,
   scanPallet,
   getOverAll,
   getLotByMachine,
@@ -22,6 +21,7 @@ import Tem from "../../UI/Manufacture/Tem";
 import { getMachines } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
+import ScanQR from "../../../components/Scanner";
 
 const mockData = [
   {
@@ -378,6 +378,19 @@ const Manufacture1 = (props) => {
       return {disabled: record.status !== 4}
     },
   };
+  const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
+  const [isScan, setIsScan] = useState(0);
+  const handleCloseMdl = () => {
+    setIsOpenQRScanner(false);
+    setIsScan(2);
+  };
+  useEffect(() => {
+    if (isScan === 1) {
+      setIsOpenQRScanner(true);
+    } else if (isScan === 2) {
+      setIsOpenQRScanner(false);
+    }
+  }, [isScan]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -431,6 +444,7 @@ const Manufacture1 = (props) => {
                 size="medium"
                 type="primary"
                 style={{ width: "100%" }}
+                onClick={()=>setIsScan(1)}
                 icon={<QrcodeOutlined />}
               />
             </Col>
@@ -468,6 +482,9 @@ const Manufacture1 = (props) => {
           </Col>
         </Row>
       </Spin>
+      {isOpenQRScanner && <Modal title="Quét QR" open={isOpenQRScanner} onCancel={handleCloseMdl} footer={null}>
+          <ScanQR isScan={isOpenQRScanner} onResult={(res) => { onScan(res); setIsOpenQRScanner(false); }} />
+      </Modal>}
     </React.Fragment>
   );
 };

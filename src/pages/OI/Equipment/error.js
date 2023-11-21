@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Row, Col, Table, DatePicker } from "antd";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
+import Popup from "../../../components/Popup/popup";
 
 const data = [
   {
@@ -35,6 +36,9 @@ const columns = [
     key: "ten_su_co",
     align: "center",
     width: "20%",
+    render: () => {
+      return <Popup/>
+    }
   },
   {
     title: "Nguyên nhân",
@@ -42,6 +46,9 @@ const columns = [
     key: "nguyen_nhan",
     align: "center",
     width: "20%",
+    render: () => {
+      return <Popup/>
+    }
   },
   {
     title: "Trạng thái",
@@ -183,7 +190,7 @@ const Mapping = () => {
             placeholder="Từ ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
-            defaultValue={moment()}
+            defaultValue={dayjs()}
           />
         </Col>
         <Col span={12}>
@@ -191,7 +198,7 @@ const Mapping = () => {
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
-            defaultValue={moment()}
+            defaultValue={dayjs()}
           />
         </Col>
       </Row>
