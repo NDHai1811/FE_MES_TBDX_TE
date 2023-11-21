@@ -18,6 +18,12 @@ const columnDetail = [
     align: "center",
   },
   {
+    title: "Số lot",
+    dataIndex: "so_lot",
+    key: "so_lot",
+    align: "center",
+  },
+  {
     title: "Số MQL",
     dataIndex: "so_mql",
     key: "so_mql",
@@ -51,9 +57,9 @@ const columnDetail = [
   },
 ];
 
-const importColumns = [
+const exportColumns = [
   {
-    title: "Thời gian nhập",
+    title: "Thời gian xuất theo KH",
     dataIndex: "time",
     key: "time",
     align: "center",
@@ -242,7 +248,7 @@ const Import = (props) => {
             pagination={false}
             bordered
             className="mb-4"
-            columns={importColumns}
+            columns={exportColumns}
             dataSource={warehousExportTPData}
             onRow={(record) => {
               return {

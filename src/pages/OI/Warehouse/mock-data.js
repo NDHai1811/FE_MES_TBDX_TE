@@ -144,7 +144,7 @@ export const warehousExportNVLData = [
 
   export const warehousTPData = [
     {
-      time: "7:15",
+      so_lot: "001",
       so_pallet: "T300/3",
       vi_tri: "A01",
       so_mql: '10',
@@ -154,7 +154,7 @@ export const warehousExportNVLData = [
       nguoi_nhap: "BB",
     },
     {
-      time: "9:00",
+      so_lot: "002",
       so_pallet: "T300/3",
       so_mql: '10',
       so_luong: '150',
@@ -164,7 +164,7 @@ export const warehousExportNVLData = [
       nguoi_nhap: "AA",
     },
     {
-      time: "9:15",
+      so_lot: "003",
       so_pallet: "T300/3",
       so_mql: '10',
       so_luong: '150',
@@ -174,7 +174,7 @@ export const warehousExportNVLData = [
       nguoi_nhap: "AA",
     },
     {
-      time: "",
+      so_lot: "004",
       so_pallet: "T300/3",
       so_mql: '10',
       so_luong: '150',
@@ -184,7 +184,7 @@ export const warehousExportNVLData = [
       nguoi_nhap: "",
     },
     {
-      time: "",
+      so_lot: "005",
       so_pallet: "T300/3",
       so_mql: '10',
       so_luong: '150',
@@ -194,7 +194,7 @@ export const warehousExportNVLData = [
       nguoi_nhap: "",
     },
     {
-      time: "",
+      so_lot: "006",
       so_pallet: "T300/3",
       so_mql: '10',
       so_luong: '150',

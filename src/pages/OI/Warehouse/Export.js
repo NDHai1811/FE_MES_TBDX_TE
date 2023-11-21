@@ -89,7 +89,7 @@ const exportColumns = [
     align: "center",
   },
   {
-    title: "Người xuất",
+    title: "Thời gian xuất kho thực tế",
     dataIndex: "thoi_gian_xuat",
     key: "thoi_gian_xuat",
     align: "center",
@@ -98,13 +98,13 @@ const exportColumns = [
 
 const column2 = [
   {
-    title: "Số KG nhập trong ngày",
+    title: "Số KG xuất trong ngày",
     dataIndex: "soKgNhapTrongNgay",
     key: "soKgNhapTrongNgay",
     align: "center",
   },
   {
-    title: "Số cuộn nhập trong ngày",
+    title: "Số cuộn xuất trong ngày",
     dataIndex: "soCuonNhapTrongNgay",
     key: "soCuonNhapTrongNgay",
     align: "center",
@@ -449,7 +449,7 @@ const Export = (props) => {
   // };
 
   const onScan = () => {
-    
+
   }
   return (
     <React.Fragment>

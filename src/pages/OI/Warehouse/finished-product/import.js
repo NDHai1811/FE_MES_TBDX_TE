@@ -39,15 +39,15 @@ const columnDetail = [
 
 const importColumns = [
   {
-    title: "Thời gian nhập",
-    dataIndex: "time",
-    key: "time",
+    title: "Mã pallet",
+    dataIndex: "so_pallet",
+    key: "so_pallet",
     align: "center",
   },
   {
-    title: "Số pallet",
-    dataIndex: "so_pallet",
-    key: "so_pallet",
+    title: "Số lot",
+    dataIndex: "so_lot",
+    key: "so_lot",
     align: "center",
   },
   {
@@ -75,7 +75,7 @@ const importColumns = [
     align: "center",
   },
   {
-    title: "Khach hàng",
+    title: "Khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
