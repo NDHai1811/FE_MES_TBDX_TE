@@ -13,9 +13,8 @@ import {
   DatePicker,
 } from "antd";
 import { withRouter } from "react-router-dom";
-import moment from "moment";
 import "../style.scss";
-import { PrinterOutlined } from "@ant-design/icons";
+import { SaveOutlined } from "@ant-design/icons";
 import {
   useHistory,
   useParams,
@@ -28,15 +27,6 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
 import dayjs from "dayjs";
-
-const mockData = [
-  {
-    tong_lot_kiem: "100",
-    so_lot_dat: "99",
-    tong_phe: "80",
-    ti_le: "99.98%",
-  },
-];
 
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -156,7 +146,7 @@ const Quality = (props) => {
       width: "20%",
       render: () => (
         <Checksheet2
-          text="Kiểm tra"
+          text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
@@ -171,7 +161,7 @@ const Quality = (props) => {
       width: "20%",
       render: () => (
         <QuanLyLoi
-          text="Kiểm tra"
+          text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
@@ -450,7 +440,7 @@ const Quality = (props) => {
             <Button
               type="primary"
               style={{ width: "100%" }}
-              icon={<PrinterOutlined />}
+              icon={<SaveOutlined />}
             ></Button>
           </Col>
         </Row>
