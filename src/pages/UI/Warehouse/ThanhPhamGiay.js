@@ -5,19 +5,17 @@ import {
   Row,
   Card,
   Table,
-  Tag,
-  Layout,
   Divider,
   Button,
-  Form,
-  Select,
   Space,
   Spin,
   Dropdown,
   message,
   Input,
-  Menu,
   Tabs,
+  Checkbox,
+  Collapse,
+  Form,
 } from "antd";
 import { DualAxes } from "@ant-design/charts";
 import {
@@ -30,7 +28,7 @@ import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { getCustomers, getDataFilterUI } from "../../../api/ui/main";
 
-const { SubMenu } = Menu;
+const { Panel } = Collapse;
 
 const dataDualAxes = [
   { time: "A1", value: 10 },
@@ -150,12 +148,41 @@ const tabItems = [
   },
 ];
 
+const mockDataTable = [
+  {
+    so_kg_ton_kho: "100",
+    so_cuon_ton_kho: "50",
+    so_vi_tri_trong: "5",
+  },
+];
+
+const columns = [
+  {
+    title: "Số kg tồn trong kho",
+    dataIndex: "so_kg_ton_kho",
+    key: "so_kg_ton_kho",
+    align: "center",
+  },
+  {
+    title: "Số cuộn tồn trong kho",
+    dataIndex: "so_cuon_ton_kho",
+    key: "so_cuon_ton_kho",
+    align: "center",
+  },
+  {
+    title: "Số vị trí còn trống trong kho",
+    dataIndex: "so_vi_tri_trong",
+    key: "so_vi_tri_trong",
+    align: "center",
+  },
+];
+
 const ThanhPhamGiay = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const [listCustomers, setListCustomers] = useState([]);
-  const [listIdProducts, setListIdProducts] = useState([]);
+  // const [listIdProducts, setListIdProducts] = useState([]);
   const [listNameProducts, setListNameProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
   useEffect(() => {
@@ -261,29 +288,44 @@ const ThanhPhamGiay = (props) => {
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={3}>
           <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
-            <Menu mode="inline" defaultOpenKeys={["sub1"]}>
-              <SubMenu key="sub1" title="KHO NGUYÊN VẬT LIỆU">
-                <Menu.Item key="1">Kho AB</Menu.Item>
-                <Menu.Item key="2">Kho C</Menu.Item>
-                <Menu.Item key="3">Kho Dang Dở</Menu.Item>
-              </SubMenu>
-            </Menu>
-            <Menu mode="inline" defaultOpenKeys={["sub2"]}>
-              <SubMenu key="sub2" title="KV BÁN THÀNH PHẨM">
-                <Menu.Item key="1">KV BTP giấy tấm</Menu.Item>
-                <Menu.Item key="2">KV BTP sau in</Menu.Item>
-              </SubMenu>
-            </Menu>
-            <Menu mode="inline" defaultOpenKeys={["sub3"]}>
-              <SubMenu key="sub3" title="KHO THÀNH PHẨM">
-                <Menu.Item key="1">Kho chờ nhập</Menu.Item>
-                <Menu.Item key="2">Kho đã nhập</Menu.Item>
-              </SubMenu>
-            </Menu>
+            <Collapse defaultActiveKey={["1", "2", "3"]}>
+              <Panel header="KHO NGUYÊN VẬT LIỆU" key="1">
+                <Checkbox.Group style={{ width: "100%", display: "block" }}>
+                  <Checkbox value="Kho AB" style={{ width: "100%" }}>
+                    Kho AB
+                  </Checkbox>
+                  <Checkbox value="Kho C" style={{ width: "100%" }}>
+                    Kho C
+                  </Checkbox>
+                  <Checkbox value="Kho Dang Dở" style={{ width: "100%" }}>
+                    Kho Dang Dở
+                  </Checkbox>
+                </Checkbox.Group>
+              </Panel>
+              <Panel header="KV BÁN THÀNH PHẨM" key="2">
+                <Checkbox.Group style={{ width: "100%", display: "block" }}>
+                  <Checkbox value="KV BTP giấy tấm" style={{ width: "100%" }}>
+                    KV BTP giấy tấm
+                  </Checkbox>
+                  <Checkbox value="KV BTP sau in" style={{ width: "100%" }}>
+                    KV BTP sau in
+                  </Checkbox>
+                </Checkbox.Group>
+              </Panel>
+              <Panel header="KHO THÀNH PHẨM" key="3">
+                <Checkbox.Group style={{ width: "100%", display: "block" }}>
+                  <Checkbox value="Kho chờ nhập" style={{ width: "100%" }}>
+                    Kho chờ nhập
+                  </Checkbox>
+                  <Checkbox value="Kho đã nhập" style={{ width: "100%" }}>
+                    Kho đã nhập
+                  </Checkbox>
+                </Checkbox.Group>
+              </Panel>
+            </Collapse>
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <DatePicker
                     allowClear={false}
@@ -309,17 +351,6 @@ const ThanhPhamGiay = (props) => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <Form.Item label="Chức năng truy vấn" className='mb-3'>
-                            <Select
-                                defaultValue="1"
-                                options={[{ value: '1', label: 'Nhập - Xuất - Tồn' },
-                                { value: '2', label: 'Nhập' },
-                                { value: '3', label: 'Xuất' },
-                                { value: '3', label: 'Tồn' },
-                                { value: '3', label: 'Tồn lâu' },
-                                ]}
-                            />
-                        </Form.Item> */}
                 <Form.Item label="Mã cuộn TBDX" className="mb-3">
                   <Input placeholder="Nhập mã cuộn TBDX" />
                 </Form.Item>
@@ -338,40 +369,6 @@ const ThanhPhamGiay = (props) => {
                 <Form.Item label="Tình trạng" className="mb-3">
                   <Input placeholder="Nhập tình trạng" />
                 </Form.Item>
-                {/* <Form.Item label="Tên sản phẩm" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
-                    }}
-                    placeholder="Nhập tên sản phẩm"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listNameProducts}
-                  />
-                </Form.Item>
-                <Form.Item label="Lô Sản xuất" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập lô sản xuất"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => {
-                      setParams({ ...params, lo_sx: value });
-                    }}
-                    options={listLoSX}
-                  />
-                </Form.Item> */}
               </Form>
             </div>
 
@@ -412,92 +409,15 @@ const ThanhPhamGiay = (props) => {
               </Space>
             }
           >
-            <Row style={{alignItems: 'center'}}>
+            <Row style={{ alignItems: "flex-end" }}>
               <Col span={8}>
-                <Row>
-                  <Col
-                    span={8}
-                    style={{
-                      color: "black",
-                      fontSize: 16,
-                      border: "1px solid #000",
-                      margin: "10px 0",
-                      padding: "10px",
-                    }}
-                  >
-                    Số kg tồn trong kho
-                  </Col>
-                  <Col
-                    span={4}
-                    style={{
-                      color: "black",
-                      fontSize: 16,
-                      border: "1px solid #000",
-                      borderLeft: "0px",
-                      margin: "10px 0",
-                      padding: "10px",
-                      textAlign: "center",
-                    }}
-                  >
-                    100
-                  </Col>
-                </Row>
-                <Row>
-                  <Col
-                    span={8}
-                    style={{
-                      color: "black",
-                      fontSize: 16,
-                      border: "1px solid #000",
-                      margin: "10px 0",
-                      padding: "10px",
-                    }}
-                  >
-                    Số cuộn tồn trong kho
-                  </Col>
-                  <Col
-                    span={4}
-                    style={{
-                      color: "black",
-                      fontSize: 16,
-                      border: "1px solid #000",
-                      borderLeft: "0px",
-                      margin: "10px 0",
-                      padding: "10px",
-                      textAlign: "center",
-                    }}
-                  >
-                    50
-                  </Col>
-                </Row>
-                <Row>
-                  <Col
-                    span={8}
-                    style={{
-                      color: "black",
-                      fontSize: 16,
-                      border: "1px solid #000",
-                      margin: "10px 0",
-                      padding: "10px",
-                    }}
-                  >
-                    Số vị trí còn trống trong kho
-                  </Col>
-                  <Col
-                    span={4}
-                    style={{
-                      color: "black",
-                      fontSize: 16,
-                      border: "1px solid #000",
-                      borderLeft: "0px",
-                      margin: "10px 0",
-                      padding: "10px",
-                      textAlign: "center",
-                    }}
-                  >
-                    A01
-                  </Col>
-                </Row>
+                <Table
+                  columns={columns}
+                  dataSource={mockDataTable}
+                  pagination={false}
+                  bordered
+                  style={{ marginRight: 12, marginBottom: 20 }}
+                />
               </Col>
               <Col span={16}>
                 <DualAxes {...config} />
