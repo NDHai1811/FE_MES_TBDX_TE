@@ -290,12 +290,12 @@ const KeHoachSanXuat = () => {
       // setListStaffs(res4.data.map(e => {
       //       return { ...e, label: e.name, value: e.id }
       // }))
-      const res5 = await getCustomers();
-      setListCustomers(
-        res5.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
+      // const res5 = await getCustomers();
+      // setListCustomers(
+      //   res5.data.map((e) => {
+      //     return { ...e, label: e.name, value: e.id };
+      //   })
+      // );
     })();
   }, []);
 
@@ -303,23 +303,23 @@ const KeHoachSanXuat = () => {
     loadListTable(params);
   }
 
-  useEffect(() => {
-    (async () => {
-      var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-      if (res.success) {
-        setListNameProducts(
-          res.data.product.map((e) => {
-            return { ...e, label: e.name, value: e.id };
-          })
-        );
-        setListLoSX(
-          Object.values(res.data.lo_sx).map((e) => {
-            return { label: e, value: e };
-          })
-        );
-      }
-    })();
-  }, [params.khach_hang]);
+  // useEffect(() => {
+  //   (async () => {
+  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
+  //     if (res.success) {
+  //       setListNameProducts(
+  //         res.data.product.map((e) => {
+  //           return { ...e, label: e.name, value: e.id };
+  //         })
+  //       );
+  //       setListLoSX(
+  //         Object.values(res.data.lo_sx).map((e) => {
+  //           return { label: e, value: e };
+  //         })
+  //       );
+  //     }
+  //   })();
+  // }, [params.khach_hang]);
 
   const [data, setData] = useState([]);
   const loadListTable = async (params) => {
@@ -408,10 +408,11 @@ const KeHoachSanXuat = () => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Công đoạn" className="mb-3">
+                <Divider>Công đoạn</Divider>
+                <Form.Item className="mb-3">
                   <Select
                     allowClear
                     value={selectedLine}
@@ -453,11 +454,26 @@ const KeHoachSanXuat = () => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item label="Máy" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập máy"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
-                    placeholder="Chọn khách hàng"
+                    placeholder="Nhập khách hàng"
                     onChange={(value) =>
                       setParams({ ...params, khach_hang: value })
                     }
@@ -470,14 +486,14 @@ const KeHoachSanXuat = () => {
                     options={listCustomers}
                   />
                 </Form.Item>
-                <Form.Item label="Tên sản phẩm" className="mb-3">
+                <Form.Item label="Đơn hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
                     onChange={(value) => {
                       setParams({ ...params, ten_sp: value });
                     }}
-                    placeholder="Nhập tên sản phẩm"
+                    placeholder="Nhập đơn hàng"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
@@ -492,6 +508,21 @@ const KeHoachSanXuat = () => {
                     allowClear
                     showSearch
                     placeholder="Nhập lô sản xuất"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
+                <Form.Item label="Quy cách" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập quy cách"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")

@@ -343,12 +343,14 @@ const LichSuSanXuat = (props) => {
     <React.Fragment>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
         <Col span={5}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+        <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Công đoạn" className="mb-3">
+                <Divider>Công đoạn</Divider>
+                <Form.Item className="mb-3">
                   <Select
                     allowClear
+                    value={selectedLine}
                     onChange={(value) =>
                       setParams({ ...params, line_id: value })
                     }
@@ -361,7 +363,7 @@ const LichSuSanXuat = (props) => {
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]}/> */}
+                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <DatePicker
                     allowClear={false}
@@ -387,11 +389,26 @@ const LichSuSanXuat = (props) => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item label="Máy" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập máy"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
-                    placeholder="Chọn khách hàng"
+                    placeholder="Nhập khách hàng"
                     onChange={(value) =>
                       setParams({ ...params, khach_hang: value })
                     }
@@ -404,14 +421,14 @@ const LichSuSanXuat = (props) => {
                     options={listCustomers}
                   />
                 </Form.Item>
-                <Form.Item label="Tên sản phẩm" className="mb-3">
+                <Form.Item label="Đơn hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
                     onChange={(value) => {
                       setParams({ ...params, ten_sp: value });
                     }}
-                    placeholder="Nhập tên sản phẩm"
+                    placeholder="Nhập đơn hàng"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
@@ -432,9 +449,22 @@ const LichSuSanXuat = (props) => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    onChange={(value) => {
-                      setParams({ ...params, lo_sx: value });
-                    }}
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
+                <Form.Item label="Quy cách" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập quy cách"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
                     options={listLoSX}
                   />
                 </Form.Item>
