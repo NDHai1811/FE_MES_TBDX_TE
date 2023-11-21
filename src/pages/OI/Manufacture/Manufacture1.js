@@ -12,7 +12,6 @@ import {
 import SelectButton from "../../../components/Button/SelectButton";
 import {
   getInfoPallet,
-  inTem,
   scanPallet,
   getOverAll,
   getLotByMachine,
