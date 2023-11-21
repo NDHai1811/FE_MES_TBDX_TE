@@ -200,14 +200,17 @@ const data3 = [
 ];
 
 const config = {
-  appendPadding: 10,
+  // appendPadding: 10,
   data: data1,
+  width:100,
+  height: 100,
   angleField: "value",
   colorField: "type",
   radius: 0.8,
   color: (value) => {
     return value.type === "Xanh" ? "blue" : "orange";
   },
+  label: false,
   legend: false,
   tooltip: {
     formatter: (datum) => {
@@ -220,11 +223,14 @@ const config = {
 };
 
 const config2 = {
-  appendPadding: 4,
+  // appendPadding: 4,
   data: data2,
+  height: 100,
+  width:100,
   angleField: "value",
   colorField: "type",
   radius: 0.8,
+  label: false,
   color: (value) => {
     return value.type === "Xanh" ? "blue" : "orange";
   },
@@ -248,6 +254,7 @@ const config3 = {
       textAlign: "center",
     },
   },
+  height: 250,
   data: data3,
   xField: "type",
   yField: "value",
@@ -329,7 +336,7 @@ const errorTable = [
 
 const Equipment1 = (props) => {
   document.title = "UI - Thống kê lỗi";
-  // const [listLines, setListLines] = useState([]);
+  const [listLines, setListLines] = useState([]);
   const [listMachines, setListMachines] = useState([]);
   const [listIdProducts, setListIdProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
@@ -351,50 +358,50 @@ const Equipment1 = (props) => {
     date: [dayjs(), dayjs()],
   });
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    (async () => {
-      setLoading(false);
-      const res2 = await getProducts();
-      setListIdProducts(
-        res2.data.map((e) => {
-          return { ...e, label: e.id, value: e.id };
-        })
-      );
-      const res3 = await getLoSanXuat();
-      setListLoSX(
-        res3.data.map((e) => {
-          return { ...e, label: e, value: e };
-        })
-      );
-      const res4 = await getStaffs();
-      setListStaffs(
-        res4.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
+  // useEffect(() => {
+  //   (async () => {
+  //     setLoading(false);
+  //     const res2 = await getProducts();
+  //     setListIdProducts(
+  //       res2.data.map((e) => {
+  //         return { ...e, label: e.id, value: e.id };
+  //       })
+  //     );
+  //     const res3 = await getLoSanXuat();
+  //     setListLoSX(
+  //       res3.data.map((e) => {
+  //         return { ...e, label: e, value: e };
+  //       })
+  //     );
+  //     const res4 = await getStaffs();
+  //     setListStaffs(
+  //       res4.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.id };
+  //       })
+  //     );
 
-      const res5 = await getCustomers();
-      setListCustomers(
-        res5.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      const res6 = await getErrorsMachine();
-      setListErrorsMachine(
-        res6.data.map((e) => {
-          return { ...e, label: e.noi_dung, value: e.id };
-        })
-      );
-      const res7 = await getMachineOfLine();
-      setListMachines(
-        res7.data.map((e) => {
-          return { ...e, label: e.name, value: e.code };
-        })
-      );
-      setLoading(false);
-    })();
-    btn_click();
-  }, []);
+  //     const res5 = await getCustomers();
+  //     setListCustomers(
+  //       res5.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.id };
+  //       })
+  //     );
+  //     const res6 = await getErrorsMachine();
+  //     setListErrorsMachine(
+  //       res6.data.map((e) => {
+  //         return { ...e, label: e.noi_dung, value: e.id };
+  //       })
+  //     );
+  //     const res7 = await getMachineOfLine();
+  //     setListMachines(
+  //       res7.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.code };
+  //       })
+  //     );
+  //     setLoading(false);
+  //   })();
+  //   btn_click();
+  // }, []);
 
   function btn_click() {
     (async () => {
@@ -478,32 +485,19 @@ const Equipment1 = (props) => {
   return (
     <>
       <Row style={{ padding: "8px" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+        <Col span={4}>
+          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Công đoạn" className="mb-3">
+                <Divider>Công đoạn</Divider>
+                <Form.Item className="mb-3">
                   <Select
                     allowClear
+                    onChange={(value) =>
+                      setParams({ ...params, line_id: value })
+                    }
                     placeholder="Nhập công đoạn"
-                    options={listMachines}
-                    onChange={(value) =>
-                      setParams({ ...params, machine_code: value })
-                    }
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Phân loại" className="mb-3">
-                  <Select
-                    allowClear
-                    placeholder="Chọn phân loại"
-                    options={listMachines}
-                    onChange={(value) =>
-                      setParams({ ...params, machine_code: value })
-                    }
+                    options={listLines}
                   />
                 </Form.Item>
               </Form>
@@ -511,7 +505,7 @@ const Equipment1 = (props) => {
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]}/> */}
+                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <DatePicker
                     allowClear={false}
@@ -541,7 +535,7 @@ const Equipment1 = (props) => {
                   <Select
                     allowClear
                     showSearch
-                    placeholder="Chọn máy"
+                    placeholder="Nhập máy"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
@@ -552,84 +546,71 @@ const Equipment1 = (props) => {
                     options={listLoSX}
                   />
                 </Form.Item>
-
                 <Form.Item label="Mã lỗi" className="mb-3">
                   <Select
-                    showSearch
-                    // onChange={(value)=>{
-                    //     setSelectedError(value);
-                    // }}
                     allowClear
-                    placeholder="Mã lỗi"
+                    showSearch
+                    onChange={(value) => {
+                      setParams({ ...params, ten_sp: value });
+                    }}
+                    placeholder="Nhập mã lỗi"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    onChange={(value) =>
-                      setParams({ ...params, machine_error: value })
-                    }
-                    options={listErrorsMachine}
+                    options={[]}
                   />
                 </Form.Item>
-
                 <Form.Item label="Tên lỗi" className="mb-3">
                   <Select
-                    showSearch
-                    // onChange={(value)=>{
-                    //     setSelectedError(value);
-                    // }}
                     allowClear
-                    placeholder="Chọn lỗi"
+                    showSearch
+                    placeholder="Nhập tên lỗi"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    onChange={(value) =>
-                      setParams({ ...params, machine_error: value })
-                    }
-                    options={listErrorsMachine}
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
                   />
                 </Form.Item>
-
                 <Form.Item label="Nguyên nhân" className="mb-3">
                   <Select
-                    showSearch
                     allowClear
-                    onChange={(value) =>
-                      setParams({ ...params, user_id: value })
-                    }
-                    placeholder="Chọn nhân viên"
+                    showSearch
+                    placeholder="Nhập nguyên nhân"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listStaffs}
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
                   />
                 </Form.Item>
-
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
-                    showSearch
                     allowClear
+                    showSearch
+                    placeholder="Nhập khách hàng"
                     onChange={(value) =>
-                      setParams({ ...params, user_id: value })
+                      setParams({ ...params, khach_hang: value })
                     }
-                    placeholder="Chọn khách hàng"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listStaffs}
+                    options={listCustomers}
                   />
                 </Form.Item>
+                
               </Form>
             </div>
 
@@ -650,7 +631,7 @@ const Equipment1 = (props) => {
             </div>
           </Card>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Row gutter={[8, 8]}>
             <Col span={12}>
               <Card
@@ -664,43 +645,44 @@ const Equipment1 = (props) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    height: "100%",
                   }}
                 >
-                  <Pie
-                    {...config}
-                    style={{ width: "20%" }}
-                    innerRadius={0.8}
-                    statistic={{
-                      title: {
-                        formatter: () => "OEE",
-                        style: {
-                          fontSize: "16px",
-                          textAlign: "center",
+                  <Space direction="vertical">
+                    <Pie
+                      {...config}
+                      // style={{ width: "20%" }}
+                      innerRadius={0.8}
+                      statistic={{
+                        title: false,
+                        content: {
+                          style: {
+                            whiteSpace: 'pre-wrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            fontSize: 14
+                          },
+                          content: 'OEE',
                         },
-                      },
-                      content: {
-                        formatter: () => "",
-                      },
-                    }}
-                  />
-                  <Pie
-                    {...config2}
-                    style={{ width: "20%" }}
-                    innerRadius={0.8}
-                    statistic={{
-                      title: {
-                        formatter: () => "Tỷ lệ vận hành",
-                        style: {
-                          fontSize: "16px",
-                          textAlign: "center",
+                      }}
+                    />
+                    <Pie
+                      {...config2}
+                      // style={{ width: "20%" }}
+                      innerRadius={0.8}
+                      statistic={{
+                        title: false,
+                        content: {
+                          style: {
+                            whiteSpace: 'pre-wrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            fontSize: 12
+                          },
+                          content: 'Tỷ lệ\nvận hành',
                         },
-                      },
-                      content: {
-                        formatter: () => "",
-                      },
-                    }}
-                  />
+                      }}
+                    />
+                  </Space>
                   <Column {...config3} />
                 </div>
               </Card>
@@ -720,7 +702,6 @@ const Equipment1 = (props) => {
                   columns={column}
                   pagination={false}
                   bordered
-                  scroll={{ x: false }}
                 />
               </Card>
             </Col>

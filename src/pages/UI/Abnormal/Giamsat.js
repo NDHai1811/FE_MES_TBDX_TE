@@ -103,24 +103,24 @@ const Giamsat = (props) => {
     var res = await getMonitor();
     setDemoMonitor(res.data);
   };
-  useEffect(() => {
-    hanleGetMonitorList();
-    hanleGetMonitorSeparate();
-  }, []);
+  // useEffect(() => {
+  //   hanleGetMonitorList();
+  //   hanleGetMonitorSeparate();
+  // }, []);
   let interval1;
-  useEffect(() => {
-    interval1 = setInterval(async () => {
-      hanleGetMonitorList();
-    }, 5000);
-    return () => clearInterval(interval1);
-  }, []);
+  // useEffect(() => {
+  //   interval1 = setInterval(async () => {
+  //     hanleGetMonitorList();
+  //   }, 5000);
+  //   return () => clearInterval(interval1);
+  // }, []);
   let interval2;
-  useEffect(() => {
-    interval2 = setInterval(async () => {
-      hanleGetMonitorSeparate();
-    }, 5000);
-    return () => clearInterval(interval2);
-  }, []);
+  // useEffect(() => {
+  //   interval2 = setInterval(async () => {
+  //     hanleGetMonitorSeparate();
+  //   }, 5000);
+  //   return () => clearInterval(interval2);
+  // }, []);
   const onFinish = async (values) => {
     values.start_date = dayjs(values.start_date).format("YYYY-MM-DD");
     values.end_date = dayjs(values.end_date).format("YYYY-MM-DD");

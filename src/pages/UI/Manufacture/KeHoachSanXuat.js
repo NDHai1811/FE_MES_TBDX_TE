@@ -407,7 +407,7 @@ const KeHoachSanXuat = () => {
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
+        <Col span={4}>
           <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -553,7 +553,7 @@ const KeHoachSanXuat = () => {
             </div>
           </Card>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Kế hoạch sản xuất"

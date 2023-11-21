@@ -480,8 +480,8 @@ const LichSuSanXuat = (props) => {
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
-        <Col span={5}>
-        <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
+        <Col span={4}>
+          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>

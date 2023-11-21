@@ -25,17 +25,17 @@ const items = [
   },
   {
     label: "Chất lượng",
-    key: "quality",
-    children: [
-      {
-        label: "PQC",
-        key: "quality/PQC",
-      },
-      {
-        label: "OQC",
-        key: "quality/OQC",
-      },
-    ],
+    key: "quality/PQC",
+    // children: [
+    //   {
+    //     label: "PQC",
+    //     key: "quality/PQC",
+    //   },
+    //   {
+    //     label: "OQC",
+    //     key: "quality/OQC",
+    //   },
+    // ],
     permission: "ui-cl",
   },
   {
@@ -194,7 +194,7 @@ const HeaderUI = () => {
   const selectMenu = (key) => {
     let r = "/ui/" + key.key;
     history.push(r);
-    setUI(key.key);
+    // setUI(key.key);
   };
 
   const logout = () => {
@@ -235,7 +235,7 @@ const HeaderUI = () => {
             <Menu
               mode="horizontal"
               defaultSelectedKeys={[ui]}
-              selectedKeys={[ui]}
+              selectedKeys={[window.location.pathname.split("/ui/")[1]]}
               style={{
                 // width: '100%',
                 // height: '100%',

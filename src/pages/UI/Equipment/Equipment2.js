@@ -235,22 +235,22 @@ const Equipment2 = (props) => {
     ca_sx: "",
     date: [dayjs(), dayjs()],
   });
-  useEffect(() => {
-    (async () => {
-      const res4 = await getStaffs();
-      setListStaffs(
-        res4.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      const res5 = await getMachineOfLine();
-      setListMachines(
-        res5.data.map((e) => {
-          return { ...e, label: e.name, value: e.code };
-        })
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const res4 = await getStaffs();
+  //     setListStaffs(
+  //       res4.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.id };
+  //       })
+  //     );
+  //     const res5 = await getMachineOfLine();
+  //     setListMachines(
+  //       res5.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.code };
+  //       })
+  //     );
+  //   })();
+  // }, []);
 
   async function btn_click() {
     setLoSX();
@@ -274,9 +274,9 @@ const Equipment2 = (props) => {
     setLoading(false);
   }
 
-  useEffect(() => {
-    btn_click();
-  }, []);
+  // useEffect(() => {
+  //   btn_click();
+  // }, []);
   const [loading, setLoading] = useState(false);
 
   const [exportLoading, setExportLoading] = useState(false);
@@ -527,28 +527,28 @@ const Equipment2 = (props) => {
   const onClickRow = async (record) => {
     setLoSX(record.lo_sx);
   };
-  useEffect(() => {
-    if (loSX) {
-      (async () => {
-        const res = await getThongSoMay({ ...params, lo_sx: loSX });
-        if (res.success) {
-          setData(
-            res.data.map((e) => {
-              let dataIf = e.data_if;
-              Object.keys(dataIf ?? {}).forEach(function (key, index) {
-                dataIf[key] = { is_if: true, value: dataIf[key] };
-              });
-              let dataInput = e.data_input;
-              Object.keys(dataInput ?? {}).forEach(function (key, index) {
-                dataInput[key] = { is_if: false, value: dataInput[key] };
-              });
-              return { ...e, ...dataIf, ...dataInput };
-            })
-          );
-        }
-      })();
-    }
-  }, [loSX]);
+  // useEffect(() => {
+  //   if (loSX) {
+  //     (async () => {
+  //       const res = await getThongSoMay({ ...params, lo_sx: loSX });
+  //       if (res.success) {
+  //         setData(
+  //           res.data.map((e) => {
+  //             let dataIf = e.data_if;
+  //             Object.keys(dataIf ?? {}).forEach(function (key, index) {
+  //               dataIf[key] = { is_if: true, value: dataIf[key] };
+  //             });
+  //             let dataInput = e.data_input;
+  //             Object.keys(dataInput ?? {}).forEach(function (key, index) {
+  //               dataInput[key] = { is_if: false, value: dataInput[key] };
+  //             });
+  //             return { ...e, ...dataIf, ...dataInput };
+  //           })
+  //         );
+  //       }
+  //     })();
+  //   }
+  // }, [loSX]);
 
   const renderCard = (item, index) => {
     return (

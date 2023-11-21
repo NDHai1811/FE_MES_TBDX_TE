@@ -163,15 +163,15 @@ const QualityPQC = (props) => {
     },
   };
   const configPieChart = {
-    // appendPadding: 10,
     data: dataPieChart,
+    height: 200,
     angleField: 'value',
     colorField: 'error',
     radius: 0.5,
     innerRadius: 0.6,
     label: {
       type: 'outer',
-      offset: '-50%',
+      offset: '100%',
       content: ({ error, percent }) => `${error}` + " " + `${(percent * 100).toFixed(0)}%`,
       style: {
         textAlign: 'center',
@@ -298,6 +298,8 @@ const QualityPQC = (props) => {
   ];
   const configColumnLine = {
     data: [uvBillData, transformData],
+    height: 170,
+    autoFit: true,
     xField: 'time',
     yField: ['value', 'count'],
     geometryOptions: [
@@ -669,11 +671,12 @@ const QualityPQC = (props) => {
     <React.Fragment>
       {contextHolder}
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+        <Col span={4}>
+          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Công đoạn" className="mb-3">
+                <Divider>Công đoạn</Divider>
+                <Form.Item className="mb-3">
                   <Select
                     allowClear
                     onChange={(value) =>
@@ -688,7 +691,7 @@ const QualityPQC = (props) => {
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]}/> */}
+                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <DatePicker
                     allowClear={false}
@@ -714,11 +717,26 @@ const QualityPQC = (props) => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item label="Máy" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập máy"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
-                    placeholder="Chọn khách hàng"
+                    placeholder="Nhập khách hàng"
                     onChange={(value) =>
                       setParams({ ...params, khach_hang: value })
                     }
@@ -731,14 +749,14 @@ const QualityPQC = (props) => {
                     options={listCustomers}
                   />
                 </Form.Item>
-                <Form.Item label="Tên sản phẩm" className="mb-3">
+                <Form.Item label="Đơn hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
                     onChange={(value) => {
                       setParams({ ...params, ten_sp: value });
                     }}
-                    placeholder="Nhập tên sản phẩm"
+                    placeholder="Nhập đơn hàng"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
@@ -759,9 +777,37 @@ const QualityPQC = (props) => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    onChange={(value) => {
-                      setParams({ ...params, lo_sx: value });
-                    }}
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
+                <Form.Item label="Quy cách" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập quy cách"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    options={listLoSX}
+                  />
+                </Form.Item>
+                <Form.Item label="Lỗi" className="mb-3">
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder="Nhập lỗi"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) => setParams({ ...params, lo_sx: value })}
                     options={listLoSX}
                   />
                 </Form.Item>
@@ -786,7 +832,7 @@ const QualityPQC = (props) => {
           </Card>
         </Col>
 
-        <Col span={21}>
+        <Col span={20}>
           <Row gutter={[8, 8]}>
             <Col span={24}>
               <Card
@@ -806,7 +852,7 @@ const QualityPQC = (props) => {
             <Col span={12}>
               <Card
                 title="Top 5 lỗi"
-                // style={{ height: "100%", padding: "0px" }}
+                style={{ height: 250, padding: "0px" }}
                 bodyStyle={{ padding: 12 }}
               >
                 <Pie {...configPieChart} />
@@ -815,7 +861,7 @@ const QualityPQC = (props) => {
             <Col span={12}>
               <Card
                 title="Biểu đồ"
-                // style={{ height: "100%", padding: "0px" }}
+                style={{ height: 250, padding: "0px" }}
                 bodyStyle={{ padding: 12 }}
               >
                 <DualAxes {...configColumnLine} />
