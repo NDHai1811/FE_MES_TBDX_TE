@@ -4,6 +4,7 @@ import styled from "styled-components";
 import "./style.css";
 import dayjs from "dayjs";
 import { QRCode, Space } from "antd";
+import logolight from "../../../assets/images/logo.jpg";
 
 const PageBreakWrapper = styled.div`
   && {
@@ -28,19 +29,22 @@ const PrintTemplate = ({ detail }) => {
             <tr>
               <td colSpan={4}>
                 <div className="d-flex justify-content-between">
-                  <div className="flex-column">
-                    <h5 style={{ marginLeft: "8px" }}>NO:</h5>
-                    <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5>
-                  </div>
-
-                  {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
                   <QRCode
-                    style={{ marginRight: "12px" }}
-                    value={detail.lot_id}
-                    bordered={false}
-                    size={100}
-                    type="svg"
-                  />
+                      style={{ marginRight: "12px" }}
+                      value={detail.lot_id}
+                      bordered={false}
+                      size={60}
+                      type="svg"
+                    />
+                  <div className="flex-column">
+                    <h5 style={{ marginLeft: "8px" }}>Tem tổ dợn sóng</h5>
+                    {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
+                  </div>
+                  <div className="flex-column">
+                    <img src={logolight} width={60}/>
+                    {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
+                  </div>
+                  {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
                 </div>
               </td>
             </tr>
