@@ -68,26 +68,26 @@ const items = [
     ],
     permission: "ui-kho",
   },
-  {
-    label: "KPI",
-    key: "kpi",
-    permission: "ui-kpi",
-  },
-  {
-    label: "Giám sát bất thường",
-    key: "abnormal",
-    children: [
-      {
-        label: "Kịch bản bất thường",
-        key: "abnormal/kich-ban-bat-thuong",
-      },
-      {
-        label: "Lịch sử bất thường",
-        key: "abnormal/lich-su-bat-thuong",
-      },
-    ],
-    permission: "ui-abnormal",
-  },
+  // {
+  //   label: "KPI",
+  //   key: "kpi",
+  //   permission: "ui-kpi",
+  // },
+  // {
+  //   label: "Giám sát bất thường",
+  //   key: "abnormal",
+  //   children: [
+  //     {
+  //       label: "Kịch bản bất thường",
+  //       key: "abnormal/kich-ban-bat-thuong",
+  //     },
+  //     {
+  //       label: "Lịch sử bất thường",
+  //       key: "abnormal/lich-su-bat-thuong",
+  //     },
+  //   ],
+  //   permission: "ui-abnormal",
+  // },
   {
     label: "Master Data",
     key: "master-data",

@@ -185,42 +185,42 @@ const ThanhPhamGiay = (props) => {
   // const [listIdProducts, setListIdProducts] = useState([]);
   const [listNameProducts, setListNameProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
-  useEffect(() => {
-    (async () => {
-      var res1 = await getCustomers();
-      setListCustomers(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      // var res2 = await getProducts();
-      // setListIdProducts(res2.data.map(e => {
-      //     return { ...e, label: e.id, value: e.id }
-      // }));
-      // setListNameProducts(res2.data.map(e => {
-      //     return { ...e, label: e.name, value: e.id }
-      // }));
-    })();
-    btn_click();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     var res1 = await getCustomers();
+  //     setListCustomers(
+  //       res1.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.id };
+  //       })
+  //     );
+  //     // var res2 = await getProducts();
+  //     // setListIdProducts(res2.data.map(e => {
+  //     //     return { ...e, label: e.id, value: e.id }
+  //     // }));
+  //     // setListNameProducts(res2.data.map(e => {
+  //     //     return { ...e, label: e.name, value: e.id }
+  //     // }));
+  //   })();
+  //   btn_click();
+  // }, []);
 
-  useEffect(() => {
-    (async () => {
-      var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-      if (res.success) {
-        setListNameProducts(
-          res.data.product.map((e) => {
-            return { ...e, label: e.name, value: e.id };
-          })
-        );
-        setListLoSX(
-          Object.values(res.data.lo_sx).map((e) => {
-            return { label: e, value: e };
-          })
-        );
-      }
-    })();
-  }, [params.khach_hang]);
+  // useEffect(() => {
+  //   (async () => {
+  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
+  //     if (res.success) {
+  //       setListNameProducts(
+  //         res.data.product.map((e) => {
+  //           return { ...e, label: e.name, value: e.id };
+  //         })
+  //       );
+  //       setListLoSX(
+  //         Object.values(res.data.lo_sx).map((e) => {
+  //           return { label: e, value: e };
+  //         })
+  //       );
+  //     }
+  //   })();
+  // }, [params.khach_hang]);
 
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
