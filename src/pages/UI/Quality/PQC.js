@@ -171,7 +171,7 @@ const QualityPQC = (props) => {
     innerRadius: 0.6,
     label: {
       type: 'outer',
-      offset: '100%',
+      offset: '120%',
       content: ({ error, percent }) => `${error}` + " " + `${(percent * 100).toFixed(0)}%`,
       style: {
         textAlign: 'center',
@@ -849,7 +849,7 @@ const QualityPQC = (props) => {
                 />
               </Card>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <Card
                 title="Top 5 lỗi"
                 style={{ height: 250, padding: "0px" }}
@@ -858,7 +858,7 @@ const QualityPQC = (props) => {
                 <Pie {...configPieChart} />
               </Card>
             </Col>
-            <Col span={12}>
+            <Col span={16}>
               <Card
                 title="Biểu đồ"
                 style={{ height: 250, padding: "0px" }}

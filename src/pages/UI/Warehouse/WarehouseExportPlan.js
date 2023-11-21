@@ -62,21 +62,21 @@ const WarehouseExportPlan = (props) => {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-      if (res.success) {
-        setListNameProducts(
-          res.data.product.map((e) => {
-            return { ...e, label: e.name, value: e.id };
-          })
-        );
-        // setListLoSX(Object.values(res.data.lo_sx).map(e => {
-        //         return { label: e, value: e }
-        // }));
-      }
-    })();
-  }, [params.khach_hang]);
+  // useEffect(() => {
+  //   (async () => {
+  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
+  //     if (res.success) {
+  //       setListNameProducts(
+  //         res.data.product.map((e) => {
+  //           return { ...e, label: e.name, value: e.id };
+  //         })
+  //       );
+  //       // setListLoSX(Object.values(res.data.lo_sx).map(e => {
+  //       //         return { label: e, value: e }
+  //       // }));
+  //     }
+  //   })();
+  // }, [params.khach_hang]);
 
   const deleteRecord = async () => {
     if (listCheck.length > 0) {
@@ -232,16 +232,16 @@ const WarehouseExportPlan = (props) => {
   const mergeValue = mergeColumn.map((e) => {
     return { key: e, set: new Set() };
   });
-  useEffect(() => {
-    (async () => {
-      var res1 = await getCustomers();
-      setListCustomers(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     var res1 = await getCustomers();
+  //     setListCustomers(
+  //       res1.data.map((e) => {
+  //         return { ...e, label: e.name, value: e.id };
+  //       })
+  //     );
+  //   })();
+  // }, []);
   const isEditing = (col, record) => {
     return col.editable === true && listCheck.includes(record.id);
   };

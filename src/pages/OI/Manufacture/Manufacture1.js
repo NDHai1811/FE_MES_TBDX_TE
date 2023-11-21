@@ -78,7 +78,7 @@ const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const history = useHistory();
-  const [params, setParams] = useState({machine_id: machine_id, start_date: dayjs(), end_date: dayjs()})
+  const [params, setParams] = useState({start_date: dayjs(), end_date: dayjs()})
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -131,13 +131,17 @@ const Manufacture1 = (props) => {
   ]);
 
   useEffect(() => {
-    setParams({...params, machine_id: machine_id})
+    if(machine_id){
+      setParams({...params, machine_id: machine_id})
+    }
   }, [machine_id]);
 
   useEffect(()=>{
-    getOverAllDetail();
-    getListLotDetail();
-  }, params)
+    if(machine_id){
+      getOverAllDetail();
+      getListLotDetail();
+    }
+  }, machine_id)
 
   useEffect(() => {
     getMachineList();
@@ -145,7 +149,7 @@ const Manufacture1 = (props) => {
 
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll(params)
+    getOverAll({...params, machine_id})
       .then((res) => {
         const { kh_ca, so_luong, ht_kh_ca, phe_sx } = res.data?.[0] || {};
         setRow1([
@@ -185,7 +189,7 @@ const Manufacture1 = (props) => {
 
   const getListLotDetail = () => {
     setLoading(true);
-    getLotByMachine(params)
+    getLotByMachine({...params, machine_id})
       .then((res) => {
         setData(res.data);
       })
