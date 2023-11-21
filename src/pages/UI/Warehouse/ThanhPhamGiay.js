@@ -28,6 +28,7 @@ import { exportWarehouse } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { getCustomers, getDataFilterUI } from "../../../api/ui/main";
+import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 
 const { Panel } = Collapse;
 
@@ -134,13 +135,6 @@ const col_detailTable = [
   },
 ];
 
-const mockDataTable = [
-  {
-    so_kg_ton_kho: "100",
-    so_cuon_ton_kho: "50",
-    so_vi_tri_trong: "5",
-  },
-];
 const mockDataTable1 = [
   {
     title: "Số kg tồn trong kho",
@@ -153,27 +147,6 @@ const mockDataTable1 = [
   {
     title: "Số vị trí còn trống trong kho",
     value: 5,
-  },
-];
-
-const columns = [
-  {
-    title: "Số kg tồn trong kho",
-    dataIndex: "so_kg_ton_kho",
-    key: "so_kg_ton_kho",
-    align: "center",
-  },
-  {
-    title: "Số cuộn tồn trong kho",
-    dataIndex: "so_cuon_ton_kho",
-    key: "so_cuon_ton_kho",
-    align: "center",
-  },
-  {
-    title: "Số vị trí còn trống trong kho",
-    dataIndex: "so_vi_tri_trong",
-    key: "so_vi_tri_trong",
-    align: "center",
   },
 ];
 
@@ -730,7 +703,7 @@ const ThanhPhamGiay = (props) => {
       ]
     }
   ];
-  const [ selectedKey, setSelectedKey] = useState([]);
+
   return (
     <>
       {contextHolder}
@@ -772,14 +745,6 @@ const ThanhPhamGiay = (props) => {
                 </Checkbox.Group>
               </Panel>
             </Collapse>
-            {/* <Menu
-              // style={{ width: 256 }}
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              mode="inline"
-              onSelect={({keyPath})=>setSelectedKey(keyPath)}
-              items={itemsMenu}
-            /> */}
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -792,6 +757,7 @@ const ThanhPhamGiay = (props) => {
                       setParams({ ...params, date: [value, params.date[1]] })
                     }
                     value={params.date[0]}
+                    format={COMMON_DATE_FORMAT}
                   />
                   <DatePicker
                     allowClear={false}
@@ -801,6 +767,7 @@ const ThanhPhamGiay = (props) => {
                       setParams({ ...params, date: [params.date[0], value] })
                     }
                     value={params.date[1]}
+                    format={COMMON_DATE_FORMAT}
                   />
                 </Space>
               </Form>

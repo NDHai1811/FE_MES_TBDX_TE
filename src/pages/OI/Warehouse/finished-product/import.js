@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Table, Button, Space } from "antd";
+import { Row, Col, Table, Button } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -25,12 +25,6 @@ const columnDetail = [
   },
   {
     title: "Vị trí đề xuất",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-  },
-  {
-    title: "Số lượng",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
@@ -128,7 +122,6 @@ const Import = (props) => {
     {
       so_pallet: "T300/3",
       so_mql: "10",
-      so_luong: "150",
       vi_tri: "A01",
     },
   ]);

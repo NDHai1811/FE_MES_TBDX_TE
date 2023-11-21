@@ -146,6 +146,7 @@ export const warehousExportNVLData = [
     {
       so_lot: "001",
       so_pallet: "T300/3",
+      so_lot: 'S2301',
       vi_tri: "A01",
       so_mql: '10',
       so_luong: '150',
@@ -156,6 +157,7 @@ export const warehousExportNVLData = [
     {
       so_lot: "002",
       so_pallet: "T300/3",
+      so_lot: 'S2301',
       so_mql: '10',
       so_luong: '150',
       so_don_hang: '13112018',
@@ -166,6 +168,7 @@ export const warehousExportNVLData = [
     {
       so_lot: "003",
       so_pallet: "T300/3",
+      so_lot: 'S2301',
       so_mql: '10',
       so_luong: '150',
       so_don_hang: '13112018',
@@ -176,6 +179,7 @@ export const warehousExportNVLData = [
     {
       so_lot: "004",
       so_pallet: "T300/3",
+      so_lot: 'S2301',
       so_mql: '10',
       so_luong: '150',
       so_don_hang: '13112018',
@@ -186,6 +190,7 @@ export const warehousExportNVLData = [
     {
       so_lot: "005",
       so_pallet: "T300/3",
+      so_lot: 'S2301',
       so_mql: '10',
       so_luong: '150',
       so_don_hang: '13112018',
@@ -196,6 +201,7 @@ export const warehousExportNVLData = [
     {
       so_lot: "006",
       so_pallet: "T300/3",
+      so_lot: 'S2301',
       so_mql: '10',
       so_luong: '150',
       so_don_hang: '13112018',

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { QrcodeOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
 import { Row, Col, Table } from "antd";
 import "../style.scss";
 import {
@@ -193,9 +192,7 @@ const Import = (props) => {
   //   loadInfo();
   // }, []);
 
-  const onScan = () => {
-    
-  }
+  const onScan = () => {};
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[12, 12]}>
@@ -240,7 +237,7 @@ const Import = (props) => {
           />
         </Col>
         <Col span={24}>
-          <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} onScan={onScan} />
+          <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} onScan={onScan} />
         </Col>
         <Col span={24}>
           <Table

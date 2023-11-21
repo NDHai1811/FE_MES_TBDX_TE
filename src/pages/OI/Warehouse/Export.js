@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Table, Input, Form } from "antd";
+import { Row, Col, Table, Form } from "antd";
 import "../style.scss";
 import {
   useHistory,
@@ -14,19 +13,19 @@ import ScanButton from "../../../components/Button/ScanButton";
 
 const columnDetail = [
   {
-    title: "Mã cuộn TBDX",
-    dataIndex: "ma_cuon_tbdx",
-    key: "ma_cuon_tbdx",
-    align: "center",
-  },
-  {
     title: "Đầu sóng",
     dataIndex: "dau_song",
     key: "dau_song",
     align: "center",
   },
   {
-    title: "Vị trí đề xuất",
+    title: "Mã cuộn TBDX",
+    dataIndex: "ma_cuon_tbdx",
+    key: "ma_cuon_tbdx",
+    align: "center",
+  },
+  {
+    title: "Vị trí",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
@@ -89,7 +88,7 @@ const exportColumns = [
     align: "center",
   },
   {
-    title: "Thời gian xuất kho thực tế",
+    title: "Thời gian xuất",
     dataIndex: "thoi_gian_xuat",
     key: "thoi_gian_xuat",
     align: "center",
@@ -448,9 +447,7 @@ const Export = (props) => {
   //   }
   // };
 
-  const onScan = () => {
-
-  }
+  const onScan = () => {};
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 6]}>
@@ -495,7 +492,7 @@ const Export = (props) => {
           />
         </Col>
         <Col span={24}>
-          <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} onScan={onScan} />
+          <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} onScan={onScan} />
         </Col>
         <Col span={24}>
           <Table
