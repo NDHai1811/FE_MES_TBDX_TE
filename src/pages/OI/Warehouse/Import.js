@@ -8,6 +8,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../components/Button/SelectButton";
 import { warehousNvlData } from "./mock-data";
+import ScanButton from "../../../components/Button/ScanButton";
 
 const columnDetail = [
   {
@@ -192,6 +193,9 @@ const Import = (props) => {
   //   loadInfo();
   // }, []);
 
+  const onScan = () => {
+    
+  }
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[12, 12]}>
@@ -234,6 +238,9 @@ const Import = (props) => {
             columns={columnDetail}
             dataSource={selectedItem}
           />
+        </Col>
+        <Col span={24}>
+          <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} onScan={onScan} />
         </Col>
         <Col span={24}>
           <Table
