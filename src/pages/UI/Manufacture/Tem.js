@@ -20,28 +20,29 @@ const PrintTemplate = ({ detail }) => {
           <thead>
             <tr>
               <th style={{ width: "20%" }}></th>
-              <th style={{ width: "30%" }}></th>
               <th style={{ width: "20%" }}></th>
-              <th style={{ width: "30%" }}></th>
+              <th style={{ width: "20%" }}></th>
+              <th style={{ width: "20%" }}></th>
+              <th style={{ width: "20%" }}></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colSpan={4}>
+              <td colSpan={5}>
                 <div className="d-flex justify-content-between">
                   <QRCode
-                      style={{ marginRight: "12px" }}
+                      style={{ marginRight: "5px" }}
                       value={detail.lot_id}
                       bordered={false}
-                      size={60}
+                      size={80}
                       type="svg"
                     />
                   <div className="flex-column">
-                    <h5 style={{ marginLeft: "8px" }}>Tem tổ dợn sóng</h5>
+                    <h3 style={{ marginLeft: "8px",fontSize:'28px',marginTop:'18px' }}>Tem tổ dợn sóng</h3>
                     {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                   </div>
                   <div className="flex-column">
-                    <img src={logolight} width={60}/>
+                    <img src={logolight} width={70} style={{ marginRight: "10px",marginLeft:'10px',marginTop:'10px' }}/>
                     {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                   </div>
                   {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
@@ -49,41 +50,60 @@ const PrintTemplate = ({ detail }) => {
               </td>
             </tr>
             <tr>
-              <td>Tên SP</td>
-              <td>{detail.ten_sp}</td>
-              <td>Số lượng</td>
-              <td style={{ textAlign: "center" }}>{detail.soluongtp}</td>
+              <td className="text-center" colSpan={2}>Khách hàng</td>
+              <td className="text-center" colSpan={2}>Đơn hàng</td>
+              <td className="text-center">Lô sx</td>
             </tr>
             <tr>
-              <td>Ver/His</td>
-              <td>
-                {detail?.his && detail?.ver && detail?.ver + "/" + detail?.his}
-              </td>
-              <td>Lô SX</td>
-              <td style={{ textAlign: "center" }}>{detail.lsx}</td>
+              <td className="text-center" colSpan={2}><b>GLORIDAYS</b></td>
+              <td className="text-center" colSpan={2}><b>784/10</b></td>
+              <td></td>
             </tr>
             <tr>
-              <td>Công đoạn thực hiện</td>
-              <td>
-                {detail.cd_thuc_hien ? detail.cd_thuc_hien : "Trước bảo ôn"}
-              </td>
-              <td>Thời gian SX</td>
-              <td>{dayjs().format("DD/MM/YYYY HH:mm:ss")}</td>
+              <td className="text-center">Dài</td>
+              <td className="text-center">Rộng</td>
+              <td className="text-center">Cao</td>
+              <td className="text-center">Lot</td>
+              <td className="text-center">Số lượng:</td>
             </tr>
             <tr>
-              <td>Ngày sản xuất</td>
-              <td>{dayjs().format("DD/MM/YYYY")}</td>
-              <td>Mã Pallet/thùng</td>
-              <td>{detail.lot_id}</td>
+              <td className="text-center">68.0</td>
+              <td className="text-center">48.0</td>
+              <td className="text-center">25.0</td>
+              <td className="text-center"></td>
+              <td className="text-center"><b>124</b></td>
             </tr>
             <tr>
-              <td>Công đoạn tiếp theo</td>
-              <td>{detail.cd_tiep_theo ? detail.cd_tiep_theo : "OQC"}</td>
-              <td>Người sản xuất</td>
-              <td>{detail.nguoi_sx ? detail.nguoi_sx : ""}</td>
+              <td className="text-center">Khổ</td>
+              <td className="text-center">Dài</td>
+              <td className="text-center">Số dao</td>
+              <td className="text-center">Xả</td>
+              <td className="text-center">Số lớp</td>
             </tr>
             <tr>
-              <td colSpan={4}>Ghi chú</td>
+              <td className="text-center">148</td>
+              <td className="text-center">236</td>
+              <td className="text-center">62</td>
+              <td className="text-center">2</td>
+              <td className="text-center">5 lớp</td>
+            </tr>
+            <tr>
+              <td className="text-center" colSpan={4}>Ghi chú sản phẩm</td>
+              <td className="text-center">Số pallet</td>
+            </tr>
+            <tr>
+              <td colSpan={4}>Không có</td>
+              <td className="text-center">1</td>
+            </tr>
+            <tr>
+              <td className="text-center" colSpan={2}>Nhóm máy</td>
+              <td className="text-center" colSpan={3}><b>GT</b></td>
+            </tr>
+            <tr>
+              <td className="text-center">Ngày sản xuất</td>
+              <td className="text-center" colSpan={2}>21/11/2023 12:45</td>
+              <td className="text-center">Ca sản xuất</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
