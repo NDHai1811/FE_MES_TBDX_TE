@@ -5,38 +5,29 @@ import {
   Card,
   Table,
   Tag,
-  Layout,
   Divider,
   Button,
   Form,
-  Input,
-  theme,
   Select,
-  AutoComplete,
   Space,
   Spin,
 } from "antd";
-import { Pie, Column } from "@ant-design/plots";
+import { Column } from "@ant-design/plots";
 import React, { useState, useEffect } from "react";
+import { Pie } from "@ant-design/charts";
 import {
-  getMachine,
   getErrorsMachine,
-  getLines,
   getMachineOfLine,
   getCustomers,
   getProducts,
   getStaffs,
   getLoSanXuat,
-  getWarehouses,
-  getCaSanXuats,
   getMachineError,
 } from "../../../api/ui/main";
 import { exportMachineError } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
-
-const { Sider } = Layout;
-const { RangePicker } = DatePicker;
+import "../style.scss";
 
 const columnTable = [
   {
@@ -47,98 +38,86 @@ const columnTable = [
     align: "center",
   },
   {
-    title: "Ngày",
-    dataIndex: "ngay_sx",
-    key: "ngay_sx",
+    title: "Máy",
+    dataIndex: "may",
+    key: "may",
     align: "center",
   },
   {
-    title: "Ca",
-    dataIndex: "ca_sx",
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
     key: "ca_sx",
     align: "center",
   },
   {
-    title: "Công đoạn",
-    dataIndex: "cong_doan",
-    key: "cong_doan",
+    title: "Đơn hàng",
+    dataIndex: "don_hang",
+    key: "don_hang",
     align: "center",
+    render: (value) => value || "-",
   },
   {
-    title: "Máy sản xuất",
-    dataIndex: "machine_name",
-    key: "machine_name",
-    align: "center",
-  },
-  {
-    title: "Lô sx",
+    title: "Lô sản xuất",
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
-  },
-  {
-    title: "Thùng/pallet",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
-  },
-  {
-    title: "Thời gian bắt đầu dừng",
-    dataIndex: "thoi_gian_bat_dau_dung",
-    key: "thoi_gian_bat_dau_dung",
-    align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
-  },
-  {
-    title: "Thời gian kết thúc dừng",
-    dataIndex: "thoi_gian_ket_thuc_dung",
-    key: "thoi_gian_ket_thuc_dung",
-    align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
   },
   {
     title: "Thời gian dừng",
     dataIndex: "thoi_gian_dung",
     key: "thoi_gian_dung",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
   },
   {
-    title: "Mã lỗi",
-    dataIndex: "error_id",
-    key: "error_id",
+    title: "Thời gian chạy",
+    dataIndex: "thoi_gian_chay",
+    key: "thoi_gian_chay",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
   },
   {
-    title: "Tên lỗi",
-    dataIndex: "error_name",
-    key: "error_name",
+    title: "Mã sự cố",
+    dataIndex: "ma_su_co",
+    key: "ma_su_co",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
   },
   {
-    title: "Nguyên nhân lỗi",
+    title: "Tên sự cố",
+    dataIndex: "ten_su_co",
+    key: "ten_su_co",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Nguyên nhân",
     dataIndex: "nguyen_nhan",
     key: "nguyen_nhan",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
   },
   {
-    title: "Biện pháp khắc phục lỗi",
-    dataIndex: "bien_phap",
-    key: "bien_phap",
+    title: "Cách xử lý",
+    dataIndex: "cach_xu_ly",
+    key: "cach_xu_ly",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
   },
   {
-    title: "Biện pháp phòng ngừa lỗi",
-    dataIndex: "phong_ngua",
-    key: "phong_ngua",
+    title: "Thời gian xử lý",
+    dataIndex: "thoi_gian_xu_ly",
+    key: "thoi_gian_xu_ly",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    render: (value) => value || "-",
+  },
+  {
+    title: "Nguời xử lý",
+    dataIndex: "nguoi_xu_ly",
+    key: "nguoi_xu_ly",
+    align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Tình trạng",
@@ -155,33 +134,218 @@ const columnTable = [
     },
     align: "center",
   },
+];
+
+const logs = [
   {
-    title: "Người xử lý",
-    dataIndex: "nguoi_xl",
-    key: "nguoi_xl",
+    may: "P06",
+    khach_hang: "VICTORY",
+    don_hang: "",
+    lo_sx: "",
+    thoi_gian_dung: "15/10/2023 08:19:20",
+    thoi_gian_chay: "15/10/2023 08:35:20",
+    ma_su_co: "",
+    ten_su_co: "Đổi mã hàng",
+    nguyen_nhan: "",
+    cach_xu_ly: "",
+    thoi_gian_xu_ly: "",
+    nguoi_xu_ly: "",
+    tinh_trang: "",
+  },
+  {
+    may: "P06",
+    khach_hang: "VICTORY",
+    don_hang: "",
+    lo_sx: "",
+    thoi_gian_dung: "15/10/2023 08:19:20",
+    thoi_gian_chay: "15/10/2023 08:35:20",
+    ma_su_co: "",
+    ten_su_co: "Đổi mã hàng",
+    nguyen_nhan: "",
+    cach_xu_ly: "",
+    thoi_gian_xu_ly: "",
+    nguoi_xu_ly: "",
+    tinh_trang: "",
+  },
+  {
+    may: "P06",
+    khach_hang: "VICTORY",
+    don_hang: "",
+    lo_sx: "",
+    thoi_gian_dung: "15/10/2023 08:19:20",
+    thoi_gian_chay: "15/10/2023 08:35:20",
+    ma_su_co: "",
+    ten_su_co: "Đổi mã hàng",
+    nguyen_nhan: "",
+    cach_xu_ly: "",
+    thoi_gian_xu_ly: "",
+    nguoi_xu_ly: "",
+    tinh_trang: "",
+  },
+];
+
+const data1 = [
+  { type: "Xanh", value: 70 },
+  { type: "Cam", value: 30 },
+];
+
+const data2 = [
+  { type: "Xanh", value: 84 },
+  { type: "Cam", value: 16 },
+];
+
+const data3 = [
+  { type: "Thời gian dừng kế hoạch", value: 60 },
+  { type: "Thời gian dừng bất thường", value: 38 },
+];
+
+const config = {
+  appendPadding: 10,
+  data: data1,
+  angleField: "value",
+  colorField: "type",
+  radius: 0.8,
+  color: (value) => {
+    return value.type === "Xanh" ? "blue" : "orange";
+  },
+  legend: false,
+  tooltip: {
+    formatter: (datum) => {
+      return {
+        name: datum.type,
+        value: datum.value?.toFixed(2) + "%",
+      };
+    },
+  },
+};
+
+const config2 = {
+  appendPadding: 4,
+  data: data2,
+  angleField: "value",
+  colorField: "type",
+  radius: 0.8,
+  color: (value) => {
+    return value.type === "Xanh" ? "blue" : "orange";
+  },
+  legend: false,
+  tooltip: {
+    formatter: (datum) => {
+      return {
+        name: datum.type,
+        value: datum.value?.toFixed(2) + "%",
+      };
+    },
+  },
+};
+
+const config3 = {
+  title: {
+    text: "Thời gian dừng (Phút)",
+    style: {
+      fontSize: "14px",
+      fontWeight: "bold",
+      textAlign: "center",
+    },
+  },
+  data: data3,
+  xField: "type",
+  yField: "value",
+  seriesField: "type",
+  isGroup: true,
+  color: "blue",
+  xAxis: {
+    label: {
+      autoHide: false,
+      autoRotate: true,
+    },
+  },
+  label: {
+    position: "top",
+    offsetY: 10,
+    formatter: (value) => {
+      return value.value ? `${value.value}%` : "";
+    },
+  },
+  legend: false,
+  yAxis: {
+    max: 80,
+  },
+  meta: {
+    type: {
+      alias: "Máy",
+    },
+    value: {
+      alias: "Hiệu suất",
+    },
+  },
+};
+const column = [
+  {
+    title: "Mã sự cố",
+    dataIndex: "ma_su_co",
+    key: "ma_su_co",
     align: "center",
-    render: (value, record, index) => (value != "" ? value : "-"),
+    height: 30,
+  },
+  {
+    title: "Tên sự cố",
+    dataIndex: "ten_su_co",
+    key: "ten_su_co",
+    align: "center",
+    height: 30,
+  },
+  {
+    title: "Số lần",
+    dataIndex: "so_lan",
+    key: "so_lan",
+    align: "center",
+    height: 30,
+  },
+];
+
+const errorTable = [
+  {
+    ma_su_co: "SC01",
+    ten_su_co: "Mất điện",
+    so_lan: 7,
+  },
+  {
+    ma_su_co: "SC02",
+    ten_su_co: "Sản phẩm mới (duyệt mẫu)",
+    so_lan: 6,
+  },
+  {
+    ma_su_co: "SC03",
+    ten_su_co: "Bảo trì (định kỳ)",
+    so_lan: 5,
+  },
+  {
+    ma_su_co: "SC04",
+    ten_su_co: "Vệ sinh 5S",
+    so_lan: 4,
   },
 ];
 
 const Equipment1 = (props) => {
   document.title = "UI - Thống kê lỗi";
-  const [listLines, setListLines] = useState([]);
+  // const [listLines, setListLines] = useState([]);
   const [listMachines, setListMachines] = useState([]);
   const [listIdProducts, setListIdProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
   const [listStaffs, setListStaffs] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
   const [listErrorsMachine, setListErrorsMachine] = useState([]);
-  const [selectedLine, setSelectedLine] = useState();
-  const [selectedIdProduct, setSelectedIdProduct] = useState();
-  const [selectedCustomer, setSelectedCustomer] = useState();
-  const [selectedStaff, setSelectedStaff] = useState();
-  const [selectedError, setSelectedError] = useState();
+  // const [selectedLine, setSelectedLine] = useState();
+  // const [selectedIdProduct, setSelectedIdProduct] = useState();
+  // const [selectedCustomer, setSelectedCustomer] = useState();
+  // const [selectedStaff, setSelectedStaff] = useState();
+  // const [selectedError, setSelectedError] = useState();
   const [data, setData] = useState();
   const [dataTable, setDataTable] = useState();
   const [dataPieChart, setDataPieChart] = useState([]);
   const [dataColChart, setDataColChart] = useState([]);
+  const [activeTab, setActiveTab] = useState("Time");
   const [params, setParams] = useState({
     machine_code: "",
     date: [dayjs(), dayjs()],
@@ -189,7 +353,7 @@ const Equipment1 = (props) => {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      setLoading(false);
       const res2 = await getProducts();
       setListIdProducts(
         res2.data.map((e) => {
@@ -234,7 +398,7 @@ const Equipment1 = (props) => {
 
   function btn_click() {
     (async () => {
-      setLoading(true);
+      setLoading(false);
       const res = await getMachineError(params);
       setData(res.data);
       setLoading(false);
@@ -242,7 +406,6 @@ const Equipment1 = (props) => {
   }
   useEffect(() => {
     if (!data) return;
-    console.log(data);
     setDataTable(data.table);
 
     setDataPieChart(
@@ -270,20 +433,6 @@ const Equipment1 = (props) => {
   useEffect(() => {
     console.log(dataColChart);
   }, [dataColChart]);
-
-  const configPieChart = {
-    appendPadding: 10,
-    // height:200,
-    data: dataPieChart,
-    angleField: "value",
-    colorField: "error",
-    radius: 0.8,
-    label: {
-      type: "outer",
-      content: ({ id, percent }) =>
-        `${id}` + " " + `${(percent * 100).toFixed(0)}%`,
-    },
-  };
 
   var configColChart = {
     data: dataColChart,
@@ -333,10 +482,24 @@ const Equipment1 = (props) => {
           <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
+                <Form.Item label="Công đoạn" className="mb-3">
                   <Select
                     allowClear
-                    placeholder="Nhập máy"
+                    placeholder="Nhập công đoạn"
+                    options={listMachines}
+                    onChange={(value) =>
+                      setParams({ ...params, machine_code: value })
+                    }
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item label="Phân loại" className="mb-3">
+                  <Select
+                    allowClear
+                    placeholder="Chọn phân loại"
                     options={listMachines}
                     onChange={(value) =>
                       setParams({ ...params, machine_code: value })
@@ -374,11 +537,11 @@ const Equipment1 = (props) => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Lô Sản xuất" className="mb-3">
+                <Form.Item label="Máy" className="mb-3">
                   <Select
                     allowClear
                     showSearch
-                    placeholder="Nhập lô sản xuất"
+                    placeholder="Chọn máy"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
@@ -389,6 +552,28 @@ const Equipment1 = (props) => {
                     options={listLoSX}
                   />
                 </Form.Item>
+
+                <Form.Item label="Mã lỗi" className="mb-3">
+                  <Select
+                    showSearch
+                    // onChange={(value)=>{
+                    //     setSelectedError(value);
+                    // }}
+                    allowClear
+                    placeholder="Mã lỗi"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    onChange={(value) =>
+                      setParams({ ...params, machine_error: value })
+                    }
+                    options={listErrorsMachine}
+                  />
+                </Form.Item>
+
                 <Form.Item label="Tên lỗi" className="mb-3">
                   <Select
                     showSearch
@@ -410,7 +595,7 @@ const Equipment1 = (props) => {
                   />
                 </Form.Item>
 
-                <Form.Item label="Nhân viên" className="mb-3">
+                <Form.Item label="Nguyên nhân" className="mb-3">
                   <Select
                     showSearch
                     allowClear
@@ -418,6 +603,24 @@ const Equipment1 = (props) => {
                       setParams({ ...params, user_id: value })
                     }
                     placeholder="Chọn nhân viên"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={listStaffs}
+                  />
+                </Form.Item>
+
+                <Form.Item label="Khách hàng" className="mb-3">
+                  <Select
+                    showSearch
+                    allowClear
+                    onChange={(value) =>
+                      setParams({ ...params, user_id: value })
+                    }
+                    placeholder="Chọn khách hàng"
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.label ?? "")
@@ -451,26 +654,74 @@ const Equipment1 = (props) => {
           <Row gutter={[8, 8]}>
             <Col span={12}>
               <Card
-                title="Tần suất phát sinh lỗi"
-                bodyStyle={{ height: "90%" }}
+                bodyStyle={{ height: "100%" }}
                 style={{
                   height: 300,
-                  padding: "0px",
                 }}
               >
-                {!loading && <Pie {...configPieChart} />}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    height: "100%",
+                  }}
+                >
+                  <Pie
+                    {...config}
+                    style={{ width: "20%" }}
+                    innerRadius={0.8}
+                    statistic={{
+                      title: {
+                        formatter: () => "OEE",
+                        style: {
+                          fontSize: "16px",
+                          textAlign: "center",
+                        },
+                      },
+                      content: {
+                        formatter: () => "",
+                      },
+                    }}
+                  />
+                  <Pie
+                    {...config2}
+                    style={{ width: "20%" }}
+                    innerRadius={0.8}
+                    statistic={{
+                      title: {
+                        formatter: () => "Tỷ lệ vận hành",
+                        style: {
+                          fontSize: "16px",
+                          textAlign: "center",
+                        },
+                      },
+                      content: {
+                        formatter: () => "",
+                      },
+                    }}
+                  />
+                  <Column {...config3} />
+                </div>
               </Card>
             </Col>
             <Col span={12}>
               <Card
-                title="Hiệu suất máy"
+                title="5 SỰ CỐ XUẤT HIỆN NHIỀU NHẤT"
                 bodyStyle={{ height: "90%" }}
                 style={{
                   height: 300,
                   padding: "0px",
                 }}
               >
-                <Column {...configColChart} />
+                <Table
+                  className="my-custom-table"
+                  dataSource={errorTable}
+                  columns={column}
+                  pagination={false}
+                  bordered
+                  scroll={{ x: false }}
+                />
               </Card>
             </Col>
             <Col span={24}>
@@ -497,7 +748,7 @@ const Equipment1 = (props) => {
                       y: "50vh",
                     }}
                     columns={columnTable}
-                    dataSource={dataTable}
+                    dataSource={logs}
                   />
                 </Spin>
               </Card>

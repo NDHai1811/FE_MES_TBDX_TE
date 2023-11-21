@@ -22,21 +22,13 @@ import {
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import React, { useState, useEffect } from "react";
-import { Pie, Column, Line } from "@ant-design/plots";
+import { Pie, Column, Line, DualAxes } from "@ant-design/plots";
 import DataDetail from "../../../components/DataDetail";
 import {
-  getErrors,
   getLines,
-  getMachineOfLine,
   getCustomers,
-  getProducts,
-  getStaffs,
-  getLoSanXuat,
-  getWarehouses,
-  getCaSanXuats,
   getPQCHistory,
   getDataFilterUI,
-  getDetailDataError,
 } from "../../../api/ui/main";
 import dayjs from "dayjs";
 import {
@@ -82,12 +74,12 @@ const QualityPQC = (props) => {
       //         return {...e, label:e.name, value:e.id}
       //     }))
 
-      const res5 = await getCustomers();
-      setListCustomers(
-        res5.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
+      // const res5 = await getCustomers();
+      // setListCustomers(
+      //   res5.data.map((e) => {
+      //     return { ...e, label: e.name, value: e.id };
+      //   })
+      // );
       // const res6 = await getErrors();
       //     setListErrors(res6.data.map(e=>{
       //         return {...e, label:e.noi_dung, value:e.id}
@@ -96,23 +88,23 @@ const QualityPQC = (props) => {
     btn_click();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-      if (res.success) {
-        setListNameProducts(
-          res.data.product.map((e) => {
-            return { ...e, label: e.name, value: e.id };
-          })
-        );
-        setListLoSX(
-          Object.values(res.data.lo_sx).map((e) => {
-            return { label: e, value: e };
-          })
-        );
-      }
-    })();
-  }, [params.khach_hang]);
+  // useEffect(() => {
+  //   (async () => {
+  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
+  //     if (res.success) {
+  //       setListNameProducts(
+  //         res.data.product.map((e) => {
+  //           return { ...e, label: e.name, value: e.id };
+  //         })
+  //       );
+  //       setListLoSX(
+  //         Object.values(res.data.lo_sx).map((e) => {
+  //           return { label: e, value: e };
+  //         })
+  //       );
+  //     }
+  //   })();
+  // }, [params.khach_hang]);
 
   useEffect(() => {
     if (listLines.length > 0) setSelectedLine(listLines[1].id);
@@ -129,7 +121,28 @@ const QualityPQC = (props) => {
   const [data, setData] = useState();
   const [dataTable2, setDataTable2] = useState();
   const [dataLineChart, setDataLineChart] = useState([]);
-  const [dataPieChart, setDataPieChart] = useState([]);
+  const [dataPieChart, setDataPieChart] = useState([
+    {
+      error: 'P01',
+      value: 27,
+    },
+    {
+      error: 'P02',
+      value: 25,
+    },
+    {
+      error: 'P03',
+      value: 18,
+    },
+    {
+      error: 'P04',
+      value: 15,
+    },
+    {
+      error: 'P05',
+      value: 10,
+    },
+  ]);
   const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
 
   const configLineChart = {
@@ -150,29 +163,167 @@ const QualityPQC = (props) => {
     },
   };
   const configPieChart = {
-    appendPadding: 10,
-    height: 200,
+    // appendPadding: 10,
     data: dataPieChart,
-    angleField: "value",
-    colorField: "error",
-    radius: 0.8,
+    angleField: 'value',
+    colorField: 'error',
+    radius: 0.5,
+    innerRadius: 0.6,
     label: {
-      type: "outer",
-      content: "{name} {percentage}",
+      type: 'outer',
+      offset: '-50%',
+      content: ({ error, percent }) => `${error}` + " " + `${(percent * 100).toFixed(0)}%`,
+      style: {
+        textAlign: 'center',
+        fontSize: 14,
+      },
+    },
+    legend: false,
+    interactions: [
+      {
+        type: 'element-selected',
+      },
+      {
+        type: 'element-active',
+      },
+    ],
+    statistic: {
+      title: false,
+      content: false,
     },
   };
-  const configPieChart2 = {
-    appendPadding: 10,
-    height: 200,
-    data: dataPieChart_NG,
-    angleField: "value",
-    colorField: "error",
-    radius: 0.8,
-    legend: false,
-    label: {
-      type: "outer",
-      content: "{name} {percentage}",
+  const uvBillData = [
+    {
+      time: '2023-03',
+      value: 350,
+      type: 'Lot NG',
     },
+    {
+      time: '2023-04',
+      value: 900,
+      type: 'Lot NG',
+    },
+    {
+      time: '2023-05',
+      value: 300,
+      type: 'Lot NG',
+    },
+    {
+      time: '2023-06',
+      value: 450,
+      type: 'Lot NG',
+    },
+    {
+      time: '2023-07',
+      value: 470,
+      type: 'Lot NG',
+    },
+    {
+      time: '2023-03',
+      value: 220,
+      type: 'Lot OK',
+    },
+    {
+      time: '2023-04',
+      value: 300,
+      type: 'Lot OK',
+    },
+    {
+      time: '2023-05',
+      value: 250,
+      type: 'Lot OK',
+    },
+    {
+      time: '2023-06',
+      value: 220,
+      type: 'Lot OK',
+    },
+    {
+      time: '2023-07',
+      value: 362,
+      type: 'Lot OK',
+    },
+  ];
+  const transformData = [
+    {
+      time: '2023-03',
+      count: 100,
+      name: 'tieu_chuan',
+    },
+    {
+      time: '2023-04',
+      count: 100,
+      name: 'tieu_chuan',
+    },
+    {
+      time: '2023-05',
+      count: 100,
+      name: 'tieu_chuan',
+    },
+    {
+      time: '2023-06',
+      count: 100,
+      name: 'tieu_chuan',
+    },
+    {
+      time: '2023-07',
+      count: 100,
+      name: 'tieu_chuan',
+    },
+    {
+      time: '2023-03',
+      count: 75,
+      name: 'ti_le',
+    },
+    {
+      time: '2023-04',
+      count: 65,
+      name: 'ti_le',
+    },
+    {
+      time: '2023-05',
+      count: 45,
+      name: 'ti_le',
+    },
+    {
+      time: '2023-06',
+      count: 40,
+      name: 'ti_le',
+    },
+    {
+      time: '2023-07',
+      count: 32,
+      name: 'ti_le',
+    },
+  ];
+  const configColumnLine = {
+    data: [uvBillData, transformData],
+    xField: 'time',
+    yField: ['value', 'count'],
+    geometryOptions: [
+      {
+        geometry: 'column',
+        isStack: true,
+        seriesField: 'type',
+        columnWidthRatio: 0.4,
+      },
+      {
+        geometry: 'line',
+        seriesField: 'name',
+        lineStyle: ({ name }) => {
+          // if (name === 'tieu_chuan') {
+          //   return {
+          //     lineDash: [1, 4],
+          //     opacity: 1,
+          //   };
+          // }
+
+          return {
+            opacity: 0.5,
+          };
+        },
+      },
+    ],
   };
 
   async function btnNG_click(record) {
@@ -208,7 +359,7 @@ const QualityPQC = (props) => {
     }
   };
 
-  const columns2 = [
+  const columnsDetail = [
     {
       title: "STT",
       dataIndex: "index",
@@ -218,41 +369,11 @@ const QualityPQC = (props) => {
       fixed: "left",
     },
     {
-      title: "Ngày SX",
-      dataIndex: "ngay_sx",
-      key: "ngay_sx",
-      align: "center",
-      fixed: "left",
-    },
-    {
-      title: "Ca",
-      dataIndex: "ca_sx",
-      key: "ca_sx",
-      align: "center",
-    },
-    {
-      title: "Xưởng",
-      dataIndex: "xuong",
-      key: "xuong",
-      align: "center",
-    },
-    {
-      title: "Công đoạn",
-      dataIndex: "cong_doan",
-      key: "cong_doan",
-      align: "center",
-    },
-    {
-      title: "Máy sản xuất",
+      title: "Máy",
       dataIndex: "machine",
       key: "machine",
       align: "center",
-    },
-    {
-      title: "Mã máy",
-      dataIndex: "machine_id",
-      key: "machine_id",
-      align: "center",
+      fixed: "left",
     },
     {
       title: "Khách hàng",
@@ -261,106 +382,145 @@ const QualityPQC = (props) => {
       align: "center",
     },
     {
-      title: "Mã hàng",
-      dataIndex: "product_id",
-      key: "product_id",
+      title: "Đơn hàng",
+      dataIndex: "don_hang",
+      key: "don_hang",
       align: "center",
     },
     {
-      title: "Tên sản phẩm",
-      dataIndex: "ten_san_pham",
-      key: "ten_san_pham",
-      align: "center",
-    },
-    {
-      title: "Lô SX",
+      title: "Lô sản xuất",
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
     },
     {
-      title: "Mã thùng/pallet",
+      title: "Lot sản xuất",
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
     },
     {
-      title: "Số lượng đầu ra thực tế",
-      dataIndex: "sl_dau_ra_hang_loat",
-      key: "sl_dau_ra_hang_loat",
+      title: "Quy cách",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
       align: "center",
     },
     {
-      title: "Số lượng đầu ra OK",
-      dataIndex: "sl_dau_ra_ok",
-      key: "sl_dau_ra_ok",
+      title: "TG BĐ",
+      dataIndex: "tg_bd",
+      key: "tg_bd",
       align: "center",
     },
     {
-      title: "Số lượng tem vàng",
-      dataIndex: "sl_tem_vang",
-      key: "sl_tem_vang",
+      title: "TG KT",
+      dataIndex: "tg_kt",
+      key: "tg_kt",
       align: "center",
     },
     {
-      title: "Số lượng NG (SX tự KT)",
-      dataIndex: "sl_ng_sxkt",
-      key: "sl_ng_sxkt",
+      title: "Sản lượng đếm được",
+      dataIndex: "san_luong_dem_duoc",
+      key: "san_luong_dem_duoc",
       align: "center",
     },
     {
-      title: "Công nhân SX",
-      dataIndex: "user_sxkt",
-      key: "user_sxkt",
+      title: "Sản lượng sau QC",
+      dataIndex: "sl_sau_qc",
+      key: "sl_sau_qc",
       align: "center",
     },
     {
-      title: "Số lượng NG (PQC)",
-      dataIndex: "sl_ng_pqc",
-      key: "sl_ng_pqc",
+      title: "Tỷ lệ lỗi",
+      dataIndex: "ti_le_loi",
+      key: "ti_le_loi",
       align: "center",
     },
     {
-      title: "PQC kiểm tra",
-      dataIndex: "user_pqc",
-      key: "user_pqc",
-      align: "center",
-    },
-    {
-      title: "Số lượng NG",
+      title: "Số phế",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      render: (value1, record, index) => {
-        value1 = parseInt(value1);
-        //   let lot_id = record['lot_id'];
-        return (
-          <>
-            <Button
-              style={{ backgroundColor: "red", color: "white" }}
-              onClick={() => btnNG_click(record)}
-            >
-              {value1}
-            </Button>
-          </>
-        );
-      },
     },
     {
-      title: "Tỉ lệ NG",
-      dataIndex: "ti_le_ng",
-      key: "ti_le_ng",
+      title: "Tỷ lệ phế",
+      dataIndex: "ti_le_phe",
+      key: "ti_le_phe",
       align: "center",
+    },
+    {
+      title: "KQ kiểm tra tình trạng",
+      dataIndex: "sl_tinh_trang",
+      key: "sl_tinh_trang",
+      align: "center",
+    },
+    {
+      title: "KQ kiểm tra ngoại quan",
+      dataIndex: "sl_ngoai_quan",
+      key: "sl_ngoai_quan",
+      align: "center",
+    },
+    {
+      title: "Phán định",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
+      align: "center",
+      render: (value, record)=>value === 1 ? 'OK' : 'NG'
+    },
+    {
+      title: "Cho phép tái kiểm",
+      dataIndex: "cho_phep_tai_kiem",
+      key: "cho_phep_tai_kiem",
+      align: "center",
+      render: (value, record)=><Button onClick={()=>setIsModalOpen(true)}>Tái kiểm</Button>
     },
   ];
 
+  const [dataDetail, setDataDetail] = useState([
+    {
+      machine: 'S01',
+      khach_hang: 'VICTORY',
+      don_hang: "420/7",
+      lo_sx:'231012',
+      lot_id:'xxxxxx.001',
+      quy_cach:'DxRxC',
+      tg_bd:2.4,
+      tg_kt:1.2,
+      san_luong_dem_duoc:1000,
+      sl_sau_qc: 1000,
+      ti_le_loi:'10%',
+      sl_ng:10,
+      ti_le_phe:'10%',
+      sl_tinh_trang: 2,
+      sl_ngoai_quan: 3,
+      phan_dinh: 2
+    },
+    {
+      machine: 'S01',
+      khach_hang: 'VICTORY',
+      don_hang: "420/7",
+      lo_sx:'231012',
+      lot_id:'xxxxxx.002',
+      quy_cach:'DxRxC',
+      tg_bd:2.4,
+      tg_kt:1.2,
+      san_luong_dem_duoc:1000,
+      sl_sau_qc: 1000,
+      ti_le_loi:'10%',
+      sl_ng:10,
+      ti_le_phe:'10%',
+      sl_tinh_trang: 2,
+      sl_ngoai_quan: 3,
+      phan_dinh: 1
+    },
+  ]);
+
   function btn_click() {
-    (async () => {
-      setLoading(true);
-      const res1 = await getPQCHistory(params);
-      setData(res1.data);
-      setLoading(false);
-    })();
+    // (async () => {
+    //   setLoading(true);
+    //   const res1 = await getPQCHistory(params);
+    //   setData(res1.data);
+    //   setLoading(false);
+    // })();
   }
 
   useEffect(() => {
@@ -456,6 +616,55 @@ const QualityPQC = (props) => {
     }
     setExportLoading2(false);
   };
+  const summaryTable = [
+    {
+      title: 'Sản lượng đếm được',
+      key: 'san_luong_dem_duoc',
+      dataIndex: 'san_luong_dem_duoc',
+      align: 'center'
+    },
+    {
+      title: 'Lỗi ngoại quan',
+      key: 'sl_ngoai_quan',
+      dataIndex: 'sl_ngoai_quan',
+      align: 'center'
+    },
+    {
+      title: 'Lỗi tính năng',
+      key: 'sl_tinh_nang',
+      dataIndex: 'sl_tinh_nang',
+      align: 'center'
+    },
+    {
+      title: 'Tỷ lệ lỗi',
+      key: 'ti_le_loi',
+      dataIndex: 'ti_le_loi',
+      align: 'center'
+    },
+    {
+      title: 'Số phế',
+      key: 'sl_ng',
+      dataIndex: 'sl_ng',
+      align: 'center'
+    },
+    {
+      title: 'Tỷ lệ phế',
+      key: 'ti_le_ng',
+      dataIndex: 'ti_le_ng',
+      align: 'center'
+    }
+  ];
+  const [summaryData, setSummaryData] = useState([
+    {
+      san_luong_dem_duoc: 1000,
+      sl_ngoai_quan: 10,
+      sl_tinh_nang: 5,
+      sl_ng: 10,
+      ti_le_loi: '2%',
+      ti_le_ng: '1%'
+    }
+  ]);
+
   return (
     <React.Fragment>
       {contextHolder}
@@ -579,22 +788,37 @@ const QualityPQC = (props) => {
 
         <Col span={21}>
           <Row gutter={[8, 8]}>
-            <Col span={12}>
+            <Col span={24}>
               <Card
-                title="Biểu đồ xu hướng lỗi"
+                title="Tóm tắt chất lượng"
                 style={{ height: "100%", padding: "0px" }}
                 bodyStyle={{ padding: 12 }}
               >
-                <Line {...configLineChart} />
+                <Table
+                  bordered
+                  size="small"
+                  columns={summaryTable}
+                  dataSource={summaryData}
+                  pagination={false}
+                />
               </Card>
             </Col>
             <Col span={12}>
               <Card
-                title="Biểu đồ tỉ lệ lỗi"
-                style={{ height: "100%", padding: "0px" }}
+                title="Top 5 lỗi"
+                // style={{ height: "100%", padding: "0px" }}
                 bodyStyle={{ padding: 12 }}
               >
                 <Pie {...configPieChart} />
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card
+                title="Biểu đồ"
+                // style={{ height: "100%", padding: "0px" }}
+                bodyStyle={{ padding: 12 }}
+              >
+                <DualAxes {...configColumnLine} />
               </Card>
             </Col>
             <Col span={24}>
@@ -628,8 +852,8 @@ const QualityPQC = (props) => {
                   <Table
                     bordered
                     size="small"
-                    columns={columns2}
-                    dataSource={dataTable2}
+                    columns={columnsDetail}
+                    dataSource={dataDetail}
                     pagination={false}
                     scroll={{
                       x: "120vw",
@@ -644,27 +868,12 @@ const QualityPQC = (props) => {
       </Row>
 
       <Modal
-        title="Chi tiết NG"
+        title="Bạn cho phép tái kiểm lô hàng?"
         open={isModalOpen}
-        footer={null}
+        onOk={()=>console.log('Tái kiểm')}
         onCancel={closeModal}
-        width={600}
+        width={300}
       >
-        <Row gutter={8}>
-          <Col span={12}>
-            <Table
-              bordered
-              size="small"
-              scroll={{ x: "100%" }}
-              columns={columnDetailError}
-              dataSource={dataDetailError}
-              pagination={false}
-            ></Table>
-          </Col>
-          <Col span={12}>
-            <Pie {...configPieChart2}></Pie>
-          </Col>
-        </Row>
       </Modal>
       <Modal
         title="Báo cáo"

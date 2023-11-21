@@ -10,16 +10,16 @@ import {
   Divider,
   Button,
   Form,
-  Input,
-  theme,
   Select,
-  AutoComplete,
   Space,
   Spin,
   Dropdown,
   message,
+  Input,
+  Menu,
+  Tabs,
 } from "antd";
-import { Pie, Column } from "@ant-design/charts";
+import { DualAxes } from "@ant-design/charts";
 import {
   exportBMCardWarehouse,
   exportSummaryWarehouse,
@@ -28,14 +28,36 @@ import {
 import { exportWarehouse } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
-import {
-  getCustomers,
-  getDataFilterUI,
-  getProducts,
-} from "../../../api/ui/main";
+import { getCustomers, getDataFilterUI } from "../../../api/ui/main";
 
-const { Sider } = Layout;
-const { RangePicker } = DatePicker;
+const { SubMenu } = Menu;
+
+const dataDualAxes = [
+  { time: "A1", value: 10 },
+  { time: "A2", value: 12 },
+  { time: "A3", value: 8 },
+  { time: "A4", value: 15 },
+  { time: "A5", value: 9 },
+  { time: "A6", value: 13 },
+  { time: "A7", value: 14 },
+  { time: "A8", value: 12 },
+  { time: "A9", value: 10 },
+  { time: "A10", value: 12 },
+];
+
+const config = {
+  data: [dataDualAxes, dataDualAxes],
+  xField: "time",
+  yField: ["value", "value"],
+  geometryOptions: [{ geometry: "column" }, { geometry: "line", smooth: true }],
+  yAxis: {
+    value: {
+      min: 0,
+      max: 14,
+    },
+  },
+  legend: false,
+};
 
 const col_detailTable = [
   {
@@ -44,142 +66,87 @@ const col_detailTable = [
     key: "index",
     render: (value, record, index) => index + 1,
     align: "center",
-    fixed: "left",
   },
   {
-    title: "Ngày",
+    title: "Kho",
     dataIndex: "ngay",
     key: "ngay",
     align: "center",
-    fixed: "left",
   },
   {
-    title: "Mã khách hàng",
+    title: "Vị trí",
     dataIndex: "ma_khach_hang",
     key: "ma_khach_hang",
     align: "center",
-    fixed: "left",
   },
   {
-    title: "Tên khách hàng",
+    title: "Tên NCC",
     dataIndex: "ten_khach_hang",
     key: "ten_khach_hang",
     align: "center",
-    fixed: "left",
   },
   {
-    title: "Mã hàng",
+    title: "Mã cuộn NCC",
     dataIndex: "product_id",
     key: "product_id",
     align: "center",
-    fixed: "left",
   },
   {
-    title: "Tên SP",
+    title: "Mã cuộn TBDX",
     dataIndex: "ten_san_pham",
     key: "name_product",
     align: "center",
-    fixed: "left",
   },
   {
-    title: "ĐVT",
+    title: "Loại giấy",
     dataIndex: "dvt",
     key: "dvt",
     align: "center",
   },
   {
-    title: "Lô SX",
+    title: "Khổ",
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
   },
   {
-    title: "Kho",
+    title: "Định lượng",
     dataIndex: "kho",
     key: "kho",
     align: "center",
   },
   {
-    title: "Mã thùng",
+    title: "SL nhập",
     dataIndex: "lot_id",
     key: "lot_id",
     align: "center",
   },
   {
-    title: "Vị trí",
+    title: "Người nhập",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
   },
   {
-    title: "Nhập kho",
-    children: [
-      {
-        title: "Ngày nhập",
-        dataIndex: "ngay_nhap",
-        key: "ngay_nhap",
-        align: "center",
-      },
-      {
-        title: "Số lượng",
-        dataIndex: "so_luong_nhap",
-        key: "so_luong_nhap",
-        align: "center",
-      },
-      {
-        title: "Người nhập",
-        dataIndex: "nguoi_nhap",
-        key: "nguoi_nhap",
-        align: "center",
-      },
-    ],
-  },
-  {
-    title: "Xuất kho",
-    children: [
-      {
-        title: "Ngày xuất",
-        dataIndex: "ngay_xuat",
-        key: "ngay_xuat",
-        align: "center",
-      },
-      {
-        title: "Số lượng",
-        dataIndex: "so_luong_xuat",
-        key: "so_luong_xuat",
-        align: "center",
-      },
-      {
-        title: "Người xuất",
-        dataIndex: "nguoi_xuat",
-        key: "nguoi_xuat",
-        align: "center",
-      },
-    ],
-  },
-  {
-    title: "Tồn kho",
-    width: "10%",
-    children: [
-      {
-        title: "Số lượng",
-        dataIndex: "ton_kho",
-        key: "ton_kho",
-        align: "center",
-      },
-      {
-        title: "Số ngày tồn kho",
-        dataIndex: "so_ngay_ton",
-        key: "so_ngay_ton",
-        align: "center",
-      },
-    ],
-  },
-  {
-    title: "Ghi chú",
+    title: "Tình trạng",
     dataIndex: "note",
     key: "note",
     align: "center",
+  },
+];
+
+const tabItems = [
+  {
+    key: 1,
+    label: "Nhập dữ liệu nhập kho",
+  },
+  {
+    key: 2,
+    label: "Kết quả QC/In tem",
+  },
+  {
+    key: 3,
+    label: "Kết quả truy vân",
   },
 ];
 
@@ -238,7 +205,7 @@ const ThanhPhamGiay = (props) => {
     setExportLoading(false);
   };
   async function btn_click() {
-    setLoading(true);
+    setLoading(false);
     const res = await getHistoryWareHouse(params);
     setDataTable(res);
     setLoading(false);
@@ -294,6 +261,25 @@ const ThanhPhamGiay = (props) => {
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={3}>
           <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+            <Menu mode="inline" defaultOpenKeys={["sub1"]}>
+              <SubMenu key="sub1" title="KHO NGUYÊN VẬT LIỆU">
+                <Menu.Item key="1">Kho AB</Menu.Item>
+                <Menu.Item key="2">Kho C</Menu.Item>
+                <Menu.Item key="3">Kho Dang Dở</Menu.Item>
+              </SubMenu>
+            </Menu>
+            <Menu mode="inline" defaultOpenKeys={["sub2"]}>
+              <SubMenu key="sub2" title="KV BÁN THÀNH PHẨM">
+                <Menu.Item key="1">KV BTP giấy tấm</Menu.Item>
+                <Menu.Item key="2">KV BTP sau in</Menu.Item>
+              </SubMenu>
+            </Menu>
+            <Menu mode="inline" defaultOpenKeys={["sub3"]}>
+              <SubMenu key="sub3" title="KHO THÀNH PHẨM">
+                <Menu.Item key="1">Kho chờ nhập</Menu.Item>
+                <Menu.Item key="2">Kho đã nhập</Menu.Item>
+              </SubMenu>
+            </Menu>
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -334,24 +320,25 @@ const ThanhPhamGiay = (props) => {
                                 ]}
                             />
                         </Form.Item> */}
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Chọn khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
-                    }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listCustomers}
-                  />
+                <Form.Item label="Mã cuộn TBDX" className="mb-3">
+                  <Input placeholder="Nhập mã cuộn TBDX" />
                 </Form.Item>
-                <Form.Item label="Tên sản phẩm" className="mb-3">
+                <Form.Item label="Mã cuộn NCC" className="mb-3">
+                  <Input placeholder="Nhập mã cuộn NCC" />
+                </Form.Item>
+                <Form.Item label="Tên NCC" className="mb-3">
+                  <Input placeholder="Nhập tên NCC" />
+                </Form.Item>
+                <Form.Item label="Loại giấy" className="mb-3">
+                  <Input placeholder="Nhập loại giấy" />
+                </Form.Item>
+                <Form.Item label="Người nhập" className="mb-3">
+                  <Input placeholder="Nhập tên người nhập" />
+                </Form.Item>
+                <Form.Item label="Tình trạng" className="mb-3">
+                  <Input placeholder="Nhập tình trạng" />
+                </Form.Item>
+                {/* <Form.Item label="Tên sản phẩm" className="mb-3">
                   <Select
                     allowClear
                     showSearch
@@ -384,7 +371,7 @@ const ThanhPhamGiay = (props) => {
                     }}
                     options={listLoSX}
                   />
-                </Form.Item>
+                </Form.Item> */}
               </Form>
             </div>
 
@@ -400,7 +387,7 @@ const ThanhPhamGiay = (props) => {
                 onClick={btn_click}
                 style={{ width: "80%" }}
               >
-                Truy vấn
+                Tìm kiếm
               </Button>
             </div>
           </Card>
@@ -408,12 +395,11 @@ const ThanhPhamGiay = (props) => {
         <Col span={21}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý thành phẩm giấy"
             extra={
               <Space>
                 <Dropdown menu={{ items }}>
                   <Button type="primary" loading={exportLoading1}>
-                    Xuất báo cáo
+                    Nhập từ excel
                   </Button>
                 </Dropdown>
                 <Button
@@ -421,11 +407,108 @@ const ThanhPhamGiay = (props) => {
                   loading={exportLoading}
                   onClick={exportFile}
                 >
-                  Xuất excel
+                  Xuất kết quả
                 </Button>
               </Space>
             }
           >
+            <Row style={{alignItems: 'center'}}>
+              <Col span={8}>
+                <Row>
+                  <Col
+                    span={8}
+                    style={{
+                      color: "black",
+                      fontSize: 16,
+                      border: "1px solid #000",
+                      margin: "10px 0",
+                      padding: "10px",
+                    }}
+                  >
+                    Số kg tồn trong kho
+                  </Col>
+                  <Col
+                    span={4}
+                    style={{
+                      color: "black",
+                      fontSize: 16,
+                      border: "1px solid #000",
+                      borderLeft: "0px",
+                      margin: "10px 0",
+                      padding: "10px",
+                      textAlign: "center",
+                    }}
+                  >
+                    100
+                  </Col>
+                </Row>
+                <Row>
+                  <Col
+                    span={8}
+                    style={{
+                      color: "black",
+                      fontSize: 16,
+                      border: "1px solid #000",
+                      margin: "10px 0",
+                      padding: "10px",
+                    }}
+                  >
+                    Số cuộn tồn trong kho
+                  </Col>
+                  <Col
+                    span={4}
+                    style={{
+                      color: "black",
+                      fontSize: 16,
+                      border: "1px solid #000",
+                      borderLeft: "0px",
+                      margin: "10px 0",
+                      padding: "10px",
+                      textAlign: "center",
+                    }}
+                  >
+                    50
+                  </Col>
+                </Row>
+                <Row>
+                  <Col
+                    span={8}
+                    style={{
+                      color: "black",
+                      fontSize: 16,
+                      border: "1px solid #000",
+                      margin: "10px 0",
+                      padding: "10px",
+                    }}
+                  >
+                    Số vị trí còn trống trong kho
+                  </Col>
+                  <Col
+                    span={4}
+                    style={{
+                      color: "black",
+                      fontSize: 16,
+                      border: "1px solid #000",
+                      borderLeft: "0px",
+                      margin: "10px 0",
+                      padding: "10px",
+                      textAlign: "center",
+                    }}
+                  >
+                    A01
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={16}>
+                <DualAxes {...config} />
+              </Col>
+            </Row>
+            <Tabs
+              className="mb-3"
+              defaultActiveKey={1}
+              items={tabItems}
+              destroyInactiveTabPane={true}
+            />
             <Spin spinning={loading}>
               <Table
                 size="small"
