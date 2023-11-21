@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Table } from "antd";
+import { Row, Col, Table, Button, Space } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -7,6 +7,8 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../../components/Button/SelectButton";
 import { warehousTPData } from "../mock-data";
+import ScanButton from "../../../../components/Button/ScanButton";
+import { PrinterOutlined } from "@ant-design/icons";
 
 const columnDetail = [
   {
@@ -188,6 +190,16 @@ const Import = (props) => {
             columns={columnDetail}
             dataSource={selectedItem}
           />
+        </Col>
+        <Col span={24}>
+          <Row gutter={8}>
+            <Col span={12}>
+              <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} />
+            </Col>
+            <Col span={12}>
+              <Button block className="h-100 w-100" icon={<PrinterOutlined/>} type="primary">In tem pallet</Button>
+            </Col>
+          </Row>
         </Col>
         <Col span={24}>
           <Table

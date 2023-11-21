@@ -10,6 +10,7 @@ import SelectButton from "../../../components/Button/SelectButton";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { useReactToPrint } from "react-to-print";
 import { warehousExportNVLData } from "./mock-data";
+import ScanButton from "../../../components/Button/ScanButton";
 
 const columnDetail = [
   {
@@ -447,6 +448,9 @@ const Export = (props) => {
   //   }
   // };
 
+  const onScan = () => {
+    
+  }
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 6]}>
@@ -489,6 +493,9 @@ const Export = (props) => {
             columns={columnDetail}
             dataSource={selectedItem}
           />
+        </Col>
+        <Col span={24}>
+          <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} onScan={onScan} />
         </Col>
         <Col span={24}>
           <Table
