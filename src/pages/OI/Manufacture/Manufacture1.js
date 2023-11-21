@@ -80,7 +80,7 @@ const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const history = useHistory();
-  const [params, setParams] = useState({start_date: dayjs(), end_date: dayjs()})
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() })
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -133,13 +133,13 @@ const Manufacture1 = (props) => {
   ]);
 
   useEffect(() => {
-    if(machine_id){
-      setParams({...params, machine_id: machine_id})
+    if (machine_id) {
+      setParams({ ...params, machine_id: machine_id })
     }
   }, [machine_id]);
 
-  useEffect(()=>{
-    if(machine_id){
+  useEffect(() => {
+    if (machine_id) {
       getOverAllDetail();
       getListLotDetail();
     }
@@ -151,7 +151,7 @@ const Manufacture1 = (props) => {
 
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll({...params, machine_id})
+    getOverAll({ ...params, machine_id })
       .then((res) => {
         const { kh_ca, so_luong, ht_kh_ca, phe_sx } = res.data?.[0] || {};
         setRow1([
@@ -191,7 +191,7 @@ const Manufacture1 = (props) => {
 
   const getListLotDetail = () => {
     setLoading(true);
-    getLotByMachine({...params, machine_id})
+    getLotByMachine({ ...params, machine_id })
       .then((res) => {
         setData(res.data);
       })
@@ -357,7 +357,7 @@ const Manufacture1 = (props) => {
   ];
   const componentRef1 = useRef();
   const handlePrint = async () => {
-    if(listCheck.length > 0){
+    if (listCheck.length > 0) {
       print();
     }
   };
@@ -375,7 +375,7 @@ const Manufacture1 = (props) => {
       setListCheck(selectedRows)
     },
     getCheckboxProps: (record) => {
-      return {disabled: record.status !== 4}
+      return { disabled: record.status !== 4 }
     },
   };
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
@@ -391,6 +391,32 @@ const Manufacture1 = (props) => {
       setIsOpenQRScanner(false);
     }
   }, [isScan]);
+  var token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI0Mjc4OTdlMi0xYzIyLTRjMmItOTEzMS00ZDRkOTYzMjc0NDUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMDU1MDU2MiwiZXhwIjoxNzAwNTU5NTYyLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.Z8WohLv48FCT-k3Y7o4hDvHiK5DXETFQSjlWG2sO60qcXG03FJwytp9KVAbE2s7ZkSfJSSbnTo-_DDQFhKj0_A';
+  var entityID = 'e9aba8d0-85da-11ee-8392-a51389126dc6';
+  var webSocket = new WebSocket("ws://113.176.95.167:3030/api/plugins/telemetry?token="+token);
+  webSocket.onopen = function (){
+    var object = {
+      tsSubCmds : [{
+        entityType:'DEVICE',
+        entityID:entityID,
+        scope:'LATEST_TELEMETRY',
+        cmdId:10
+      }],
+      historyCmds:[],
+      attrSubCmds:[],
+    }
+    var data = JSON.stringify(object);
+    webSocket.send(data);
+    console.log(data);
+  }
+  webSocket.onmessage = function(event){
+    var recived_msg = event.data;
+    console.log(recived_msg);
+  }
+  webSocket.onclose = function(event){
+    console.log('Connection is closed');
+  }
+
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -444,7 +470,7 @@ const Manufacture1 = (props) => {
                 size="medium"
                 type="primary"
                 style={{ width: "100%" }}
-                onClick={()=>setIsScan(1)}
+                onClick={() => setIsScan(1)}
                 icon={<QrcodeOutlined />}
               />
             </Col>
@@ -477,13 +503,13 @@ const Manufacture1 = (props) => {
               //   };
               // }}
               columns={columns}
-              dataSource={data.map((e, index)=>{return {...e, key: index}})}
+              dataSource={data.map((e, index) => { return { ...e, key: index } })}
             />
           </Col>
         </Row>
       </Spin>
       {isOpenQRScanner && <Modal title="Quét QR" open={isOpenQRScanner} onCancel={handleCloseMdl} footer={null}>
-          <ScanQR isScan={isOpenQRScanner} onResult={(res) => { onScan(res); setIsOpenQRScanner(false); }} />
+        <ScanQR isScan={isOpenQRScanner} onResult={(res) => { onScan(res); setIsOpenQRScanner(false); }} />
       </Modal>}
     </React.Fragment>
   );
