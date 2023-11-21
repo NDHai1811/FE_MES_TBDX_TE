@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, Checkbox, DatePicker } from "antd";
-import moment from 'moment';
+import { Row, Col, Button, Table, Spin, DatePicker } from "antd";
 
 import DataDetail from "../../../components/DataDetail";
 import "../style.scss";
@@ -12,7 +11,6 @@ import {
 import SelectButton from "../../../components/Button/SelectButton";
 import {
   getInfoPallet,
-  inTem,
   scanPallet,
   getOverAll,
   getLotByMachine,

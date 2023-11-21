@@ -11,11 +11,7 @@ import {
 } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
-import { useEffect } from "react";
-import { getChecksheetList } from "../../api/oi/quality";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Checksheet3 = (props) => {
-  const { line } = useParams();
   const { text } = props;
   const closeModal = () => {
     setOpen(false);
@@ -25,7 +21,6 @@ const Checksheet3 = (props) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const onFinish = (values) => {
-    console.log(values);
     closeModal();
     if (values.result) {
       setButtonColor("#55c23a");

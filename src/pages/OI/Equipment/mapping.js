@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col, Table, DatePicker, Button } from "antd";
 import { QrcodeOutlined } from "@ant-design/icons";
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 
@@ -176,7 +176,7 @@ const Mapping = () => {
             placeholder="Từ ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
-            defaultValue={moment()}
+            defaultValue={dayjs()}
           />
         </Col>
         <Col span={8}>
@@ -184,7 +184,7 @@ const Mapping = () => {
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
-            defaultValue={moment()}
+            defaultValue={dayjs()}
           />
         </Col>
         <Col span={8}>

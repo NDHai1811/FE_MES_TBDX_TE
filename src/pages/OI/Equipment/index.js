@@ -100,11 +100,11 @@ const Equipment = (props) => {
       label: `Sự cố`,
       children: <Error line={line} machine={machine} />,
     },
-    {
-      key: 3,
-      label: `Bảo dưỡng`,
-      children: <Mapping />,
-    },
+    // {
+    //   key: 3,
+    //   label: `Bảo dưỡng`,
+    //   children: <Mapping />,
+    // },
   ];
   const onChangeLine = (value) => {
     history.push("/equipment/" + value);
