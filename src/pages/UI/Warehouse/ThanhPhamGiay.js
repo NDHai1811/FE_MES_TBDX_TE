@@ -16,6 +16,7 @@ import {
   Checkbox,
   Collapse,
   Form,
+  Menu,
 } from "antd";
 import { DualAxes } from "@ant-design/charts";
 import {
@@ -133,26 +134,25 @@ const col_detailTable = [
   },
 ];
 
-const tabItems = [
-  {
-    key: 1,
-    label: "Nhập dữ liệu nhập kho",
-  },
-  {
-    key: 2,
-    label: "Kết quả QC/In tem",
-  },
-  {
-    key: 3,
-    label: "Kết quả truy vân",
-  },
-];
-
 const mockDataTable = [
   {
     so_kg_ton_kho: "100",
     so_cuon_ton_kho: "50",
     so_vi_tri_trong: "5",
+  },
+];
+const mockDataTable1 = [
+  {
+    title: "Số kg tồn trong kho",
+    value: 100,
+  },
+  {
+    title: "Số cuộn tồn trong kho",
+    value: 50,
+  },
+  {
+    title: "Số vị trí còn trống trong kho",
+    value: 5,
   },
 ];
 
@@ -176,6 +176,335 @@ const columns = [
     align: "center",
   },
 ];
+
+const columns1 = [
+  {
+    title: "Tiêu đề",
+    dataIndex: "title",
+    key: "title",
+    align: "center",
+    rowScope: 'row',
+  },
+  {
+    title: "Số lượng",
+    dataIndex: "value",
+    key: "value",
+    align: "center",
+  },
+];
+
+const table1 = [
+  {
+    title: "STT",
+    dataIndex: "index",
+    key: "index",
+    render: (value, record, index) => index + 1,
+    align: "center",
+  },
+  {
+    title: "Kho",
+    dataIndex: "ngay",
+    key: "ngay",
+    align: "center",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "ma_khach_hang",
+    key: "ma_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Tên NCC",
+    dataIndex: "ten_khach_hang",
+    key: "ten_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn NCC",
+    dataIndex: "product_id",
+    key: "product_id",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn TBDX",
+    dataIndex: "ten_san_pham",
+    key: "name_product",
+    align: "center",
+  },
+  {
+    title: "Loại giấy",
+    dataIndex: "dvt",
+    key: "dvt",
+    align: "center",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "SL nhập",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "Người nhập",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+  {
+    title: "Tình trạng",
+    dataIndex: "note",
+    key: "note",
+    align: "center",
+  },
+]
+const table2 = [
+  {
+    title: "STT",
+    dataIndex: "index",
+    key: "index",
+    render: (value, record, index) => index + 1,
+    align: "center",
+  },
+  {
+    title: "Kho",
+    dataIndex: "ngay",
+    key: "ngay",
+    align: "center",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "ma_khach_hang",
+    key: "ma_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Tên NCC",
+    dataIndex: "ten_khach_hang",
+    key: "ten_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn NCC",
+    dataIndex: "product_id",
+    key: "product_id",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn TBDX",
+    dataIndex: "ten_san_pham",
+    key: "name_product",
+    align: "center",
+  },
+  {
+    title: "Loại giấy",
+    dataIndex: "dvt",
+    key: "dvt",
+    align: "center",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "SL nhập",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "Người nhập",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+  {
+    title: "Tình trạng",
+    dataIndex: "note",
+    key: "note",
+    align: "center",
+  },
+]
+const table3 = [
+  {
+    title: "STT",
+    dataIndex: "index",
+    key: "index",
+    render: (value, record, index) => index + 1,
+    align: "center",
+  },
+  {
+    title: "Kho",
+    dataIndex: "ngay",
+    key: "ngay",
+    align: "center",
+  },
+  {
+    title: "Vị trí/KV",
+    dataIndex: "ma_khach_hang",
+    key: "ma_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Tên NCC",
+    dataIndex: "ten_khach_hang",
+    key: "ten_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn NCC",
+    dataIndex: "product_id",
+    key: "product_id",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn TBDX",
+    dataIndex: "ten_san_pham",
+    key: "name_product",
+    align: "center",
+  },
+  {
+    title: "Loại giấy",
+    dataIndex: "dvt",
+    key: "dvt",
+    align: "center",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "Ngày nhập",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "SL nhập",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "Ngày xuất nhập",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "SL xuất",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "NV nhập",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+  {
+    title: "NV xuất",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+]
+const table4 = [
+  {
+    title: "STT",
+    dataIndex: "index",
+    key: "index",
+    render: (value, record, index) => index + 1,
+    align: "center",
+  },
+  {
+    title: "Đầu sóng",
+    dataIndex: "ngay",
+    key: "ngay",
+    align: "center",
+  },
+  {
+    title: "Mã vật tư",
+    dataIndex: "ma_khach_hang",
+    key: "ma_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn",
+    dataIndex: "ten_khach_hang",
+    key: "ten_khach_hang",
+    align: "center",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "product_id",
+    key: "product_id",
+    align: "center",
+  },
+  {
+    title: "Loại giấy",
+    dataIndex: "ten_san_pham",
+    key: "name_product",
+    align: "center",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "dvt",
+    key: "dvt",
+    align: "center",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+  },
+  {
+    title: "Số kg",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "Số m",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "Thời gian dự kiến",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+]
 
 const ThanhPhamGiay = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
@@ -222,6 +551,77 @@ const ThanhPhamGiay = (props) => {
   //   })();
   // }, [params.khach_hang]);
 
+  const [dataTable1, setDataTable1] = useState([]);
+  const tabItems = [
+    {
+      key: 1,
+      label: "Nhập dữ liệu nhập kho",
+      children: (
+        <Table
+          size="small"
+          bordered
+          pagination={false}
+          scroll={{
+            x: "130vw",
+            y: "80vh",
+          }}
+          columns={table1}
+          dataSource={dataTable1}
+        />
+      )
+    },
+    {
+      key: 2,
+      label: "Kết quả QC/In tem",
+      // children: (
+      //   <Table
+      //     size="small"
+      //     bordered
+      //     pagination={false}
+      //     scroll={{
+      //       x: "130vw",
+      //       y: "80vh",
+      //     }}
+      //     columns={table1}
+      //     dataSource={dataTable1}
+      //   />
+      // )
+    },
+    {
+      key: 3,
+      label: "Kết quả truy vấn",
+      children: (
+        <Table
+          size="small"
+          bordered
+          pagination={false}
+          scroll={{
+            x: "130vw",
+            y: "80vh",
+          }}
+          columns={table3}
+          dataSource={dataTable1}
+        />
+      )
+    },
+    {
+      key: 4,
+      label: "Theo dõi xuất hàng",
+      children: (
+        <Table
+          size="small"
+          bordered
+          pagination={false}
+          scroll={{
+            x: "130vw",
+            y: "80vh",
+          }}
+          columns={table4}
+          dataSource={dataTable1}
+        />
+      )
+    },
+  ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
@@ -282,12 +682,61 @@ const ThanhPhamGiay = (props) => {
       setExportLoading1(false);
     }
   }
+  const itemsMenu = [
+    {
+      label: 'Kho nguyên vật liệu',
+      key: 'kho_nvl',
+      children: [
+        {
+          label: 'Kho A',
+          key: 'kho_a',
+        },
+        {
+          label: 'Kho B',
+          key: 'kho_b',
+        },
+        {
+          label: 'Kho dở dang',
+          key: 'kho_do_dang',
+        }
+      ]
+    },
+    {
+      label: 'KV bán thành phẩm',
+      key: 'kv_btp',
+      children: [
+        {
+          label: 'KV BTP giấy tấm',
+          key: 'kv_btp_giay_tam',
+        },
+        {
+          label: 'KV BTP sau in',
+          key: 'kv_btp_sau_in',
+        },
+      ]
+    },
+    {
+      label: 'Kho thành phẩm',
+      key: 'kho_tp',
+      children: [
+        {
+          label: 'Kho chờ nhập',
+          key: 'kho_cho_nhap',
+        },
+        {
+          label: 'Kho đã nhập',
+          key: 'kho_da_nhap',
+        },
+      ]
+    }
+  ];
+  const [ selectedKey, setSelectedKey] = useState([]);
   return (
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+        <Col span={4}>
+          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
             <Collapse defaultActiveKey={["1", "2", "3"]}>
               <Panel header="KHO NGUYÊN VẬT LIỆU" key="1">
                 <Checkbox.Group style={{ width: "100%", display: "block" }}>
@@ -323,6 +772,14 @@ const ThanhPhamGiay = (props) => {
                 </Checkbox.Group>
               </Panel>
             </Collapse>
+            {/* <Menu
+              // style={{ width: 256 }}
+              defaultSelectedKeys={['1']}
+              defaultOpenKeys={['sub1']}
+              mode="inline"
+              onSelect={({keyPath})=>setSelectedKey(keyPath)}
+              items={itemsMenu}
+            /> */}
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -389,7 +846,7 @@ const ThanhPhamGiay = (props) => {
             </div>
           </Card>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             extra={
@@ -409,38 +866,28 @@ const ThanhPhamGiay = (props) => {
               </Space>
             }
           >
-            <Row style={{ alignItems: "flex-end" }}>
+            <Row style={{ alignItems: "flex-end" }} gutter={16}>
               <Col span={8}>
                 <Table
-                  columns={columns}
-                  dataSource={mockDataTable}
+                  columns={columns1}
+                  dataSource={mockDataTable1}
                   pagination={false}
                   bordered
-                  style={{ marginRight: 12, marginBottom: 20 }}
+                  showHeader={false}
+                  className="custom-height-table"
                 />
               </Col>
               <Col span={16}>
                 <DualAxes {...config} />
               </Col>
             </Row>
+            <Spin spinning={loading}>
             <Tabs
               className="mb-3"
               defaultActiveKey={1}
               items={tabItems}
               destroyInactiveTabPane={true}
             />
-            <Spin spinning={loading}>
-              <Table
-                size="small"
-                bordered
-                pagination={false}
-                scroll={{
-                  x: "130vw",
-                  y: "80vh",
-                }}
-                columns={col_detailTable}
-                dataSource={dataTable}
-              />
             </Spin>
           </Card>
         </Col>
