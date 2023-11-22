@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   DatePicker,
   Col,
@@ -16,7 +16,6 @@ import {
   Checkbox,
   Collapse,
   Form,
-  Menu,
 } from "antd";
 import { DualAxes } from "@ant-design/charts";
 import {
@@ -27,7 +26,6 @@ import {
 import { exportWarehouse } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
-import { getCustomers, getDataFilterUI } from "../../../api/ui/main";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 
 const { Panel } = Collapse;
@@ -51,81 +49,81 @@ const config = {
   legend: false,
 };
 
-const col_detailTable = [
-  {
-    title: "STT",
-    dataIndex: "index",
-    key: "index",
-    render: (value, record, index) => index + 1,
-    align: "center",
-  },
-  {
-    title: "Kho",
-    dataIndex: "ngay",
-    key: "ngay",
-    align: "center",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "ma_khach_hang",
-    key: "ma_khach_hang",
-    align: "center",
-  },
-  {
-    title: "Tên NCC",
-    dataIndex: "ten_khach_hang",
-    key: "ten_khach_hang",
-    align: "center",
-  },
-  {
-    title: "Mã cuộn NCC",
-    dataIndex: "product_id",
-    key: "product_id",
-    align: "center",
-  },
-  {
-    title: "Mã cuộn TBDX",
-    dataIndex: "ten_san_pham",
-    key: "name_product",
-    align: "center",
-  },
-  {
-    title: "Loại giấy",
-    dataIndex: "dvt",
-    key: "dvt",
-    align: "center",
-  },
-  {
-    title: "Khổ",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-  },
-  {
-    title: "Định lượng",
-    dataIndex: "kho",
-    key: "kho",
-    align: "center",
-  },
-  {
-    title: "SL nhập",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-  },
-  {
-    title: "Người nhập",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-  },
-  {
-    title: "Tình trạng",
-    dataIndex: "note",
-    key: "note",
-    align: "center",
-  },
-];
+// const col_detailTable = [
+//   {
+//     title: "STT",
+//     dataIndex: "index",
+//     key: "index",
+//     render: (value, record, index) => index + 1,
+//     align: "center",
+//   },
+//   {
+//     title: "Kho",
+//     dataIndex: "ngay",
+//     key: "ngay",
+//     align: "center",
+//   },
+//   {
+//     title: "Vị trí",
+//     dataIndex: "ma_khach_hang",
+//     key: "ma_khach_hang",
+//     align: "center",
+//   },
+//   {
+//     title: "Tên NCC",
+//     dataIndex: "ten_khach_hang",
+//     key: "ten_khach_hang",
+//     align: "center",
+//   },
+//   {
+//     title: "Mã cuộn NCC",
+//     dataIndex: "product_id",
+//     key: "product_id",
+//     align: "center",
+//   },
+//   {
+//     title: "Mã cuộn TBDX",
+//     dataIndex: "ten_san_pham",
+//     key: "name_product",
+//     align: "center",
+//   },
+//   {
+//     title: "Loại giấy",
+//     dataIndex: "dvt",
+//     key: "dvt",
+//     align: "center",
+//   },
+//   {
+//     title: "Khổ",
+//     dataIndex: "lo_sx",
+//     key: "lo_sx",
+//     align: "center",
+//   },
+//   {
+//     title: "Định lượng",
+//     dataIndex: "kho",
+//     key: "kho",
+//     align: "center",
+//   },
+//   {
+//     title: "SL nhập",
+//     dataIndex: "lot_id",
+//     key: "lot_id",
+//     align: "center",
+//   },
+//   {
+//     title: "Người nhập",
+//     dataIndex: "vi_tri",
+//     key: "vi_tri",
+//     align: "center",
+//   },
+//   {
+//     title: "Tình trạng",
+//     dataIndex: "note",
+//     key: "note",
+//     align: "center",
+//   },
+// ];
 
 const mockDataTable1 = [
   {

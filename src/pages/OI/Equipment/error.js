@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Popup from "../../../components/Popup/popup";
+import '../style.scss';
 
 const data = [
   {
@@ -11,7 +12,7 @@ const data = [
     tg_chay: "13:20:15",
     ten_su_co: "Popup",
     nguyen_nhan: "Popup",
-    trang_thai: "Chờ đã xử lý",
+    trang_thai: "Chờ xử lý",
   },
 ];
 
@@ -37,8 +38,8 @@ const columns = [
     align: "center",
     width: "20%",
     render: () => {
-      return <Popup/>
-    }
+      return <Popup title="Sự cố" />;
+    },
   },
   {
     title: "Nguyên nhân",
@@ -47,8 +48,8 @@ const columns = [
     align: "center",
     width: "20%",
     render: () => {
-      return <Popup/>
-    }
+      return <Popup title="Nguyên nhân" />;
+    },
   },
   {
     title: "Trạng thái",
@@ -182,10 +183,9 @@ const Mapping = () => {
       </Row>
       <Row
         className="mt-2"
-        gutter={[2,12]}
-        style={{ justifyContent: "space-between" }}
+        gutter={[3, 8]}
       >
-        <Col span={12}>
+        <Col span={8}>
           <DatePicker
             placeholder="Từ ngày"
             style={{ width: "100%" }}
@@ -193,13 +193,16 @@ const Mapping = () => {
             defaultValue={dayjs()}
           />
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <DatePicker
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
           />
+        </Col>
+        <Col span={8}>
+          <Popup title="Cách xử lý" />
         </Col>
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>
