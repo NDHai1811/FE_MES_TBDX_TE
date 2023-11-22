@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, DatePicker, Modal } from "antd";
+import { Row, Col, Button, Table, Spin, DatePicker, Modal, Select, Divider } from "antd";
 
 import DataDetail from "../../../components/DataDetail";
 import "../style.scss";
@@ -138,26 +138,7 @@ const Manufacture1 = (props) => {
     setLoading(true);
     getOverAll({ ...params })
       .then((res) => {
-        const { kh_ca, so_luong, ht_kh_ca, phe_sx } = res.data?.[0] || {};
-        setRow1([
-          {
-            title: "KH ca",
-            value: kh_ca,
-          },
-          {
-            title: "Sản lượng ca",
-            value: so_luong,
-          },
-          {
-            title: "% KH ca",
-            value: ht_kh_ca,
-          },
-          {
-            title: "Tổng Phế",
-            value: "4",
-            bg: phe_sx,
-          },
-        ]);
+        setOverall(res.data)
       })
       .catch((err) => {
         console.error("Get over all error: ", err);
@@ -493,7 +474,7 @@ const Manufacture1 = (props) => {
     <React.Fragment>
       <Spin spinning={loading}>
         <Row className="mt-3" gutter={[6, 8]}>
-          <Col span={5}>
+          <Col span={window.screen.width < 720 ? 7 : 5}>
             {/* <SelectButton
               options={lineOptions}
               label="Công đoạn"
@@ -558,7 +539,7 @@ const Manufacture1 = (props) => {
               </Row>
             </div>
           </Col>
-          <Col span={19}>
+          <Col span={window.screen.width < 720 ? 17 : 19}>
             <Table
               size="small"
               pagination={false}
