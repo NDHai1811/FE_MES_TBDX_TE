@@ -13,9 +13,8 @@ import {
   DatePicker,
 } from "antd";
 import { withRouter } from "react-router-dom";
-import moment from "moment";
 import "../style.scss";
-import { PrinterOutlined } from "@ant-design/icons";
+import { SaveOutlined } from "@ant-design/icons";
 import {
   useHistory,
   useParams,
@@ -23,20 +22,15 @@ import {
 import SelectButton from "../../../components/Button/SelectButton";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getListMachine } from "../../../api";
-import { getLotQCList, getQCOverall, sendQCResult } from "../../../api/oi/quality";
+import {
+  getLotQCList,
+  getQCOverall,
+  sendQCResult,
+} from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
 import dayjs from "dayjs";
-
-const mockData = [
-  {
-    tong_lot_kiem: "100",
-    so_lot_dat: "99",
-    tong_phe: "80",
-    ti_le: "99.98%",
-  },
-];
 
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -106,7 +100,7 @@ const Quality = (props) => {
     },
   ]);
   const [params, setParams] = useState([]);
-  const [overall, setOverall] = useState([])
+  const [overall, setOverall] = useState([]);
   const { userProfile } = useProfile();
 
   const overallColumns = [
@@ -156,7 +150,7 @@ const Quality = (props) => {
       width: "20%",
       render: () => (
         <Checksheet2
-          text="Kiểm tra"
+          text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
@@ -171,7 +165,7 @@ const Quality = (props) => {
       width: "20%",
       render: () => (
         <QuanLyLoi
-          text="Kiểm tra"
+          text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
@@ -240,7 +234,8 @@ const Quality = (props) => {
       key: "sl_ng",
       align: "center",
       width: "16%",
-      render: (value, record, index) => value ? value : record.phan_dinh !== 0 ? value : "-"
+      render: (value, record, index) =>
+        value ? value : record.phan_dinh !== 0 ? value : "-",
     },
     {
       title: "Phế QC",
@@ -248,7 +243,8 @@ const Quality = (props) => {
       key: "sl_ng",
       align: "center",
       width: "16%",
-      render: (value, record, index) => value ? value : record.phan_dinh !== 0 ? value : "-"
+      render: (value, record, index) =>
+        value ? value : record.phan_dinh !== 0 ? value : "-",
     },
     {
       title: "Phán định",
@@ -312,9 +308,17 @@ const Quality = (props) => {
 
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({machine_id: line, start_date: dayjs(), end_date: dayjs()});
+    var overall = await getQCOverall({
+      machine_id: line,
+      start_date: dayjs(),
+      end_date: dayjs(),
+    });
     setOverall(overall.data);
-    var res = await getLotQCList({machine_id: line, start_date: dayjs(), end_date: dayjs()});
+    var res = await getLotQCList({
+      machine_id: line,
+      start_date: dayjs(),
+      end_date: dayjs(),
+    });
     setData(res.data);
     if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
@@ -424,33 +428,37 @@ const Quality = (props) => {
         </Row>
 
         <Row
-          className="mt-3"
-          gutter={16}
+          className="mt-2"
+          gutter={[3, 8]}
           style={{ justifyContent: "space-between" }}
         >
-          <Col span={8}>
+          <Col span={10}>
             <DatePicker
               placeholder="Từ ngày"
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              onChange={(value)=>value.isValid() && setParams({...params, start_date: value})}
+              onChange={(value) =>
+                value.isValid() && setParams({ ...params, start_date: value })
+              }
             />
           </Col>
-          <Col span={8}>
+          <Col span={10}>
             <DatePicker
               placeholder="Đến ngày"
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              onChange={(value)=>value.isValid() && setParams({...params, end_date: value})}
+              onChange={(value) =>
+                value.isValid() && setParams({ ...params, end_date: value })
+              }
             />
           </Col>
-          <Col span={8}>
+          <Col span={4}>
             <Button
               type="primary"
               style={{ width: "100%" }}
-              icon={<PrinterOutlined />}
+              icon={<SaveOutlined style={{ fontSize: "24px" }} />}
             ></Button>
           </Col>
         </Row>
@@ -462,7 +470,7 @@ const Quality = (props) => {
           }}
           pagination={false}
           bordered={true}
-          className="mt-3 mb-3"
+          className="mt-2 mb-3"
           columns={columns}
           dataSource={data}
           size="small"

@@ -51,7 +51,6 @@ const ScanButton = (props) => {
   }, [isScan]);
   const [value, setValue] = useState("");
   const onChange = (event) => {
-    console.log(event.target.value);
     setValue(event.target.value);
     if (!event.target.value) {
       onReset && onReset();
@@ -82,7 +81,7 @@ const ScanButton = (props) => {
             onClick={() => {
               inputRef.current.focus();
               setValue("");
-              setIsScan(1)
+              setIsScan(1);
             }}
           />
         }
@@ -98,9 +97,23 @@ const ScanButton = (props) => {
         onChange={onChange}
       />
       {/* </AutoComplete> */}
-      {isOpenModal && <Modal title="Quét QR" open={isOpenModal} onCancel={handleCloseMdl} footer={null}>
-            <ScanQR isScan={isOpenModal} onResult={(res) => { setValue(res); onScan(res); setIsOpenModal(false); }} />
-        </Modal>}
+      {isOpenModal && (
+        <Modal
+          title="Quét QR"
+          open={isOpenModal}
+          onCancel={handleCloseMdl}
+          footer={null}
+        >
+          <ScanQR
+            isScan={isOpenModal}
+            onResult={(res) => {
+              setValue(res);
+              onScan(res);
+              setIsOpenModal(false);
+            }}
+          />
+        </Modal>
+      )}
     </>
   );
 };

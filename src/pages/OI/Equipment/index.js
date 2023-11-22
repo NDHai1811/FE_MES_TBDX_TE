@@ -111,7 +111,7 @@ const Equipment = (props) => {
   };
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[8, 8]}>
+      <Row className="mt-3" gutter={[2, 12]}>
         <Col span={6}>
           <SelectButton
             value={machine}

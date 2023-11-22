@@ -44,3 +44,7 @@
 .my-custom-table .ant-table-row {
   line-height: 0.2;
 }
+
+.custom-height-table .ant-table-tbody > tr > td {
+  height: 130px; /* Set your desired height here */
+}

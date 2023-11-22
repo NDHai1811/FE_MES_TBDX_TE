@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, Checkbox, DatePicker, Modal } from "antd";
-import moment from 'moment';
+import { Row, Col, Button, Table, Spin, DatePicker, Modal } from "antd";
 
 import DataDetail from "../../../components/DataDetail";
 import "../style.scss";
@@ -23,56 +22,48 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 
-const mockData = [
+const tableColumns = [
   {
-    lo_sx: "S231017",
-    ma_lot: "S231017.04",
-    sl_lot: "300",
-    quy_cach: "DxRxC",
-    san_luong: "200",
-    sl_sau_qc: "",
-    phe_qc: "",
-    phe_sx: "",
+    title: "Mã Lot",
+    dataIndex: "ma_lot",
+    key: "ma_lot",
+    align: "center",
+    width: "15%",
   },
   {
-    lo_sx: "S231017",
-    ma_lot: "S231017.05",
-    sl_lot: "300",
-    quy_cach: "DxRxC",
-    san_luong: "200",
-    sl_sau_qc: "",
-    phe_qc: "",
-    phe_sx: "",
+    title: "S.L thực",
+    dataIndex: "sl_thuc",
+    key: "sl_thuc",
+    align: "center",
+    width: "14%",
   },
   {
-    lo_sx: "S231017",
-    ma_lot: "S231017.06",
-    sl_lot: "300",
-    quy_cach: "DxRxC",
-    san_luong: "200",
-    sl_sau_qc: "",
-    phe_qc: "",
-    phe_sx: "",
+    title: "Phế SX",
+    dataIndex: "phe_sx",
+    key: "phe_sx",
+    align: "center",
+    width: "14%",
   },
   {
-    lo_sx: "S231017",
-    ma_lot: "S231017.03",
-    sl_lot: "300",
-    quy_cach: "DxRxC",
-    san_luong: "300",
-    sl_sau_qc: "Chờ QC",
-    phe_qc: "",
-    phe_sx: "",
+    title: "S.L 1 MQL",
+    dataIndex: "sl_mql",
+    key: "sl_mql",
+    align: "center",
+    width: "16%",
   },
   {
-    lo_sx: "S231017",
-    ma_lot: "",
-    sl_lot: "300",
-    quy_cach: "DxRxC",
-    san_luong: "300",
-    sl_sau_qc: "299",
-    phe_qc: "1",
-    phe_sx: "",
+    title: "Số m còn lại",
+    dataIndex: "so_m_con_lai",
+    key: "so_m_con_lai",
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "TG hoàn thành",
+    dataIndex: "tg_hoan_thanh",
+    key: "tg_hoan_thanh",
+    align: "center",
+    width: "16%",
   },
 ];
 
@@ -80,7 +71,10 @@ const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const history = useHistory();
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() })
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -107,34 +101,18 @@ const Manufacture1 = (props) => {
   ]);
   const [row2, setRow2] = useState([
     {
-      title: "Mã lot",
-      value: "S231",
-    },
-    {
-      title: "S.L thực",
-      value: "200",
-    },
-    {
-      title: "Phế SX",
-      value: "4",
-    },
-    {
-      title: "S.L 1 MQL",
-      value: "1800",
-    },
-    {
-      title: "Số m còn lại",
-      value: "-",
-    },
-    {
-      title: "T/g HT",
-      value: "15:50:00",
+      ma_lot: "S231031002",
+      sl_thuc: "200",
+      phe_sx: "4",
+      sl_mql: "1800",
+      so_m_con_lai: "-",
+      tg_hoan_thanh: "15:50:00",
     },
   ]);
 
   useEffect(() => {
     if (machine_id) {
-      setParams({ ...params, machine_id: machine_id })
+      setParams({ ...params, machine_id: machine_id });
     }
   }, [machine_id]);
 
@@ -143,7 +121,7 @@ const Manufacture1 = (props) => {
       getOverAllDetail();
       getListLotDetail();
     }
-  }, machine_id)
+  }, machine_id);
 
   useEffect(() => {
     getMachineList();
@@ -328,7 +306,8 @@ const Manufacture1 = (props) => {
       key: "san_luong",
       align: "center",
       width: "14%",
-      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
+      render: (value, record, index) =>
+        value ? value : record.status === 4 ? value : "-",
     },
     {
       title: "S.L sau QC",
@@ -336,7 +315,8 @@ const Manufacture1 = (props) => {
       key: "sl_ok",
       align: "center",
       width: "25%",
-      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
+      render: (value, record, index) =>
+        value ? value : record.status === 4 ? value : "-",
     },
     {
       title: "Phế QC",
@@ -344,7 +324,8 @@ const Manufacture1 = (props) => {
       key: "sl_ng_qc",
       align: "center",
       width: "14%",
-      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
+      render: (value, record, index) =>
+        value ? value : record.status === 4 ? value : "-",
     },
     {
       title: "Phế SX",
@@ -352,7 +333,8 @@ const Manufacture1 = (props) => {
       key: "sl_ng_sx",
       align: "center",
       width: "14%",
-      render: (value, record, index) => value ? value : record.status === 4 ? value : "-"
+      render: (value, record, index) =>
+        value ? value : record.status === 4 ? value : "-",
     },
   ];
   const componentRef1 = useRef();
@@ -372,10 +354,10 @@ const Manufacture1 = (props) => {
   // }, [listCheck]);
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRows)
+      setListCheck(selectedRows);
     },
     getCheckboxProps: (record) => {
-      return { disabled: record.status !== 4 }
+      return { disabled: record.status !== 4 };
     },
   };
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
@@ -391,31 +373,36 @@ const Manufacture1 = (props) => {
       setIsOpenQRScanner(false);
     }
   }, [isScan]);
-  // var token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI0Mjc4OTdlMi0xYzIyLTRjMmItOTEzMS00ZDRkOTYzMjc0NDUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMDU1MDU2MiwiZXhwIjoxNzAwNTU5NTYyLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.Z8WohLv48FCT-k3Y7o4hDvHiK5DXETFQSjlWG2sO60qcXG03FJwytp9KVAbE2s7ZkSfJSSbnTo-_DDQFhKj0_A';
-  // var entityID = 'e9aba8d0-85da-11ee-8392-a51389126dc6';
-  // var webSocket = new WebSocket("ws://113.176.95.167:3030/api/ws/plugins/telemetry?token="+token);
-  // webSocket.onopen = function (){
-  //   var object = {
-  //     tsSubCmds : [{
-  //       entityType:'DEVICE',
-  //       entityID:entityID,
-  //       scope:'LATEST_TELEMETRY',
-  //       cmdId:10
-  //     }],
-  //     historyCmds:[],
-  //     attrSubCmds:[],
-  //   }
-  //   var data = JSON.stringify(object);
-  //   webSocket.send(data);
-  //   console.log(data);
-  // }
-  // webSocket.onmessage = function(event){
-  //   var recived_msg = event.data;
-  //   console.log(recived_msg);
-  // }
-  // webSocket.onclose = function(event){
-  //   console.log('Connection is closed');
-  // }
+  var token =
+    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI0Mjc4OTdlMi0xYzIyLTRjMmItOTEzMS00ZDRkOTYzMjc0NDUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMDU1MDU2MiwiZXhwIjoxNzAwNTU5NTYyLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.Z8WohLv48FCT-k3Y7o4hDvHiK5DXETFQSjlWG2sO60qcXG03FJwytp9KVAbE2s7ZkSfJSSbnTo-_DDQFhKj0_A";
+  var entityID = "e9aba8d0-85da-11ee-8392-a51389126dc6";
+  var webSocket = new WebSocket(
+    "ws://113.176.95.167:3030/api/plugins/telemetry?token=" + token
+  );
+  webSocket.onopen = function () {
+    var object = {
+      tsSubCmds: [
+        {
+          entityType: "DEVICE",
+          entityID: entityID,
+          scope: "LATEST_TELEMETRY",
+          cmdId: 10,
+        },
+      ],
+      historyCmds: [],
+      attrSubCmds: [],
+    };
+    var data = JSON.stringify(object);
+    webSocket.send(data);
+    console.log(data);
+  };
+  webSocket.onmessage = function (event) {
+    var recived_msg = event.data;
+    console.log(recived_msg);
+  };
+  webSocket.onclose = function (event) {
+    console.log("Connection is closed");
+  };
 
   return (
     <React.Fragment>
@@ -433,16 +420,18 @@ const Manufacture1 = (props) => {
             <DataDetail data={row1} />
           </Col>
           <Col span={24}>
-            <DataDetail
-              data={row2}
+            <Table
+              columns={tableColumns}
+              dataSource={row2}
               scroll={{
                 x: window.screen.width,
               }}
+              pagination={false}
+              bordered
             />
           </Col>
           <Row
             gutter={4}
-            className="mt-1"
             style={{
               display: "flex",
               justifyContent: "space-between",
@@ -471,7 +460,7 @@ const Manufacture1 = (props) => {
                 type="primary"
                 style={{ width: "100%" }}
                 onClick={() => setIsScan(1)}
-                icon={<QrcodeOutlined />}
+                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
               />
             </Col>
             <Col span={3}>
@@ -480,7 +469,7 @@ const Manufacture1 = (props) => {
                 type="primary"
                 style={{ width: "100%" }}
                 onClick={handlePrint}
-                icon={<PrinterOutlined />}
+                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
                 <Tem listCheck={listCheck} ref={componentRef1} />
@@ -503,14 +492,29 @@ const Manufacture1 = (props) => {
               //   };
               // }}
               columns={columns}
-              dataSource={data.map((e, index) => { return { ...e, key: index } })}
+              dataSource={data.map((e, index) => {
+                return { ...e, key: index };
+              })}
             />
           </Col>
         </Row>
       </Spin>
-      {isOpenQRScanner && <Modal title="Quét QR" open={isOpenQRScanner} onCancel={handleCloseMdl} footer={null}>
-        <ScanQR isScan={isOpenQRScanner} onResult={(res) => { onScan(res); setIsOpenQRScanner(false); }} />
-      </Modal>}
+      {isOpenQRScanner && (
+        <Modal
+          title="Quét QR"
+          open={isOpenQRScanner}
+          onCancel={handleCloseMdl}
+          footer={null}
+        >
+          <ScanQR
+            isScan={isOpenQRScanner}
+            onResult={(res) => {
+              onScan(res);
+              setIsOpenQRScanner(false);
+            }}
+          />
+        </Modal>
+      )}
     </React.Fragment>
   );
 };
