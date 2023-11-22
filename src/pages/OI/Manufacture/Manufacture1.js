@@ -446,18 +446,6 @@ const Manufacture1 = (props) => {
       <Spin spinning={loading}>
         <Row className="mt-3" gutter={[6, 8]}>
           <Col span={window.screen.width < 720 ? 7 : 5}>
-            {/* <SelectButton
-              options={lineOptions}
-              label="Công đoạn"
-              value={line}
-              onChange={onChangeLine}
-            />
-            <SelectButton
-              options={machineOptions}
-              label="Máy"
-              value={params.machine_id}
-              onChange={onChangeLine}
-            /> */}
             <div
               style={{
                 borderRadius: "8px",
@@ -484,8 +472,8 @@ const Manufacture1 = (props) => {
                 >
                   {'CD'}
                 </Col>
-                <Col span={17}>
-                <Select options={lineOptions} className="w-100" bordered={false} placeholder="Chọn công đoạn" value={lineOptions.length > 0 && line && !isNaN(parseInt(line)) ? parseInt(line) : null} onChange={onChangeLine}/>
+                <Col span={17} className="d-flex">
+                <Select options={lineOptions} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn công đoạn" value={lineOptions.length > 0 && line && !isNaN(parseInt(line)) ? parseInt(line) : null} onChange={onChangeLine}/>
                 </Col>
               </Row>
               <Divider style={{margin:0}}/>
@@ -504,8 +492,8 @@ const Manufacture1 = (props) => {
                 >
                   {'Máy'}
                 </Col>
-                <Col span={17}>
-                  <Select options={machineOptions.filter(e=>e.line_id === line)} className="w-100" bordered={false} placeholder="Chọn máy" value={params.machine_id} onChange={(value)=>setParams({...params, machine_id: value})}/>
+                <Col span={17} className="d-flex">
+                  <Select options={machineOptions.filter(e=>e.line_id === line)} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn máy" value={params.machine_id} onChange={(value)=>setParams({...params, machine_id: value})}/>
                 </Col>
               </Row>
             </div>

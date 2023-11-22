@@ -175,6 +175,7 @@ const Quality = (props) => {
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
+          machine_id={params.machine_id}
         />
       ),
     },
@@ -344,12 +345,6 @@ const Quality = (props) => {
     }
   }, params.machine_id);
   useEffect(() => {
-    (async () => {
-      var machines = await getListMachine();
-      setMachines(machines);
-    })();
-  }, []);
-  useEffect(() => {
     if (line) {
       const screen = JSON.parse(localStorage.getItem("screen"));
       localStorage.setItem(
@@ -399,18 +394,6 @@ const Quality = (props) => {
       <Spin spinning={loading}>
         <Row gutter={[6, 8]} className="mt-3">
           <Col span={window.screen.width < 720 ? 7 : 5}>
-            {/* <SelectButton
-              options={lineOptions}
-              label="Công đoạn"
-              value={line}
-              onChange={onChangeLine}
-            />
-            <SelectButton
-              options={machineOptions}
-              label="Máy"
-              value={params.machine_id}
-              onChange={onChangeLine}
-            /> */}
             <div
               style={{
                 borderRadius: "8px",

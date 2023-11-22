@@ -92,6 +92,6 @@ thead th[class*="red"] {
     background: #fcfc9b;
   }
 }
-.no-hover:hover {
+.no-hover .ant-table-cell-row-hover {
   background-color: transparent !important;
 }
