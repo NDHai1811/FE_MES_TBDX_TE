@@ -23,9 +23,10 @@ const errorOptions = [
   { value: "Máy hư" },
 ];
 
-const Popup = () => {
+const Popup = (props) => {
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
+  const { title } = props;
 
   const handleOk = () => {
     form
@@ -46,8 +47,12 @@ const Popup = () => {
 
   return (
     <React.Fragment>
-      <Button type="default" onClick={() => setVisible(true)}>
-        Popup
+      <Button
+        type="default"
+        onClick={() => setVisible(true)}
+        style={{ width: "100%" }}
+      >
+        {title}
       </Button>
       <Modal
         title="Form gợi ý"

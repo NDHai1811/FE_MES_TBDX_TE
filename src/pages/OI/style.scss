@@ -19,12 +19,12 @@ thead td[class*="ant-table-cell ant-table-cell-scrollbar"] {
   background-color: #ebebeb;
 }
 .table-row-red {
-    background-color: #ec1414;
-    color: white
+  background-color: #ec1414;
+  color: white;
 }
 .table-row-pink {
-    background-color: #e63b82;
-    color: white
+  background-color: #e63b82;
+  color: white;
 }
 .table-row-green {
   background-color: #9eff7c;
@@ -33,8 +33,8 @@ thead td[class*="ant-table-cell ant-table-cell-scrollbar"] {
   background-color: rgb(199, 112, 127);
 }
 .table-row-blue {
-    background-color: #2878f0;
-    color: white
+  background-color: #2878f0;
+  color: white;
 }
 .table-row-yellow {
   background-color: #fdfdb4;
@@ -51,30 +51,35 @@ thead th[class*="red"] {
 //   background-color: unset;
 //   cursor: pointer;
 // }
-.ant-table-wrapper.selectable-table .ant-table-tbody >tr.ant-table-row:hover>td{
-    background-color: unset;
-    cursor: pointer;
+.ant-table-wrapper.selectable-table
+  .ant-table-tbody
+  > tr.ant-table-row:hover
+  > td {
+  background-color: unset;
+  cursor: pointer;
 }
-.ant-table-wrapper.custom-table .ant-table{
-    border-radius: 8px !important;
+.ant-table-wrapper.custom-table .ant-table {
+  border-radius: 8px !important;
 }
-.ant-table-wrapper.custom-table .ant-table-tbody >tr.ant-table-row:hover>td{
-  border-radius: 8px
+.ant-table-wrapper.custom-table .ant-table-tbody > tr.ant-table-row:hover > td {
+  border-radius: 8px;
 }
-.ant-table-wrapper.custom-table .ant-table-tbody >tr >td{
-    border-bottom: 0;
+.ant-table-wrapper.custom-table .ant-table-tbody > tr > td {
+  border-bottom: 0;
 }
-.ant-table-wrapper.custom-table .ant-table.ant-table-bordered >.ant-table-container{
-    border-inline-start: 0;
+.ant-table-wrapper.custom-table
+  .ant-table.ant-table-bordered
+  > .ant-table-container {
+  border-inline-start: 0;
 }
-.ant-table-wrapper.custom-table td:last-child{
-    border-inline-end: 0 !important;
+.ant-table-wrapper.custom-table td:last-child {
+  border-inline-end: 0 !important;
 }
 
-.blink{
+.blink {
   animation: blink 1.5s infinite linear;
 }
-@keyframes blink{
+@keyframes blink {
   0%,
   100% {
     background: #fcfc82;
@@ -83,7 +88,7 @@ thead th[class*="red"] {
     background: #fcfc9b;
   }
 }
-@-webkit-keyframes blink{
+@-webkit-keyframes blink {
   0%,
   100% {
     background: #fcfc82;
@@ -94,4 +99,10 @@ thead th[class*="red"] {
 }
 .no-hover .ant-table-cell-row-hover {
   background-color: transparent !important;
+}
+.ant-picker-dropdown {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
 }
