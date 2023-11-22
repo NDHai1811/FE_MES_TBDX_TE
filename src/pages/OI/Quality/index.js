@@ -34,6 +34,7 @@ import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
 import dayjs from "dayjs";
 import { getLine } from "../../../api/oi/manufacture";
+import Checksheet1 from "../../../components/Popup/Checksheet1";
 
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -154,7 +155,7 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <Checksheet2
+        <Checksheet1
           text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
@@ -170,7 +171,7 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <QuanLyLoi
+        <Checksheet2
           text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
