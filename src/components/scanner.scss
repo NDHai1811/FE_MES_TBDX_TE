@@ -27,11 +27,22 @@
   line-height: 0;
   margin-bottom: 0 !important;
 }
-#html5-qrcode-button-file-selection:after {
-  content: "Chọn hình ảnh";
-  text-indent: 0;
-  display: block;
-  line-height: initial;
+#html5-qrcode-button-file-selection {
+  transition: all 0.3s ease-in-out;
+  border: none;
+  border-radius: 12px;
+  padding: 4px 12px;
+  background-color: rgb(0, 172, 252);
+  color: #ffffff;
+  &:hover {
+    background-color: rgb(0, 172, 252);
+  }
+  &:after {
+    content: "Chọn hình ảnh";
+    text-indent: 0;
+    display: block;
+    line-height: initial;
+  }
 }
 
 #html5qr-code-full-region__dashboard_section {
@@ -64,21 +75,43 @@
   text-indent: -9999px;
   line-height: 0;
 }
-#html5-qrcode-button-camera-start:after {
-  content: "Bắt đầu quét";
-  text-indent: 0;
-  display: block;
-  line-height: initial;
+#html5-qrcode-button-camera-start {
+  transition: all 0.3s ease-in-out;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  background-color: rgb(0, 172, 252);
+  color: #ffffff;
+  &:hover {
+    background-color: rgb(0, 172, 252);
+  }
+  &:after {
+    content: "Bắt đầu quét";
+    text-indent: 0;
+    display: block;
+    line-height: initial;
+  }
 }
 #html5-qrcode-button-camera-stop {
   text-indent: -9999px;
   line-height: 0;
 }
-#html5-qrcode-button-camera-stop:after {
-  content: "Dừng quét";
-  text-indent: 0;
-  display: block;
-  line-height: initial;
+#html5-qrcode-button-camera-stop {
+  transition: all 0.3s ease-in-out;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  background-color: rgb(0, 172, 252);
+  color: #ffffff;
+  &:hover {
+    background-color: rgb(0, 172, 252);
+  }
+  &:after {
+    content: "Dừng quét";
+    text-indent: 0;
+    display: block;
+    line-height: initial;
+  }
 }
 .bounce-comment-box {
   animation: MoveUpDown 1.6s linear infinite;

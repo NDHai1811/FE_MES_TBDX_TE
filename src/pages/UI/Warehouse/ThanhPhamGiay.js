@@ -32,18 +32,10 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 
 const { Panel } = Collapse;
 
-const dataDualAxes = [
-  { time: "A1", value: 10 },
-  { time: "A2", value: 12 },
-  { time: "A3", value: 8 },
-  { time: "A4", value: 15 },
-  { time: "A5", value: 9 },
-  { time: "A6", value: 13 },
-  { time: "A7", value: 14 },
-  { time: "A8", value: 12 },
-  { time: "A9", value: 10 },
-  { time: "A10", value: 12 },
-];
+const dataDualAxes = Array.from({ length: 18 }, (_, i) => ({
+  time: `A${i + 1}`,
+  value: Math.floor(Math.random() * 14),
+}));
 
 const config = {
   data: [dataDualAxes, dataDualAxes],
