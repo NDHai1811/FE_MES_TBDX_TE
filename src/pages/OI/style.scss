@@ -58,6 +58,9 @@ thead th[class*="red"] {
 .ant-table-wrapper.custom-table .ant-table{
     border-radius: 8px !important;
 }
+.ant-table-wrapper.custom-table .ant-table-tbody >tr.ant-table-row:hover>td{
+  border-radius: 8px
+}
 .ant-table-wrapper.custom-table .ant-table-tbody >tr >td{
     border-bottom: 0;
 }
@@ -66,4 +69,26 @@ thead th[class*="red"] {
 }
 .ant-table-wrapper.custom-table td:last-child{
     border-inline-end: 0 !important;
+}
+
+.blink{
+  animation: blink 1.5s infinite linear;
+}
+@keyframes blink{
+  0%,
+  100% {
+    background: #fcfc82;
+  }
+  50% {
+    background: #fcfc9b;
+  }
+}
+@-webkit-keyframes blink{
+  0%,
+  100% {
+    background: #fcfc82;
+  }
+  50% {
+    background: #fcfc9b;
+  }
 }

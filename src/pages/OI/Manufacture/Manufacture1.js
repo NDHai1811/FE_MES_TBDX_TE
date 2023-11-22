@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { SaveOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, DatePicker, Modal } from "antd";
+import { Row, Col, Button, Table, Spin, DatePicker, Modal, Select, Space, Divider } from "antd";
 
 import DataDetail from "../../../components/DataDetail";
 import "../style.scss";
@@ -14,6 +14,7 @@ import {
   scanPallet,
   getOverAll,
   getLotByMachine,
+  getLine,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "../../UI/Manufacture/Tem";
@@ -21,15 +22,18 @@ import { getMachines } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
+import { getListMachine } from "../../../api";
 
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
-  const { machine_id } = useParams();
+  const { line } = useParams();
   const history = useHistory();
   const [params, setParams] = useState({
     start_date: dayjs(),
     end_date: dayjs(),
   });
+  const [lineOptions, setLineOptions] = useState([]);
+  const [machineOptions, setMachineOptions] = useState([]);
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -82,25 +86,28 @@ const Manufacture1 = (props) => {
   ]);
 
   useEffect(() => {
-    if (machine_id) {
-      setParams({ ...params, machine_id: machine_id });
-    }
-  }, [machine_id]);
-
-  useEffect(() => {
-    if (machine_id) {
+    console.log('machine: ', params.machine_id);
+    if (params.machine_id) {
       getOverAllDetail();
       getListLotDetail();
     }
-  }, machine_id);
+  }, params.machine_id);
 
   useEffect(() => {
-    getMachineList();
+    getListOption();
   }, []);
 
+  const getListOption = async () => {
+    setLoading(true);
+    var line = (await getLine());
+    setLineOptions(line.data);
+    var machine = await getListMachine();
+    setMachineOptions(machine);
+    setLoading(false);
+  }
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll({ ...params, machine_id })
+    getOverAll({ ...params })
       .then((res) => {
         const { kh_ca, so_luong, ht_kh_ca, phe_sx } = res.data?.[0] || {};
         setRow1([
@@ -129,18 +136,9 @@ const Manufacture1 = (props) => {
       .finally(() => setLoading(false));
   };
 
-  const getMachineList = () => {
-    getMachines()
-      .then((res) => {
-        setOptions(res.data);
-        history.push("/manufacture/" + res.data?.[0]?.value);
-      })
-      .catch((err) => console.log("Get machines error: ", err));
-  };
-
   const getListLotDetail = () => {
     setLoading(true);
-    getLotByMachine({ ...params, machine_id })
+    getLotByMachine({ ...params })
       .then((res) => {
         setData(res.data);
       })
@@ -155,7 +153,7 @@ const Manufacture1 = (props) => {
   };
 
   const onScan = async (result) => {
-    var res = await scanPallet({ lot_id: result, line_id: machine_id });
+    var res = await scanPallet({ lot_id: result });
     if (res.success) {
       if (row2[0].value !== "") {
         setRow2([
@@ -189,19 +187,22 @@ const Manufacture1 = (props) => {
           },
         ]);
       }
-      const infoPallet = await getInfoPallet({ line_id: machine_id });
-      if (infoPallet.success) {
-        // setData(infoPallet.data);
-      }
+      // const infoPallet = await getInfoPallet({ line_id: machine_id });
+      // if (infoPallet.success) {
+      //   // setData(infoPallet.data);
+      // }
     }
   };
 
   const rowClassName = (record, index) => {
-    if (record.status === 1 || index === 0) {
+    if (record.status === 1 && index === 0) {
       return "table-row-green";
     }
+    if (record.status === 2) {
+      return "table-row-yellow";
+    }
     if (record.status === 3) {
-      return "table-row-pink";
+      return "table-row-yellow blink";
     }
     if (record.status === 4) {
       return "table-row-grey";
@@ -269,14 +270,12 @@ const Manufacture1 = (props) => {
       dataIndex: "quy_cach",
       key: "quy_cach",
       align: "center",
-      width: "14%",
     },
     {
       title: "S.L",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
-      width: "14%",
       render: (value, record, index) =>
         value ? value : record.status === 4 ? value : "-",
     },
@@ -285,7 +284,6 @@ const Manufacture1 = (props) => {
       dataIndex: "sl_ok",
       key: "sl_ok",
       align: "center",
-      width: "25%",
       render: (value, record, index) =>
         value ? value : record.status === 4 ? value : "-",
     },
@@ -294,7 +292,6 @@ const Manufacture1 = (props) => {
       dataIndex: "sl_ng_qc",
       key: "sl_ng_qc",
       align: "center",
-      width: "14%",
       render: (value, record, index) =>
         value ? value : record.status === 4 ? value : "-",
     },
@@ -303,11 +300,89 @@ const Manufacture1 = (props) => {
       dataIndex: "sl_ng_sx",
       key: "sl_ng_sx",
       align: "center",
-      width: "14%",
       render: (value, record, index) =>
         value ? value : record.status === 4 ? value : "-",
     },
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+      width: "14%",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      width: "14%",
+    },
   ];
+  const overallColumns = [
+    {
+      title: "KH Ca",
+      dataIndex: "kh_ca",
+      key: "kh_ca",
+      align: "center",
+    },
+    {
+      title: "Sản lượng ca",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+    },
+    {
+      title: "% KH Ca",
+      dataIndex: "ti_le_ca",
+      key: "ti_le_ca",
+      align: "center",
+    },
+    {
+      title: "Tổng phế",
+      dataIndex: "tong_phe",
+      key: "tong_phe",
+      align: "center",
+    },
+  ];
+  const [overall, setOverall] = useState([{kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0}]);
+  const currentColumns = [
+    {
+      title: "Mã lot",
+      dataIndex: "lot_id",
+      key: "lot_id",
+      align: "center",
+    },
+    {
+      title: "S.L thực",
+      dataIndex: "so_luong",
+      key: "so_luong",
+      align: "center",
+    },
+    {
+      title: "Phế sản xuất",
+      dataIndex: "sl_ng_sx",
+      key: "sl_ng_sx",
+      align: "center",
+    },
+    {
+      title: "S.L 1 MQL",
+      dataIndex: "sl_1_mql",
+      key: "sl_1_mql",
+      align: "center",
+    },
+    {
+      title: "Số m còn lại",
+      dataIndex: "so_m_con_lai",
+      key: "so_m_con_lai",
+      align: "center",
+    },
+    {
+      title: "TG hoàn thành",
+      dataIndex: "tg_ht",
+      key: "tg_ht",
+      align: "center",
+    },
+  ]
   const componentRef1 = useRef();
   const handlePrint = async () => {
     if (listCheck.length > 0) {
@@ -375,27 +450,108 @@ const Manufacture1 = (props) => {
     console.log("Connection is closed");
   };
 
+  useEffect(()=>{
+    if(data.length > 0){
+      setSelectedLot(data.length > 0 ? data[0] : null)
+      setListCheck(data.filter(e=>e.status === 4));
+    }
+  }, [data])
+
+  useEffect(()=>{
+    setParams({...params, machine_id: machineOptions.find(e=>e.line_id === line)?.value});
+  }, [line, machineOptions])
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row className="mt-3" gutter={[2, 12]}>
+        <Row className="mt-3" gutter={[6, 8]}>
           <Col span={5}>
-            <SelectButton
-              options={options}
+            {/* <SelectButton
+              options={lineOptions}
               label="Công đoạn"
-              value={machine_id}
+              value={line}
               onChange={onChangeLine}
             />
+            <SelectButton
+              options={machineOptions}
+              label="Máy"
+              value={params.machine_id}
+              onChange={onChangeLine}
+            /> */}
+            <div
+              style={{
+                borderRadius: "8px",
+                textAlign: "center",
+                background: "#fff",
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                height: "100%",
+                justifyContent:'space-between'
+              }}
+              className="d-flex flex-column"
+            >
+              <Row style={{height:'100%'}}>
+                <Col span={7}
+                  style={{
+                    background: "#0454a2",
+                    borderRadius: '8px 0px 0px 0px',
+                    color: "#fff",
+                    height:'100%',
+                    display: 'flex',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    fontWeight:600
+                  }}
+                >
+                  {'CD'}
+                </Col>
+                <Col span={17}>
+                <Select options={lineOptions} className="w-100" bordered={false} placeholder="Chọn công đoạn" value={lineOptions.length > 0 && line && !isNaN(parseInt(line)) ? parseInt(line) : null} onChange={onChangeLine}/>
+                </Col>
+              </Row>
+              <Divider style={{margin:0}}/>
+              <Row style={{height:'100%'}}>
+                <Col span={7}
+                  style={{
+                    background: "#0454a2",
+                    borderRadius: '0px 0px 0px 8px',
+                    color: "#fff",
+                    height:'100%',
+                    display: 'flex',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    fontWeight:600
+                  }}
+                >
+                  {'Máy'}
+                </Col>
+                <Col span={17}>
+                  <Select options={machineOptions.filter(e=>e.line_id === line)} className="w-100" bordered={false} placeholder="Chọn máy" value={params.machine_id} onChange={(value)=>setParams({...params, machine_id: value})}/>
+                </Col>
+              </Row>
+            </div>
           </Col>
           <Col span={19}>
-            <DataDetail data={row1} />
+            <Table
+              size="small"
+              pagination={false}
+              bordered
+              locale={{emptyText: 'Trống'}}
+              className="custom-table"
+              columns={overallColumns}
+              dataSource={overall}
+              scroll={window.screen.width < 720 ? {
+                x: window.screen.width,
+              } : false}
+            />
           </Col>
           <Col span={24}>
-            <DataDetail
-              data={row2}
-              scroll={{
-                x: window.screen.width,
-              }}
+            <Table
+              size="small"
+              pagination={false}
+              bordered
+              className="custom-table"
+              locale={{emptyText: 'Trống'}}
+              columns={currentColumns}
+              dataSource={selectedLot ? [selectedLot] : []}
             />
           </Col>
           <Row
@@ -448,18 +604,12 @@ const Manufacture1 = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: window.screen.width,
+                x: '170vw',
               }}
               size="small"
               rowClassName={rowClassName}
               pagination={false}
               bordered
-              rowSelection={rowSelection}
-              // onRow={(record, rowIndex) => {
-              //   return {
-              //     onClick: (event) => onClickRow(record),
-              //   };
-              // }}
               columns={columns}
               dataSource={data.map((e, index) => {
                 return { ...e, key: index };
