@@ -182,7 +182,7 @@ const Mapping = () => {
       </Row>
       <Row
         className="mt-2"
-        gutter={16}
+        gutter={[2,12]}
         style={{ justifyContent: "space-between" }}
       >
         <Col span={12}>

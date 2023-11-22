@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { SaveOutlined, QrcodeOutlined } from "@ant-design/icons";
+import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { Row, Col, Button, Table, Spin, DatePicker, Modal } from "antd";
 
 import DataDetail from "../../../components/DataDetail";
@@ -21,6 +21,51 @@ import { getMachines } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
+
+const tableColumns = [
+  {
+    title: "Mã Lot",
+    dataIndex: "ma_lot",
+    key: "ma_lot",
+    align: "center",
+    width: "15%",
+  },
+  {
+    title: "S.L thực",
+    dataIndex: "sl_thuc",
+    key: "sl_thuc",
+    align: "center",
+    width: "14%",
+  },
+  {
+    title: "Phế SX",
+    dataIndex: "phe_sx",
+    key: "phe_sx",
+    align: "center",
+    width: "14%",
+  },
+  {
+    title: "S.L 1 MQL",
+    dataIndex: "sl_mql",
+    key: "sl_mql",
+    align: "center",
+    width: "16%",
+  },
+  {
+    title: "Số m còn lại",
+    dataIndex: "so_m_con_lai",
+    key: "so_m_con_lai",
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "TG hoàn thành",
+    dataIndex: "tg_hoan_thanh",
+    key: "tg_hoan_thanh",
+    align: "center",
+    width: "16%",
+  },
+];
 
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
@@ -56,28 +101,12 @@ const Manufacture1 = (props) => {
   ]);
   const [row2, setRow2] = useState([
     {
-      title: "Mã lot",
-      value: "S231",
-    },
-    {
-      title: "S.L thực",
-      value: "200",
-    },
-    {
-      title: "Phế SX",
-      value: "4",
-    },
-    {
-      title: "S.L 1 MQL",
-      value: "1800",
-    },
-    {
-      title: "Số m còn lại",
-      value: "-",
-    },
-    {
-      title: "T/g HT",
-      value: "15:50:00",
+      ma_lot: "S231031002",
+      sl_thuc: "200",
+      phe_sx: "4",
+      sl_mql: "1800",
+      so_m_con_lai: "-",
+      tg_hoan_thanh: "15:50:00",
     },
   ]);
 
@@ -391,16 +420,18 @@ const Manufacture1 = (props) => {
             <DataDetail data={row1} />
           </Col>
           <Col span={24}>
-            <DataDetail
-              data={row2}
+            <Table
+              columns={tableColumns}
+              dataSource={row2}
               scroll={{
                 x: window.screen.width,
               }}
+              pagination={false}
+              bordered
             />
           </Col>
           <Row
             gutter={4}
-            className="mt-1"
             style={{
               display: "flex",
               justifyContent: "space-between",
@@ -429,7 +460,7 @@ const Manufacture1 = (props) => {
                 type="primary"
                 style={{ width: "100%" }}
                 onClick={() => setIsScan(1)}
-                icon={<QrcodeOutlined />}
+                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
               />
             </Col>
             <Col span={3}>
@@ -438,7 +469,7 @@ const Manufacture1 = (props) => {
                 type="primary"
                 style={{ width: "100%" }}
                 onClick={handlePrint}
-                icon={<SaveOutlined />}
+                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
                 <Tem listCheck={listCheck} ref={componentRef1} />

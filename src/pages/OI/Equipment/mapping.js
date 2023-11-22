@@ -168,10 +168,10 @@ const Mapping = () => {
       </Row>
       <Row
         className="mt-2"
-        gutter={16}
+        gutter={[3,8]}
         style={{ justifyContent: "space-between" }}
       >
-        <Col span={8}>
+        <Col span={10}>
           <DatePicker
             placeholder="Từ ngày"
             style={{ width: "100%" }}
@@ -179,7 +179,7 @@ const Mapping = () => {
             defaultValue={dayjs()}
           />
         </Col>
-        <Col span={8}>
+        <Col span={10}>
           <DatePicker
             placeholder="Đến ngày"
             style={{ width: "100%" }}
@@ -187,11 +187,11 @@ const Mapping = () => {
             defaultValue={dayjs()}
           />
         </Col>
-        <Col span={8}>
+        <Col span={4}>
           <Button
             type="primary"
             style={{ width: "100%" }}
-            icon={<QrcodeOutlined />}
+            icon={<QrcodeOutlined style={{ fontSize: "24px" }}/>}
           ></Button>
         </Col>
       </Row>
