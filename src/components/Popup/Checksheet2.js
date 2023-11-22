@@ -17,7 +17,7 @@ import { getChecksheetList } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Checksheet2 = (props) => {
     const { line } = useParams();
-    const { text, selectedLot, onSubmit } = props;
+    const { text, selectedLot, onSubmit, machine_id } = props;
     const closeModal = () => {
         setOpen(false);
     };
@@ -44,11 +44,10 @@ const Checksheet2 = (props) => {
     };
     useEffect(() => {
         (async () => {
-            var res = await getChecksheetList({machine_id: line});
-            console.log(res);
+            var res = await getChecksheetList({machine_id: machine_id});
             setChecksheet(res.data);
         })();
-    }, [selectedLot]);
+    }, [machine_id]);
     useEffect(() => {
         form.resetFields();
     }, [checksheet, line]);

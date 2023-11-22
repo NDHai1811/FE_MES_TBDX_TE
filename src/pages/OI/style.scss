@@ -92,3 +92,6 @@ thead th[class*="red"] {
     background: #fcfc9b;
   }
 }
+.no-hover:hover {
+  background-color: transparent !important;
+}

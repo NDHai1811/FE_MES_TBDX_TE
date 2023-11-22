@@ -223,35 +223,6 @@ const Manufacture1 = (props) => {
   const onClickRow = (row) => {
     setSelectedLot(row);
   };
-
-  useEffect(() => {
-    if (selectedLot) {
-      setRow2([
-        {
-          title: "Số Lot",
-          value: selectedLot.lot_id,
-        },
-        {
-          title: "KH ĐH",
-          value: selectedLot.ten_sp,
-        },
-        {
-          title: "S.L",
-          value: selectedLot.uph_an_dinh,
-        },
-        {
-          title: "HT ĐH",
-          value: selectedLot.uph_thuc_te,
-        },
-        {
-          title: "Phế SX",
-          value: selectedLot.sl_dau_ra_kh,
-        },
-      ]);
-    } else {
-      setListCheck([]);
-    }
-  }, [selectedLot]);
   const columns = [
     {
       title: "Lô SX",
