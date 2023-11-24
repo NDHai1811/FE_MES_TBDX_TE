@@ -373,36 +373,37 @@ const Manufacture1 = (props) => {
       setIsOpenQRScanner(false);
     }
   }, [isScan]);
-  var token =
-    "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI0Mjc4OTdlMi0xYzIyLTRjMmItOTEzMS00ZDRkOTYzMjc0NDUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMDU1MDU2MiwiZXhwIjoxNzAwNTU5NTYyLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.Z8WohLv48FCT-k3Y7o4hDvHiK5DXETFQSjlWG2sO60qcXG03FJwytp9KVAbE2s7ZkSfJSSbnTo-_DDQFhKj0_A";
-  var entityID = "e9aba8d0-85da-11ee-8392-a51389126dc6";
-  var webSocket = new WebSocket(
-    "ws://113.176.95.167:3030/api/plugins/telemetry?token=" + token
-  );
+  var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJhZDg5N2ZhMy03ZDQxLTQ4ODUtYjEzNi04ZmJhMmY2MWJmYmIiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMDY0Nzg4OSwiZXhwIjoxNzAwNjU2ODg5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.AWTkwDvyWDlOsqle8Yrh2a_ApB8z0BRs5CxSmwp3ZFcz-Nc6p1va0iJEuMKnfjTqKgj2739R4u4Lht4Jm6-4Zw";
+  var entityId = "e9aba8d0-85da-11ee-8392-a51389126dc6";
+  var webSocket = new WebSocket("ws://113.176.95.167:3030/api/ws/plugins/telemetry?token=" + token);
+
   webSocket.onopen = function () {
     var object = {
       tsSubCmds: [
         {
           entityType: "DEVICE",
-          entityID: entityID,
+          entityId: entityId,
           scope: "LATEST_TELEMETRY",
-          cmdId: 10,
-        },
+          cmdId: 10
+        }
       ],
       historyCmds: [],
-      attrSubCmds: [],
+      attrSubCmds: []
     };
     var data = JSON.stringify(object);
     webSocket.send(data);
-    console.log(data);
+    alert("Message is sent: " + data);
   };
+
   webSocket.onmessage = function (event) {
-    var recived_msg = event.data;
-    console.log(recived_msg);
+    var received_msg = event.data;
+    console.log(received_msg); // Hiển thị giá trị đọc được
   };
+
   webSocket.onclose = function (event) {
-    console.log("Connection is closed");
+    alert("Connection is closed!");
   };
+
 
   return (
     <React.Fragment>
