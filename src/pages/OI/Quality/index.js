@@ -10,6 +10,8 @@ import {
   message,
   Button,
   Radio,
+  Select,
+  Divider,
   DatePicker,
 } from "antd";
 import { withRouter } from "react-router-dom";
@@ -31,6 +33,8 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
 import dayjs from "dayjs";
+import { getLine } from "../../../api/oi/manufacture";
+import Checksheet1 from "../../../components/Popup/Checksheet1";
 
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -99,6 +103,8 @@ const Quality = (props) => {
       result: 1,
     },
   ]);
+  const [lineOptions, setLineOptions] = useState([]);
+  const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
   const [overall, setOverall] = useState([]);
   const { userProfile } = useProfile();
@@ -149,11 +155,12 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <Checksheet2
+        <Checksheet1
           text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
+          machine_id={params.machine_id}
         />
       ),
     },
@@ -164,11 +171,12 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <QuanLyLoi
+        <Checksheet2
           text="Kiểm"
           selectedLot={selectedRow}
           onSubmit={onSubmitResult}
           onClose={() => setOpenModal(false)}
+          machine_id={params.machine_id}
         />
       ),
     },
@@ -306,41 +314,46 @@ const Quality = (props) => {
     }
   };
 
+  useEffect(() => {
+    getListOption();
+  }, []);
+
+  const getListOption = async () => {
+    setLoading(true);
+    var line = (await getLine());
+    setLineOptions(line.data);
+    var machine = await getListMachine();
+    setMachineOptions(machine);
+    setLoading(false);
+  }
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({
-      machine_id: line,
-      start_date: dayjs(),
-      end_date: dayjs(),
-    });
+    var overall = await getQCOverall(params);
     setOverall(overall.data);
-    var res = await getLotQCList({
-      machine_id: line,
-      start_date: dayjs(),
-      end_date: dayjs(),
-    });
+    var res = await getLotQCList(params);
     setData(res.data);
     if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
     }
     setLoading(false);
   }
+  useEffect(()=>{
+    setParams({...params, machine_id: machineOptions.find(e=>e.line_id === line)?.value});
+  }, [line, machineOptions])
   useEffect(() => {
-    (async () => {
-      var machines = await getListMachine();
-      setMachines(machines);
-    })();
-  }, []);
+    if (params.machine_id) {
+      getData();
+    }
+  }, params.machine_id);
   useEffect(() => {
     if (line) {
-      getData();
       const screen = JSON.parse(localStorage.getItem("screen"));
       localStorage.setItem(
         "screen",
         JSON.stringify({ ...screen, quality: line ? line : "" })
       );
     } else {
-      history.push("/quality/S01");
+      history.push("/quality/30");
     }
   }, [line]);
   const onChangeLine = (value) => {
@@ -380,22 +393,62 @@ const Quality = (props) => {
     <React.Fragment>
       {contextHolder}
       <Spin spinning={loading}>
-        <Row gutter={[2, 12]} className="mt-3">
-          <Col span={6}>
-            <SelectButton
-              value={
-                machines.length > 0 &&
-                machines.some((e) => e.value === line) &&
-                line
-              }
-              options={machines}
-              label="Công đoạn"
-              onChange={onChangeLine}
-            />
+        <Row gutter={[6, 8]} className="mt-3">
+          <Col span={window.screen.width < 720 ? 7 : 5}>
+            <div
+              style={{
+                borderRadius: "8px",
+                textAlign: "center",
+                background: "#fff",
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                height: "100%",
+                justifyContent:'space-between'
+              }}
+              className="d-flex flex-column"
+            >
+              <Row style={{height:'100%'}}>
+                <Col span={7}
+                  style={{
+                    background: "#0454a2",
+                    borderRadius: '8px 0px 0px 0px',
+                    color: "#fff",
+                    height:'100%',
+                    display: 'flex',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    fontWeight:600
+                  }}
+                >
+                  {'CD'}
+                </Col>
+                <Col span={17} className="d-flex">
+                <Select options={lineOptions} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn công đoạn" value={lineOptions.length > 0 && line && !isNaN(parseInt(line)) ? parseInt(line) : null} onChange={onChangeLine}/>
+                </Col>
+              </Row>
+              <Divider style={{margin:0}}/>
+              <Row style={{height:'100%'}}>
+                <Col span={7}
+                  style={{
+                    background: "#0454a2",
+                    borderRadius: '0px 0px 0px 8px',
+                    color: "#fff",
+                    height:'100%',
+                    display: 'flex',
+                    alignItems:'center',
+                    justifyContent:'center',
+                    fontWeight:600
+                  }}
+                >
+                  {'Máy'}
+                </Col>
+                <Col span={17} className="d-flex">
+                  <Select options={machineOptions.filter(e=>e.line_id === line)} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn máy" value={params.machine_id} onChange={(value)=>setParams({...params, machine_id: value})}/>
+                </Col>
+              </Row>
+            </div>
           </Col>
-          <Col span={18}>
+          <Col span={window.screen.width < 720 ? 17 : 19}>
             <Table
-              rowClassName={(record, index) => "table-row-light"}
               locale={{ emptyText: "Trống" }}
               pagination={false}
               bordered={true}
@@ -403,9 +456,9 @@ const Quality = (props) => {
               dataSource={overall}
               size="small"
               style={{ borderRadius: 12 }}
-              scroll={{
+              scroll={window.screen.width < 720 ? {
                 x: window.screen.width,
-              }}
+              } : false}
             />
           </Col>
         </Row>
@@ -413,13 +466,12 @@ const Quality = (props) => {
         <Row className="mt-3" style={{ justifyContent: "space-between" }}>
           <Col span={24}>
             <Table
-              rowClassName={(record, index) => "table-row-light"}
               locale={{ emptyText: "Trống" }}
               pagination={false}
               bordered={true}
-              scroll={{
+              scroll={window.screen.width < 720 ? {
                 x: window.screen.width,
-              }}
+              } : false}
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"
@@ -464,7 +516,7 @@ const Quality = (props) => {
         </Row>
 
         <Table
-          rowClassName={rowClassName}
+          rowClassName={(record, index)=>{return 'no-hover '+rowClassName(record, index)}}
           scroll={{
             x: window.screen.width,
           }}

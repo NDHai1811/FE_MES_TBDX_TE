@@ -6,20 +6,11 @@ import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { useEffect } from "react";
 import { scanError } from "../../api/oi/quality";
 const QuanLyLoi = (props) => {
-  const { line } = useParams();
-  const { text, selectedLot, onSubmit } = props;
+  const { text, selectedLot, onSubmit, machine_id } = props;
   const closeModal = () => {
     setOpen(false);
   };
   const [errorsList, setErrorsList] = useState([]);
-  // useEffect(() => {
-  //     (async () => {
-  //         var res = await scanError();
-  //         if (res.success) {
-  //             setErrorsList(res.data);
-  //         }
-  //     })();
-  // }, [line]);
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const onFinish = async (values) => {
@@ -36,7 +27,7 @@ const QuanLyLoi = (props) => {
   };
   useEffect(() => {
     form.resetFields();
-  }, [errorsList, line]);
+  }, [errorsList, machine_id]);
   const hanleClickOk = () => {
     form.setFieldValue("result", 1);
     form.submit();
@@ -46,7 +37,7 @@ const QuanLyLoi = (props) => {
     form.submit();
   };
   const onScan = async (result) => {
-    var res = await scanError({ machine_id: line, error_id: result });
+    var res = await scanError({ machine_id: machine_id, error_id: result });
     if (res.success) {
       setErrorsList([...errorsList, res.data]);
     }

@@ -202,7 +202,7 @@ const data3 = [
 const config = {
   // appendPadding: 10,
   data: data1,
-  width:100,
+  width: 100,
   height: 100,
   angleField: "value",
   colorField: "type",
@@ -226,7 +226,7 @@ const config2 = {
   // appendPadding: 4,
   data: data2,
   height: 100,
-  width:100,
+  width: 100,
   angleField: "value",
   colorField: "type",
   radius: 0.8,
@@ -331,6 +331,11 @@ const errorTable = [
     ma_su_co: "SC04",
     ten_su_co: "Vệ sinh 5S",
     so_lan: 4,
+  },
+  {
+    ma_su_co: "SC05",
+    ten_su_co: "Nghỉ giữa ca",
+    so_lan: 2,
   },
 ];
 
@@ -486,7 +491,10 @@ const Equipment1 = (props) => {
     <>
       <Row style={{ padding: "8px" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
+          <Card
+            style={{ height: "100%" }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+          >
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>
@@ -610,7 +618,6 @@ const Equipment1 = (props) => {
                     options={listCustomers}
                   />
                 </Form.Item>
-                
               </Form>
             </div>
 
@@ -656,12 +663,12 @@ const Equipment1 = (props) => {
                         title: false,
                         content: {
                           style: {
-                            whiteSpace: 'pre-wrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontSize: 14
+                            whiteSpace: "pre-wrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            fontSize: 14,
                           },
-                          content: 'OEE',
+                          content: "OEE",
                         },
                       }}
                     />
@@ -673,12 +680,12 @@ const Equipment1 = (props) => {
                         title: false,
                         content: {
                           style: {
-                            whiteSpace: 'pre-wrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontSize: 12
+                            whiteSpace: "pre-wrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            fontSize: 12,
                           },
-                          content: 'Tỷ lệ\nvận hành',
+                          content: "Tỷ lệ\nvận hành",
                         },
                       }}
                     />
@@ -689,13 +696,14 @@ const Equipment1 = (props) => {
             </Col>
             <Col span={12}>
               <Card
-                title="5 SỰ CỐ XUẤT HIỆN NHIỀU NHẤT"
                 bodyStyle={{ height: "90%" }}
                 style={{
                   height: 300,
-                  padding: "0px",
                 }}
               >
+                <h4 style={{ textAlign: "center", marginTop: -12 }}>
+                  5 SỰ CỐ XUẤT HIỆN NHIỀU NHẤT
+                </h4>
                 <Table
                   className="my-custom-table"
                   dataSource={errorTable}
