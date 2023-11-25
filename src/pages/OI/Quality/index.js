@@ -32,6 +32,7 @@ import {
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
+import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
 import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
@@ -40,6 +41,7 @@ const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
   const [messageApi, contextHolder] = message.useMessage();
   const { line } = useParams();
+  const { machine_id } = useParams();
   const history = useHistory();
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -316,16 +318,23 @@ const Quality = (props) => {
 
   useEffect(() => {
     getListOption();
+    getMachineList();
   }, []);
+
+  const getMachineList = () => {
+    getMachines()
+      .then((res) => setMachines(res.data))
+      .catch((err) => console.log("Get machines error: ", err));
+  };
 
   const getListOption = async () => {
     setLoading(true);
-    var line = (await getLine());
+    var line = await getLine();
     setLineOptions(line.data);
     var machine = await getListMachine();
     setMachineOptions(machine);
     setLoading(false);
-  }
+  };
   async function getData() {
     setLoading(true);
     var overall = await getQCOverall(params);
@@ -337,9 +346,12 @@ const Quality = (props) => {
     }
     setLoading(false);
   }
-  useEffect(()=>{
-    setParams({...params, machine_id: machineOptions.find(e=>e.line_id === line)?.value});
-  }, [line, machineOptions])
+  useEffect(() => {
+    setParams({
+      ...params,
+      machine_id: machineOptions.find((e) => e.line_id === line)?.value,
+    });
+  }, [line, machineOptions]);
   useEffect(() => {
     if (params.machine_id) {
       getData();
@@ -395,57 +407,12 @@ const Quality = (props) => {
       <Spin spinning={loading}>
         <Row gutter={[6, 8]} className="mt-3">
           <Col span={window.screen.width < 720 ? 7 : 5}>
-            <div
-              style={{
-                borderRadius: "8px",
-                textAlign: "center",
-                background: "#fff",
-                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-                height: "100%",
-                justifyContent:'space-between'
-              }}
-              className="d-flex flex-column"
-            >
-              <Row style={{height:'100%'}}>
-                <Col span={7}
-                  style={{
-                    background: "#0454a2",
-                    borderRadius: '8px 0px 0px 0px',
-                    color: "#fff",
-                    height:'100%',
-                    display: 'flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    fontWeight:600
-                  }}
-                >
-                  {'CD'}
-                </Col>
-                <Col span={17} className="d-flex">
-                <Select options={lineOptions} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn công đoạn" value={lineOptions.length > 0 && line && !isNaN(parseInt(line)) ? parseInt(line) : null} onChange={onChangeLine}/>
-                </Col>
-              </Row>
-              <Divider style={{margin:0}}/>
-              <Row style={{height:'100%'}}>
-                <Col span={7}
-                  style={{
-                    background: "#0454a2",
-                    borderRadius: '0px 0px 0px 8px',
-                    color: "#fff",
-                    height:'100%',
-                    display: 'flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    fontWeight:600
-                  }}
-                >
-                  {'Máy'}
-                </Col>
-                <Col span={17} className="d-flex">
-                  <Select options={machineOptions.filter(e=>e.line_id === line)} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn máy" value={params.machine_id} onChange={(value)=>setParams({...params, machine_id: value})}/>
-                </Col>
-              </Row>
-            </div>
+            <SelectButton
+              options={machine_id}
+              value={machine_id}
+              label="Máy"
+              onChange={onChangeLine}
+            />
           </Col>
           <Col span={window.screen.width < 720 ? 17 : 19}>
             <Table
@@ -456,9 +423,13 @@ const Quality = (props) => {
               dataSource={overall}
               size="small"
               style={{ borderRadius: 12 }}
-              scroll={window.screen.width < 720 ? {
-                x: window.screen.width,
-              } : false}
+              scroll={
+                window.screen.width < 720
+                  ? {
+                      x: window.screen.width,
+                    }
+                  : false
+              }
             />
           </Col>
         </Row>
@@ -469,9 +440,13 @@ const Quality = (props) => {
               locale={{ emptyText: "Trống" }}
               pagination={false}
               bordered={true}
-              scroll={window.screen.width < 720 ? {
-                x: window.screen.width,
-              } : false}
+              scroll={
+                window.screen.width < 720
+                  ? {
+                      x: window.screen.width,
+                    }
+                  : false
+              }
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"
@@ -516,7 +491,9 @@ const Quality = (props) => {
         </Row>
 
         <Table
-          rowClassName={(record, index)=>{return 'no-hover '+rowClassName(record, index)}}
+          rowClassName={(record, index) => {
+            return "no-hover " + rowClassName(record, index);
+          }}
           scroll={{
             x: window.screen.width,
           }}

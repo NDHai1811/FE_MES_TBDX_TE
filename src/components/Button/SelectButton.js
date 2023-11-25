@@ -1,6 +1,4 @@
-import { QrcodeOutlined } from "@ant-design/icons";
-import { Button, Input, AutoComplete, Select } from "antd";
-import { useEffect, useState } from "react";
+import { Select } from "antd";
 
 const SelectButton = (props) => {
   const {
