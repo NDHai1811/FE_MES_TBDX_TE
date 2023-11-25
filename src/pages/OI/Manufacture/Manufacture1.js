@@ -1,8 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, DatePicker, Modal, Select, Divider } from "antd";
+import {
+  Row,
+  Col,
+  Button,
+  Table,
+  Spin,
+  DatePicker,
+  Modal,
+  Select,
+  Divider,
+} from "antd";
 
-import DataDetail from "../../../components/DataDetail";
 import "../style.scss";
 import {
   useHistory,
@@ -10,7 +19,6 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../components/Button/SelectButton";
 import {
-  getInfoPallet,
   scanPallet,
   getOverAll,
   getLotByMachine,
@@ -24,54 +32,10 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getListMachine } from "../../../api";
 
-const tableColumns = [
-  {
-    title: "Mã Lot",
-    dataIndex: "ma_lot",
-    key: "ma_lot",
-    align: "center",
-    width: "15%",
-  },
-  {
-    title: "S.L thực",
-    dataIndex: "sl_thuc",
-    key: "sl_thuc",
-    align: "center",
-    width: "14%",
-  },
-  {
-    title: "Phế SX",
-    dataIndex: "phe_sx",
-    key: "phe_sx",
-    align: "center",
-    width: "14%",
-  },
-  {
-    title: "S.L 1 MQL",
-    dataIndex: "sl_mql",
-    key: "sl_mql",
-    align: "center",
-    width: "16%",
-  },
-  {
-    title: "Số m còn lại",
-    dataIndex: "so_m_con_lai",
-    key: "so_m_con_lai",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "TG hoàn thành",
-    dataIndex: "tg_hoan_thanh",
-    key: "tg_hoan_thanh",
-    align: "center",
-    width: "16%",
-  },
-];
-
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { line } = useParams();
+  const { machine_id } = useParams();
   const history = useHistory();
   const [params, setParams] = useState({
     start_date: dayjs(),
@@ -131,21 +95,28 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     getListOption();
+    getMachineList();
   }, []);
+
+  const getMachineList = () => {
+    getMachines()
+      .then((res) => setOptions(res.data))
+      .catch((err) => console.log("Get machines error: ", err));
+  };
 
   const getListOption = async () => {
     setLoading(true);
-    var line = (await getLine());
+    var line = await getLine();
     setLineOptions(line.data);
     var machine = await getListMachine();
     setMachineOptions(machine);
     setLoading(false);
-  }
+  };
   const getOverAllDetail = () => {
     setLoading(true);
     getOverAll({ ...params })
       .then((res) => {
-        setOverall(res.data)
+        setOverall(res.data);
       })
       .catch((err) => {
         console.error("Get over all error: ", err);
@@ -332,7 +303,9 @@ const Manufacture1 = (props) => {
       align: "center",
     },
   ];
-  const [overall, setOverall] = useState([{kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0}]);
+  const [overall, setOverall] = useState([
+    { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
+  ]);
   const currentColumns = [
     {
       title: "Mã lot",
@@ -370,7 +343,7 @@ const Manufacture1 = (props) => {
       key: "tg_ht",
       align: "center",
     },
-  ]
+  ];
   const componentRef1 = useRef();
   const handlePrint = async () => {
     if (listCheck.length > 0) {
@@ -451,85 +424,47 @@ const Manufacture1 = (props) => {
   }
   
 
-  useEffect(()=>{
-    if(data.length > 0){
-      setSelectedLot(data.length > 0 ? data[0] : null)
-      setListCheck(data.filter(e=>e.status === 4));
+  useEffect(() => {
+    if (data.length > 0) {
+      setSelectedLot(data.length > 0 ? data[0] : null);
+      setListCheck(data.filter((e) => e.status === 4));
     }
-  }, [data])
+  }, [data]);
 
-  useEffect(()=>{
-    setParams({...params, machine_id: machineOptions.find(e=>e.line_id === line)?.value});
-  }, [line, machineOptions])
+  useEffect(() => {
+    setParams({
+      ...params,
+      machine_id: machineOptions.find((e) => e.line_id === line)?.value,
+    });
+  }, [line, machineOptions]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
         <Row className="mt-3" gutter={[6, 8]}>
           <Col span={window.screen.width < 720 ? 7 : 5}>
-            <div
-              style={{
-                borderRadius: "8px",
-                textAlign: "center",
-                background: "#fff",
-                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
-                height: "100%",
-                justifyContent:'space-between'
-              }}
-              className="d-flex flex-column"
-            >
-              <Row style={{height:'100%'}}>
-                <Col span={7}
-                  style={{
-                    background: "#0454a2",
-                    borderRadius: '8px 0px 0px 0px',
-                    color: "#fff",
-                    height:'100%',
-                    display: 'flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    fontWeight:600
-                  }}
-                >
-                  {'CD'}
-                </Col>
-                <Col span={17} className="d-flex">
-                <Select options={lineOptions} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn công đoạn" value={lineOptions.length > 0 && line && !isNaN(parseInt(line)) ? parseInt(line) : null} onChange={onChangeLine}/>
-                </Col>
-              </Row>
-              <Divider style={{margin:0}}/>
-              <Row style={{height:'100%'}}>
-                <Col span={7}
-                  style={{
-                    background: "#0454a2",
-                    borderRadius: '0px 0px 0px 8px',
-                    color: "#fff",
-                    height:'100%',
-                    display: 'flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    fontWeight:600
-                  }}
-                >
-                  {'Máy'}
-                </Col>
-                <Col span={17} className="d-flex">
-                  <Select options={machineOptions.filter(e=>e.line_id === line)} style={{alignSelf:'center'}} className="w-100" bordered={false} placeholder="Chọn máy" value={params.machine_id} onChange={(value)=>setParams({...params, machine_id: value})}/>
-                </Col>
-              </Row>
-            </div>
+            <SelectButton
+              options={options}
+              value={machine_id}
+              label="Máy"
+              onChange={onChangeLine}
+            />
           </Col>
           <Col span={window.screen.width < 720 ? 17 : 19}>
             <Table
               size="small"
               pagination={false}
               bordered
-              locale={{emptyText: 'Trống'}}
+              locale={{ emptyText: "Trống" }}
               className="custom-table"
               columns={overallColumns}
               dataSource={overall}
-              scroll={window.screen.width < 720 ? {
-                x: window.screen.width,
-              } : false}
+              scroll={
+                window.screen.width < 720
+                  ? {
+                      x: window.screen.width,
+                    }
+                  : false
+              }
             />
           </Col>
           <Col span={24}>
@@ -538,7 +473,7 @@ const Manufacture1 = (props) => {
               pagination={false}
               bordered
               className="custom-table"
-              locale={{emptyText: 'Trống'}}
+              locale={{ emptyText: "Trống" }}
               columns={currentColumns}
               dataSource={selectedLot ? [selectedLot] : []}
             />
@@ -592,10 +527,12 @@ const Manufacture1 = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: '170vw',
+                x: "170vw",
               }}
               size="small"
-              rowClassName={(record, index)=>"no-hover "+rowClassName(record, index)}
+              rowClassName={(record, index) =>
+                "no-hover " + rowClassName(record, index)
+              }
               pagination={false}
               bordered
               columns={columns}
