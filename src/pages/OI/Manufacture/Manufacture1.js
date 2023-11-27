@@ -1,16 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import {
-  Row,
-  Col,
-  Button,
-  Table,
-  Spin,
-  DatePicker,
-  Modal,
-  Select,
-  Divider,
-} from "antd";
+import { Row, Col, Button, Table, Spin, DatePicker, Modal } from "antd";
 
 import "../style.scss";
 import {
@@ -22,52 +12,164 @@ import {
   scanPallet,
   getOverAll,
   getLotByMachine,
-  getLine,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "../../UI/Manufacture/Tem";
-import { getMachines } from "../../../api/oi/equipment";
-import { COMMON_DATE_FORMAT } from "../../../commons/constants";
+import {
+  COMMON_DATE_FORMAT,
+  COMMON_DATE_FORMAT_REQUEST,
+} from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { getListMachine } from "../../../api";
+import { formatDateTime } from "../../../commons/utils";
+import { getMachines } from "../../../api/oi/equipment";
+
+const token =
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJlMzg3YmYyNS05MWU2LTQxYjUtOWMyOS0xZjM2MjljYWU2N2QiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTA0Nzk2OSwiZXhwIjoxNzAxMDU2OTY5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.h_DR_3yFs92-w_WEAOCmOmzTg73U1jTAJN-jL_JXX-yOZiDdJsE6_OtgNkLSPtO4RD_slQexD47GHtSUqj1nyA";
+const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry?token=${token}`;
+
+const currentColumns = [
+  {
+    title: "Mã lot",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+  },
+  {
+    title: "Sản lượng kế hoạch",
+    dataIndex: "san_luong_kh",
+    key: "san_luong_kh",
+    align: "center",
+  },
+  {
+    title: "Sản lượng đầu ra",
+    dataIndex: "san_luong_dau_ra",
+    key: "san_luong_dau_ra",
+    align: "center",
+  },
+  {
+    title: "Sản lượng đạt",
+    dataIndex: "sl_ok",
+    key: "sl_ok",
+    align: "center",
+  },
+];
+
+const columns = [
+  {
+    title: "Mã Lot",
+    dataIndex: "lot_id",
+    key: "lot_id",
+    align: "center",
+    width: "14%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Sản lượng kế hoạch",
+    dataIndex: "san_luong_kh",
+    key: "san_luong_kh",
+    align: "center",
+    width: "14%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Sản lượng đạt",
+    dataIndex: "sl_ok",
+    key: "sl_ok",
+    align: "center",
+    width: "14%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Mã layout",
+    dataIndex: "layout_id",
+    key: "layout_id",
+    align: "center",
+    width: "14%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    width: "14%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Mã QL",
+    dataIndex: "mql",
+    key: "mql",
+    align: "center",
+    width: "14%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+    width: "15%",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+];
+const overallColumns = [
+  {
+    title: "K.H Ca",
+    dataIndex: "kh_ca",
+    key: "kh_ca",
+    align: "center",
+  },
+  {
+    title: "Sản lượng ca",
+    dataIndex: "san_luong",
+    key: "san_luong",
+    align: "center",
+  },
+  {
+    title: "% KH Ca",
+    dataIndex: "ti_le_ca",
+    key: "ti_le_ca",
+    align: "center",
+  },
+  {
+    title: "Tổng phế",
+    dataIndex: "tong_phe",
+    key: "tong_phe",
+    align: "center",
+  },
+];
 
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
-  const { line } = useParams();
   const { machine_id } = useParams();
+
   const history = useHistory();
+  const componentRef1 = useRef();
+
   const [params, setParams] = useState({
     machine_id: machine_id,
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  const [lineOptions, setLineOptions] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
-  const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [selectedLot, setSelectedLot] = useState();
+  const [selectedLot, setSelectedLot] = useState([]);
   const [listCheck, setListCheck] = useState([]);
-  const [row1, setRow1] = useState([
-    {
-      title: "KH ca",
-      value: "10000",
-    },
-    {
-      title: "S.L ca",
-      value: "1100",
-    },
-    {
-      title: "% KH ca",
-      value: "11%",
-    },
-    {
-      title: "Tổng Phế",
-      value: "4",
-      bg: "#fb4b50",
-    },
+  const [overall, setOverall] = useState([
+    { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
+  const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
+  const [isScan, setIsScan] = useState(0);
+  const [socket, setSocket] = useState(null);
   const [row2, setRow2] = useState([
     {
       ma_lot: "S231031002",
@@ -80,47 +182,47 @@ const Manufacture1 = (props) => {
   ]);
 
   useEffect(() => {
-    // console.log(machineOptions, machine_id);
     if (socket) {
       socket.close();
     }
     if (machine_id) {
       getOverAllDetail();
       getListLotDetail();
-      var deviceId = machineOptions.find(e=>e.value === machine_id)?.device_id;
-      console.log(deviceId, machineOptions, machine_id);
-      if(deviceId){
-        connectWebsocket(deviceId);
-      }
     }
-    
-  },[machineOptions]);
+  }, [machine_id]);
 
   useEffect(() => {
-    getListOption();
-    // getMachineList();
+    if (isScan === 1) {
+      setIsOpenQRScanner(true);
+    } else if (isScan === 2) {
+      setIsOpenQRScanner(false);
+    }
+  }, [isScan]);
+
+  useEffect(() => {
+    getListMachine();
   }, []);
 
-  const getMachineList = () => {
-    getMachines()
-      .then((res) => setOptions(res.data))
-      .catch((err) => console.log("Get machines error: ", err));
+  const onClickRow = (value) => {
+    setSelectedLot([value]);
   };
 
-  const getListOption = async () => {
-    setLoading(true);
-    var line = await getLine();
-    setLineOptions(line.data);
-    var machine = await getListMachine();
-    setMachineOptions(machine);
-    setLoading(false);
+  const getListMachine = () => {
+    getMachines()
+      .then((res) => setMachineOptions(res.data))
+      .catch((err) => console.log("Get list machine error: ", err));
   };
+
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll({ ...params })
-      .then((res) => {
-        setOverall(res.data);
-      })
+    const resData = {
+      machine_id: params.machine_id,
+      start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
+      end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+    };
+
+    getOverAll(resData)
+      .then((res) => setOverall(res.data))
       .catch((err) => {
         console.error("Get over all error: ", err);
       })
@@ -128,9 +230,15 @@ const Manufacture1 = (props) => {
   };
 
   const getListLotDetail = () => {
+    const resData = {
+      machine_id: params.machine_id,
+      start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
+      end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+    };
     setLoading(true);
-    getLotByMachine({ ...params })
+    getLotByMachine(resData)
       .then((res) => {
+        setSelectedLot([res.data?.[0]]);
         setData(res.data);
       })
       .catch((err) => {
@@ -201,153 +309,6 @@ const Manufacture1 = (props) => {
     return "";
   };
 
-  const onClickRow = (row) => {
-    setSelectedLot(row);
-  };
-  const columns = [
-    {
-      title: "Lô SX",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
-      align: "center",
-      width: "15%",
-      // render: (value, record, index) => <Checkbox></Checkbox>,
-    },
-    {
-      title: "Mã Lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
-      align: "center",
-      width: "14%",
-    },
-    {
-      title: "Sl/Lot",
-      dataIndex: "dinh_muc",
-      key: "dinh_muc",
-      align: "center",
-      width: "14%",
-    },
-    {
-      title: "Quy cách",
-      dataIndex: "quy_cach",
-      key: "quy_cach",
-      align: "center",
-    },
-    {
-      title: "S.L",
-      dataIndex: "san_luong",
-      key: "san_luong",
-      align: "center",
-      render: (value, record, index) =>
-        value ? value : record.status === 4 ? value : "-",
-    },
-    {
-      title: "S.L sau QC",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
-      align: "center",
-      render: (value, record, index) =>
-        value ? value : record.status === 4 ? value : "-",
-    },
-    {
-      title: "Phế QC",
-      dataIndex: "sl_ng_qc",
-      key: "sl_ng_qc",
-      align: "center",
-      render: (value, record, index) =>
-        value ? value : record.status === 4 ? value : "-",
-    },
-    {
-      title: "Phế SX",
-      dataIndex: "sl_ng_sx",
-      key: "sl_ng_sx",
-      align: "center",
-      render: (value, record, index) =>
-        value ? value : record.status === 4 ? value : "-",
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-      width: "14%",
-    },
-    {
-      title: "MQL",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-      width: "14%",
-    },
-  ];
-  const overallColumns = [
-    {
-      title: "KH Ca",
-      dataIndex: "kh_ca",
-      key: "kh_ca",
-      align: "center",
-    },
-    {
-      title: "Sản lượng ca",
-      dataIndex: "san_luong",
-      key: "san_luong",
-      align: "center",
-    },
-    {
-      title: "% KH Ca",
-      dataIndex: "ti_le_ca",
-      key: "ti_le_ca",
-      align: "center",
-    },
-    {
-      title: "Tổng phế",
-      dataIndex: "tong_phe",
-      key: "tong_phe",
-      align: "center",
-    },
-  ];
-  const [overall, setOverall] = useState([
-    { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
-  ]);
-  const currentColumns = [
-    {
-      title: "Mã lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
-      align: "center",
-    },
-    {
-      title: "S.L thực",
-      dataIndex: "so_luong",
-      key: "so_luong",
-      align: "center",
-    },
-    {
-      title: "Phế sản xuất",
-      dataIndex: "sl_ng_sx",
-      key: "sl_ng_sx",
-      align: "center",
-    },
-    {
-      title: "S.L 1 MQL",
-      dataIndex: "sl_1_mql",
-      key: "sl_1_mql",
-      align: "center",
-    },
-    {
-      title: "Số m còn lại",
-      dataIndex: "so_m_con_lai",
-      key: "so_m_con_lai",
-      align: "center",
-    },
-    {
-      title: "TG hoàn thành",
-      dataIndex: "tg_ht",
-      key: "tg_ht",
-      align: "center",
-    },
-  ];
-  const componentRef1 = useRef();
   const handlePrint = async () => {
     if (listCheck.length > 0) {
       print();
@@ -362,6 +323,7 @@ const Manufacture1 = (props) => {
   //     print();
   //   }
   // }, [listCheck]);
+
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRows);
@@ -370,52 +332,49 @@ const Manufacture1 = (props) => {
       return { disabled: record.status !== 4 };
     },
   };
-  const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
-  const [isScan, setIsScan] = useState(0);
+
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
     setIsScan(2);
   };
-  useEffect(() => {
-    if (isScan === 1) {
-      setIsOpenQRScanner(true);
-    } else if (isScan === 2) {
-      setIsOpenQRScanner(false);
-    }
-  }, [isScan]);
 
-  const [socket, setSocket] = useState(null);
   const connectWebsocket = (deviceId) => {
-    console.log(deviceId);
-    var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJlMzg3YmYyNS05MWU2LTQxYjUtOWMyOS0xZjM2MjljYWU2N2QiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTA0Nzk2OSwiZXhwIjoxNzAxMDU2OTY5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.h_DR_3yFs92-w_WEAOCmOmzTg73U1jTAJN-jL_JXX-yOZiDdJsE6_OtgNkLSPtO4RD_slQexD47GHtSUqj1nyA";
-    var entityId = deviceId;
-    var webSocket = new WebSocket("ws://113.176.95.167:3030/api/ws/plugins/telemetry?token=" + token);
+    const entityId = deviceId;
+    const webSocket = new WebSocket(url);
+
     webSocket.onopen = function () {
-      var object = {
+      const object = {
         tsSubCmds: [
           {
             entityType: "DEVICE",
             entityId: entityId,
             scope: "LATEST_TELEMETRY",
-            cmdId: 10
-          }
+            cmdId: 10,
+          },
         ],
         historyCmds: [],
-        attrSubCmds: []
+        attrSubCmds: [],
       };
-      var data = JSON.stringify(object);
+      const data = JSON.stringify(object);
       webSocket.send(data);
-      // console.log("Message is sent: " + data);
     };
+
     webSocket.onmessage = function (event) {
-      var recived_msg = JSON.parse(event.data);
-      console.log(recived_msg.data);
+      const receivedMsg = JSON.parse(event.data);
+      console.log(receivedMsg.data);
     };
+
     webSocket.onclose = function (event) {
       console.log("Connection is closed");
       connectWebsocket(deviceId);
     };
+
+    webSocket.onerror = function (error) {
+      console.log("WebSocket Error: ", error);
+    };
+
     setSocket(webSocket);
+
     return () => {
       if (webSocket) {
         webSocket.close();
@@ -424,15 +383,15 @@ const Manufacture1 = (props) => {
         socket.close();
       }
     };
-  }
-  
+  };
 
-  useEffect(() => {
-    if (data.length > 0) {
-      setSelectedLot(data.length > 0 ? data[0] : null);
-      setListCheck(data.filter((e) => e.status === 4));
-    }
-  }, [data]);
+  const onChangeStartDate = (value) => {
+    setParams({ ...params, start_date: value });
+  };
+
+  const onChangeEndDate = (value) => {
+    setParams({ ...params, end_date: value });
+  };
 
   // useEffect(() => {
   //   setParams({
@@ -461,13 +420,13 @@ const Manufacture1 = (props) => {
               className="custom-table"
               columns={overallColumns}
               dataSource={overall}
-              scroll={
-                window.screen.width < 720
-                  ? {
-                      x: window.screen.width,
-                    }
-                  : false
-              }
+              // scroll={
+              //   window.screen.width < 720
+              //     ? {
+              //         x: window.screen.width,
+              //       }
+              //     : false
+              // }
             />
           </Col>
           <Col span={24}>
@@ -478,7 +437,7 @@ const Manufacture1 = (props) => {
               className="custom-table"
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
-              dataSource={selectedLot ? [selectedLot] : []}
+              dataSource={selectedLot}
             />
           </Col>
           <Row
@@ -495,6 +454,7 @@ const Manufacture1 = (props) => {
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
                 defaultValue={dayjs()}
+                onChange={onChangeStartDate}
               />
             </Col>
             <Col span={9}>
@@ -503,6 +463,7 @@ const Manufacture1 = (props) => {
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
                 defaultValue={dayjs()}
+                onChange={onChangeEndDate}
               />
             </Col>
             <Col span={3}>
@@ -539,9 +500,12 @@ const Manufacture1 = (props) => {
               pagination={false}
               bordered
               columns={columns}
-              dataSource={data.map((e, index) => {
-                return { ...e, key: index };
-              })}
+              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: () => onClickRow(record),
+                };
+              }}
             />
           </Col>
         </Row>

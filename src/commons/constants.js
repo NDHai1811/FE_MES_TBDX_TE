@@ -1,1 +1,2 @@
 export const COMMON_DATE_FORMAT = "DD-MM-YY";
+export const COMMON_DATE_FORMAT_REQUEST = "YY-MM-DD";
