@@ -38,6 +38,7 @@ const Manufacture1 = (props) => {
   const { machine_id } = useParams();
   const history = useHistory();
   const [params, setParams] = useState({
+    machine_id: machine_id,
     start_date: dayjs(),
     end_date: dayjs(),
   });
@@ -79,23 +80,25 @@ const Manufacture1 = (props) => {
   ]);
 
   useEffect(() => {
+    // console.log(machineOptions, machine_id);
     if (socket) {
       socket.close();
     }
-    if (params.machine_id) {
+    if (machine_id) {
       getOverAllDetail();
       getListLotDetail();
-      var deviceId = machineOptions.find(e=>e.value === params.machine_id)?.ma_so;
+      var deviceId = machineOptions.find(e=>e.value === machine_id)?.device_id;
+      console.log(deviceId, machineOptions, machine_id);
       if(deviceId){
         connectWebsocket(deviceId);
       }
     }
     
-  }, params.machine_id);
+  },[machineOptions]);
 
   useEffect(() => {
     getListOption();
-    getMachineList();
+    // getMachineList();
   }, []);
 
   const getMachineList = () => {
@@ -384,7 +387,7 @@ const Manufacture1 = (props) => {
   const [socket, setSocket] = useState(null);
   const connectWebsocket = (deviceId) => {
     console.log(deviceId);
-    var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI1YzIzYjNhOC00ZDkyLTQ4MWQtOTk2Ni0yNGUwYWZiZjQwMjUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMDg5MzQxNCwiZXhwIjoxNzAwOTAyNDE0LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.Zys_15X792M_grcS9FJe0pXR5eM157RTLL-DIDtubNduaxqe-9Vg6niZ5Kb5OF4CcE_mzt1Kt3pdBlETbboxtw";
+    var token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJlMzg3YmYyNS05MWU2LTQxYjUtOWMyOS0xZjM2MjljYWU2N2QiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTA0Nzk2OSwiZXhwIjoxNzAxMDU2OTY5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.h_DR_3yFs92-w_WEAOCmOmzTg73U1jTAJN-jL_JXX-yOZiDdJsE6_OtgNkLSPtO4RD_slQexD47GHtSUqj1nyA";
     var entityId = deviceId;
     var webSocket = new WebSocket("ws://113.176.95.167:3030/api/ws/plugins/telemetry?token=" + token);
     webSocket.onopen = function () {
@@ -410,7 +413,7 @@ const Manufacture1 = (props) => {
     };
     webSocket.onclose = function (event) {
       console.log("Connection is closed");
-      connectWebsocket();
+      connectWebsocket(deviceId);
     };
     setSocket(webSocket);
     return () => {
@@ -431,19 +434,19 @@ const Manufacture1 = (props) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    setParams({
-      ...params,
-      machine_id: machineOptions.find((e) => e.line_id === line)?.value,
-    });
-  }, [line, machineOptions]);
+  // useEffect(() => {
+  //   setParams({
+  //     ...params,
+  //     machine_id: machineOptions.find((e) => e.line_id === machine_id)?.value,
+  //   });
+  // }, [machineOptions]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
         <Row className="mt-3" gutter={[6, 8]}>
           <Col span={window.screen.width < 720 ? 7 : 5}>
             <SelectButton
-              options={options}
+              options={machineOptions}
               value={machine_id}
               label="Máy"
               onChange={onChangeLine}
