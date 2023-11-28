@@ -10,8 +10,6 @@ import {
   message,
   Button,
   Radio,
-  Select,
-  Divider,
   DatePicker,
 } from "antd";
 import { withRouter } from "react-router-dom";
@@ -31,7 +29,6 @@ import {
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
-import QuanLyLoi from "../../../components/Popup/QuanLyLoi";
 import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
 import { getLine } from "../../../api/oi/manufacture";
@@ -157,13 +154,15 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <Checksheet1
-          text="Kiểm"
-          selectedLot={selectedRow}
-          onSubmit={onSubmitResult}
-          onClose={() => setOpenModal(false)}
-          machine_id={params.machine_id}
-        />
+        <div onClick={() => setOpenModal(true)}>
+          <Checksheet1
+            text="Kiểm"
+            selectedLot={selectedRow}
+            onSubmit={onSubmitResult}
+            onClose={() => setOpenModal(false)}
+            machine_id={params.machine_id}
+          />
+        </div>
       ),
     },
     {
@@ -173,13 +172,15 @@ const Quality = (props) => {
       align: "center",
       width: "20%",
       render: () => (
-        <Checksheet2
-          text="Kiểm"
-          selectedLot={selectedRow}
-          onSubmit={onSubmitResult}
-          onClose={() => setOpenModal(false)}
-          machine_id={params.machine_id}
-        />
+        <div onClick={() => setOpenModal(true)}>
+          <Checksheet2
+            text="Kiểm"
+            selectedLot={selectedRow}
+            onSubmit={onSubmitResult}
+            onClose={() => setOpenModal(false)}
+            machine_id={params.machine_id}
+          />
+        </div>
       ),
     },
     {
@@ -423,13 +424,13 @@ const Quality = (props) => {
               dataSource={overall}
               size="small"
               style={{ borderRadius: 12 }}
-              scroll={
-                window.screen.width < 720
-                  ? {
-                      x: window.screen.width,
-                    }
-                  : false
-              }
+              // scroll={
+              //   window.screen.width < 720
+              //     ? {
+              //         x: window.screen.width,
+              //       }
+              //     : false
+              // }
             />
           </Col>
         </Row>
@@ -448,7 +449,9 @@ const Quality = (props) => {
                   : false
               }
               columns={checkingTable}
-              dataSource={selectedRow ? [selectedRow] : []}
+              dataSource={selectedRow ? [selectedRow] : [{
+                lot_id: 'L9328MC'
+              }]}
               size="small"
             />
           </Col>
@@ -459,7 +462,7 @@ const Quality = (props) => {
           gutter={[3, 8]}
           style={{ justifyContent: "space-between" }}
         >
-          <Col span={10}>
+          <Col span={11}>
             <DatePicker
               placeholder="Từ ngày"
               style={{ width: "100%" }}
@@ -470,7 +473,7 @@ const Quality = (props) => {
               }
             />
           </Col>
-          <Col span={10}>
+          <Col span={11}>
             <DatePicker
               placeholder="Đến ngày"
               style={{ width: "100%" }}
@@ -481,11 +484,11 @@ const Quality = (props) => {
               }
             />
           </Col>
-          <Col span={4}>
+          <Col span={2}>
             <Button
               type="primary"
               style={{ width: "100%" }}
-              icon={<SaveOutlined style={{ fontSize: "24px" }} />}
+              icon={<SaveOutlined style={{ fontSize: "22px" }} />}
             ></Button>
           </Col>
         </Row>

@@ -31,7 +31,7 @@ const Manufacture = (props) => {
       JSON.stringify({ ...screen, manufacture: line ?? "" })
     );
     if (!line) {
-      history.push("/manufacture/30");
+      history.push("/manufacture/S01");
     }
   }, [line]);
   return (
