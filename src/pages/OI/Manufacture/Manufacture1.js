@@ -25,8 +25,8 @@ import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJlMzg3YmYyNS05MWU2LTQxYjUtOWMyOS0xZjM2MjljYWU2N2QiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTA0Nzk2OSwiZXhwIjoxNzAxMDU2OTY5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.h_DR_3yFs92-w_WEAOCmOmzTg73U1jTAJN-jL_JXX-yOZiDdJsE6_OtgNkLSPtO4RD_slQexD47GHtSUqj1nyA";
-const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry?token=${token}`;
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJkNmIzZTI3OC0xN2ExLTQ2OTQtYmRiMy1hMGI3ZWI2NTVhODIiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTE1NDY3NSwiZXhwIjoxNzAxMTYzNjc1LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.1GIr-vauzBoFbzCF4uBtPiOGshZettLT4624Qgqa1CGM2XBWiSibA2c00ABoTTNPWPvLuyhLXCtJX7yq0OF60A";
+const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
   {
@@ -36,19 +36,19 @@ const currentColumns = [
     align: "center",
   },
   {
-    title: "Sản lượng kế hoạch",
+    title: "SL kế hoạch",
     dataIndex: "san_luong_kh",
     key: "san_luong_kh",
     align: "center",
   },
   {
-    title: "Sản lượng đầu ra",
+    title: "SL đầu ra",
     dataIndex: "san_luong_dau_ra",
     key: "san_luong_dau_ra",
     align: "center",
   },
   {
-    title: "Sản lượng đạt",
+    title: "SL đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
@@ -128,7 +128,7 @@ const overallColumns = [
     align: "center",
   },
   {
-    title: "Sản lượng ca",
+    title: "SL ca",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
@@ -155,7 +155,6 @@ const Manufacture1 = (props) => {
   const componentRef1 = useRef();
 
   const [params, setParams] = useState({
-    machine_id: machine_id,
     start_date: dayjs(),
     end_date: dayjs(),
   });
@@ -163,32 +162,31 @@ const Manufacture1 = (props) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState([]);
+  const [lotCurrent, setLotCurrent] = useState(['12', '12']);
   const [listCheck, setListCheck] = useState([]);
+  const [deviceID, setDeviceID] = useState('e9aba8d0-85da-11ee-8392-a51389126dc6');
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
-  const [socket, setSocket] = useState(null);
-  const [row2, setRow2] = useState([
-    {
-      ma_lot: "S231031002",
-      sl_thuc: "200",
-      phe_sx: "4",
-      sl_mql: "1800",
-      so_m_con_lai: "-",
-      tg_hoan_thanh: "15:50:00",
-    },
-  ]);
-
+  const ws = useRef(null);
   useEffect(() => {
-    if (socket) {
-      socket.close();
-    }
-    if (machine_id) {
-      getOverAllDetail();
-      getListLotDetail();
-    }
+    (async () => {
+      if (machine_id) {
+        const resData = await getListLotDetail();
+        setData(resData);
+        getOverAllDetail();
+        const device_id = machineOptions.find(obj => {
+          return obj.value === machine_id;
+        })?.device_id;
+        setDeviceID(device_id);
+        if (ws.current) {
+          ws.current.close();
+        }
+        connectWebsocket(device_id, resData)
+      }
+    })();
   }, [machine_id]);
 
   useEffect(() => {
@@ -203,10 +201,6 @@ const Manufacture1 = (props) => {
     getListMachine();
   }, []);
 
-  const onClickRow = (value) => {
-    setSelectedLot([value]);
-  };
-
   const getListMachine = () => {
     getMachines()
       .then((res) => setMachineOptions(res.data))
@@ -216,7 +210,7 @@ const Manufacture1 = (props) => {
   const getOverAllDetail = () => {
     setLoading(true);
     const resData = {
-      machine_id: params.machine_id,
+      machine_id: machine_id,
       start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
       end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
     };
@@ -229,22 +223,24 @@ const Manufacture1 = (props) => {
       .finally(() => setLoading(false));
   };
 
-  const getListLotDetail = () => {
+  const getListLotDetail = async () => {
     const resData = {
-      machine_id: params.machine_id,
+      machine_id: machine_id,
       start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
       end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
     };
+    const res = await getLotByMachine(resData);
     setLoading(true);
-    getLotByMachine(resData)
-      .then((res) => {
-        setSelectedLot([res.data?.[0]]);
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.error("Get list lot error: ", err);
-      })
-      .finally(() => setLoading(false));
+    return res.data;
+    // await getLotByMachine(resData)
+    //   .then((res) => {
+    //     setSelectedLot([res.data?.[0]]);
+    //     setData(res.data);
+    //   })
+    //   .catch((err) => {
+    //     console.error("Get list lot error: ", err);
+    //   })
+    //   .finally(() => setLoading(false));
   };
 
   const onChangeLine = (value) => {
@@ -254,42 +250,7 @@ const Manufacture1 = (props) => {
   const onScan = async (result) => {
     var res = await scanPallet({ lot_id: result });
     if (res.success) {
-      if (row2[0].value !== "") {
-        setRow2([
-          {
-            title: "Mã lot",
-            value: "",
-          },
-          {
-            title: "Tên sản phẩm",
-            value: "",
-          },
-          {
-            title: "UPH (Ấn định)",
-            value: "",
-          },
-          {
-            title: "UPH (Thực tế)",
-            value: "",
-          },
-          {
-            title: "SL đầu ra (KH)",
-            value: "",
-          },
-          {
-            title: "SL đầu ra (TT)",
-            value: "",
-          },
-          {
-            title: "SL đầu ra (TT OK)",
-            value: "",
-          },
-        ]);
-      }
-      // const infoPallet = await getInfoPallet({ line_id: machine_id });
-      // if (infoPallet.success) {
-      //   // setData(infoPallet.data);
-      // }
+
     }
   };
 
@@ -318,37 +279,23 @@ const Manufacture1 = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  // useEffect(() => {
-  //   if (listCheck.length > 0) {
-  //     print();
-  //   }
-  // }, [listCheck]);
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRows);
-    },
-    getCheckboxProps: (record) => {
-      return { disabled: record.status !== 4 };
-    },
-  };
 
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
     setIsScan(2);
   };
 
-  const connectWebsocket = (deviceId) => {
+  const connectWebsocket = (deviceId, resData) => {
     const entityId = deviceId;
-    const webSocket = new WebSocket(url);
-
-    webSocket.onopen = function () {
+    ws.current = new WebSocket(url);
+    ws.current.onopen = function () {
       const object = {
         tsSubCmds: [
           {
             entityType: "DEVICE",
             entityId: entityId,
             scope: "LATEST_TELEMETRY",
+            keys: 'Pre_Counter,Error_Counter',
             cmdId: 10,
           },
         ],
@@ -356,33 +303,25 @@ const Manufacture1 = (props) => {
         attrSubCmds: [],
       };
       const data = JSON.stringify(object);
-      webSocket.send(data);
+      ws.current.send(data);
     };
 
-    webSocket.onmessage = function (event) {
+    ws.current.onmessage = function (event) {
       const receivedMsg = JSON.parse(event.data);
-      console.log(receivedMsg.data);
-    };
-
-    webSocket.onclose = function (event) {
-      console.log("Connection is closed");
-      connectWebsocket(deviceId);
-    };
-
-    webSocket.onerror = function (error) {
-      console.log("WebSocket Error: ", error);
-    };
-
-    setSocket(webSocket);
-
-    return () => {
-      if (webSocket) {
-        webSocket.close();
-      }
-      if (socket) {
-        socket.close();
+      const Pre_Counter = receivedMsg.data?.Pre_Counter ? receivedMsg.data?.Pre_Counter[0][1] : 0;
+      const Error_Counter = receivedMsg.data?.Error_Counter ? receivedMsg.data.Error_Counter[0][1] : 0;
+      if (Pre_Counter || Error_Counter) {
+        console.log(Pre_Counter, Error_Counter, resData, deviceId);
       }
     };
+
+    // webSocket.onclose = function (event) {
+    //   console.log("Connection is closed");
+    // };
+
+    // webSocket.onerror = function (error) {
+    //   console.log("WebSocket Error: ", error);
+    // };
   };
 
   const onChangeStartDate = (value) => {
@@ -393,12 +332,6 @@ const Manufacture1 = (props) => {
     setParams({ ...params, end_date: value });
   };
 
-  // useEffect(() => {
-  //   setParams({
-  //     ...params,
-  //     machine_id: machineOptions.find((e) => e.line_id === machine_id)?.value,
-  //   });
-  // }, [machineOptions]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -420,13 +353,13 @@ const Manufacture1 = (props) => {
               className="custom-table"
               columns={overallColumns}
               dataSource={overall}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
+            // scroll={
+            //   window.screen.width < 720
+            //     ? {
+            //         x: window.screen.width,
+            //       }
+            //     : false
+            // }
             />
           </Col>
           <Col span={24}>
@@ -501,11 +434,6 @@ const Manufacture1 = (props) => {
               bordered
               columns={columns}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: () => onClickRow(record),
-                };
-              }}
             />
           </Col>
         </Row>
