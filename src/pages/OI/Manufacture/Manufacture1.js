@@ -12,6 +12,7 @@ import {
   scanPallet,
   getOverAll,
   getLotByMachine,
+  checkMaterialPosition,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "../../UI/Manufacture/Tem";
@@ -43,8 +44,8 @@ const currentColumns = [
   },
   {
     title: "Sản lượng đầu ra",
-    dataIndex: "san_luong_dau_ra",
-    key: "san_luong_dau_ra",
+    dataIndex: "san_luong",
+    key: "san_luong",
     align: "center",
   },
   {
@@ -237,8 +238,11 @@ const Manufacture1 = (props) => {
     };
     setLoading(true);
     getLotByMachine(resData)
-      .then((res) => {
-        setSelectedLot([res.data?.[0]]);
+      .then(async (res) => {
+        var check = await checkMaterialPosition({...res.data[0], machine_id});
+        if(check.success){
+          setSelectedLot([res.data[0]]);
+        }
         setData(res.data);
       })
       .catch((err) => {
