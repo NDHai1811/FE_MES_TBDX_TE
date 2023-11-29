@@ -26,7 +26,7 @@ import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI5ZTNmMmI5Yi1jNTI4LTQyYzEtOGZlZC01OTdkYmUwYWNjZjIiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTE2Mzk3MywiZXhwIjoxNzAxMTcyOTczLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.fJTwED_Kt6dBJqDpPPdQECf6wk_dRyksRs_KDK4x9iZYTWc2Jt9E7Cfev2r8f5-lXhwEMaO8eawxcT8puAwqwA";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiIxODE2MGYyMi00NmU5LTQwMmUtOTFkMC1lZjdhNDliZjY2NDQiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTIyOTIzNywiZXhwIjoxNzAxMjM4MjM3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.aR-bTzZc70GNvQ1b57ZWSmTkpvqIhHFGN_Nx5nyCXYocOliTj9syzmy54U8VkNushvTfX5DAsjG3KiA_cCRw8w";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
@@ -328,7 +328,7 @@ const Manufacture1 = (props) => {
       }
       console.log(Pre_Counter,Error_Counter, resData[0]);
       if (sl_ok >= resData[0]?.dinh_muc) {
-        setLoadData(!loadData);
+        // setLoadData(!loadData);
       } else {
         const new_data = resData.map((value, index) => {
           if (index === 0) {

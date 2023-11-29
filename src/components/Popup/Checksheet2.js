@@ -28,27 +28,29 @@ const Checksheet2 = (props) => {
 
   const onFinish = async (values) => {
     if (selectedLot?.lot_id) {
-      Object.keys(values["data"] ?? {}).forEach((key) => {
-        const isNullish = Object.values(values["data"][key]).every((value) => {
+      Object.keys(values["ngoai_quan"] ?? {}).forEach((key) => {
+        const isNullish = Object.values(values["ngoai_quan"][key]).every((value) => {
           if (!value) {
             return true;
           }
           return false;
         });
         if (isNullish) {
-          delete values["data"][key];
+          delete values["ngoai_quan"][key];
         }
       });
       console.log(values);
       closeModal();
-      onSubmit({ "kich-thuoc": values });
+      onSubmit(values);
     }
   };
   useEffect(() => {
-    (async () => {
-      var res = await getChecksheetList({ machine_id: machine_id });
-      setChecksheet(res.data);
-    })();
+    if (machine_id) {
+      (async () => {
+        var res = await getChecksheetList({ machine_id: machine_id });
+        setChecksheet(res.data);
+      })();
+    }
   }, [machine_id]);
   useEffect(() => {
     form.resetFields();
@@ -89,10 +91,15 @@ const Checksheet2 = (props) => {
         title={"Kiểm tra"}
         open={open}
         onCancel={closeModal}
-        onOk={() => {
-          form.submit();
-        }}
-        okText={"Lưu"}
+        footer={
+          (
+            <Space>
+              <Button onClick={() => onSubmit({ ngoai_quan: {result: 1} })} type="primary">Duyệt</Button>
+              <Button onClick={() => form.submit()} type="primary">Lưu</Button>
+              <Button onClick={() => setOpen(false)}>Huỷ</Button>
+            </Space>
+          )
+        }
         width={500}
       >
         <ScanButton
@@ -100,7 +107,7 @@ const Checksheet2 = (props) => {
           onScan={onScan}
         />
         <Form form={form} onFinish={onFinish} colon={false} className="mt-3">
-          <Form.List name={"data"}>
+          <Form.List name={"ngoai_quan"}>
             {(fields, { add, remove }, { errors }) =>
               (errorsList ?? []).map((e, index) => {
                 return (
@@ -131,7 +138,7 @@ const Checksheet2 = (props) => {
                           style={{ width: "100%" }}
                           onChange={(value) =>
                             form.setFieldValue(
-                              ["data", e.id, "result"],
+                              ["ngoai_quan", e.id, "result"],
                               parseFloat(value) >=
                                 parseFloat(e.tieu_chuan) -
                                 parseFloat(e.delta) &&
@@ -139,7 +146,7 @@ const Checksheet2 = (props) => {
                                 parseFloat(e.tieu_chuan) +
                                 parseFloat(e.delta)
                                 ? 1
-                                : 0
+                                : 2
                             )
                           }
                         />
@@ -156,11 +163,11 @@ const Checksheet2 = (props) => {
                             noStyle
                             className="w-100 h-100"
                           >
-                            {!getFieldValue(["data", e.id, "value"]) ? (
+                            {!getFieldValue(["ngoai_quan", e.id, "value"]) ? (
                               <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
                                 OK/NG
                               </Button>
-                            ) : getFieldValue(["data", e.id, "result"]) ? (
+                            ) : getFieldValue(["ngoai_quan", e.id, "result"]) === 1 ? (
                               <Button
                                 className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
                                 style={{
