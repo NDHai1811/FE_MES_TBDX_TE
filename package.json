@@ -35,10 +35,6 @@
     "sass": "^1.63.6",
     "styled-components": "^6.1.1",
     "three": "^0.158.0",
-<<<<<<< HEAD
-=======
-    "three.js": "^0.77.1",
->>>>>>> origin/master
     "web-vitals": "^2.1.0"
   },
   "scripts": {

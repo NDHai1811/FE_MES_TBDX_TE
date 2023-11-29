@@ -38,7 +38,7 @@ const PrintTemplate = ({ detail }) => {
                       type="svg"
                     />
                   <div className="flex-column">
-                    <h3 style={{ marginLeft: "8px",fontSize:'28px',marginTop:'18px' }}>Tem tổ dợn sóng</h3>
+                    <h3 style={{ marginLeft: "8px",fontSize:'28px',marginTop:'18px' }}>TEM TỔ DỢN SÓNG</h3>
                     {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                   </div>
                   <div className="flex-column">
@@ -55,9 +55,9 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">Lô sx</td>
             </tr>
             <tr>
-              <td className="text-center" colSpan={2}><b>GLORIDAYS</b></td>
-              <td className="text-center" colSpan={2}><b>784/10</b></td>
-              <td></td>
+              <td className="text-center" colSpan={2}><b>{detail.khach_hang}</b></td>
+              <td className="text-center" colSpan={2}><b>{detail.ma_don_hang}</b></td>
+              <td>{detail.lo_sx}</td>
             </tr>
             <tr>
               <td className="text-center">Dài</td>
@@ -67,11 +67,11 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">Số lượng:</td>
             </tr>
             <tr>
-              <td className="text-center">68.0</td>
-              <td className="text-center">48.0</td>
-              <td className="text-center">25.0</td>
-              <td className="text-center"></td>
-              <td className="text-center"><b>124</b></td>
+              <td className="text-center">{detail.dai}</td>
+              <td className="text-center">{detail.rong}</td>
+              <td className="text-center">{detail.cao}</td>
+              <td className="text-center">{detail.lot_id}</td>
+              <td className="text-center"><b>{detail.so_luong}</b></td>
             </tr>
             <tr>
               <td className="text-center">Khổ</td>
@@ -81,11 +81,11 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">Số lớp</td>
             </tr>
             <tr>
-              <td className="text-center">148</td>
-              <td className="text-center">236</td>
-              <td className="text-center">62</td>
-              <td className="text-center">2</td>
-              <td className="text-center">5 lớp</td>
+              <td className="text-center">{detail.kho}</td>
+              <td className="text-center">{detail.dai}</td>
+              <td className="text-center">{detail.so_dao}</td>
+              <td className="text-center"></td>
+              <td className="text-center">{detail.so_lop}</td>
             </tr>
             <tr>
               <td className="text-center" colSpan={4}>Ghi chú sản phẩm</td>
@@ -93,17 +93,17 @@ const PrintTemplate = ({ detail }) => {
             </tr>
             <tr>
               <td colSpan={4}>Không có</td>
-              <td className="text-center">1</td>
+              <td className="text-center"></td>
             </tr>
             <tr>
               <td className="text-center" colSpan={2}>Nhóm máy</td>
-              <td className="text-center" colSpan={3}><b>GT</b></td>
+              <td className="text-center" colSpan={3}><b>{detail.nhom_may}</b></td>
             </tr>
             <tr>
               <td className="text-center">Ngày sản xuất</td>
-              <td className="text-center" colSpan={2}>21/11/2023 12:45</td>
+              <td className="text-center" colSpan={2}>{detail.ngay_sx}</td>
               <td className="text-center">Ca sản xuất</td>
-              <td></td>
+              <td>{detail.ca_sx}</td>
             </tr>
           </tbody>
         </table>
