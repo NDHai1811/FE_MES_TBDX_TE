@@ -7,10 +7,7 @@
     "@ant-design/icons": "^5.1.4",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@react-three/drei": "^9.89.0",
-<<<<<<< HEAD
     "@react-three/fiber": "^8.15.11",
-=======
->>>>>>> origin/master
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
