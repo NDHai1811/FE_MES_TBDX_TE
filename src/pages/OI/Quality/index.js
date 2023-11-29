@@ -160,7 +160,7 @@ const Quality = (props) => {
             selectedLot={selectedRow}
             onSubmit={onSubmitResult}
             onClose={() => setOpenModal(false)}
-            machine_id={params.machine_id}
+            machine_id={machine_id}
           />
         </div>
       ),
@@ -178,7 +178,7 @@ const Quality = (props) => {
             selectedLot={selectedRow}
             onSubmit={onSubmitResult}
             onClose={() => setOpenModal(false)}
-            machine_id={params.machine_id}
+            machine_id={machine_id}
           />
         </div>
       ),
@@ -338,9 +338,9 @@ const Quality = (props) => {
   };
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall(params);
+    var overall = await getQCOverall({...params, machine_id});
     setOverall(overall.data);
-    var res = await getLotQCList(params);
+    var res = await getLotQCList({...params, machine_id});
     setData(res.data);
     if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
@@ -350,14 +350,14 @@ const Quality = (props) => {
   useEffect(() => {
     setParams({
       ...params,
-      machine_id: machineOptions.find((e) => e.line_id === line)?.value,
+      machine_id: machine_id,
     });
-  }, [line, machineOptions]);
+  }, [machine_id, machineOptions]);
   useEffect(() => {
-    if (params.machine_id) {
+    if (machine_id) {
       getData();
     }
-  }, params.machine_id);
+  }, machine_id);
   useEffect(() => {
     if (line) {
       const screen = JSON.parse(localStorage.getItem("screen"));
@@ -366,7 +366,7 @@ const Quality = (props) => {
         JSON.stringify({ ...screen, quality: line ? line : "" })
       );
     } else {
-      history.push("/quality/30");
+      history.push("/quality/S01");
     }
   }, [line]);
   const onChangeLine = (value) => {
@@ -396,7 +396,7 @@ const Quality = (props) => {
 
   const onSubmitResult = async (values) => {
     var res = await sendQCResult({
-      machine_id: line,
+      machine_id: machine_id,
       lot_id: selectedRow?.lot_id,
       data: values,
     });
@@ -409,7 +409,7 @@ const Quality = (props) => {
         <Row gutter={[6, 8]} className="mt-3">
           <Col span={window.screen.width < 720 ? 7 : 5}>
             <SelectButton
-              options={machine_id}
+              options={machineOptions}
               value={machine_id}
               label="Máy"
               onChange={onChangeLine}
@@ -536,8 +536,8 @@ const Quality = (props) => {
             }}
             onFinish={onSubmitSLP}
           >
-            <Form.Item name={"sl_ng"}>
-              <InputNumber style={{ width: "100%" }} inputMode="numeric" />
+            <Form.Item name={"sl_ng_qc"}>
+              <InputNumber style={{ width: "100%" }} inputMode="numeric" onPressEnter={()=>form1.submit()}/>
             </Form.Item>
           </Form>
         </Modal>

@@ -75,7 +75,7 @@ const authProtectedRoutes = [
   //OI
   { path: ["/tao-tem"], component: InTem },
   { path: ["/manufacture", "/manufacture/:machine_id"], component: Manufacture, },
-  { path: ["/quality", "/quality/:line"], component: Quality },
+  { path: ["/quality", "/quality/:machine_id"], component: Quality },
   { path: ["/equipment", "/equipment/:line"], component: Equipment },
   { path: ["/warehouse", "/warehouse/kho-nvl/:line"], component: Warehouse },
   { path: ["/warehouse", "/warehouse/kho-tp/:line"], component: WarehouseTP },
