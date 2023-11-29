@@ -8,6 +8,7 @@ const GiaoDienDaChieu = () => {
     <Canvas style={{ width: "100vw", height: "100vh" }}>
       <Suspense fallback={null}>
         <ambientLight intensity={1} />
+        <color attach="background" args={["#152845"]} />
         <Model
           objPath="/assets/machine1.obj"
           mtlPath="/assets/machine1.mtl"
