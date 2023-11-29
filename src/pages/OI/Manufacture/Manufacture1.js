@@ -25,7 +25,7 @@ import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJkNmIzZTI3OC0xN2ExLTQ2OTQtYmRiMy1hMGI3ZWI2NTVhODIiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTE1NDY3NSwiZXhwIjoxNzAxMTYzNjc1LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.1GIr-vauzBoFbzCF4uBtPiOGshZettLT4624Qgqa1CGM2XBWiSibA2c00ABoTTNPWPvLuyhLXCtJX7yq0OF60A";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI5ZTNmMmI5Yi1jNTI4LTQyYzEtOGZlZC01OTdkYmUwYWNjZjIiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTE2Mzk3MywiZXhwIjoxNzAxMTcyOTczLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.fJTwED_Kt6dBJqDpPPdQECf6wk_dRyksRs_KDK4x9iZYTWc2Jt9E7Cfev2r8f5-lXhwEMaO8eawxcT8puAwqwA";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
@@ -43,8 +43,8 @@ const currentColumns = [
   },
   {
     title: "SL đầu ra",
-    dataIndex: "san_luong_dau_ra",
-    key: "san_luong_dau_ra",
+    dataIndex: "san_luong",
+    key: "san_luong",
     align: "center",
   },
   {
@@ -160,8 +160,9 @@ const Manufacture1 = (props) => {
   });
   const [machineOptions, setMachineOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
-  const [selectedLot, setSelectedLot] = useState([]);
+  const [selectedLot, setSelectedLot] = useState();
   const [lotCurrent, setLotCurrent] = useState(['12', '12']);
   const [listCheck, setListCheck] = useState([]);
   const [deviceID, setDeviceID] = useState('e9aba8d0-85da-11ee-8392-a51389126dc6');
@@ -176,18 +177,20 @@ const Manufacture1 = (props) => {
       if (machine_id) {
         const resData = await getListLotDetail();
         setData(resData);
+        setSelectedLot(resData?.[0]);
         getOverAllDetail();
         const device_id = machineOptions.find(obj => {
           return obj.value === machine_id;
         })?.device_id;
-        setDeviceID(device_id);
         if (ws.current) {
           ws.current.close();
         }
-        connectWebsocket(device_id, resData)
+        if (device_id) {
+          connectWebsocket(device_id, resData)
+        }
       }
     })();
-  }, [machine_id]);
+  }, [machine_id, machineOptions,loadData]);
 
   useEffect(() => {
     if (isScan === 1) {
@@ -306,12 +309,37 @@ const Manufacture1 = (props) => {
       ws.current.send(data);
     };
 
-    ws.current.onmessage = function (event) {
+    ws.current.onmessage = async function (event) {
       const receivedMsg = JSON.parse(event.data);
-      const Pre_Counter = receivedMsg.data?.Pre_Counter ? receivedMsg.data?.Pre_Counter[0][1] : 0;
-      const Error_Counter = receivedMsg.data?.Error_Counter ? receivedMsg.data.Error_Counter[0][1] : 0;
-      if (Pre_Counter || Error_Counter) {
-        console.log(Pre_Counter, Error_Counter, resData, deviceId);
+      const Pre_Counter = receivedMsg.data?.Pre_Counter ? parseInt(receivedMsg.data?.Pre_Counter[0][1]) : 0;
+      const Error_Counter = receivedMsg.data?.Error_Counter ? parseInt(receivedMsg.data.Error_Counter[0][1]) : 0;
+      let san_luong = 0;
+      let sl_ok = 0;
+      if (Pre_Counter > 0) {
+        san_luong = Pre_Counter - resData[0]?.tong_sl_lo_sx;
+      } else {
+        san_luong = data[0]?.san_luong;
+      }
+      if (Error_Counter) {
+        sl_ok = san_luong - (parseInt(resData[0]?.tong_ng_lo_sx) + Error_Counter);
+      } else {
+        sl_ok = san_luong - parseInt(resData[0]?.tong_sl_lo_sx);
+      }
+      console.log(Pre_Counter,Error_Counter, resData[0]);
+      if (sl_ok >= resData[0]?.dinh_muc) {
+        setLoadData(!loadData);
+      } else {
+        const new_data = resData.map((value, index) => {
+          if (index === 0) {
+            value.san_luong = san_luong;
+            value.sl_ok = sl_ok;
+            return value;
+          } else {
+            return value;
+          }
+        });
+        setData(new_data);
+        setSelectedLot(new_data[0]);
       }
     };
 
@@ -370,7 +398,7 @@ const Manufacture1 = (props) => {
               className="custom-table"
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
-              dataSource={selectedLot}
+              dataSource={selectedLot ? [selectedLot] : []}
             />
           </Col>
           <Row
