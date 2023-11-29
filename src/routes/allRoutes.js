@@ -22,6 +22,7 @@ import ThanhPhamGiay from "../pages/UI/Warehouse/ThanhPhamGiay";
 import DBTinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 import DBHieuSuatThietBi from "../pages/DB/HieuSuatThietBi";
 import DBCanhBaoBatThuong from "../pages/DB/CanhBaoBatThuong";
+import DBGiaoDienDaChieu from "../pages/DB/GiaoDienDaChieu";
 import DashBoard from "../pages/DB";
 import Logout from "../pages/Authentication/Logout";
 import Kichban from "../pages/UI/Abnormal/Kichban";
@@ -117,6 +118,7 @@ const publicRoutes = [
   { path: ["/dashboard/tinh-hinh-san-xuat"], component: DBTinhHinhSanXuat },
   { path: ["/dashboard/hieu-suat-thiet-bi"], component: DBHieuSuatThietBi },
   { path: ["/dashboard/canh-bao-bat-thuong"], component: DBCanhBaoBatThuong },
+  { path: ["/dashboard/giao-dien-da-chieu"], component: DBGiaoDienDaChieu },
 ];
 
 export { authProtectedRoutes, publicRoutes };

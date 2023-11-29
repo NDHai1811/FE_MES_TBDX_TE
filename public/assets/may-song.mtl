@@ -1,0 +1,508 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl M_0086_MediumAquamarine
+Ka 0.000000 0.000000 0.000000
+Kd 0.400000 0.803922 0.666667
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_M00
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl M_0056_Yellow
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl Metal_Steel_Textured_White
+Ka 0.000000 0.000000 0.000000
+Kd 0.749020 0.749020 0.749020
+Ks 0.330000 0.330000 0.330000
+map_Kd Metal_Steel_Textured_White.jpg
+
+newmtl Metal_Corrugated_Shiny
+Ka 0.000000 0.000000 0.000000
+Kd 0.756863 0.756863 0.756863
+Ks 0.330000 0.330000 0.330000
+map_Kd Metal_Corrugated_Shiny.jpg
+
+newmtl M_0136_Charcoal
+Ka 0.000000 0.000000 0.000000
+Kd 0.137255 0.137255 0.137255
+Ks 0.330000 0.330000 0.330000
+
+newmtl FrontColor
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl M_0135_DarkGray
+Ka 0.000000 0.000000 0.000000
+Kd 0.317647 0.317647 0.317647
+Ks 0.330000 0.330000 0.330000
+
+newmtl _1
+Ka 0.000000 0.000000 0.000000
+Kd 0.247059 0.247059 0.247059
+Ks 0.330000 0.330000 0.330000
+
+newmtl MyFrontMaterial4
+Ka 0.000000 0.000000 0.000000
+Kd 0.752941 0.752941 0.752941
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_M08
+Ka 0.000000 0.000000 0.000000
+Kd 0.117647 0.117647 0.117647
+Ks 0.330000 0.330000 0.330000
+
+newmtl Mirror_02
+Ka 0.000000 0.000000 0.000000
+Kd 0.898039 0.898039 0.898039
+Ks 0.330000 0.330000 0.330000
+d 0.500000
+map_Kd Mirror_02.jpg
+
+newmtl _Metal_Corrugated_Shiny_1
+Ka 0.000000 0.000000 0.000000
+Kd 0.756863 0.756863 0.756863
+Ks 0.330000 0.330000 0.330000
+map_Kd _Metal_Corrugated_Shiny_1.jpg
+
+newmtl Metal_Rough
+Ka 0.000000 0.000000 0.000000
+Kd 0.600000 0.615686 0.627451
+Ks 0.330000 0.330000 0.330000
+map_Kd Metal_Rough.jpg
+
+newmtl _DimGray_
+Ka 0.000000 0.000000 0.000000
+Kd 0.411765 0.411765 0.411765
+Ks 0.330000 0.330000 0.330000
+
+newmtl _Black_
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl M_0069_LimeGreen
+Ka 0.000000 0.000000 0.000000
+Kd 0.196078 0.803922 0.196078
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_C04
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 0.600000 0.196078
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_G07
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.600000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_M02
+Ka 0.000000 0.000000 0.000000
+Kd 0.776471 0.776471 0.776471
+Ks 0.330000 0.330000 0.330000
+
+newmtl Translucent_Glass_Gray
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.330000 0.330000 0.330000
+d 0.990000
+
+newmtl _Metal_Corrugated_Shiny_2
+Ka 0.000000 0.000000 0.000000
+Kd 0.756863 0.756863 0.756863
+Ks 0.330000 0.330000 0.330000
+map_Kd _Metal_Corrugated_Shiny_2.jpg
+
+newmtl _Metal_Steel_Textured_White_1
+Ka 0.000000 0.000000 0.000000
+Kd 0.749020 0.749020 0.749020
+Ks 0.330000 0.330000 0.330000
+map_Kd _Metal_Steel_Textured_White_1.jpg
+
+newmtl M_0110_LightSlateGray
+Ka 0.000000 0.000000 0.000000
+Kd 0.466667 0.533333 0.600000
+Ks 0.330000 0.330000 0.330000
+
+newmtl M_0076_Green
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.501961 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl M_0111_SlateGray
+Ka 0.000000 0.000000 0.000000
+Kd 0.439216 0.501961 0.564706
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_E05
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl _Translucent_Glass_Gray_1
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.330000 0.330000 0.330000
+d 0.500000
+
+newmtl M_0022_Maroon
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl _Charcoal_
+Ka 0.000000 0.000000 0.000000
+Kd 0.137255 0.137255 0.137255
+Ks 0.330000 0.330000 0.330000
+
+newmtl M_0103_Blue
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 1.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_002
+Ka 0.000000 0.000000 0.000000
+Kd 0.776471 0.776471 0.776471
+Ks 0.330000 0.330000 0.330000
+
+newmtl Color_A01
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl Metal_Aluminum_Anodized
+Ka 0.000000 0.000000 0.000000
+Kd 0.792157 0.819608 0.858824
+Ks 0.330000 0.330000 0.330000
+map_Kd Metal_Aluminum_Anodized.jpg
+
+newmtl tech_round_display_3
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3.jpg
+
+newmtl Translucent_Glass_Tinted
+Ka 0.000000 0.000000 0.000000
+Kd 0.027451 0.788235 0.941176
+Ks 0.330000 0.330000 0.330000
+d 0.480000
+map_Kd Translucent_Glass_Tinted.jpg
+
+newmtl M_0137_Black
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl tech_round_display_3_1_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_1_.jpg
+
+newmtl Steel_Brushed_Stainless
+Ka 0.000000 0.000000 0.000000
+Kd 0.717647 0.733333 0.745098
+Ks 0.330000 0.330000 0.330000
+map_Kd Steel_Brushed_Stainless.jpg
+
+newmtl Metal_Silver
+Ka 0.000000 0.000000 0.000000
+Kd 0.917647 0.913725 0.933333
+Ks 0.330000 0.330000 0.330000
+map_Kd Metal_Silver.jpg
+
+newmtl tech_round_display_3_2_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_2_.jpg
+
+newmtl M_0131_Silver
+Ka 0.000000 0.000000 0.000000
+Kd 0.752941 0.752941 0.752941
+Ks 0.330000 0.330000 0.330000
+
+newmtl tech_round_display_3_3_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_3_.jpg
+
+newmtl tech_round_display_3_4_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_4_.jpg
+
+newmtl tech_round_display_3_5_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_5_.jpg
+
+newmtl tech_round_display_3_6_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_6_.jpg
+
+newmtl tech_round_display_3_7_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_7_.jpg
+
+newmtl tech_round_display_3_8_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_8_.jpg
+
+newmtl tech_round_display_3_9_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_9_.jpg
+
+newmtl tech_round_display_3_10_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_10_.jpg
+
+newmtl tech_round_display_3_11_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_11_.jpg
+
+newmtl tech_round_display_3_12_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_12_.jpg
+
+newmtl tech_round_display_3_13_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_13_.jpg
+
+newmtl tech_round_display_3_14_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_14_.jpg
+
+newmtl tech_round_display_3_15_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_15_.jpg
+
+newmtl tech_round_display_3_16_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_16_.jpg
+
+newmtl tech_round_display_3_17_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_17_.jpg
+
+newmtl tech_round_display_3_18_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_18_.jpg
+
+newmtl _Metal_Corrugated_Shiny_3
+Ka 0.000000 0.000000 0.000000
+Kd 0.756863 0.756863 0.756863
+Ks 0.330000 0.330000 0.330000
+map_Kd _Metal_Corrugated_Shiny_3.jpg
+
+newmtl Metal_Seamed
+Ka 0.000000 0.000000 0.000000
+Kd 0.462745 0.466667 0.450980
+Ks 0.330000 0.330000 0.330000
+map_Kd Metal_Seamed.jpg
+
+newmtl tech_round_display_3_19_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_19_.jpg
+
+newmtl tech_round_display_3_20_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_20_.jpg
+
+newmtl tech_round_display_3_21_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_21_.jpg
+
+newmtl tech_round_display_3_22_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_22_.jpg
+
+newmtl tech_round_display_3_23_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_23_.jpg
+
+newmtl tech_round_display_3_24_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_24_.jpg
+
+newmtl tech_round_display_3_25_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_25_.jpg
+
+newmtl tech_round_display_3_26_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_26_.jpg
+
+newmtl tech_round_display_3_27_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_27_.jpg
+
+newmtl tech_round_display_3_28_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_28_.jpg
+
+newmtl tech_round_display_3_29_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_29_.jpg
+
+newmtl tech_round_display_3_30_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_30_.jpg
+
+newmtl tech_round_display_3_31_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_31_.jpg
+
+newmtl tech_round_display_3_32_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_32_.jpg
+
+newmtl tech_round_display_3_33_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_33_.jpg
+
+newmtl tech_round_display_3_34_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_34_.jpg
+
+newmtl tech_round_display_3_35_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_35_.jpg
+
+newmtl tech_round_display_3_36_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_36_.jpg
+
+newmtl tech_round_display_3_37_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_37_.jpg
+
+newmtl tech_round_display_3_38_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_38_.jpg
+
+newmtl tech_round_display_3_39_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_39_.jpg
+
+newmtl tech_round_display_3_40_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_40_.jpg
+
+newmtl tech_round_display_3_41_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_41_.jpg
+
+newmtl tech_round_display_3_42_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_42_.jpg
+
+newmtl tech_round_display_3_43_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_43_.jpg
+
+newmtl tech_round_display_3_44_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_44_.jpg
+
+newmtl tech_round_display_3_45_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_45_.jpg
+
+newmtl tech_round_display_3_46_
+Ka 0.000000 0.000000 0.000000
+Kd 0.819608 0.807843 0.784314
+Ks 0.330000 0.330000 0.330000
+map_Kd tech_round_display_3_46_.jpg
+

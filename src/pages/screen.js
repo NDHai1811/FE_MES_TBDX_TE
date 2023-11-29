@@ -29,6 +29,10 @@ const Screen = (props) => {
       title: "Cảnh báo bất thường",
       link: "/dashboard/canh-bao-bat-thuong",
     },
+    {
+      title: "3D",
+      link: "/dashboard/giao-dien-da-chieu",
+    },
   ];
   const listOI = [
     {
