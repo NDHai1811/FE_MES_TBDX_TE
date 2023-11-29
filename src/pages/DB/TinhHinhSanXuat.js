@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { Layout, Table, Tag, Col, Row } from "antd";
+import { Layout, Table, Col, Row } from "antd";
 import ReactFullscreen from "react-easyfullscreen";
 import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 import { getProductFMB } from "../../api/db/main";
@@ -14,72 +13,92 @@ const colTable = [
     align: "center",
   },
   {
-    title: "TÊN SẢN PHẨM",
-    dataIndex: "product",
-    key: "product",
+    title: "KẾ HOẠCH CA",
+    dataIndex: "ke_hoach_ca",
+    key: "ke_hoach_ca",
     align: "center",
   },
   {
-    title: "SL KẾ HOẠCH",
-    dataIndex: "sl_dau_ra_kh",
-    key: "sl_dau_ra_kh",
+    title: "MỤC TIÊU HIỆN TẠI",
+    dataIndex: "muc_tieu_hien_tai",
+    key: "muc_tieu_hien_tai",
     align: "center",
   },
   {
-    title: "MỤC TIÊU",
-    dataIndex: "sl_muc_tieu",
-    key: "sl_muc_tieu",
+    title: "SẢN LƯỢNG HIỆN TẠI",
+    dataIndex: "sl_hien_tai",
+    key: "sl_hien_tai",
     align: "center",
   },
   {
-    title: "SL THỰC TẾ",
-    dataIndex: "sl_thuc_te",
-    key: "sl_thuc_te",
-    align: "center",
-  },
-  {
-    title: "TỈ LỆ HOÀN THÀNH",
+    title: "TỈ LỆ %",
     dataIndex: "ti_le_ht",
     key: "ti_le_ht",
     align: "center",
+    render: (value) => `${value}%`,
   },
   {
-    title: "TỈ LỆ NG",
-    dataIndex: "ti_le_ng",
-    key: "ti_le_ng",
-    align: "center",
-  },
-  {
-    title: "TÌNH TRẠNG",
-    dataIndex: "status",
-    key: "status",
+    title: "Đánh giá",
+    dataIndex: "ti_le_ht",
+    key: "ti_le_ht",
     render: (value) => {
-      if (value == "1")
-        return (
-          <Tag color={"orange"} className="bd-custom">
-            VÀO HÀNG
-          </Tag>
-        );
-      else if (value == "2")
-        return (
-          <Tag color={"blue"} className="bd-custom">
-            SẢN XUẤT
-          </Tag>
-        );
-      else if (value == "3")
-        return (
-          <Tag color={"green"} className="bd-custom">
-            HOÀN THÀNH
-          </Tag>
-        );
-      else return <Tag color="#929292">Ko có K.Hoạch</Tag>;
+      let color = "";
+      if (value < 90) {
+        color = "red";
+      } else if (value >= 90 && value < 95) {
+        color = "yellow";
+      } else if (value >= 95) {
+        color = "green";
+      }
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div
+            style={{
+              height: 60,
+              width: 60,
+              backgroundColor: color,
+              borderRadius: "50%",
+            }}
+          />
+        </div>
+      );
     },
     align: "center",
   },
 ];
 
+const mockData = [
+  {
+    cong_doan: "SÓNG",
+    ke_hoach_ca: "1500",
+    muc_tieu_hien_tai: "1000",
+    sl_hien_tai: "900",
+    ti_le_ht: 90,
+  },
+  {
+    cong_doan: "IN",
+    ke_hoach_ca: "1500",
+    muc_tieu_hien_tai: "1000",
+    sl_hien_tai: "950",
+    ti_le_ht: 95,
+  },
+  {
+    cong_doan: "DÁN",
+    ke_hoach_ca: "1500",
+    muc_tieu_hien_tai: "1000",
+    sl_hien_tai: "850",
+    ti_le_ht: 85,
+  },
+];
+
 const TinhHinhSanXuat = () => {
-  const history = useHistory();
+  // const history = useHistory();
   const [isFullCreen, setIsFullScreen] = useState(false);
   const [clock, setClock] = useState(new Date());
   useEffect(() => {
@@ -98,21 +117,21 @@ const TinhHinhSanXuat = () => {
   };
 
   const [dataTable, setDataTable] = useState([]);
-  let interval;
-  useEffect(() => {
-    interval = setInterval(() => {
-      (async () => {
-        const res1 = await getProductFMB();
-        setDataTable(
-          res1.data.map((e) => {
-            return { ...e };
-          })
-        );
-      })();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-  var interval1;
+  // useEffect(() => {
+  //   let interval;
+  //   interval = setInterval(() => {
+  //     (async () => {
+  //       const res1 = await getProductFMB();
+  //       setDataTable(
+  //         res1.data.map((e) => {
+  //           return { ...e };
+  //         })
+  //       );
+  //     })();
+  //   }, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
+
   // useEffect(() => {
   //     interval = setInterval(async () => {
   //       history.push('/dashboard/canh-bao-bat-thuong');
@@ -176,7 +195,7 @@ const TinhHinhSanXuat = () => {
                   pagination={false}
                   scroll={{ x: "100%", y: "100vh" }}
                   columns={colTable}
-                  dataSource={dataTable}
+                  dataSource={mockData}
                 />
               </Col>
             </Row>
