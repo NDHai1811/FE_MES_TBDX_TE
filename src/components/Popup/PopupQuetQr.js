@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Modal, Row, Col } from "antd";
 import {
   QrcodeOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import "./PopupQuetQr.css";
+import ScanQR from "../Scanner";
 
 function PopupQuetQr(props) {
   const [value, setValue] = useState(null);
@@ -20,6 +21,58 @@ function PopupQuetQr(props) {
     setVisible(false);
   };
 
+  const renderItem = (item, index) => {
+    return (
+      <Row className="table-row">
+        <Col
+          span={8}
+          className="table-cell"
+          style={{
+            paddingTop: 8,
+            paddingBottom: 8,
+            borderTopWidth: 0,
+          }}
+        >
+          Chỉ tiêu {index}
+        </Col>
+        <Col
+          span={8}
+          className="table-cell"
+          style={{
+            borderLeftWidth: 0,
+            paddingTop: 8,
+            paddingBottom: 8,
+            borderTopWidth: 0,
+          }}
+        >
+          {value || "-"}
+        </Col>
+        <Col
+          span={8}
+          className="table-cell"
+          style={{
+            borderLeftWidth: 0,
+            paddingTop: 8,
+            paddingBottom: 8,
+            borderTopWidth: 0,
+          }}
+        >
+          {value ? (
+            <CheckOutlined
+              disabled
+              style={{ color: "green", fontSize: "24px" }}
+            />
+          ) : (
+            <CloseOutlined
+              disabled
+              style={{ color: "red", fontSize: "24px" }}
+            />
+          )}
+        </Col>
+      </Row>
+    );
+  };
+
   return (
     <div>
       <Modal
@@ -28,39 +81,8 @@ function PopupQuetQr(props) {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Row className="table-row">
-          <Col
-            span={8}
-            className="table-cell"
-            style={{ paddingTop: 8, paddingBottom: 8 }}
-          >
-            Tiêu đề
-          </Col>
-          <Col
-            span={8}
-            className="table-cell"
-            style={{ borderLeftWidth: 0, paddingTop: 8, paddingBottom: 8 }}
-          >
-            {!value && <QrcodeOutlined style={{ fontSize: "24px" }} />}
-          </Col>
-          <Col
-            span={8}
-            className="table-cell"
-            style={{ borderLeftWidth: 0, paddingTop: 8, paddingBottom: 8 }}
-          >
-            {value ? (
-              <CheckCircleOutlined
-                disabled
-                style={{ color: "green", fontSize: "24px" }}
-              />
-            ) : (
-              <CloseCircleOutlined
-                disabled
-                style={{ color: "red", fontSize: "24px" }}
-              />
-            )}
-          </Col>
-        </Row>
+        <ScanQR />
+        {[...Array(5).keys()].map(renderItem)}
       </Modal>
     </div>
   );

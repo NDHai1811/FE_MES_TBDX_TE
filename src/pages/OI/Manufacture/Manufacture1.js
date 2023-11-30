@@ -9,10 +9,8 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../components/Button/SelectButton";
 import {
-  scanPallet,
   getOverAll,
   getLotByMachine,
-  checkMaterialPosition,
   getInfoTem,
   scanQrCode,
 } from "../../../api/oi/manufacture";

@@ -36,11 +36,9 @@ const Popup = (props) => {
 
   const getErrors = () => {
     getErrorList({ machine_id: machineId })
-      .then((res) => console.log(res.data))
+      .then((res) => setErrorList(res.data))
       .catch((err) => console.log("Lấy danh sách sự cố thất bại:", err));
   };
-
-  console.log({ errorList });
 
   const onUpdateErrorStatus = (values) => {
     updateErrorStatus({
@@ -79,20 +77,6 @@ const Popup = (props) => {
       >
         <Form form={form} name="suggest_form">
           <Form.Item
-            name="nguyenNhan"
-            label="Nguyên nhân"
-            rules={[{ required: true, message: "Vui lòng nhập nguyên nhân!" }]}
-          >
-            <AutoComplete
-              placeholder="Nhập nguyên nhân..."
-              options={options}
-              filterOption={(inputValue, option) =>
-                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-                -1
-              }
-            />
-          </Form.Item>
-          <Form.Item
             name="suCo"
             label="Sự cố"
             rules={[{ required: true, message: "Vui lòng nhập sự cố!" }]}
@@ -105,6 +89,13 @@ const Popup = (props) => {
                 -1
               }
             />
+          </Form.Item>
+          <Form.Item
+            name="nguyenNhan"
+            label="Nguyên nhân"
+            rules={[{ required: true, message: "Vui lòng nhập nguyên nhân!" }]}
+          >
+            <Input placeholder="Nhập nguyên nhân..." />
           </Form.Item>
           <Form.Item
             name="cachXuLy"

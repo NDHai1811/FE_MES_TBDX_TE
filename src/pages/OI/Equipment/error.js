@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Row, Col, Table, DatePicker } from "antd";
 import dayjs from "dayjs";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Popup from "../../../components/Popup/popup";
 import "../style.scss";
+import { useEffect } from "react";
+import { getErrorLogs } from "../../../api/oi/equipment";
 
 const data = [
   {
@@ -112,8 +115,21 @@ const tableData = [
 ];
 
 const Mapping = () => {
+  const { line } = useParams();
+
   const [selectedError, setSelectedError] = useState(data);
   const [visible, setVisible] = useState(false);
+  const [logs, setLogs] = useState([]);
+
+  useEffect(() => {
+    getLogs();
+  }, []);
+
+  const getLogs = () => {
+    getErrorLogs({ machine_id: line })
+      .then((res) => setLogs(res.data))
+      .catch((err) => console.log("Lấy danh sách lịch sử lỗi thất bại: ", err));
+  };
 
   const columns = [
     {
@@ -136,7 +152,12 @@ const Mapping = () => {
       key: "ten_su_co",
       align: "center",
       width: "20%",
-      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+      render: (text) => <div>{text || "-"}</div>,
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopup,
+        };
+      },
     },
     {
       title: "Nguyên nhân",
@@ -144,7 +165,12 @@ const Mapping = () => {
       key: "nguyen_nhan",
       align: "center",
       width: "20%",
-      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+      render: (text) => <div>{text || "-"}</div>,
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopup,
+        };
+      },
     },
     {
       title: "Cách xử lý",
@@ -152,7 +178,12 @@ const Mapping = () => {
       key: "cach_xu_ly",
       align: "center",
       width: "20%",
-      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+      render: (text) => <div>{text || "-"}</div>,
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopup,
+        };
+      },
     },
   ];
 
@@ -219,11 +250,7 @@ const Mapping = () => {
         />
       </Row>
       {visible && (
-        <Popup
-          visible={visible}
-          setVisible={setVisible}
-          machineId={selectedError[0]?.machine_id}
-        />
+        <Popup visible={visible} setVisible={setVisible} machineId={line} />
       )}
     </React.Fragment>
   );

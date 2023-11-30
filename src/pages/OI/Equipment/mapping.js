@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Row, Col, Table, DatePicker, Button } from "antd";
 import PopupQuetQr from "../../../components/Popup/PopupQuetQr";
+import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -129,6 +130,7 @@ const tableData = [
 
 const Mapping = () => {
   const [visible, setVisible] = useState(false);
+  const [isShowPopup, setIsShowPopup] = useState(false);
 
   const columns = [
     {
@@ -161,7 +163,12 @@ const Mapping = () => {
       key: "mapping",
       align: "center",
       width: "20%",
-      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+      render: (text) => <div>{text || "-"}</div>,
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopup,
+        };
+      },
     },
     {
       title: "Thông số",
@@ -170,11 +177,20 @@ const Mapping = () => {
       align: "center",
       width: "20%",
       render: (value) => value || "-",
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopupParameter,
+        };
+      },
     },
   ];
 
   const onShowPopup = () => {
     setVisible(true);
+  };
+
+  const onShowPopupParameter = () => {
+    setIsShowPopup(true);
   };
 
   return (
@@ -229,6 +245,9 @@ const Mapping = () => {
         />
       </Row>
       {visible && <PopupQuetQr visible={visible} setVisible={setVisible} />}
+      {isShowPopup && (
+        <PopupThongSo visible={isShowPopup} setVisible={setIsShowPopup} />
+      )}
     </React.Fragment>
   );
 };
