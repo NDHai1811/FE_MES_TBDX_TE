@@ -36,7 +36,6 @@ import Checksheet1 from "../../../components/Popup/Checksheet1";
 
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
-  const [messageApi, contextHolder] = message.useMessage();
   const { line } = useParams();
   const { machine_id } = useParams();
   const history = useHistory();
@@ -191,8 +190,9 @@ const Quality = (props) => {
       width: "14%",
       render: (text, record) => (
         <InputNumber
-          defaultValue={text}
+          value={text}
           onChange={(value) => handleInputChange(record, value)}
+          onPressEnter={(event)=>onSubmitSLP({sl_ng_qc: event.target.value})}
           placeholder="Nhập số lượng"
         />
       ),
@@ -279,17 +279,17 @@ const Quality = (props) => {
   ];
 
   const handleInputChange = (record, value) => {
-    // const newData = [...data];
-    // const index = newData.findIndex((item) => record.key === item.key);
-    // newData[index].sl_kich_thuoc = value;
-    // setData(newData);
+    const newData = [...data];
+    const index = newData.findIndex((item) => record.key === item.key);
+    newData[index].sl_ng_qc = value;
+    setData(newData);
   };
 
   const rowClassName = (record, index) => {
     if (record.lot_id === selectedRow?.lot_id) {
       return "table-row-green";
     }
-    switch (record.result) {
+    switch (record.phan_dinh) {
       case 0:
         return "";
       case 1:
@@ -404,7 +404,6 @@ const Quality = (props) => {
   };
   return (
     <React.Fragment>
-      {contextHolder}
       <Spin spinning={loading}>
         <Row gutter={[6, 8]} className="mt-3">
           <Col span={window.screen.width < 720 ? 7 : 5}>
@@ -449,9 +448,7 @@ const Quality = (props) => {
                   : false
               }
               columns={checkingTable}
-              dataSource={selectedRow ? [selectedRow] : [{
-                lot_id: 'L9328MC'
-              }]}
+              dataSource={selectedRow ? [selectedRow] : []}
               size="small"
             />
           </Col>

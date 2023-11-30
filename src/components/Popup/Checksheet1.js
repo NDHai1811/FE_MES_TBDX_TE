@@ -20,6 +20,7 @@ const Checksheet1 = (props) => {
     const { text, selectedLot, onSubmit, machine_id } = props;
     const closeModal = () => {
         setOpen(false);
+        form.resetFields();
     };
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
@@ -86,7 +87,7 @@ const Checksheet1 = (props) => {
                 footer={
                     (
                         <Space>
-                            <Button onClick={() => onSubmit({ tinh_nang: 1 })} type="primary">Duyệt</Button>
+                            <Button onClick={() => {onSubmit({ tinh_nang: [] }); closeModal()}} type="primary">Duyệt</Button>
                             <Button onClick={() => form.submit()} type="primary">Lưu</Button>
                             <Button onClick={() => setOpen(false)}>Huỷ</Button>
                         </Space>
