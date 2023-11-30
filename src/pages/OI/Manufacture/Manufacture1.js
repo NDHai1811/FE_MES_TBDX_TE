@@ -13,10 +13,13 @@ import {
   getOverAll,
   getLotByMachine,
   checkMaterialPosition,
+  getInfoTem,
   scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "../../UI/Manufacture/Tem";
+import Tem from "./Tem";
+import TemIn from "./TemIn";
+import TemDan from "./TemDan";
 import {
   COMMON_DATE_FORMAT,
   COMMON_DATE_FORMAT_REQUEST,
@@ -159,6 +162,8 @@ const Manufacture1 = (props) => {
 
   const history = useHistory();
   const componentRef1 = useRef();
+  const componentRef2 = useRef();
+  const componentRef3 = useRef();
 
   const [params, setParams] = useState({
     start_date: dayjs(),
@@ -279,15 +284,34 @@ const Manufacture1 = (props) => {
     }
     return "";
   };
+  useEffect(() => {
+    if (listCheck.length > 0) {
+      if (machine_id === 'S01') {
+        print();
+      } else if (machine_id == 'P06' || machine_id == 'P16') {
+        printIn();
+      } else if (machine_id == 'D05' || machine_id == 'D06') {
+        printDan();
+      }
+    }
+    setListCheck([]);
+  }, [listCheck.length])
 
   const handlePrint = async () => {
-    if (listCheck.length > 0) {
-      print();
+    const res = await getInfoTem({ machine_id: machine_id });
+    if (res.data.length) {
+      setListCheck(res.data);
     }
   };
 
   const print = useReactToPrint({
     content: () => componentRef1.current,
+  });
+  const printIn = useReactToPrint({
+    content: () => componentRef2.current,
+  });
+  const printDan = useReactToPrint({
+    content: () => componentRef3.current,
   });
 
   const handleCloseMdl = () => {
@@ -458,6 +482,8 @@ const Manufacture1 = (props) => {
               />
               <div className="report-history-invoice">
                 <Tem listCheck={listCheck} ref={componentRef1} />
+                <TemIn listCheck={listCheck} ref={componentRef2} />
+                <TemDan listCheck={listCheck} ref={componentRef3} />
               </div>
             </Col>
           </Row>

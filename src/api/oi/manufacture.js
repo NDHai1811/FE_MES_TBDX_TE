@@ -76,3 +76,6 @@ export async function checkMaterialPosition(params) {
 export async function getManufactureOverall(params) {
   return await axios.get("/oi/manufacture/overall", { params: params });
 }
+export async function getInfoTem(params){
+  return await axios.get("/oi/manufacture/intem", { params: params });
+}

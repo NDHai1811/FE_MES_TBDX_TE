@@ -22,28 +22,28 @@ const tableColumns = [
     dataIndex: "thu_tu",
     key: "thu_tu",
     align: "center",
-    width: "20%",
+    width: "5%",
   },
   {
     title: "Tg dừng",
     dataIndex: "tg_dung",
     key: "tg_dung",
     align: "center",
-    width: "20%",
+    width: "8%",
   },
   {
     title: "Tg chạy",
     dataIndex: "tg_chay",
     key: "tg_chay",
     align: "center",
-    width: "20%",
+    width: "8%",
   },
   {
     title: "Mã sự cố",
     dataIndex: "ma_su_co",
     key: "ma_su_co",
     align: "center",
-    width: "20%",
+    width: "15%",
   },
   {
     title: "Tên sự cố",
@@ -63,13 +63,6 @@ const tableColumns = [
     title: "Cách xử lý",
     dataIndex: "cach_xu_ly",
     key: "cach_xu_ly",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "trang_thai",
-    key: "trang_thai",
     align: "center",
     width: "20%",
   },
@@ -180,9 +173,6 @@ const Mapping = () => {
             locale={{ emptyText: "Trống" }}
             pagination={false}
             bordered={true}
-            scroll={{
-              x: window.screen.width,
-            }}
             columns={columns}
             dataSource={selectedError}
             size="small"

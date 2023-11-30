@@ -186,9 +186,6 @@ const Mapping = () => {
             locale={{ emptyText: "Trống" }}
             pagination={false}
             bordered={true}
-            scroll={{
-              x: window.screen.width,
-            }}
             columns={columns}
             dataSource={data}
             size="small"
