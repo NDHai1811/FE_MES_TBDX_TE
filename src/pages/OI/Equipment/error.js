@@ -4,59 +4,15 @@ import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Popup from "../../../components/Popup/popup";
-import '../style.scss';
+import "../style.scss";
 
 const data = [
   {
     tg_dung: "13:10:01",
     tg_chay: "13:20:15",
-    ten_su_co: "Popup",
-    nguyen_nhan: "Popup",
-    trang_thai: "Chờ xử lý",
-  },
-];
-
-const columns = [
-  {
-    title: "Tg dừng",
-    dataIndex: "tg_dung",
-    key: "tg_dung",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Tg chạy",
-    dataIndex: "tg_chay",
-    key: "tg_chay",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Tên sự cố",
-    dataIndex: "ten_su_co",
-    key: "ten_su_co",
-    align: "center",
-    width: "20%",
-    render: () => {
-      return <Popup title="Sự cố" />;
-    },
-  },
-  {
-    title: "Nguyên nhân",
-    dataIndex: "nguyen_nhan",
-    key: "nguyen_nhan",
-    align: "center",
-    width: "20%",
-    render: () => {
-      return <Popup title="Nguyên nhân" />;
-    },
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "trang_thai",
-    key: "trang_thai",
-    align: "center",
-    width: "20%",
+    ten_su_co: "",
+    nguyen_nhan: "",
+    cach_xu_ly: "",
   },
 ];
 
@@ -163,6 +119,58 @@ const tableData = [
 ];
 
 const Mapping = () => {
+  const [selectedError, setSelectedError] = useState(data);
+  const [visible, setVisible] = useState(false);
+
+  const columns = [
+    {
+      title: "Tg dừng",
+      dataIndex: "tg_dung",
+      key: "tg_dung",
+      align: "center",
+      width: "20%",
+    },
+    {
+      title: "Tg chạy",
+      dataIndex: "tg_chay",
+      key: "tg_chay",
+      align: "center",
+      width: "20%",
+    },
+    {
+      title: "Tên sự cố",
+      dataIndex: "ten_su_co",
+      key: "ten_su_co",
+      align: "center",
+      width: "20%",
+      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+    },
+    {
+      title: "Nguyên nhân",
+      dataIndex: "nguyen_nhan",
+      key: "nguyen_nhan",
+      align: "center",
+      width: "20%",
+      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+    },
+    {
+      title: "Cách xử lý",
+      dataIndex: "cach_xu_ly",
+      key: "cach_xu_ly",
+      align: "center",
+      width: "20%",
+      render: (text) => <div onClick={onShowPopup}>{text || "-"}</div>,
+    },
+  ];
+
+  const onSelectedError = (item) => {
+    setSelectedError([item]);
+  };
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
+
   return (
     <React.Fragment>
       <Row className="mt-1" style={{ justifyContent: "space-between" }}>
@@ -176,16 +184,13 @@ const Mapping = () => {
               x: window.screen.width,
             }}
             columns={columns}
-            dataSource={data}
+            dataSource={selectedError}
             size="small"
           />
         </Col>
       </Row>
-      <Row
-        className="mt-2"
-        gutter={[3, 8]}
-      >
-        <Col span={8}>
+      <Row className="mt-2" gutter={[3, 8]}>
+        <Col span={12}>
           <DatePicker
             placeholder="Từ ngày"
             style={{ width: "100%" }}
@@ -193,16 +198,13 @@ const Mapping = () => {
             defaultValue={dayjs()}
           />
         </Col>
-        <Col span={8}>
+        <Col span={12}>
           <DatePicker
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
           />
-        </Col>
-        <Col span={8}>
-          <Popup title="Cách xử lý" />
         </Col>
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>
@@ -217,8 +219,16 @@ const Mapping = () => {
           columns={tableColumns}
           dataSource={tableData}
           size="small"
+          onRow={(record, index) => {
+            return {
+              onClick: () => {
+                onSelectedError(record);
+              },
+            };
+          }}
         />
       </Row>
+      {visible && <Popup visible={visible} setVisible={setVisible} />}
     </React.Fragment>
   );
 };

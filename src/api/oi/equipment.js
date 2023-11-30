@@ -40,3 +40,7 @@ export async function getMachineOverall(params) {
 export const getMachines = async () => {
   return await axios.get("/machine/list");
 };
+
+export const updateErrorStatus = async (params) => {
+  return await axios.post("/oi/equipment/error/result", params);
+};

@@ -8,13 +8,11 @@ import {
   Form,
   InputNumber,
   message,
-  Button,
   Radio,
   DatePicker,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
-import { SaveOutlined } from "@ant-design/icons";
 import {
   useHistory,
   useParams,
@@ -462,7 +460,7 @@ const Quality = (props) => {
           gutter={[3, 8]}
           style={{ justifyContent: "space-between" }}
         >
-          <Col span={11}>
+          <Col span={12}>
             <DatePicker
               placeholder="Từ ngày"
               style={{ width: "100%" }}
@@ -473,7 +471,7 @@ const Quality = (props) => {
               }
             />
           </Col>
-          <Col span={11}>
+          <Col span={12}>
             <DatePicker
               placeholder="Đến ngày"
               style={{ width: "100%" }}
@@ -483,13 +481,6 @@ const Quality = (props) => {
                 value.isValid() && setParams({ ...params, end_date: value })
               }
             />
-          </Col>
-          <Col span={2}>
-            <Button
-              type="primary"
-              style={{ width: "100%" }}
-              icon={<SaveOutlined style={{ fontSize: "22px" }} />}
-            ></Button>
           </Col>
         </Row>
 

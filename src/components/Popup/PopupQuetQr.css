@@ -1,0 +1,11 @@
+.table-row {
+  width: 100%;
+  display: flex;
+}
+
+.table-cell {
+  align-items: center;
+  border: 1px solid #dad6d6;
+  display: flex;
+  justify-content: center;
+}
