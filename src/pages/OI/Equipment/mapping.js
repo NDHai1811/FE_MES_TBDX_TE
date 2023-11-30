@@ -31,16 +31,9 @@ const columns = [
     width: "20%",
   },
   {
-    title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
+    title: "Mã layout",
+    dataIndex: "layout_id",
+    key: "layout_id",
     align: "center",
     width: "20%",
   },
@@ -48,6 +41,13 @@ const columns = [
     title: "Mapping",
     dataIndex: "mapping",
     key: "mapping",
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "Thông số",
+    dataIndex: "thong_so",
+    key: "thong_so",
     align: "center",
     width: "20%",
   },
@@ -157,9 +157,6 @@ const Mapping = () => {
             locale={{ emptyText: "Trống" }}
             pagination={false}
             bordered={true}
-            scroll={{
-              x: window.screen.width,
-            }}
             columns={columns}
             dataSource={data}
             size="small"
@@ -171,7 +168,7 @@ const Mapping = () => {
         gutter={[3, 8]}
         style={{ justifyContent: "space-between" }}
       >
-        <Col span={7}>
+        <Col span={12}>
           <DatePicker
             placeholder="Từ ngày"
             style={{ width: "100%" }}
@@ -179,28 +176,13 @@ const Mapping = () => {
             defaultValue={dayjs()}
           />
         </Col>
-        <Col span={7}>
+        <Col span={12}>
           <DatePicker
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
           />
-        </Col>
-        <Col span={4}>
-          <Button
-            type="primary"
-            style={{ width: "100%" }}
-            icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-          />
-        </Col>
-        <Col span={6}>
-          <Button
-            type="default"
-            style={{ width: "100%", fontSize: 12, textAlign: "center" }}
-          >
-            Thông số TB
-          </Button>
         </Col>
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>

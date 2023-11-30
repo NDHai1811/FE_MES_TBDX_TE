@@ -22,21 +22,21 @@ const columns = [
     dataIndex: "tg_dung",
     key: "tg_dung",
     align: "center",
-    width: "20%",
+    width: "15%",
   },
   {
     title: "Tg chạy",
     dataIndex: "tg_chay",
     key: "tg_chay",
     align: "center",
-    width: "20%",
+    width: "15%",
   },
   {
     title: "Tên sự cố",
     dataIndex: "ten_su_co",
     key: "ten_su_co",
     align: "center",
-    width: "20%",
+    width: "15%",
     render: () => {
       return <Popup title="Sự cố" />;
     },
@@ -47,14 +47,12 @@ const columns = [
     key: "nguyen_nhan",
     align: "center",
     width: "20%",
-    render: () => {
-      return <Popup title="Nguyên nhân" />;
-    },
+    
   },
   {
-    title: "Trạng thái",
-    dataIndex: "trang_thai",
-    key: "trang_thai",
+    title: "Cách xử lý",
+    dataIndex: "cach_xu_ly",
+    key: "cach_xu_ly",
     align: "center",
     width: "20%",
   },
@@ -66,28 +64,28 @@ const tableColumns = [
     dataIndex: "thu_tu",
     key: "thu_tu",
     align: "center",
-    width: "20%",
+    width: "5%",
   },
   {
     title: "Tg dừng",
     dataIndex: "tg_dung",
     key: "tg_dung",
     align: "center",
-    width: "20%",
+    width: "8%",
   },
   {
     title: "Tg chạy",
     dataIndex: "tg_chay",
     key: "tg_chay",
     align: "center",
-    width: "20%",
+    width: "8%",
   },
   {
     title: "Mã sự cố",
     dataIndex: "ma_su_co",
     key: "ma_su_co",
     align: "center",
-    width: "20%",
+    width: "15%",
   },
   {
     title: "Tên sự cố",
@@ -107,13 +105,6 @@ const tableColumns = [
     title: "Cách xử lý",
     dataIndex: "cach_xu_ly",
     key: "cach_xu_ly",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "trang_thai",
-    key: "trang_thai",
     align: "center",
     width: "20%",
   },
@@ -172,9 +163,6 @@ const Mapping = () => {
             locale={{ emptyText: "Trống" }}
             pagination={false}
             bordered={true}
-            scroll={{
-              x: window.screen.width,
-            }}
             columns={columns}
             dataSource={data}
             size="small"
@@ -185,7 +173,7 @@ const Mapping = () => {
         className="mt-2"
         gutter={[3, 8]}
       >
-        <Col span={8}>
+        <Col span={12}>
           <DatePicker
             placeholder="Từ ngày"
             style={{ width: "100%" }}
@@ -193,16 +181,13 @@ const Mapping = () => {
             defaultValue={dayjs()}
           />
         </Col>
-        <Col span={8}>
+        <Col span={12}>
           <DatePicker
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
           />
-        </Col>
-        <Col span={8}>
-          <Popup title="Cách xử lý" />
         </Col>
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>

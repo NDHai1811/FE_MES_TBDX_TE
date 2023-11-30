@@ -73,19 +73,19 @@ const Equipment = (props) => {
 
   const [row1, setRow1] = useState([
     {
-      title: "OEE",
+      title: "Thời gian chạy",
+      value: "0",
+    },
+    {
+      title: "Thời gian dừng",
+      value: "0",
+    },
+    {
+      title: "Số lần dừng",
       value: "0",
     },
     {
       title: "Tỷ lệ vận hành",
-      value: "0",
-    },
-    {
-      title: "Dừng máy KH",
-      value: "0",
-    },
-    {
-      title: "Dừng máy BT",
       value: "0",
     },
   ]);
