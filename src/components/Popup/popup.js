@@ -1,6 +1,6 @@
 import { AutoComplete, Form, Input, Modal, Button } from "antd";
-import React, { useState } from "react";
-import { updateErrorStatus } from "../../api/oi/equipment";
+import React, { useEffect, useState } from "react";
+import { getErrorList, updateErrorStatus } from "../../api/oi/equipment";
 
 const options = [
   { value: "Cúp điện theo lịch" },
@@ -26,7 +26,21 @@ const errorOptions = [
 
 const Popup = (props) => {
   const [form] = Form.useForm();
-  const { visible, setVisible } = props;
+  const { visible, setVisible, machineId } = props;
+
+  const [errorList, setErrorList] = useState([]);
+
+  useEffect(() => {
+    getErrors();
+  }, []);
+
+  const getErrors = () => {
+    getErrorList({ machine_id: machineId })
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log("Lấy danh sách sự cố thất bại:", err));
+  };
+
+  console.log({ errorList });
 
   const onUpdateErrorStatus = (values) => {
     updateErrorStatus({

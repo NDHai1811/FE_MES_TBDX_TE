@@ -218,7 +218,13 @@ const Mapping = () => {
           }}
         />
       </Row>
-      {visible && <Popup visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <Popup
+          visible={visible}
+          setVisible={setVisible}
+          machineId={selectedError[0]?.machine_id}
+        />
+      )}
     </React.Fragment>
   );
 };
