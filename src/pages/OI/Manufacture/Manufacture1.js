@@ -14,6 +14,7 @@ import {
   getLotByMachine,
   checkMaterialPosition,
   getInfoTem,
+  scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
@@ -169,9 +170,11 @@ const Manufacture1 = (props) => {
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
-  const [lotCurrent, setLotCurrent] = useState(['12', '12']);
+  const [lotCurrent, setLotCurrent] = useState(["12", "12"]);
   const [listCheck, setListCheck] = useState([]);
-  const [deviceID, setDeviceID] = useState('e9aba8d0-85da-11ee-8392-a51389126dc6');
+  const [deviceID, setDeviceID] = useState(
+    "e9aba8d0-85da-11ee-8392-a51389126dc6"
+  );
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -185,14 +188,14 @@ const Manufacture1 = (props) => {
         setData(resData);
         setSelectedLot(resData?.[0]);
         getOverAllDetail();
-        const device_id = machineOptions.find(obj => {
+        const device_id = machineOptions.find((obj) => {
           return obj.value === machine_id;
         })?.device_id;
         if (ws.current) {
           ws.current.close();
         }
         if (device_id) {
-          connectWebsocket(device_id, resData)
+          connectWebsocket(device_id, resData);
         }
       }
     })();
@@ -257,10 +260,9 @@ const Manufacture1 = (props) => {
   };
 
   const onScan = async (result) => {
-    var res = await scanPallet({ lot_id: result });
-    if (res.success) {
-
-    }
+    scanQrCode({ lot_id: result })
+      .then()
+      .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
 
   const rowClassName = (record, index) => {
@@ -323,7 +325,7 @@ const Manufacture1 = (props) => {
             entityType: "DEVICE",
             entityId: entityId,
             scope: "LATEST_TELEMETRY",
-            keys: 'Pre_Counter,Error_Counter',
+            keys: "Pre_Counter,Error_Counter",
             cmdId: 10,
           },
         ],
@@ -336,8 +338,12 @@ const Manufacture1 = (props) => {
 
     ws.current.onmessage = async function (event) {
       const receivedMsg = JSON.parse(event.data);
-      const Pre_Counter = receivedMsg.data?.Pre_Counter ? parseInt(receivedMsg.data?.Pre_Counter[0][1]) : 0;
-      const Error_Counter = receivedMsg.data?.Error_Counter ? parseInt(receivedMsg.data.Error_Counter[0][1]) : 0;
+      const Pre_Counter = receivedMsg.data?.Pre_Counter
+        ? parseInt(receivedMsg.data?.Pre_Counter[0][1])
+        : 0;
+      const Error_Counter = receivedMsg.data?.Error_Counter
+        ? parseInt(receivedMsg.data.Error_Counter[0][1])
+        : 0;
       let san_luong = 0;
       let sl_ok = 0;
       if (Pre_Counter > 0) {
@@ -346,7 +352,8 @@ const Manufacture1 = (props) => {
         san_luong = data[0]?.san_luong;
       }
       if (Error_Counter) {
-        sl_ok = san_luong - (parseInt(resData[0]?.tong_ng_lo_sx) + Error_Counter);
+        sl_ok =
+          san_luong - (parseInt(resData[0]?.tong_ng_lo_sx) + Error_Counter);
       } else {
         sl_ok = san_luong - parseInt(resData[0]?.tong_sl_lo_sx);
       }
@@ -406,13 +413,13 @@ const Manufacture1 = (props) => {
               className="custom-table"
               columns={overallColumns}
               dataSource={overall}
-            // scroll={
-            //   window.screen.width < 720
-            //     ? {
-            //         x: window.screen.width,
-            //       }
-            //     : false
-            // }
+              // scroll={
+              //   window.screen.width < 720
+              //     ? {
+              //         x: window.screen.width,
+              //       }
+              //     : false
+              // }
             />
           </Col>
           <Col span={24}>

@@ -12,6 +12,10 @@ export async function scanPallet(params) {
   return await axios.post("/lot/scanPallet", params);
 }
 
+export const scanQrCode = async data => {
+  return await axios.post("/oi/manufacture/scan", data);
+}
+
 export async function getInfoPallet(params) {
   return await axios.get("/lot/info", { params: params });
 }

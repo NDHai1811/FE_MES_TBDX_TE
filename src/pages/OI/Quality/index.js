@@ -585,14 +585,6 @@ const Quality = (props) => {
             </Form.Item>
           </Form>
         </Modal>
-        {openModal && (
-          <Checksheet2
-            text="KT kích thước"
-            selectedLot={selectedRow}
-            onSubmit={onSubmitResult}
-            onClose={() => setOpenModal(false)}
-          />
-        )}
       </Spin>
     </React.Fragment>
   );
