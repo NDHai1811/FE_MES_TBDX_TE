@@ -1,12 +1,47 @@
 import React, { useState } from "react";
-import { Modal, Row, Col } from "antd";
-import {
-  QrcodeOutlined,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { Modal, Row, Col, Table } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
+
+const columns = [
+  {
+    title: "Vị trí",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+    width: "25%",
+  },
+  {
+    title: "Mã film",
+    dataIndex: "film_id",
+    key: "film_id",
+    align: "center",
+    width: "25%",
+  },
+  {
+    title: "Mã mực",
+    dataIndex: "ma_muc",
+    key: "ma_muc",
+    align: "center",
+    width: "25%",
+  },
+  {
+    title: "OK/NG",
+    dataIndex: "ok_ng",
+    key: "ok_ng",
+    align: "center",
+    width: "25%",
+  },
+];
+
+const data = [
+  {
+    vi_tri: "Khối in",
+    film_id: "",
+    ma_muc: "",
+    ok_ng: "",
+  },
+];
 
 function PopupQuetQr(props) {
   const [value, setValue] = useState(null);
@@ -21,68 +56,31 @@ function PopupQuetQr(props) {
     setVisible(false);
   };
 
-  const renderItem = (item, index) => {
-    return (
-      <Row className="table-row">
-        <Col
-          span={8}
-          className="table-cell"
-          style={{
-            paddingTop: 8,
-            paddingBottom: 8,
-            borderTopWidth: 0,
-          }}
-        >
-          Chỉ tiêu {index}
-        </Col>
-        <Col
-          span={8}
-          className="table-cell"
-          style={{
-            borderLeftWidth: 0,
-            paddingTop: 8,
-            paddingBottom: 8,
-            borderTopWidth: 0,
-          }}
-        >
-          {value || "-"}
-        </Col>
-        <Col
-          span={8}
-          className="table-cell"
-          style={{
-            borderLeftWidth: 0,
-            paddingTop: 8,
-            paddingBottom: 8,
-            borderTopWidth: 0,
-          }}
-        >
-          {value ? (
-            <CheckOutlined
-              disabled
-              style={{ color: "green", fontSize: "24px" }}
-            />
-          ) : (
-            <CloseOutlined
-              disabled
-              style={{ color: "red", fontSize: "24px" }}
-            />
-          )}
-        </Col>
-      </Row>
-    );
-  };
-
   return (
     <div>
       <Modal
         title="Mapping"
         visible={visible}
         onOk={handleOk}
+        okText="Lưu"
         onCancel={handleCancel}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR />
-        {[...Array(5).keys()].map(renderItem)}
+        <ScanQR isHideButton={true} />
+        <Row className="mt-3">
+          <Col span={24}>
+            <Table
+              // scroll={{
+              //   x: "170vw",
+              // }}
+              size="small"
+              pagination={false}
+              bordered
+              columns={columns}
+              dataSource={data}
+            />
+          </Col>
+        </Row>
       </Modal>
     </div>
   );

@@ -119,6 +119,14 @@
   left: 0;
   // bottom: 0;
 }
+.hide-button {
+  #html5-qrcode-button-camera-stop {
+    display: none !important;
+  }
+  #html5qr-code-full-region__dashboard {
+    display: none !important;
+  }
+}
 
 @keyframes MoveUpDown {
   0%,
