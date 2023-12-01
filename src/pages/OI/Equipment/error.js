@@ -26,25 +26,26 @@ const tableColumns = [
     key: "thu_tu",
     align: "center",
     width: "5%",
+    render: (value, record, index)=>index+1
   },
   {
     title: "Tg dừng",
-    dataIndex: "tg_dung",
-    key: "tg_dung",
+    dataIndex: "start_time",
+    key: "start_time",
     align: "center",
     width: "8%",
   },
   {
     title: "Tg chạy",
-    dataIndex: "tg_chay",
-    key: "tg_chay",
+    dataIndex: "end_time",
+    key: "end_time",
     align: "center",
     width: "8%",
   },
   {
     title: "Mã sự cố",
-    dataIndex: "ma_su_co",
-    key: "ma_su_co",
+    dataIndex: "code",
+    key: "code",
     align: "center",
     width: "15%",
   },
@@ -115,9 +116,9 @@ const tableData = [
 ];
 
 const Mapping = () => {
-  const { line } = useParams();
+  const { machine_id } = useParams();
 
-  const [selectedError, setSelectedError] = useState(data);
+  const [selectedError, setSelectedError] = useState();
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
 
@@ -126,7 +127,7 @@ const Mapping = () => {
   }, []);
 
   const getLogs = () => {
-    getErrorLogs({ machine_id: line })
+    getErrorLogs({ machine_id: machine_id })
       .then((res) => setLogs(res.data))
       .catch((err) => console.log("Lấy danh sách lịch sử lỗi thất bại: ", err));
   };
@@ -134,16 +135,18 @@ const Mapping = () => {
   const columns = [
     {
       title: "Tg dừng",
-      dataIndex: "tg_dung",
-      key: "tg_dung",
+      dataIndex: "start_time",
+      key: "start_time",
       align: "center",
+      render: (text) => text ? text : "-",
       width: "20%",
     },
     {
       title: "Tg chạy",
-      dataIndex: "tg_chay",
-      key: "tg_chay",
+      dataIndex: "end_time",
+      key: "end_time",
       align: "center",
+      render: (text) => text ? text : "-",
       width: "20%",
     },
     {
@@ -152,7 +155,7 @@ const Mapping = () => {
       key: "ten_su_co",
       align: "center",
       width: "20%",
-      render: (text) => <div>{text || "-"}</div>,
+      render: (text) => text ? text : "-",
       onHeaderCell: () => {
         return {
           onClick: onShowPopup,
@@ -165,7 +168,7 @@ const Mapping = () => {
       key: "nguyen_nhan",
       align: "center",
       width: "20%",
-      render: (text) => <div>{text || "-"}</div>,
+      render: (text) => text ? text : "-",
       onHeaderCell: () => {
         return {
           onClick: onShowPopup,
@@ -178,7 +181,7 @@ const Mapping = () => {
       key: "cach_xu_ly",
       align: "center",
       width: "20%",
-      render: (text) => <div>{text || "-"}</div>,
+      render: (text) => text ? text : "-",
       onHeaderCell: () => {
         return {
           onClick: onShowPopup,
@@ -188,7 +191,7 @@ const Mapping = () => {
   ];
 
   const onSelectedError = (item) => {
-    setSelectedError([item]);
+    setSelectedError(item);
   };
 
   const onShowPopup = () => {
@@ -205,7 +208,7 @@ const Mapping = () => {
             pagination={false}
             bordered={true}
             columns={columns}
-            dataSource={selectedError}
+            dataSource={selectedError ? [selectedError] : []}
             size="small"
           />
         </Col>
@@ -238,7 +241,7 @@ const Mapping = () => {
             x: window.screen.width,
           }}
           columns={tableColumns}
-          dataSource={tableData}
+          dataSource={logs}
           size="small"
           onRow={(record, index) => {
             return {
@@ -250,7 +253,7 @@ const Mapping = () => {
         />
       </Row>
       {visible && (
-        <Popup visible={visible} setVisible={setVisible} machineId={line} />
+        <Popup visible={visible} setVisible={setVisible} selectedError={selectedError}/>
       )}
     </React.Fragment>
   );

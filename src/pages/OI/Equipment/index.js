@@ -15,37 +15,35 @@ import Mapping from "./mapping";
 
 const Equipment = (props) => {
   document.title = "Thiết bị";
-  const { line } = useParams();
+  const { machine_id } = useParams();
   const history = useHistory();
   const [optionsLine, setOptionsLine] = useState([]);
   // const [line, setLine] = useState();
   const [listMachine, setListMachine] = useState([]);
   const [machines, setMachines] = useState([]);
   const [machine, setMachine] = useState("");
-  useEffect(() => {
-    (async () => {
-      const list_line = await getLine({ type: "tb" });
-      setOptionsLine(list_line.success == true ? list_line.data : []);
-      if (!line) {
-        history.push("/equipment/" + list_line.data[0].value);
-      }
-      // setLine(list_line.data[0]?.value);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const list_line = await getLine({ type: "tb" });
+  //     setOptionsLine(list_line.success == true ? list_line.data : []);
+  //     if (!line) {
+  //       history.push("/equipment/" + list_line.data[0].value);
+  //     }
+  //     // setLine(list_line.data[0]?.value);
+  //   })();
+  // }, []);
 
   useEffect(() => {
-    if (line) {
-      (async () => {
-        const list_machine = await getListMachineOfLine({ line_id: line });
-        setListMachine(list_machine.success == true ? list_machine.data : []);
-      })();
+    if (machine_id) {
       const screen = JSON.parse(localStorage.getItem("screen"));
       localStorage.setItem(
         "screen",
-        JSON.stringify({ ...screen, equipment: line ? line : "" })
+        JSON.stringify({ ...screen, equipment: machine_id ? machine_id : "" })
       );
+    }else{
+      history.push("/equipment/S01");
     }
-  }, [line]);
+  }, [machine_id]);
 
   useEffect(() => {
     getMachineList();
@@ -89,7 +87,7 @@ const Equipment = (props) => {
     {
       key: 2,
       label: `Sự cố`,
-      children: <Error line={line} machine={machine} />,
+      children: <Error machine={machine} />,
     },
   ];
   const onChangeLine = (value) => {

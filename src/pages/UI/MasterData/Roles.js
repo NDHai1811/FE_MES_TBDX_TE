@@ -41,12 +41,20 @@ const Roles = () => {
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
   const [permissions, setPermissions] = useState([]);
+  const [data, setData] = useState([]);
   const col_detailTable = [
     {
       title: "Tên",
       dataIndex: "name",
       key: "name",
       align: "center",
+    },
+    {
+      title: "Thuộc bộ phận",
+      dataIndex: "parent",
+      key: "parent",
+      align: "center",
+      render: (value) => value?.name
     },
     {
       title: "Quyền",
@@ -73,7 +81,14 @@ const Roles = () => {
       required: true,
     },
     {
-      title: "Bộ phận",
+      title: "Thuộc bộ phận",
+      key: "parent_id",
+      select: {
+        options: data.map(e=>({value: e.id, label: e.name})),
+      },
+    },
+    {
+      title: "Quyền",
       key: "permissions",
       select: {
         mode: "multiple",
@@ -86,7 +101,7 @@ const Roles = () => {
     loadListTable(params);
   }
 
-  const [data, setData] = useState([]);
+  
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getRoles(params);
@@ -157,6 +172,7 @@ const Roles = () => {
       message.info("Chọn 1 bản ghi để chỉnh sửa");
     } else {
       const result = data.find((record) => record.id === listCheck[0]);
+      console.log(result);
       form.setFieldsValue({
         ...result,
         permissions: result?.permissions.map((e) => e.id),
@@ -338,6 +354,7 @@ const Roles = () => {
                       {!e.isTrueFalse ? (
                         e.select ? (
                           <Select
+                            allowClear
                             mode={e.select.mode}
                             options={e.select.options}
                           />
