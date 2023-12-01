@@ -46,7 +46,7 @@ export const updateErrorStatus = async (params) => {
 };
 
 export const getErrorList = async (params) => {
-  return await axios.get("/oi/equipment/error/list", {params});
+  return await axios.get("/oi/equipment/error/list", { params });
 };
 
 export const getErrorLogs = async (params) => {
