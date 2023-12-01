@@ -60,13 +60,13 @@ function PopupQuetQr(props) {
     <div>
       <Modal
         title="Mapping"
-        visible={visible}
+        open={visible}
         onOk={handleOk}
         okText="Lưu"
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR isHideButton={true} />
+        <ScanQR isHideButton={false} />
         <Row className="mt-3">
           <Col span={24}>
             <Table
