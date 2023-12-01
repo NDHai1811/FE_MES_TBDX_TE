@@ -22,6 +22,7 @@ const createConfig = (props) => {
 };
 
 const Html5QrcodePlugin = (props) => {
+  const { isHideButton } = props;
   useEffect(() => {
     // when component mounts
     const config = createConfig(props);
@@ -48,12 +49,18 @@ const Html5QrcodePlugin = (props) => {
     };
   }, []);
 
-  return <div id={qrcodeRegionId} />;
+  return (
+    <div id={qrcodeRegionId} className={isHideButton ? "hide-button" : ""} />
+  );
 };
+
 const ScanQR = (props) => {
+  const { isHideButton } = props;
+
   const onNewScanResult = (decodedText, decodedResult) => {
     props.onResult(decodedText);
   };
+
   return (
     <div width="100%">
       <Html5QrcodePlugin
@@ -61,6 +68,7 @@ const ScanQR = (props) => {
         qrbox={250}
         disableFlip={true}
         qrCodeSuccessCallback={onNewScanResult}
+        isHideButton={isHideButton}
       />
     </div>
   );
