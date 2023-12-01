@@ -1,41 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  CloseOutlined,
-  PrinterOutlined,
-  QrcodeOutlined,
-} from "@ant-design/icons";
-import {
-  Layout,
-  Row,
-  Col,
-  Divider,
-  Button,
-  Table,
-  Modal,
-  Select,
-  Steps,
-  Input,
-  Radio,
-  Popconfirm,
-  Form,
-  Checkbox,
-  InputNumber,
-} from "antd";
-import { withRouter, Link } from "react-router-dom";
-import CardInfo from "../components/CardInfo";
-import DataDetail from "../../../components/DataDetail";
-import SelectButton from "../../../components/Button/SelectButton";
+import { Row, Col, Table, InputNumber } from "antd";
+import { withRouter } from "react-router-dom";
 import "../style.scss";
-import {
-  useHistory,
-  useParams,
-} from "react-router-dom/cjs/react-router-dom.min";
 import {
   getMachineParamtersData,
   updateMachineParamtersData,
 } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
-import EditableTable from "../../../components/Table/EditableTable";
 
 const Measurement = (props) => {
   const [columns, setColumns] = useState([]);

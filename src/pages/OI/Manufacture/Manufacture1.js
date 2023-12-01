@@ -9,10 +9,8 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../components/Button/SelectButton";
 import {
-  scanPallet,
   getOverAll,
   getLotByMachine,
-  checkMaterialPosition,
   getInfoTem,
   scanQrCode,
 } from "../../../api/oi/manufacture";
@@ -39,24 +37,28 @@ const currentColumns = [
     dataIndex: "lot_id",
     key: "lot_id",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "SL kế hoạch",
     dataIndex: "san_luong_kh",
     key: "san_luong_kh",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "SL đầu ra",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "SL đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -67,7 +69,7 @@ const columns = [
     key: "lot_id",
     align: "center",
     width: "14%",
-    render: (value, record, index) => value || "-",
+    render: (value) => value || "-",
   },
   {
     title: "Sản lượng kế hoạch",
@@ -75,7 +77,7 @@ const columns = [
     key: "san_luong_kh",
     align: "center",
     width: "14%",
-    render: (value, record, index) => value || "-",
+    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đạt",
@@ -83,7 +85,7 @@ const columns = [
     key: "sl_ok",
     align: "center",
     width: "14%",
-    render: (value, record, index) => value || "-",
+    render: (value) => value || "-",
   },
   {
     title: "Mã layout",
@@ -91,7 +93,7 @@ const columns = [
     key: "layout_id",
     align: "center",
     width: "14%",
-    render: (value, record, index) => value || "-",
+    render: (value) => value || "-",
   },
   {
     title: "Khách hàng",

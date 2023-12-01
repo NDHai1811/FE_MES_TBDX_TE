@@ -16,18 +16,21 @@ const columnDetail = [
     dataIndex: "so_pallet",
     key: "so_pallet",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số MQL",
     dataIndex: "so_mql",
     key: "so_mql",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Vị trí đề xuất",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -37,48 +40,56 @@ const importColumns = [
     dataIndex: "so_pallet",
     key: "so_pallet",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số lot",
     dataIndex: "so_lot",
     key: "so_lot",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Vị trí",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số MQL",
     dataIndex: "so_mql",
     key: "so_mql",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số lượng",
     dataIndex: "so_luong",
     key: "so_luong",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số đơn hàng",
     dataIndex: "so_don_hang",
     key: "so_don_hang",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Người nhập",
     dataIndex: "nguoi_nhap",
     key: "nguoi_nhap",
     align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -88,18 +99,21 @@ const column2 = [
     dataIndex: "soPalletNhapTrongNgay",
     key: "soPalletNhapTrongNgay",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số Pallet xuất trong ngày",
     dataIndex: "soPalletXuatTrongNgay",
     key: "soPalletXuatTrongNgay",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Tổng Pallet tồn trong kho",
     dataIndex: "soPalletTonTrongKho",
     key: "soPalletTonTrongKho",
     align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -187,10 +201,17 @@ const Import = (props) => {
         <Col span={24}>
           <Row gutter={8}>
             <Col span={12}>
-              <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} />
+              <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} />
             </Col>
             <Col span={12}>
-              <Button block className="h-100 w-100" icon={<PrinterOutlined/>} type="primary">In tem pallet</Button>
+              <Button
+                block
+                className="h-100 w-100"
+                icon={<PrinterOutlined />}
+                type="primary"
+              >
+                In tem pallet
+              </Button>
             </Col>
           </Row>
         </Col>

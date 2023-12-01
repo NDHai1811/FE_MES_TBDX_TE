@@ -1,5 +1,6 @@
 import { AutoComplete, Form, Input, Modal, Button } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getErrorList, updateErrorStatus } from "../../api/oi/equipment";
 
 const options = [
   { value: "Cúp điện theo lịch" },
@@ -24,17 +25,38 @@ const errorOptions = [
 ];
 
 const Popup = (props) => {
-  const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
-  const { title } = props;
+  const { visible, setVisible, machineId } = props;
+
+  const [errorList, setErrorList] = useState([]);
+
+  useEffect(() => {
+    getErrors();
+  }, []);
+
+  const getErrors = () => {
+    getErrorList({ machine_id: machineId })
+      .then((res) => setErrorList(res.data))
+      .catch((err) => console.log("Lấy danh sách sự cố thất bại:", err));
+  };
+
+  const onUpdateErrorStatus = (values) => {
+    updateErrorStatus({
+      nguyen_nhan: values.nguyenNhan,
+      su_co: values.suCo,
+      cach_xu_ly: values.cachXuLy,
+    })
+      .then()
+      .catch((err) => console.log("Cập nhật sự cố thất bại: ", err));
+  };
 
   const handleOk = () => {
     form
       .validateFields()
       .then((values) => {
         form.resetFields();
-        console.log(values);
         setVisible(false);
+        onUpdateErrorStatus(values);
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
@@ -47,13 +69,6 @@ const Popup = (props) => {
 
   return (
     <React.Fragment>
-      <Button
-        type="default"
-        onClick={() => setVisible(true)}
-        style={{ width: "100%" }}
-      >
-        {title}
-      </Button>
       <Modal
         title="Form gợi ý"
         visible={visible}
@@ -61,20 +76,6 @@ const Popup = (props) => {
         onCancel={handleCancel}
       >
         <Form form={form} name="suggest_form">
-          <Form.Item
-            name="nguyenNhan"
-            label="Nguyên nhân"
-            rules={[{ required: true, message: "Vui lòng nhập nguyên nhân!" }]}
-          >
-            <AutoComplete
-              placeholder="Nhập nguyên nhân..."
-              options={options}
-              filterOption={(inputValue, option) =>
-                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-                -1
-              }
-            />
-          </Form.Item>
           <Form.Item
             name="suCo"
             label="Sự cố"
@@ -88,6 +89,13 @@ const Popup = (props) => {
                 -1
               }
             />
+          </Form.Item>
+          <Form.Item
+            name="nguyenNhan"
+            label="Nguyên nhân"
+            rules={[{ required: true, message: "Vui lòng nhập nguyên nhân!" }]}
+          >
+            <Input placeholder="Nhập nguyên nhân..." />
           </Form.Item>
           <Form.Item
             name="cachXuLy"

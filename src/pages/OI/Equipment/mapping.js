@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Row, Col, Table, DatePicker, Button } from "antd";
-import { QrcodeOutlined } from "@ant-design/icons";
+import PopupQuetQr from "../../../components/Popup/PopupQuetQr";
+import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -12,44 +13,8 @@ const data = [
     don_hang: "1062/11",
     mql: "4",
     mapping: "Đã Mapping",
-  },
-];
-
-const columns = [
-  {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Mã KH",
-    dataIndex: "ma_kh",
-    key: "ma_kh",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Mã layout",
-    dataIndex: "layout_id",
-    key: "layout_id",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Mapping",
-    dataIndex: "mapping",
-    key: "mapping",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Thông số",
-    dataIndex: "thong_so",
-    key: "thong_so",
-    align: "center",
-    width: "20%",
+    layout_id: "",
+    thong_so: "Đã đủ",
   },
 ];
 
@@ -60,6 +25,7 @@ const tableColumns = [
     key: "lo_sx",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "Mã KH",
@@ -67,6 +33,15 @@ const tableColumns = [
     key: "ma_kh",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Mã layout",
+    dataIndex: "layout_id",
+    key: "layout_id",
+    align: "center",
+    width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "Đơn hàng",
@@ -74,6 +49,7 @@ const tableColumns = [
     key: "don_hang",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "MQL",
@@ -81,6 +57,7 @@ const tableColumns = [
     key: "mql",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "Mapping",
@@ -88,6 +65,7 @@ const tableColumns = [
     key: "mapping",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "TS XYZ",
@@ -95,6 +73,7 @@ const tableColumns = [
     key: "ts_xyz",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "TS XYZ",
@@ -102,6 +81,7 @@ const tableColumns = [
     key: "ts_xyz",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
   {
     title: "TS XYZ",
@@ -109,6 +89,7 @@ const tableColumns = [
     key: "ts_xyz",
     align: "center",
     width: "20%",
+    render: (value) => value || "-",
   },
 ];
 
@@ -148,6 +129,70 @@ const tableData = [
 ];
 
 const Mapping = () => {
+  const [visible, setVisible] = useState(false);
+  const [isShowPopup, setIsShowPopup] = useState(false);
+
+  const columns = [
+    {
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      width: "20%",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã KH",
+      dataIndex: "ma_kh",
+      key: "ma_kh",
+      align: "center",
+      width: "20%",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+      width: "20%",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mapping",
+      dataIndex: "mapping",
+      key: "mapping",
+      align: "center",
+      width: "20%",
+      render: (text) => <div>{text || "-"}</div>,
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopup,
+        };
+      },
+    },
+    {
+      title: "Thông số",
+      dataIndex: "thong_so",
+      key: "thong_so",
+      align: "center",
+      width: "20%",
+      render: (value) => value || "-",
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopupParameter,
+        };
+      },
+    },
+  ];
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
+
+  const onShowPopupParameter = () => {
+    setIsShowPopup(true);
+  };
+
   return (
     <React.Fragment>
       <Row className="mt-1" style={{ justifyContent: "space-between" }}>
@@ -199,6 +244,10 @@ const Mapping = () => {
           size="small"
         />
       </Row>
+      {visible && <PopupQuetQr visible={visible} setVisible={setVisible} />}
+      {isShowPopup && (
+        <PopupThongSo visible={isShowPopup} setVisible={setIsShowPopup} />
+      )}
     </React.Fragment>
   );
 };

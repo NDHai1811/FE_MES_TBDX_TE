@@ -16,30 +16,35 @@ const columnDetail = [
     dataIndex: "so_pallet",
     key: "so_pallet",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số lot",
     dataIndex: "so_lot",
     key: "so_lot",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số MQL",
     dataIndex: "so_mql",
     key: "so_mql",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Vị trí đề xuất",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số lượng",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Tách",
@@ -63,54 +68,63 @@ const exportColumns = [
     dataIndex: "time",
     key: "time",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số pallet",
     dataIndex: "so_pallet",
     key: "so_pallet",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số xe",
     dataIndex: "so_xe",
     key: "so_xe",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Vị trí",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số MQL",
     dataIndex: "so_mql",
     key: "so_mql",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số lượng",
     dataIndex: "so_luong",
     key: "so_luong",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số đơn hàng",
     dataIndex: "so_don_hang",
     key: "so_don_hang",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Khach hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Người nhập",
     dataIndex: "nguoi_nhap",
     key: "nguoi_nhap",
     align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -120,18 +134,21 @@ const column2 = [
     dataIndex: "soPalletNhapTrongNgay",
     key: "soPalletNhapTrongNgay",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Số Pallet xuất trong ngày",
     dataIndex: "soPalletXuatTrongNgay",
     key: "soPalletXuatTrongNgay",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Tổng Pallet tồn trong kho",
     dataIndex: "soPalletTonTrongKho",
     key: "soPalletTonTrongKho",
     align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -223,13 +240,22 @@ const Import = (props) => {
         <Col span={24}>
           <Row gutter={8}>
             <Col span={8}>
-              <ScanButton placeholder={'Nhập mã hoặc quét mã QR'} />
+              <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} />
             </Col>
             <Col span={8}>
-              <Button block className="h-100 w-100" icon={<PrinterOutlined/>} type="primary">In tem pallet</Button>
+              <Button
+                block
+                className="h-100 w-100"
+                icon={<PrinterOutlined />}
+                type="primary"
+              >
+                In tem pallet
+              </Button>
             </Col>
             <Col span={8}>
-              <Button block className="h-100 w-100" type="primary">Nhập lại</Button>
+              <Button block className="h-100 w-100" type="primary">
+                Nhập lại
+              </Button>
             </Col>
           </Row>
         </Col>

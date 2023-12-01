@@ -21,8 +21,7 @@ const Equipment = (props) => {
   // const [line, setLine] = useState();
   const [listMachine, setListMachine] = useState([]);
   const [machines, setMachines] = useState([]);
-  const [optionsMachine, setOptionsMachine] = useState([]);
-  const [machine, setMachine] = useState();
+  const [machine, setMachine] = useState("");
   useEffect(() => {
     (async () => {
       const list_line = await getLine({ type: "tb" });
@@ -47,19 +46,6 @@ const Equipment = (props) => {
       );
     }
   }, [line]);
-  useEffect(() => {
-    let listOption = [];
-    for (let i = 0; i < listMachine.length; i++) {
-      let res = {
-        value: listMachine[i].id,
-        label: listMachine[i].name,
-        code: listMachine[i].code,
-      };
-      listOption.push(res);
-    }
-    setOptionsMachine(listOption);
-    setMachine(listOption[0]);
-  }, [listMachine]);
 
   useEffect(() => {
     getMachineList();
@@ -67,7 +53,12 @@ const Equipment = (props) => {
 
   const getMachineList = () => {
     getMachines()
-      .then((res) => setMachines(res.data))
+      .then((res) => {
+        if (res.data.length > 0) {
+          setMachines(res.data);
+          setMachine(res.data[0].value);
+        }
+      })
       .catch((err) => console.log("Lấy danh sách máy thất bại: ", err));
   };
 
@@ -100,14 +91,10 @@ const Equipment = (props) => {
       label: `Sự cố`,
       children: <Error line={line} machine={machine} />,
     },
-    // {
-    //   key: 3,
-    //   label: `Bảo dưỡng`,
-    //   children: <Mapping />,
-    // },
   ];
   const onChangeLine = (value) => {
-    history.push("/equipment/" + value);
+    history.push("/equipment/" + value.key);
+    setMachine(value.value);
   };
   return (
     <React.Fragment>
@@ -117,7 +104,7 @@ const Equipment = (props) => {
             value={machine}
             options={machines}
             label="Công đoạn"
-            onChange={(value) => setMachine(value)}
+            onChange={(value) => onChangeLine(value)}
             labelInValue={true}
           />
         </Col>
