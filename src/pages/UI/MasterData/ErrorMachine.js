@@ -47,9 +47,9 @@ const ErrorMachines = () => {
       fixed: "left",
     },
     {
-      title: "Nội dung",
-      dataIndex: "noi_dung",
-      key: "noi_dung",
+      title: "Tên lỗi",
+      dataIndex: "ten_su_co",
+      key: "ten_su_co",
       align: "center",
     },
     {
@@ -66,52 +66,36 @@ const ErrorMachines = () => {
       align: "center",
     },
     {
-      title: "Khắc phục",
-      dataIndex: "khac_phuc",
-      key: "khac_phuc",
-      align: "center",
-    },
-    {
-      title: "Phòng ngừa",
-      dataIndex: "phong_ngua",
-      key: "phong_ngua",
+      title: "Cách xử lý",
+      dataIndex: "cach_xu_ly",
+      key: "cach_xu_ly",
       align: "center",
     },
   ];
   const formFields = [
     {
       key: "id",
-      hidden: true,
+      hidden: true
     },
     {
       title: "Mã lỗi ",
       key: "code",
-      required: true,
     },
     {
-      title: "Nội dung",
-      key: "noi_dung",
-      required: true,
+      title: "Tên lỗi",
+      key: "ten_su_co",
     },
     {
       title: "Công đoạn",
       key: "line",
-      required: true,
     },
     {
       title: "Nguyên nhân",
       key: "nguyen_nhan",
-      required: true,
     },
     {
-      title: "Khắc phục",
-      key: "khac_phuc",
-      required: true,
-    },
-    {
-      title: "Phòng ngừa",
-      key: "phong_ngua",
-      required: true,
+      title: "Cách xử lý",
+      key: "cach_xu_ly",
     },
   ];
 
@@ -335,12 +319,8 @@ const ErrorMachines = () => {
                 size="small"
                 bordered
                 pagination={{ position: ["topRight", "bottomRight"] }}
-                scroll={{
-                  x: "130vw",
-                  y: "80vh",
-                }}
                 columns={col_detailTable}
-                dataSource={data}
+                dataSource={data.map(e=>({...e, key: e.id}))}
                 rowSelection={rowSelection}
               />
             </Spin>
