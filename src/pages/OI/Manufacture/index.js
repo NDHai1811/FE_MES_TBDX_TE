@@ -8,18 +8,18 @@ import {
 import Manufacture1 from "./Manufacture1";
 const Manufacture = () => {
   document.title = "Sản xuất";
-  const { line } = useParams();
+  const { machine_id } = useParams();
   const history = useHistory();
   useEffect(() => {
     const screen = JSON.parse(localStorage.getItem("screen"));
     localStorage.setItem(
       "screen",
-      JSON.stringify({ ...screen, manufacture: line ?? "" })
+      JSON.stringify({ ...screen, manufacture: machine_id ?? "" })
     );
-    if (!line) {
+    if (!machine_id) {
       history.push("/manufacture/S01");
     }
-  }, [line]);
+  }, [machine_id]);
   return (
     <React.Fragment>
       <Manufacture1 />
