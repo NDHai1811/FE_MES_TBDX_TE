@@ -50,5 +50,17 @@ export const getErrorList = async (params) => {
 };
 
 export const getErrorLogs = async (params) => {
-  return await axios.get("/oi/equipment/error/log", {params});
+  return await axios.get("/oi/equipment/error/log", { params });
+};
+
+export const getEquipmentOverall = async (params) => {
+  return await axios.get("/oi/equipment/overall", { params });
+};
+
+export const getParamaters = async (params) => {
+  return await axios.get("/oi/equipment/parameters", { params });
+};
+
+export const sendErrorInputResults = async (data) => {
+  return await axios.post("/oi/equipment/parameters/save", data);
 };
