@@ -64,3 +64,7 @@ export const getParamaters = async (params) => {
 export const sendErrorInputResults = async (data) => {
   return await axios.post("/oi/equipment/parameters/save", data);
 };
+
+export const getEquipmentLogs = async (params) => {
+  return await axios.get("/oi/equipment/mapping-list", { params });
+};

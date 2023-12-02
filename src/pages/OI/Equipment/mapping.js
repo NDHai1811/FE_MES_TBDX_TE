@@ -5,19 +5,10 @@ import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-
-const data = [
-  {
-    lo_sx: "P231017",
-    ma_kh: "VICTORY",
-    don_hang: "1062/11",
-    mql: "4",
-    mapping: "Đã Mapping",
-    layout_id: "",
-    thong_so: "Đã đủ",
-  },
-];
+import { useParams } from "react-router-dom/cjs/react-router-dom";
+import { getEquipmentLogs } from "../../../api/oi/equipment";
+import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
+import { formatDateTime } from "../../../commons/utils";
 
 const tableColumns = [
   {
@@ -46,16 +37,16 @@ const tableColumns = [
   },
   {
     title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    dataIndex: "ma_don_hang",
+    key: "ma_don_hang",
     align: "center",
     width: "20%",
     render: (value) => value || "-",
   },
   {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
+    title: "Mã QL",
+    dataIndex: "ma_quan_ly",
+    key: "ma_quan_ly",
     align: "center",
     width: "20%",
     render: (value) => value || "-",
@@ -66,7 +57,6 @@ const tableColumns = [
     key: "mapping",
     align: "center",
     width: "20%",
-    render: (value) => value || "-",
   },
   {
     title: "TS XYZ",
@@ -91,48 +81,39 @@ const tableColumns = [
     align: "center",
     width: "20%",
     render: (value) => value || "-",
-  },
-];
-
-const tableData = [
-  {
-    lo_sx: "P231017",
-    ma_kh: "VICTORY",
-    don_hang: "1062/11",
-    mql: "4",
-    mapping: "Đã Mapping",
-    ts_xyz: "",
-  },
-  {
-    lo_sx: "P231017",
-    ma_kh: "KEN",
-    don_hang: "1064/11",
-    mql: "1",
-    mapping: "",
-    ts_xyz: "",
-  },
-  {
-    lo_sx: "P231017",
-    ma_kh: "KEN",
-    don_hang: "1064/11",
-    mql: "2",
-    mapping: "",
-    ts_xyz: "",
-  },
-  {
-    lo_sx: "P231017",
-    ma_kh: "KEN",
-    don_hang: "1064/11",
-    mql: "3",
-    mapping: "",
-    ts_xyz: "",
   },
 ];
 
 const Mapping = () => {
-  const {machine_id} = useParams();
+  const { machine_id } = useParams();
   const [visible, setVisible] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [date, setDate] = useState({
+    startDate: dayjs(),
+    endDate: dayjs(),
+  });
+  const [selectedItem, setSelectedItem] = useState([]);
+
+  useEffect(() => {
+    getLogs();
+  }, [machine_id, date.startDate, date.endDate]);
+
+  const getLogs = () => {
+    const resData = {
+      machine_id,
+      start_date: formatDateTime(date.startDate, COMMON_DATE_FORMAT_REQUEST),
+      end_date: formatDateTime(date.endDate, COMMON_DATE_FORMAT_REQUEST),
+    };
+    getEquipmentLogs(resData)
+      .then((res) => {
+        setLogs(res.data.data);
+        if (res.data.data.length > 0) {
+          setSelectedItem([res.data[0]]);
+        }
+      })
+      .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
+  };
 
   const columns = [
     {
@@ -145,8 +126,8 @@ const Mapping = () => {
     },
     {
       title: "Mã KH",
-      dataIndex: "ma_kh",
-      key: "ma_kh",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
       align: "center",
       width: "20%",
       render: (value) => value || "-",
@@ -195,9 +176,13 @@ const Mapping = () => {
     setIsShowPopup(true);
   };
 
+  const onSelectRow = (item) => {
+    setSelectedItem([item]);
+  };
+
   return (
     <React.Fragment>
-      <Row className="mt-1" style={{ justifyContent: "space-between" }}>
+      <Row style={{ justifyContent: "space-between" }}>
         <Col span={24}>
           <Table
             rowClassName={(record, index) => "table-row-light"}
@@ -205,7 +190,7 @@ const Mapping = () => {
             pagination={false}
             bordered={true}
             columns={columns}
-            dataSource={data}
+            dataSource={selectedItem}
             size="small"
           />
         </Col>
@@ -242,8 +227,15 @@ const Mapping = () => {
             x: window.screen.width,
           }}
           columns={tableColumns}
-          dataSource={tableData}
+          dataSource={logs}
           size="small"
+          onRow={(record, index) => {
+            return {
+              onClick: () => {
+                onSelectRow(record);
+              },
+            };
+          }}
         />
       </Row>
       {visible && <PopupQuetQr visible={visible} setVisible={setVisible} />}

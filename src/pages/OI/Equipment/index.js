@@ -46,7 +46,6 @@ const Equipment = (props) => {
   document.title = "Thiết bị";
   const { machine_id } = useParams();
   const history = useHistory();
-  // const [line, setLine] = useState();
   const [machines, setMachines] = useState([]);
   const [machine, setMachine] = useState("");
   const [date, setDate] = useState({
@@ -59,16 +58,6 @@ const Equipment = (props) => {
     "so_lan_dung": 0,
     "ty_le_van_hanh": 0
   }]);
-  // useEffect(() => {
-  //   (async () => {
-  //     const list_line = await getLine({ type: "tb" });
-  //     setOptionsLine(list_line.success == true ? list_line.data : []);
-  //     if (!line) {
-  //       history.push("/equipment/" + list_line.data[0].value);
-  //     }
-  //     // setLine(list_line.data[0]?.value);
-  //   })();
-  // }, []);
 
   useEffect(() => {
     if (machine_id) {
@@ -114,24 +103,6 @@ const Equipment = (props) => {
       .catch((err) => console.log("Lấy danh sách máy thất bại: ", err));
   };
 
-  const [row1, setRow1] = useState([
-    {
-      title: "Tg chạy",
-      value: "0",
-    },
-    {
-      title: "Tg dừng",
-      value: "0",
-    },
-    {
-      title: "Số lần dừng",
-      value: "0",
-    },
-    {
-      title: "Tỷ lệ vận hành",
-      value: "0",
-    },
-  ]);
   const items = [
     {
       key: 1,
