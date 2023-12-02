@@ -115,7 +115,7 @@ const tableData = [
   },
 ];
 
-const Mapping = () => {
+const Error = () => {
   const { machine_id } = useParams();
 
   const [selectedError, setSelectedError] = useState();
@@ -259,4 +259,4 @@ const Mapping = () => {
   );
 };
 
-export default Mapping;
+export default Error;

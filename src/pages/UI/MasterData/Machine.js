@@ -70,8 +70,8 @@ const Machine = () => {
     },
     {
       title: "Mã số",
-      dataIndex: "ma_so",
-      key: "ma_so",
+      dataIndex: "device_id",
+      key: "device_id",
       align: "center",
     },
     {
@@ -80,49 +80,6 @@ const Machine = () => {
       key: "line",
       align: "center",
       render: (value, item, index) => value?.name,
-    },
-    {
-      title: "Công suất",
-      dataIndex: "cong_suat",
-      key: "cong_suat",
-      align: "center",
-    },
-    {
-      title: "Hãng sản xuất",
-      dataIndex: "hang_sx",
-      key: "hang_sx",
-      align: "center",
-    },
-    {
-      title: "Năm sử dụng",
-      dataIndex: "nam_sd",
-      key: "nam_sd",
-      align: "center",
-    },
-    {
-      title: "Đơn vị sử dụng",
-      dataIndex: "don_vi_sd",
-      key: "don_vi_sd",
-      align: "center",
-    },
-    {
-      title: "Tình trạng",
-      dataIndex: "tinh_trang",
-      key: "tinh_trang",
-      align: "center",
-    },
-    {
-      title: "Vị trí",
-      dataIndex: "vi_tri",
-      key: "vi_tri",
-      align: "center",
-    },
-    {
-      title: "IOT",
-      dataIndex: "is_iot",
-      key: "is_iot",
-      align: "center",
-      render: (value) => (value ? "Có" : "Không"),
     },
   ];
   const formFields = [
@@ -143,48 +100,12 @@ const Machine = () => {
     },
     {
       title: "Mã số",
-      key: "ma_so",
+      key: "device_id",
       required: true,
     },
     {
       title: "Công đoạn",
       key: "line",
-      required: true,
-    },
-    {
-      title: "Công suất",
-      key: "cong_suat",
-      required: true,
-    },
-    {
-      title: "Hãng sản xuất",
-      key: "hang_sx",
-      required: true,
-    },
-    {
-      title: "Năm sử dụng",
-      key: "nam_sd",
-      required: true,
-    },
-    {
-      title: "Đơn vị sử dụng",
-      key: "don_vi_sd",
-      required: true,
-    },
-    {
-      title: "Tình trạng",
-      key: "tinh_trang",
-      required: true,
-    },
-    {
-      title: "Vị trí",
-      key: "vi_tri",
-      required: true,
-    },
-    {
-      title: "IOT",
-      key: "is_iot",
-      isTrueFalse: true,
       required: true,
     },
   ];
@@ -338,7 +259,7 @@ const Machine = () => {
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/machines/import"}
+                  action={baseURL + "/api/parameters/import"}
                   headers={{
                     authorization: "authorization-text",
                   }}
@@ -407,10 +328,6 @@ const Machine = () => {
                 size="small"
                 bordered
                 pagination={false}
-                scroll={{
-                  x: "130vw",
-                  y: "80vh",
-                }}
                 columns={col_detailTable}
                 dataSource={data}
                 rowSelection={rowSelection}

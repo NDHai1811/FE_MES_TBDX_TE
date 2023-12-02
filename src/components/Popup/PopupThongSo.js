@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Row, Col, Input } from "antd";
 import "./PopupQuetQr.css";
 
@@ -53,7 +53,7 @@ function PopupThongSo(props) {
     <div>
       <Modal
         title="Thông số"
-        visible={visible}
+        open={visible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
