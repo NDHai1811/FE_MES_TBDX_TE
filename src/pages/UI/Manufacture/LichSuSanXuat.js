@@ -13,13 +13,9 @@ import {
   Space,
   Spin,
 } from "antd";
-import { Column } from "@ant-design/plots";
 import "../style.scss";
 import {
   getLines,
-  getCustomers,
-  getProduceHistory,
-  getDataFilterUI,
 } from "../../../api/ui/main";
 import {
   exportProduceHistory,
@@ -28,9 +24,6 @@ import {
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { getProduceOverall, getProducePercent, getProduceTable } from "../../../api/ui/manufacture";
-
-const { Sider } = Layout;
-const { RangePicker } = DatePicker;
 
 const columns1 = [
   {

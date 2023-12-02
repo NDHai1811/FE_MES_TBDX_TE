@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Table, Button } from "antd";
+import { Row, Col, Table, Button, Modal } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -7,8 +7,9 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../../components/Button/SelectButton";
 import { warehousTPData } from "../mock-data";
-import ScanButton from "../../../../components/Button/ScanButton";
-import { PrinterOutlined } from "@ant-design/icons";
+import ScanQR from "../../../../components/Scanner";
+import PopupInTem from "../../../../components/Popup/PopupInTem";
+import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 
 const columnDetail = [
   {
@@ -150,6 +151,12 @@ const Import = (props) => {
       soPalletTonTrongKho: 0,
     },
   ]);
+  const [isScan, setIsScan] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
 
   const onSelectItem = (val) => {
     setSelectedItem([val]);
@@ -201,7 +208,20 @@ const Import = (props) => {
         <Col span={24}>
           <Row gutter={8}>
             <Col span={12}>
-              <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} />
+              <Button
+                block
+                className="h-100 w-100"
+                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+                type="primary"
+                onClick={() => setIsScan(true)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                Quét QR Code
+              </Button>
             </Col>
             <Col span={12}>
               <Button
@@ -209,6 +229,7 @@ const Import = (props) => {
                 className="h-100 w-100"
                 icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
                 type="primary"
+                onClick={onShowPopup}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -245,6 +266,22 @@ const Import = (props) => {
           />
         </Col>
       </Row>
+      {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
+      {isScan && (
+        <Modal
+          title="Quét QR"
+          open={isScan}
+          onCancel={() => setIsScan(false)}
+          footer={null}
+        >
+          <ScanQR
+            isScan={isScan}
+            onResult={(res) => {
+              setIsScan(false);
+            }}
+          />
+        </Modal>
+      )}
     </React.Fragment>
   );
 };

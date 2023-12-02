@@ -44,7 +44,6 @@ const data = [
 ];
 
 function PopupQuetQr(props) {
-  const [value, setValue] = useState(null);
 
   const { visible, setVisible } = props;
 

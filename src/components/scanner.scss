@@ -7,12 +7,21 @@
   text-indent: -9999px;
   line-height: 0;
   margin-bottom: 10px;
-}
-#html5-qrcode-button-camera-permission:after {
-  content: "Yêu cầu truy cập máy ảnh";
-  text-indent: 0;
-  display: block;
-  line-height: initial;
+  transition: all 0.3s ease-in-out;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  background-color: rgb(0, 172, 252);
+  color: #ffffff;
+  &:hover {
+    background-color: rgb(0, 172, 252);
+  }
+  &:after {
+    content: "Yêu cầu truy cập máy ảnh";
+    text-indent: 0;
+    display: block;
+    line-height: initial;
+  }
 }
 #html5-qrcode-anchor-scan-type-change {
   font-size: 0;

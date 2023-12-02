@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Layout,
   Divider,
@@ -12,42 +12,161 @@ import {
   Input,
   Upload,
   message,
-  Select,
+  Tabs,
   Col,
   Row,
   Space,
+  Tree,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { Column } from "@ant-design/plots";
 import "../style.scss";
 import { baseURL } from "../../../config";
 import {
   createWareHouseExport,
   deleteWareHouseExport,
-  getListLot,
   getListWarehouseExportPlan,
-  store,
-  testUpdateTable,
   updateWareHouseExport,
 } from "../../../api";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
-import {
-  getCustomers,
-  getDataFilterUI,
-  getProducts,
-} from "../../../api/ui/main";
-const { RangePicker } = DatePicker;
+
+const { TabPane } = Tabs;
+
+const itemsMenu = [
+  {
+    title: "Kho nguyên vật liệu",
+    key: "0-0",
+    children: [
+      {
+        title: "Kho A",
+        key: "0-1",
+      },
+      {
+        title: "Kho B",
+        key: "0-2",
+      },
+      {
+        title: "Kho dở dang",
+        key: "0-3",
+      },
+    ],
+  },
+  {
+    title: "KV bán thành phẩm",
+    key: "1-0",
+    children: [
+      {
+        title: "KV BTP giấy tấm",
+        key: "1-1",
+      },
+      {
+        title: "KV BTP sau in",
+        key: "1-2",
+      },
+    ],
+  },
+  {
+    title: "Kho thành phẩm",
+    key: "2-0",
+    children: [
+      {
+        title: "Kho chờ nhập",
+        key: "2-1",
+      },
+      {
+        title: "Kho đã nhập",
+        key: "2-2",
+      },
+    ],
+  },
+];
+
+const columns1 = [
+  {
+    title: "STT",
+    dataIndex: "index",
+    key: "index",
+    align: "center",
+    render: (value, item, index) => index + 1,
+  },
+  {
+    title: "Máy",
+    dataIndex: "may",
+    key: "may",
+    align: "center",
+  },
+  {
+    title: "Đầu sóng",
+    dataIndex: "dau_song",
+    key: "dau_song",
+    align: "center",
+  },
+  {
+    title: "Mã vật tư",
+    dataIndex: "ma_vat_tu",
+    key: "ma_vat_tu",
+    align: "center",
+  },
+  {
+    title: "Mã cuộn",
+    dataIndex: "ma_cuon",
+    key: "ma_cuon",
+    align: "center",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+  },
+  {
+    title: "Loại giấy",
+    dataIndex: "loai_giay",
+    key: "loai_giay",
+    align: "center",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "dinh_luong",
+    key: "dinh_luong",
+    align: "center",
+  },
+  {
+    title: "Số kg",
+    dataIndex: "so_kg",
+    key: "so_kg",
+    align: "center",
+  },
+  {
+    title: "Số m",
+    dataIndex: "so_m",
+    key: "so_m",
+    align: "center",
+  },
+  {
+    title: "Thời gian cần dự kiếm",
+    dataIndex: "tg_du_kien",
+    key: "tg_du_kien",
+    align: "center",
+  },
+];
 
 const { Sider } = Layout;
 const WarehouseExportPlan = (props) => {
   document.title = "UI - Kế hoạch xuất kho";
   const [data, setData] = useState([]);
   const [listCheck, setListCheck] = useState([]);
-  const [listCustomers, setListCustomers] = useState([]);
-  const [listIdProducts, setListIdProducts] = useState([]);
-  const [listNameProducts, setListNameProducts] = useState([]);
+  const [currentTab, setCurrentTab] = useState("1");
+  // const [listCustomers, setListCustomers] = useState([]);
+  // const [listIdProducts, setListIdProducts] = useState([]);
+  // const [listNameProducts, setListNameProducts] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const onChangeChecbox = (e) => {
     if (e.target.checked) {
       if (!listCheck.includes(e.target.value)) {
@@ -94,7 +213,6 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "name1",
       key: "name1",
       align: "center",
-      fixed: "left",
       render: (value, item, index) => (
         <Checkbox
           value={item.id}
@@ -104,211 +222,117 @@ const WarehouseExportPlan = (props) => {
       ),
     },
     {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-      // editable: true,
-      fixed: "left",
-    },
-    {
-      title: "Ngày xuất hàng",
-      dataIndex: "ngay_xuat_hang",
-      key: "ngay_xuat_hang",
-      align: "center",
-      // editable: true,
-      fixed: "left",
-    },
-    {
-      title: "Số lượng nợ đơn hàng",
-      align: "center",
-      children: [
-        {
-          title: "Mã hàng",
-          dataIndex: "product_id",
-          key: "product_id",
-          align: "center",
-          fixed: "left",
-        },
-        {
-          title: "Tên sản phẩm",
-          dataIndex: "ten_san_pham",
-          key: "ten_san_pham",
-          align: "center",
-          fixed: "left",
-        },
-        {
-          title: "PO pending",
-          dataIndex: "po_pending",
-          key: "po_pendding",
-          align: "center",
-          fixed: "left",
-        },
-        {
-          title: "SL yêu cầu giao",
-          dataIndex: "sl_yeu_cau_giao",
-          key: "sl_yeu_cau_giao",
-          align: "center",
-          fixed: "left",
-        },
-      ],
-      key: "abc",
-    },
-    {
-      title: "ĐVT",
-      dataIndex: "dvt",
-      key: "dvt",
+      title: "Mã cuộn TBDX",
+      dataIndex: "ma_cuon_tbdx",
+      key: "ma_cuon_tbdx",
       align: "center",
     },
     {
-      title: "Tổng kg",
-      dataIndex: "tong_kg",
+      title: "Mã vật tư",
+      dataIndex: "vat_tu_id",
+      key: "vat_tu_id",
+      align: "center",
+    },
+    {
+      title: "Tên nhà cung cấp",
+      dataIndex: "ten_ncc",
+      key: "ten_ncc",
+      align: "center",
+    },
+    {
+      title: "Mã cuộn nhà cung cấp",
+      dataIndex: "ma_cuon_ncc",
       key: "tong_kg",
       align: "center",
     },
     {
-      title: "Quy cách đóng thùng/bó",
-      dataIndex: "quy_cach",
-      key: "quy_cach",
+      title: "Số kg",
+      dataIndex: "so_kg",
+      key: "so_kg",
       align: "center",
     },
     {
-      title: "SL thùng chẵn",
-      dataIndex: "sl_thung_chan",
-      key: "sl_thung_chan",
+      title: "Loại giấy",
+      dataIndex: "loai_giay",
+      key: "loai_giay",
       align: "center",
     },
     {
-      title: "Số lượng hàng lẻ",
-      dataIndex: "sl_hang_le",
-      key: "sl_hang_le",
+      title: "Khổ giấy",
+      dataIndex: "kho_giay",
+      key: "kho_giay",
       align: "center",
     },
     {
-      title: "Tồn kho",
-      dataIndex: "ton_kho",
-      key: "ton_kho",
+      title: "Định lượng",
+      dataIndex: "dinh_luong",
+      key: "dinh_luong",
       align: "center",
     },
     {
-      title: "Xác nhận SX",
-      dataIndex: "xac_nhan_sx",
-      key: "xac_nhan_sx",
-      align: "center",
-    },
-    {
-      title: "SL thực xuất",
-      dataIndex: "sl_thuc_xuat",
-      key: "sl_thuc_xuat",
-      align: "center",
-    },
-    // {
-    //     title: 'SL chênh lệch',
-    //     dataIndex: 'sl_chenh_lech',
-    //     key: 'sl_chenh_lech',
-    // },
-    {
-      title: "Cửa xuất hàng",
-      dataIndex: "cua_xuat_hang",
-      key: "cua_xuat_hang",
-      align: "center",
-      // editable: true,
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "dia_chi",
-      key: "dia_chi",
-      align: "center",
-    },
-    {
-      title: "Ghi chú",
-      dataIndex: "ghi_chu",
-      key: "ghi_chu",
+      title: "IQC OK/NG",
+      dataIndex: "ok_ng",
+      key: "ok_ng",
       align: "center",
     },
   ];
   const mergedKey = "khach_hang";
-  const mergeColumn = ["khach_hang", "cua_xuat_hang", "dia_chi", "ghi_chu"];
+  const mergeColumn = [
+    "ma_cuon_tbdx",
+    "ma_vat_tu",
+    "ten_ncc",
+    "ma_cuon_ncc",
+    "so_kg",
+    "loai_giay",
+    "kho_giay",
+    "dinh_luong",
+    "ok_ng",
+  ];
   const mergeValue = mergeColumn.map((e) => {
     return { key: e, set: new Set() };
   });
-  // useEffect(() => {
-  //   (async () => {
-  //     var res1 = await getCustomers();
-  //     setListCustomers(
-  //       res1.data.map((e) => {
-  //         return { ...e, label: e.name, value: e.id };
-  //       })
-  //     );
-  //   })();
-  // }, []);
-  const isEditing = (col, record) => {
-    return col.editable === true && listCheck.includes(record.id);
-  };
-  const customColumns = columns.map((e) => {
-    if (mergeColumn.includes(e.key)) {
-      console.log(e);
-      return {
-        ...e,
-        onCell: (record) => {
-          const props = {
-            record,
-            ...e,
-            editable: isEditing(e, record),
-            handleSave,
-          };
-          const set = mergeValue.find((s) => s.key === e.key)?.set;
-          if (set?.has(record[mergedKey])) {
-            return { rowSpan: 0, ...props };
-          } else {
-            const rowCount = data.filter(
-              (data) => data[mergedKey] === record[mergedKey]
-            ).length;
-            set?.add(record[mergedKey]);
-            return { rowSpan: rowCount, ...props };
-          }
-        },
-      };
-    } else {
-      return {
-        ...e,
-        onCell: (record) => {
-          const props = {
-            record,
-            ...e,
-            editable: isEditing(e, record),
-            handleSave,
-          };
-          return props;
-        },
-      };
+
+  const isEditing = (col, record) =>
+    col.editable === true && listCheck.includes(record.id);
+
+  const onCell = (record, e) => {
+    const props = {
+      record,
+      ...e,
+      editable: isEditing(e, record),
+      handleSave,
+    };
+
+    if (!mergeColumn.includes(e.key)) {
+      return props;
     }
-  });
-  const handleSave = async (row) => {
-    setData((prev) =>
-      prev.map((e) => {
-        if (e.id === row.id) {
-          return row;
-        } else {
-          return e;
-        }
-      })
-    );
+
+    const set = mergeValue.find((s) => s.key === e.key)?.set;
+    if (set?.has(record[mergedKey])) {
+      return { rowSpan: 0, ...props };
+    }
+
+    const rowCount = data.filter(
+      (data) => data[mergedKey] === record[mergedKey]
+    ).length;
+    set?.add(record[mergedKey]);
+    return { rowSpan: rowCount, ...props };
   };
+
+  const customColumns = columns.map((e) => ({
+    ...e,
+    onCell: (record) => onCell(record, e),
+  }));
+
+  const handleSave = async (row) => {
+    setData((prev) => prev.map((e) => (e.id === row.id ? row : e)));
+  };
+
   const loadListTable = async () => {
     const res = await getListWarehouseExportPlan(params);
-    setData(
-      res.sort((a, b) => {
-        if (a[mergedKey] < b[mergedKey]) {
-          return -1;
-        }
-        if (a[mergedKey] > b[mergedKey]) {
-          return 1;
-        }
-        return 0;
-      })
-    );
+    setData(res.sort((a, b) => a[mergedKey].localeCompare(b[mergedKey])));
   };
+
   useEffect(() => {
     (async () => {
       loadListTable();
@@ -362,7 +386,14 @@ const WarehouseExportPlan = (props) => {
     setOpenMdlEdit(false);
     loadListTable();
   };
-  const [openMdlEdit, setOpenMdlEdit] = useState(false);
+
+  const onSelect = (selectedKeys, info) => {
+    console.log("selected", selectedKeys, info);
+  };
+  const onCheck = (checkedKeys, info) => {
+    console.log("onCheck", checkedKeys, info);
+  };
+
   return (
     <React.Fragment>
       {contextHolder}
@@ -375,6 +406,15 @@ const WarehouseExportPlan = (props) => {
           paddingTop: "15px",
         }}
       >
+        <Tree
+          checkable
+          defaultExpandedKeys={["0-0-0", "0-0-1"]}
+          defaultSelectedKeys={["0-0-0", "0-0-1"]}
+          defaultCheckedKeys={["0-0-0", "0-0-1"]}
+          onSelect={onSelect}
+          onCheck={onCheck}
+          treeData={itemsMenu}
+        />
         <Divider>Thời gian truy vấn</Divider>
         <div className="mb-3">
           <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -404,55 +444,46 @@ const WarehouseExportPlan = (props) => {
         <Divider>Điều kiện truy vấn</Divider>
         <div className="mb-3">
           <Form style={{ margin: "0 15px" }} layout="vertical">
-            <Form.Item label="Khách hàng" className="mb-3">
-              <Select
-                allowClear
-                showSearch
-                placeholder="Chọn khách hàng"
-                onChange={(value) =>
-                  setParams({ ...params, khach_hang: value })
+            <Form.Item
+              label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
+              className="mb-3"
+            >
+              <Input
+                placeholder={
+                  currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
                 }
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={listCustomers}
               />
             </Form.Item>
-            <Form.Item label="Tên sản phẩm" className="mb-3">
-              <Select
-                allowClear
-                showSearch
-                onChange={(value) => {
-                  setParams({ ...params, ten_sp: value });
-                }}
-                placeholder="Nhập tên sản phẩm"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label ?? "")
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
+            <Form.Item
+              label={currentTab === "1" ? "Tên nhà cung cấp" : "Đầu sóng"}
+              className="mb-3"
+            >
+              <Input
+                placeholder={
+                  currentTab === "1" ? "Nhập tên NCC" : "Nhập đầu sóng"
                 }
-                options={listNameProducts}
               />
             </Form.Item>
-            {/* <Form.Item label="Lô Sản xuất" className='mb-3'>
-                            <Select
-                                allowClear
-                                showSearch
-                                placeholder="Nhập lô sản xuất"
-                                optionFilterProp="children"
-                                filterOption={(input, option) =>
-                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                }
-                                onChange={(value)=>{
-                                    setParams({...params, lo_sx: value})
-                                }}
-                                options={listLoSX}
-                                />
-                        </Form.Item> */}
+            <Form.Item
+              label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
+              className="mb-3"
+            >
+              <Input
+                placeholder={
+                  currentTab === "1" ? "Nhập mã cuộn NCC" : "Nhập mã vật tư"
+                }
+              />
+            </Form.Item>
+            <Form.Item
+              label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
+              className="mb-3"
+            >
+              <Input
+                placeholder={
+                  currentTab === "1" ? "Nhập loại giấy" : "Nhập mã cuộn TBDX"
+                }
+              />
+            </Form.Item>
           </Form>
         </div>
         <div
@@ -469,54 +500,66 @@ const WarehouseExportPlan = (props) => {
       </Sider>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
         <Card
-          title="UI kế hoạch xuất kho"
+          title={
+            <Tabs
+              defaultActiveKey="1"
+              onChange={(activeKey) => setCurrentTab(activeKey)}
+            >
+              <TabPane tab="Nhập dữ liệu nhập kho" key="1"></TabPane>
+              <TabPane tab="Theo dõi xuất hàng" key="2"></TabPane>
+            </Tabs>
+          }
           extra={
-            <Space>
-              <Upload
-                showUploadList={false}
-                name="file"
-                action={baseURL + "/api/upload-ke-hoach-xuat-kho"}
-                headers={{
-                  authorization: "authorization-text",
-                }}
-                onChange={(info) => {
-                  setLoading(true);
-                  if (info.file.status === "error") {
-                    error();
-                    setLoading(false);
-                  } else if (info.file.status === "done") {
-                    if (info.file.response.success === true) {
-                      loadListTable();
-                      success();
+            currentTab === "1" ? (
+              <Space>
+                <Upload
+                  showUploadList={false}
+                  name="file"
+                  action={baseURL + "/api/upload-ke-hoach-xuat-kho"}
+                  headers={{
+                    authorization: "authorization-text",
+                  }}
+                  onChange={(info) => {
+                    setLoading(true);
+                    if (info.file.status === "error") {
+                      error();
                       setLoading(false);
-                    } else {
-                      loadListTable();
-                      message.error(info.file.response.message);
-                      setLoading(false);
+                    } else if (info.file.status === "done") {
+                      if (info.file.response.success === true) {
+                        loadListTable();
+                        success();
+                        setLoading(false);
+                      } else {
+                        loadListTable();
+                        message.error(info.file.response.message);
+                        setLoading(false);
+                      }
                     }
-                  }
-                }}
-              >
-                <Button type="primary" loading={loading}>
-                  Upload excel
+                  }}
+                >
+                  <Button type="primary" loading={loading}>
+                    Upload excel
+                  </Button>
+                </Upload>
+                <Button type="primary" onClick={deleteRecord}>
+                  Xóa
                 </Button>
-              </Upload>
-              <Button type="primary" onClick={deleteRecord}>
-                Delete
-              </Button>
-              <Button type="primary" onClick={onEdit}>
-                Edit
-              </Button>
-              <Button type="primary" onClick={onInsert}>
-                Insert
-              </Button>
-            </Space>
+                <Button type="primary" onClick={onEdit}>
+                  Sửa
+                </Button>
+                <Button type="primary" onClick={onInsert}>
+                  Chèn
+                </Button>
+                <Button type="primary">Lưu</Button>
+                <Button type="primary">In tem NVL</Button>
+              </Space>
+            ) : null
           }
           style={{ width: "100%" }}
         >
           <EditableTable
             bordered
-            columns={customColumns}
+            columns={currentTab === "1" ? customColumns : columns1}
             dataSource={data}
             scroll={{
               x: "130vw",
@@ -527,13 +570,6 @@ const WarehouseExportPlan = (props) => {
             setDataSource={setData}
             onEditEnd={() => null}
           />
-          {/* <Table bordered columns={columns} dataSource={data} pagination={false} size='small'
-                        scroll={
-                            {
-                                x: '150vw',
-                                y: '55vh',
-                            }
-                        } /> */}
         </Card>
       </Row>
       <Modal

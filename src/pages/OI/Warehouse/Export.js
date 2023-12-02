@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Form, Button } from "antd";
+import { Row, Col, Table, Form, Button, Modal } from "antd";
 import "../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../components/Button/SelectButton";
-import { useProfile } from "../../../components/hooks/UserHooks";
 import { useReactToPrint } from "react-to-print";
 import { warehousExportNVLData } from "./mock-data";
-import ScanButton from "../../../components/Button/ScanButton";
-import { PrinterOutlined } from "@ant-design/icons";
+import ScanQR from "../../../components/Scanner";
+import PopupInTem from "../../../components/Popup/PopupInTem";
+import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 
 const columnDetail = [
   {
@@ -141,10 +141,9 @@ const Export = (props) => {
   document.title = "Kho";
   const { line } = useParams();
   const history = useHistory();
-  const [customersData, setCustomersData] = useState([]);
+  const [isScan, setIsScan] = useState(false);
   const [data, setData] = useState([]);
   const [summary, setSummary] = useState({ plan_export: 0, actual_export: 0 });
-  const { userProfile } = useProfile();
   const [listTem, setListTem] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
@@ -153,6 +152,11 @@ const Export = (props) => {
       vi_tri: "A01",
     },
   ]);
+  const [visible, setVisible] = useState(false);
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
 
   useEffect(() => {
     if (data.length > 0) {
@@ -496,7 +500,20 @@ const Export = (props) => {
           />
         </Col>
         <Col span={12}>
-          <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} onScan={onScan} />
+          <Button
+            block
+            className="h-100 w-100"
+            icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+            type="primary"
+            onClick={() => setIsScan(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Quét QR Code
+          </Button>
         </Col>
         <Col span={12}>
           <Button
@@ -504,6 +521,7 @@ const Export = (props) => {
             className="h-100 w-100"
             icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
             type="primary"
+            onClick={onShowPopup}
             style={{
               display: "flex",
               alignItems: "center",
@@ -538,6 +556,23 @@ const Export = (props) => {
           />
         </Col>
       </Row>
+      {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
+      {isScan && (
+        <Modal
+          title="Quét QR"
+          open={isScan}
+          onCancel={() => setIsScan(false)}
+          footer={null}
+        >
+          <ScanQR
+            isScan={isScan}
+            onResult={(res) => {
+              onScan(res);
+              setIsScan(false);
+            }}
+          />
+        </Modal>
+      )}
     </React.Fragment>
   );
 };
