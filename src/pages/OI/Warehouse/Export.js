@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Form } from "antd";
+import { Row, Col, Table, Form, Button } from "antd";
 import "../style.scss";
 import {
   useHistory,
@@ -10,12 +10,44 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import { useReactToPrint } from "react-to-print";
 import { warehousExportNVLData } from "./mock-data";
 import ScanButton from "../../../components/Button/ScanButton";
+import { PrinterOutlined } from "@ant-design/icons";
 
 const columnDetail = [
   {
-    title: "Đầu sóng",
-    dataIndex: "dau_song",
-    key: "dau_song",
+    title: "Vị trí",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Mã cuộn TBDX",
+    dataIndex: "TBDX_id",
+    key: "TBDX_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Đầu máy",
+    dataIndex: "dau_may",
+    key: "dau_may",
+    align: "center",
+    render: (value) => value || "-",
+  },
+];
+
+const exportColumns = [
+  {
+    title: "STT",
+    dataIndex: "stt",
+    key: "stt",
+    align: "center",
+    render: (value, record, index) => index + 1,
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
     align: "center",
     render: (value) => value || "-",
   },
@@ -27,15 +59,12 @@ const columnDetail = [
     render: (value) => value || "-",
   },
   {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    title: "Đầu máy",
+    dataIndex: "dau_may",
+    key: "dau_song",
     align: "center",
     render: (value) => value || "-",
   },
-];
-
-const exportColumns = [
   {
     title: "Thời gian cần",
     dataIndex: "time",
@@ -44,23 +73,9 @@ const exportColumns = [
     render: (value) => value || "-",
   },
   {
-    title: "Đầu sóng",
-    dataIndex: "dau_song",
-    key: "dau_song",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã cuộn TBDX",
-    dataIndex: "ma_cuon_tbdx",
-    key: "ma_cuon_tbdx",
+    title: "Số kg",
+    dataIndex: "so_kg",
+    key: "so_kg",
     align: "center",
     render: (value) => value || "-",
   },
@@ -78,62 +93,34 @@ const exportColumns = [
     align: "center",
     render: (value) => value || "-",
   },
-  {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Định lượng",
-    dataIndex: "dinh_luong",
-    key: "dinh_luong",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Người xuất",
-    dataIndex: "nguoi_xuat",
-    key: "nguoi_xuat",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Thời gian xuất",
-    dataIndex: "thoi_gian_xuat",
-    key: "thoi_gian_xuat",
-    align: "center",
-    render: (value) => value || "-",
-  },
 ];
 
 const column2 = [
   {
-    title: "Số KG xuất trong ngày",
-    dataIndex: "soKgNhapTrongNgay",
-    key: "soKgNhapTrongNgay",
+    title: "Sl nhập",
+    dataIndex: "sl_nhap",
+    key: "sl_nhap",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số cuộn xuất trong ngày",
-    dataIndex: "soCuonNhapTrongNgay",
-    key: "soCuonNhapTrongNgay",
+    title: "Sl xuất",
+    dataIndex: "sl_xuat",
+    key: "sl_xuat",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số KG tồn trong kho",
-    dataIndex: "soKgTonTrongKho",
-    key: "soKgTonTrongKho",
+    title: "Sl tồn",
+    dataIndex: "sl_ton",
+    key: "sl_ton",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số cuộn tồn trong kho",
-    dataIndex: "soCuonTonTrongKho",
-    key: "soCuonTonTrongKho",
+    title: "Số ngày tồn kho",
+    dataIndex: "so_ngay_ton_kho",
+    key: "so_ngay_ton_kho",
     align: "center",
     render: (value) => value || "-",
   },
@@ -227,7 +214,7 @@ const Export = (props) => {
       soCuonTonTrongKho: 0,
     },
   ]);
-  const [currentKhachHang, setCurrentKhachHang] = useState("");
+
   const [valueQR, setValueQR] = useState("");
   const [form] = Form.useForm();
   // const onFinish = async (values) => {
@@ -467,8 +454,8 @@ const Export = (props) => {
   const onScan = () => {};
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[6, 6]}>
-        <Col span={24}>
+      <Row className="mt-3" gutter={[6, 12]}>
+        <Col span={6}>
           <SelectButton
             value={line}
             options={options}
@@ -476,15 +463,15 @@ const Export = (props) => {
             onChange={onChangeLine}
           />
         </Col>
-        <Col span={24}>
+        <Col span={18}>
           <Table
-            rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : "table-row-green"
-            }
+            // rowClassName={(record, index) =>
+            //   record.status === 1
+            //     ? "table-row-yellow"
+            //     : record.status === 2
+            //     ? "table-row-grey"
+            //     : "table-row-green"
+            // }
             pagination={false}
             bordered
             className="mb-1"
@@ -494,13 +481,13 @@ const Export = (props) => {
         </Col>
         <Col span={24}>
           <Table
-            rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : "table-row-green"
-            }
+            // rowClassName={(record, index) =>
+            //   record.status === 1
+            //     ? "table-row-yellow"
+            //     : record.status === 2
+            //     ? "table-row-grey"
+            //     : "table-row-green"
+            // }
             pagination={false}
             bordered
             className="mb-1"
@@ -508,8 +495,23 @@ const Export = (props) => {
             dataSource={selectedItem}
           />
         </Col>
-        <Col span={24}>
+        <Col span={12}>
           <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} onScan={onScan} />
+        </Col>
+        <Col span={12}>
+          <Button
+            block
+            className="h-100 w-100"
+            icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
+            type="primary"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            In tem pallet
+          </Button>
         </Col>
         <Col span={24}>
           <Table

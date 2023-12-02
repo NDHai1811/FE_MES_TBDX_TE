@@ -12,75 +12,40 @@ import { PrinterOutlined } from "@ant-design/icons";
 
 const columnDetail = [
   {
-    title: "Số pallet",
-    dataIndex: "so_pallet",
-    key: "so_pallet",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số lot",
-    dataIndex: "so_lot",
-    key: "so_lot",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số MQL",
-    dataIndex: "so_mql",
-    key: "so_mql",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí đề xuất",
+    title: "Vị trí",
     dataIndex: "vi_tri",
     key: "vi_tri",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số lượng",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    title: "Pallet",
+    dataIndex: "pallet",
+    key: "pallet",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Tách",
-    dataIndex: "tach",
-    key: "tach",
+    title: "Số lượng xuất",
+    dataIndex: "sl_xuat",
+    key: "sl_xuat",
     align: "center",
-    render: (_, record) => <input type="checkbox" checked />,
-  },
-  {
-    title: "Gộp",
-    dataIndex: "gop",
-    key: "gop",
-    align: "center",
-    render: (_, record) => <input type="checkbox" checked={false} />,
+    render: (value) => value || "-",
   },
 ];
 
 const exportColumns = [
   {
-    title: "Thời gian xuất theo KH",
+    title: "STT",
+    dataIndex: "stt",
+    key: "stt",
+    align: "center",
+    render: (value, record, index) => index + 1,
+  },
+  {
+    title: "Thời gian xuất KH",
     dataIndex: "time",
     key: "time",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số pallet",
-    dataIndex: "so_pallet",
-    key: "so_pallet",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số xe",
-    dataIndex: "so_xe",
-    key: "so_xe",
     align: "center",
     render: (value) => value || "-",
   },
@@ -92,9 +57,16 @@ const exportColumns = [
     render: (value) => value || "-",
   },
   {
-    title: "Số MQL",
-    dataIndex: "so_mql",
-    key: "so_mql",
+    title: "Mã tem (pallet)",
+    dataIndex: "tem_id",
+    key: "tem_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Mã lot",
+    dataIndex: "lot_id",
+    key: "lot_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -106,23 +78,9 @@ const exportColumns = [
     render: (value) => value || "-",
   },
   {
-    title: "Số đơn hàng",
-    dataIndex: "so_don_hang",
-    key: "so_don_hang",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khach hàng",
+    title: "Khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Người nhập",
-    dataIndex: "nguoi_nhap",
-    key: "nguoi_nhap",
     align: "center",
     render: (value) => value || "-",
   },
@@ -130,23 +88,30 @@ const exportColumns = [
 
 const column2 = [
   {
-    title: "Số Pallet nhập trong ngày",
-    dataIndex: "soPalletNhapTrongNgay",
-    key: "soPalletNhapTrongNgay",
+    title: "Sl nhập",
+    dataIndex: "sl_nhap",
+    key: "sl_nhap",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số Pallet xuất trong ngày",
-    dataIndex: "soPalletXuatTrongNgay",
-    key: "soPalletXuatTrongNgay",
+    title: "Sl xuất",
+    dataIndex: "sl_xuat",
+    key: "sl_xuat",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Tổng Pallet tồn trong kho",
-    dataIndex: "soPalletTonTrongKho",
-    key: "soPalletTonTrongKho",
+    title: "Sl tồn",
+    dataIndex: "sl_ton",
+    key: "sl_ton",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Số ngày tồn kho",
+    dataIndex: "so_ngay_ton_kho",
+    key: "so_ngay_ton_kho",
     align: "center",
     render: (value) => value || "-",
   },
@@ -193,24 +158,24 @@ const Import = (props) => {
 
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[12, 12]}>
-        <Col span={24}>
+      <Row className="mt-3" gutter={[4, 12]}>
+        <Col span={6}>
           <SelectButton
             value={line}
             options={options}
-            label="Chọn"
+            label="Kho"
             onChange={onChangeLine}
           />
         </Col>
-        <Col span={24}>
+        <Col span={18}>
           <Table
-            rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : "table-row-green"
-            }
+            // rowClassName={(record, index) =>
+            //   record.status === 1
+            //     ? "table-row-yellow"
+            //     : record.status === 2
+            //     ? "table-row-grey"
+            //     : "table-row-green"
+            // }
             pagination={false}
             bordered
             className="mb-1"
@@ -220,16 +185,13 @@ const Import = (props) => {
         </Col>
         <Col span={24}>
           <Table
-            rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : "table-row-green"
-            }
-            scroll={{
-              x: window.screen.width,
-            }}
+            // rowClassName={(record, index) =>
+            //   record.status === 1
+            //     ? "table-row-yellow"
+            //     : record.status === 2
+            //     ? "table-row-grey"
+            //     : "table-row-green"
+            // }
             pagination={false}
             bordered
             className="mb-1"
@@ -239,22 +201,22 @@ const Import = (props) => {
         </Col>
         <Col span={24}>
           <Row gutter={8}>
-            <Col span={8}>
+            <Col span={12}>
               <ScanButton placeholder={"Nhập mã hoặc quét mã QR"} />
             </Col>
-            <Col span={8}>
+            <Col span={12}>
               <Button
                 block
                 className="h-100 w-100"
-                icon={<PrinterOutlined />}
+                icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
                 type="primary"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
                 In tem pallet
-              </Button>
-            </Col>
-            <Col span={8}>
-              <Button block className="h-100 w-100" type="primary">
-                Nhập lại
               </Button>
             </Col>
           </Row>
