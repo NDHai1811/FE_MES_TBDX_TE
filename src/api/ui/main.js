@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function getLines(params) {
-  const res = await axios.get("ui/lines");
+  const res = await axios.get("ui/manufacture/line");
   return res;
 }
 

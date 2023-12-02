@@ -37,6 +37,7 @@ import {
   exportReportQC,
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
+import { getErrorDetailList } from "../../../api/ui/quality";
 
 const { Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -372,8 +373,8 @@ const QualityPQC = (props) => {
     },
     {
       title: "Máy",
-      dataIndex: "machine",
-      key: "machine",
+      dataIndex: "machine_id",
+      key: "machine_id",
       align: "center",
       fixed: "left",
     },
@@ -385,8 +386,8 @@ const QualityPQC = (props) => {
     },
     {
       title: "Đơn hàng",
-      dataIndex: "don_hang",
-      key: "don_hang",
+      dataIndex: "ma_don_hang",
+      key: "ma_don_hang",
       align: "center",
     },
     {
@@ -409,44 +410,44 @@ const QualityPQC = (props) => {
     },
     {
       title: "TG BĐ",
-      dataIndex: "tg_bd",
-      key: "tg_bd",
+      dataIndex: "thoi_gian_bat_dau",
+      key: "thoi_gian_bat_dau",
       align: "center",
     },
     {
       title: "TG KT",
-      dataIndex: "tg_kt",
-      key: "tg_kt",
+      dataIndex: "thoi_gian_ket_thuc",
+      key: "thoi_gian_ket_thuc",
       align: "center",
     },
     {
       title: "Sản lượng đếm được",
-      dataIndex: "san_luong_dem_duoc",
-      key: "san_luong_dem_duoc",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
       align: "center",
     },
     {
       title: "Sản lượng sau QC",
-      dataIndex: "sl_sau_qc",
-      key: "sl_sau_qc",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
       align: "center",
     },
     {
       title: "Tỷ lệ lỗi",
-      dataIndex: "ti_le_loi",
-      key: "ti_le_loi",
+      dataIndex: "ty_le_loi",
+      key: "ty_le_loi",
       align: "center",
     },
     {
       title: "Số phế",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
+      dataIndex: "sl_phe",
+      key: "sl_phe",
       align: "center",
     },
     {
       title: "Tỷ lệ phế",
-      dataIndex: "ti_le_phe",
-      key: "ti_le_phe",
+      dataIndex: "ty_le_ng",
+      key: "ty_le_ng",
       align: "center",
     },
     {
@@ -466,7 +467,7 @@ const QualityPQC = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      render: (value, record)=>value === 1 ? 'OK' : 'NG'
+      render: (value, record)=>value === 1 ? 'OK' : value === 2 ? 'NG' : 'waiting'
     },
     {
       title: "Cho phép tái kiểm",
@@ -477,52 +478,15 @@ const QualityPQC = (props) => {
     },
   ];
 
-  const [dataDetail, setDataDetail] = useState([
-    {
-      machine: 'S01',
-      khach_hang: 'VICTORY',
-      don_hang: "420/7",
-      lo_sx:'231012',
-      lot_id:'xxxxxx.001',
-      quy_cach:'DxRxC',
-      tg_bd:2.4,
-      tg_kt:1.2,
-      san_luong_dem_duoc:1000,
-      sl_sau_qc: 1000,
-      ti_le_loi:'10%',
-      sl_ng:10,
-      ti_le_phe:'10%',
-      sl_tinh_trang: 2,
-      sl_ngoai_quan: 3,
-      phan_dinh: 2
-    },
-    {
-      machine: 'S01',
-      khach_hang: 'VICTORY',
-      don_hang: "420/7",
-      lo_sx:'231012',
-      lot_id:'xxxxxx.002',
-      quy_cach:'DxRxC',
-      tg_bd:2.4,
-      tg_kt:1.2,
-      san_luong_dem_duoc:1000,
-      sl_sau_qc: 1000,
-      ti_le_loi:'10%',
-      sl_ng:10,
-      ti_le_phe:'10%',
-      sl_tinh_trang: 2,
-      sl_ngoai_quan: 3,
-      phan_dinh: 1
-    },
-  ]);
+  const [dataDetail, setDataDetail] = useState([]);
 
   function btn_click() {
-    // (async () => {
-    //   setLoading(true);
-    //   const res1 = await getPQCHistory(params);
-    //   setData(res1.data);
-    //   setLoading(false);
-    // })();
+    (async () => {
+      setLoading(true);
+      const res = await getErrorDetailList(params);
+      setDataDetail(res.data);
+      setLoading(false);
+    })();
   }
 
   useEffect(() => {

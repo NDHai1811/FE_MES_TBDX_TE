@@ -27,6 +27,7 @@ import {
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
+import { getProduceOverall, getProducePercent, getProduceTable } from "../../../api/ui/manufacture";
 
 const { Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -34,14 +35,14 @@ const { RangePicker } = DatePicker;
 const columns1 = [
   {
     title: "Số lượng đầu ra (kế hoạch)",
-    dataIndex: "sl_dau_ra_kh",
-    key: "sl_dau_ra_kh",
+    dataIndex: "sl_kh",
+    key: "sl_kh",
     align: "center",
   },
   {
     title: "Số lượng sau QC (thực tế)",
-    dataIndex: "sl_dau_ra_thuc_te_ok",
-    key: "sl_dau_ra_thuc_te_ok",
+    dataIndex: "sl_ok",
+    key: "sl_ok",
     align: "center",
   },
   {
@@ -58,13 +59,38 @@ const columns1 = [
   },
   {
     title: "Số phế",
-    dataIndex: "sl_ng",
-    key: "sl_ng",
+    dataIndex: "sl_phe",
+    key: "sl_phe",
     className: "red",
     align: "center",
   },
 ];
-
+const columns2 = [
+  {
+    title: 'Lô SX',
+    dataIndex: 'lo_sx',
+    key: 'lo_sx',
+    align: 'center',
+  },
+  {
+    title: 'Sóng',
+    dataIndex: '30',
+    key: '30',
+    align: 'center',
+  },
+  {
+    title: 'In',
+    dataIndex: '31',
+    key: '31',
+    align: 'center',
+  },
+  {
+    title: 'Dán',
+    dataIndex: '31',
+    key: '31',
+    align: 'center',
+  },
+]
 const columns3 = [
   {
     title: "STT",
@@ -92,8 +118,8 @@ const columns3 = [
   },
   {
     title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    dataIndex: "ma_don_hang",
+    key: "ma_don_hang",
     align: "center",
     fixed: "left",
   },
@@ -158,20 +184,20 @@ const columns3 = [
       },
       {
         title: "Sản lượng sau QC",
-        dataIndex: "sl_dau_ra_ok",
-        key: "sl_dau_ra_ok",
+        dataIndex: "sl_ok",
+        key: "sl_ok",
         align: "center",
       },
       {
         title: "Số lượng phế",
-        dataIndex: "sl_ng",
-        key: "sl_ng",
+        dataIndex: "sl_phe",
+        key: "sl_phe",
         align: "center",
       },
       {
         title: "Tỉ lệ đầu ra/Đầu vào",
-        dataIndex: "sl_ng",
-        key: "sl_ng",
+        dataIndex: "ty_le_dau_ra_vao",
+        key: "ty_le_dau_ra_vao",
         align: "center",
       },
     ],
@@ -279,12 +305,12 @@ const LichSuSanXuat = (props) => {
   };
   useEffect(() => {
     (async () => {
-      // const res1 = await getLines();
-      // setListLines(
-      //   res1.data.map((e) => {
-      //     return { ...e, label: e.name, value: e.id };
-      //   })
-      // );
+      const res1 = await getLines();
+      setListLines(
+        res1.data.map((e) => {
+          return { ...e, label: e.name, value: e.id };
+        })
+      );
       // const res5 = await getCustomers();
       // setListCustomers(
       //   res5.data.map((e) => {
@@ -292,12 +318,8 @@ const LichSuSanXuat = (props) => {
       //   })
       // );
     })();
-    // btn_click();
+    btn_click();
   }, []);
-
-  useEffect(() => {
-    if (listLines.length > 0) setSelectedLine(listLines[1].id);
-  }, [listLines]);
 
   useEffect(() => {
     (async () => {
@@ -337,11 +359,11 @@ const LichSuSanXuat = (props) => {
       quy_cach: "50x40x60",
       sl_dau_vao_kh: '100',
       sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau:'20/11/2023',
-      thoi_gian_ket_thuc:'20/11/2023',
-      sl_dau_ra_hang_loat:'100',
-      sl_ok:'100',
-      sl_ng:'0',
+      thoi_gian_bat_dau: '20/11/2023',
+      thoi_gian_ket_thuc: '20/11/2023',
+      sl_dau_ra_hang_loat: '100',
+      sl_ok: '100',
+      sl_ng: '0',
     },
     {
       machine_id: 'S01',
@@ -352,11 +374,11 @@ const LichSuSanXuat = (props) => {
       quy_cach: "50x40x60",
       sl_dau_vao_kh: '100',
       sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau:'20/11/2023',
-      thoi_gian_ket_thuc:'20/11/2023',
-      sl_dau_ra_hang_loat:'100',
-      sl_ok:'100',
-      sl_ng:'0',
+      thoi_gian_bat_dau: '20/11/2023',
+      thoi_gian_ket_thuc: '20/11/2023',
+      sl_dau_ra_hang_loat: '100',
+      sl_ok: '100',
+      sl_ng: '0',
     }, {
       machine_id: 'S01',
       khach_hang: 'SHB',
@@ -366,11 +388,11 @@ const LichSuSanXuat = (props) => {
       quy_cach: "50x40x60",
       sl_dau_vao_kh: '100',
       sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau:'20/11/2023',
-      thoi_gian_ket_thuc:'20/11/2023',
-      sl_dau_ra_hang_loat:'100',
-      sl_ok:'100',
-      sl_ng:'0',
+      thoi_gian_bat_dau: '20/11/2023',
+      thoi_gian_ket_thuc: '20/11/2023',
+      sl_dau_ra_hang_loat: '100',
+      sl_ok: '100',
+      sl_ng: '0',
     },
     {
       machine_id: 'S01',
@@ -381,11 +403,11 @@ const LichSuSanXuat = (props) => {
       quy_cach: "50x40x60",
       sl_dau_vao_kh: '100',
       sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau:'20/11/2023',
-      thoi_gian_ket_thuc:'20/11/2023',
-      sl_dau_ra_hang_loat:'100',
-      sl_ok:'100',
-      sl_ng:'0',
+      thoi_gian_bat_dau: '20/11/2023',
+      thoi_gian_ket_thuc: '20/11/2023',
+      sl_dau_ra_hang_loat: '100',
+      sl_ok: '100',
+      sl_ng: '0',
     },
     {
       machine_id: 'S01',
@@ -396,11 +418,11 @@ const LichSuSanXuat = (props) => {
       quy_cach: "50x40x60",
       sl_dau_vao_kh: '100',
       sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau:'20/11/2023',
-      thoi_gian_ket_thuc:'20/11/2023',
-      sl_dau_ra_hang_loat:'100',
-      sl_ok:'100',
-      sl_ng:'0',
+      thoi_gian_bat_dau: '20/11/2023',
+      thoi_gian_ket_thuc: '20/11/2023',
+      sl_dau_ra_hang_loat: '100',
+      sl_ok: '100',
+      sl_ng: '0',
     },
     {
       machine_id: 'S01',
@@ -411,11 +433,11 @@ const LichSuSanXuat = (props) => {
       quy_cach: "50x70x80",
       sl_dau_vao_kh: '100',
       sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau:'20/11/2023',
-      thoi_gian_ket_thuc:'20/11/2023',
-      sl_dau_ra_hang_loat:'100',
-      sl_ok:'100',
-      sl_ng:'0',
+      thoi_gian_bat_dau: '20/11/2023',
+      thoi_gian_ket_thuc: '20/11/2023',
+      sl_dau_ra_hang_loat: '100',
+      sl_ok: '100',
+      sl_ng: '0',
     }
   ]);
   const [dataTable3, setDataTable3] = useState([]);
@@ -423,39 +445,16 @@ const LichSuSanXuat = (props) => {
   function btn_click() {
     (async () => {
       setLoading(true);
-      const res1 = await getProduceHistory(params);
-      let data = res1.data;
-      console.log(data);
-
-      setDataTable1([
-        {
-          chenh_lech: data.overall["sl_chenh_lech"],
-          sl_dau_ra_kh: data.overall["sl_dau_ra_kh"],
-          sl_dau_ra_thuc_te_ok: data.overall["sl_dau_ra_thuc_te_ok"],
-          sl_ng: data.overall["sl_ng"],
-          sl_tem_vang: data.overall["sl_tem_vang"],
-          ty_le: data.overall["ty_le"],
-        },
-      ]);
-
-      setDataTable2(
-        Object.keys(data.percent).map((item, i) => {
-          return {
-            lo_sx: item,
-            ...data.percent[item],
-          };
-        })
-      );
-
-      setDataTable3(
-        data.table.map((e) => {
-          return {
-            ...e,
-          };
-        })
-      );
+      const res1 = await getProduceOverall(params);
+      const res2 = await getProducePercent(params);
+      const res3 = await getProduceTable(params);
+      setDataTable1(res1.data);
+      setDataTable2(Object.keys(res2.data ?? {}).map(key=>{
+        return {...res2.data[key], lo_sx: key};
+      }));
+      setDataTable3(res3.data);
       setLoading(false);
-    })();
+    })()
   }
   const [exportLoading1, setExportLoading1] = useState(false);
   const [exportLoading2, setExportLoading2] = useState(false);
@@ -629,7 +628,7 @@ const LichSuSanXuat = (props) => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Tiến độ"
+            title="Lịch sử sản xuất"
             extra={
               <Space>
                 <Button
@@ -650,26 +649,24 @@ const LichSuSanXuat = (props) => {
             }
           >
             <Spin spinning={loading}>
-              <Row gutter={[20, 20]} className="mb-2">
-                <Col span={14}>
-                  <Table
-                    className="mb-3"
-                    size="small"
-                    bordered
-                    pagination={false}
-                    columns={columns1}
-                    dataSource={dataTable1}
-                  />
-                </Col>
-                <Col span={5} className="p-3">
-                  <h6 className="mb-4 text-center">Hoàn thành kế hoạch</h6>
-                  <Column {...config} />
-                </Col>
-                <Col span={5} className="p-3">
-                  <h6 className="mb-4 text-center">Cycle time</h6>
-                  <Column {...config1} />
-                </Col>
-              </Row>
+              <Table
+                className="mb-3"
+                size="small"
+                bordered
+                pagination={false}
+                columns={columns1}
+                dataSource={dataTable1}
+              />
+              <Table className='mb-3' size='small' bordered
+                pagination={false}
+                scroll={
+                  {
+                    x: '100%',
+                    y: '15vh'
+                  }
+                }
+                columns={columns2}
+                dataSource={dataTable2} />
               <Table
                 size="small"
                 bordered
@@ -679,7 +676,7 @@ const LichSuSanXuat = (props) => {
                   y: "50vh",
                 }}
                 columns={columns3}
-                dataSource={dataTable2}
+                dataSource={dataTable3}
               />
             </Spin>
           </Card>

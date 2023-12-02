@@ -25,7 +25,7 @@ import {
   getListProductPlan,
   storeProductPlan,
   updateProductPlan,
-} from "../../../api";
+} from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
 
 const KeHoachSanXuat = () => {
@@ -101,8 +101,8 @@ const KeHoachSanXuat = () => {
     },
     {
       title: "Mã đơn hàng",
-      dataIndex: "ma_dh",
-      key: "ma_dh",
+      dataIndex: "ma_don_hang",
+      key: "ma_don_hang",
       align: "center",
     },
     {
@@ -131,8 +131,8 @@ const KeHoachSanXuat = () => {
     },
     {
       title: "Số m tới",
-      dataIndex: "Số m tới",
-      key: "Số m tới",
+      dataIndex: "so_m_toi",
+      key: "so_m_toi",
       align: "center",
     },
     {
