@@ -224,7 +224,7 @@ const Manufacture1 = (props) => {
   const getOverAllDetail = () => {
     setLoading(true);
     const resData = {
-      machine_id: machine_id,
+      machine_id,
       start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
       end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
     };
@@ -239,7 +239,7 @@ const Manufacture1 = (props) => {
 
   const getListLotDetail = async () => {
     const resData = {
-      machine_id: machine_id,
+      machine_id,
       start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
       end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
     };
@@ -284,16 +284,16 @@ const Manufacture1 = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
-      if (machine_id === 'S01') {
+      if (machine_id === "S01") {
         print();
-      } else if (machine_id == 'P06' || machine_id == 'P16') {
+      } else if (machine_id == "P06" || machine_id == "P16") {
         printIn();
-      } else if (machine_id == 'D05' || machine_id == 'D06') {
+      } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();
       }
     }
     setListCheck([]);
-  }, [listCheck.length])
+  }, [listCheck.length]);
 
   const handlePrint = async () => {
     const res = await getInfoTem({ machine_id: machine_id });

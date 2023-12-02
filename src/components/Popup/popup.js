@@ -1,29 +1,7 @@
-import { AutoComplete, Form, Input, Modal, Button } from "antd";
+import { AutoComplete, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { getErrorList, updateErrorStatus } from "../../api/oi/equipment";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
-
-const options = [
-  { value: "Cúp điện theo lịch" },
-  { value: "Mất pha" },
-  { value: "Đứt dây điện" },
-];
-
-const errorOptions = [
-  { value: "Mất điện" },
-  { value: "Sản phẩm mới (duyệt mẫu)" },
-  { value: "Bảo trì (định kỳ)" },
-  { value: "Vệ sinh 5S" },
-  { value: "Nghỉ giữa ca" },
-  { value: "Đổi đơn hàng" },
-  { value: "Thiếu người" },
-  { value: "Thiếu nguyên vật liệu" },
-  { value: "Nguyên vật liệu không đạt" },
-  { value: "Vệ sinh giao ca" },
-  { value: "Lô hư" },
-  { value: "Hết đơn hàng" },
-  { value: "Máy hư" },
-];
 
 const Popup = (props) => {
   const {machine_id} = useParams();
@@ -48,7 +26,7 @@ const Popup = (props) => {
       su_co: values.suCo,
       cach_xu_ly: values.cachXuLy,
     })
-      .then()
+      .then((res) => console.log(res.data))
       .catch((err) => console.log("Cập nhật sự cố thất bại: ", err));
   };
 

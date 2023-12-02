@@ -1,27 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Tabs, Card } from "antd";
+import { Row, Col, Tabs, Card, Table } from "antd";
 import { withRouter } from "react-router-dom";
-import DataDetail from "../../../components/DataDetail";
 import SelectButton from "../../../components/Button/SelectButton";
 import "../style.scss";
 import { useHistory, useParams } from "react-router-dom";
 import Error from "./error";
-import {
-  getLine,
-  getListMachineOfLine,
-  getMachines,
-} from "../../../api/oi/equipment";
+import { getEquipmentOverall, getMachines } from "../../../api/oi/equipment";
 import Mapping from "./mapping";
+import dayjs from "dayjs";
+import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
+import { formatDateTime } from "../../../commons/utils";
+
+const columns = [
+  {
+    title: "Tg chạy",
+    dataIndex: "thoi_gian_chay",
+    key: "thoi_gian_chay",
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "Tg dừng",
+    dataIndex: "thoi_gian_dung",
+    key: "thoi_gian_dung",
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "Số lần dừng",
+    dataIndex: "so_lan_dung",
+    key: "so_lan_dung",
+    align: "center",
+    width: "20%",
+  },
+  {
+    title: "Tỷ lệ vận hành",
+    dataIndex: "ty_le_van_hanh",
+    key: "ty_le_van_hanh",
+    align: "center",
+    width: "20%",
+  },
+];
 
 const Equipment = (props) => {
   document.title = "Thiết bị";
   const { machine_id } = useParams();
   const history = useHistory();
-  const [optionsLine, setOptionsLine] = useState([]);
   // const [line, setLine] = useState();
-  const [listMachine, setListMachine] = useState([]);
   const [machines, setMachines] = useState([]);
   const [machine, setMachine] = useState("");
+  const [date, setDate] = useState({
+    startDate: dayjs(),
+    endDate: dayjs(),
+  });
+  const [overall, setOverall] = useState([]);
   // useEffect(() => {
   //   (async () => {
   //     const list_line = await getLine({ type: "tb" });
@@ -40,14 +72,32 @@ const Equipment = (props) => {
         "screen",
         JSON.stringify({ ...screen, equipment: machine_id ? machine_id : "" })
       );
-    }else{
+      getOverAll();
+    } else {
       history.push("/equipment/S01");
     }
   }, [machine_id]);
 
   useEffect(() => {
+    if (machine_id) {
+      getOverAll();
+    }
+  }, [machine_id, date.startDate, date.endDate]);
+
+  useEffect(() => {
     getMachineList();
   }, []);
+
+  const getOverAll = () => {
+    const resData = {
+      machine_id,
+      start_date: formatDateTime(date.startDate, COMMON_DATE_FORMAT_REQUEST),
+      end_date: formatDateTime(date.endDate, COMMON_DATE_FORMAT_REQUEST),
+    };
+    getEquipmentOverall(resData)
+      .then((res) => setOverall([res.data]))
+      .catch((err) => console.log("Lấy thông tin thất bại: ", err));
+  };
 
   const getMachineList = () => {
     getMachines()
@@ -62,11 +112,11 @@ const Equipment = (props) => {
 
   const [row1, setRow1] = useState([
     {
-      title: "Thời gian chạy",
+      title: "Tg chạy",
       value: "0",
     },
     {
-      title: "Thời gian dừng",
+      title: "Tg dừng",
       value: "0",
     },
     {
@@ -107,7 +157,12 @@ const Equipment = (props) => {
           />
         </Col>
         <Col span={18}>
-          <DataDetail data={row1} />
+          <Table
+            dataSource={overall}
+            columns={columns}
+            bordered
+            pagination={false}
+          />
         </Col>
         <Col span={24}>
           <Card bodyStyle={{ padding: 12 }}>

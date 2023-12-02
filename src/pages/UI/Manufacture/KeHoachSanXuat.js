@@ -1,26 +1,15 @@
 import {
-  DeleteOutlined,
-  EditOutlined,
-  UploadOutlined,
-  PlusOutlined,
-  FileExcelOutlined,
-  PrinterOutlined,
-} from "@ant-design/icons";
-import {
   DatePicker,
   Col,
   Row,
   Card,
   Table,
-  Tag,
   Layout,
   Divider,
   Button,
   Form,
   Input,
-  theme,
   Select,
-  AutoComplete,
   Upload,
   message,
   Checkbox,
@@ -28,24 +17,9 @@ import {
   Modal,
   Spin,
 } from "antd";
-import { Pie } from "@ant-design/charts";
 import { baseURL } from "../../../config";
-import {
-  useHistory,
-  useParams,
-} from "react-router-dom/cjs/react-router-dom.min";
-import React, { useState, useRef, useEffect } from "react";
-import {
-  getLines,
-  getMachineOfLine,
-  getCustomers,
-  getProducts,
-  getStaffs,
-  getLoSanXuat,
-  getWarehouses,
-  getCaSanXuats,
-  getDataFilterUI,
-} from "../../../api/ui/main";
+import React, { useState, useEffect } from "react";
+import { getLines } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
   getListProductPlan,
@@ -54,22 +28,19 @@ import {
 } from "../../../api";
 import dayjs from "dayjs";
 
-const { Sider } = Layout;
-const { RangePicker } = DatePicker;
-
 const KeHoachSanXuat = () => {
   const [listLines, setListLines] = useState([]);
-  const [listMachines, setListMachines] = useState([]);
-  const [listIdProducts, setListIdProducts] = useState([]);
+  // const [listMachines, setListMachines] = useState([]);
+  // const [listIdProducts, setListIdProducts] = useState([]);
   const [listNameProducts, setListNameProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
-  const [listStaffs, setListStaffs] = useState([]);
+  // const [listStaffs, setListStaffs] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
-  const [selectedNameProduct, setSelectedNameProduct] = useState();
-  const [selectedIdProduct, setSelectedIdProduct] = useState();
-  const [selectedCustomer, setSelectedCustomer] = useState();
-  const [selectedStaff, setSelectedStaff] = useState();
+  // const [selectedNameProduct, setSelectedNameProduct] = useState();
+  // const [selectedIdProduct, setSelectedIdProduct] = useState();
+  // const [selectedCustomer, setSelectedCustomer] = useState();
+  // const [selectedStaff, setSelectedStaff] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
@@ -408,7 +379,10 @@ const KeHoachSanXuat = () => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
+          <Card
+            style={{ height: "100%" }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+          >
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>
@@ -424,6 +398,18 @@ const KeHoachSanXuat = () => {
                   />
                 </Form.Item>
               </Form>
+              {/* <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Divider>Công đoạn</Divider>
+                <Form.Item className="mb-3">
+                  <Checkbox.Group
+                    options={listLines}
+                    value={selectedLine}
+                    onChange={(checkedValues) => {
+                      setParams({ ...params, line_id: checkedValues });
+                    }}
+                  />
+                </Form.Item>
+              </Form> */}
             </div>
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
