@@ -85,6 +85,12 @@ const columns2 = [
     align: 'center',
   },
   {
+    title: 'Bế',
+    dataIndex: '505',
+    key: '505',
+    align: 'center',
+  },
+  {
     title: 'Dán',
     dataIndex: '31',
     key: '31',
@@ -659,12 +665,6 @@ const LichSuSanXuat = (props) => {
               />
               <Table className='mb-3' size='small' bordered
                 pagination={false}
-                scroll={
-                  {
-                    x: '100%',
-                    y: '15vh'
-                  }
-                }
                 columns={columns2}
                 dataSource={dataTable2} />
               <Table

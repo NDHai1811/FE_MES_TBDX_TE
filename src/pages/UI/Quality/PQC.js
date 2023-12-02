@@ -19,6 +19,7 @@ import {
   Spin,
   Checkbox,
   message,
+  Popconfirm,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
 import React, { useState, useEffect } from "react";
@@ -451,9 +452,9 @@ const QualityPQC = (props) => {
       align: "center",
     },
     {
-      title: "KQ kiểm tra tình trạng",
-      dataIndex: "sl_tinh_trang",
-      key: "sl_tinh_trang",
+      title: "KQ kiểm tra tính năng",
+      dataIndex: "sl_tinh_nang",
+      key: "sl_tinh_nang",
       align: "center",
     },
     {
@@ -474,10 +475,24 @@ const QualityPQC = (props) => {
       dataIndex: "cho_phep_tai_kiem",
       key: "cho_phep_tai_kiem",
       align: "center",
-      render: (value, record)=><Button onClick={()=>setIsModalOpen(true)}>Tái kiểm</Button>
+      render: (value, record)=>(
+        <Popconfirm
+        title="Tái kiểm"
+        description="Cho phép tái kiểm lot này?"
+        okText="Có"
+        placement="topRight"
+        onConfirm={()=>recheck(record.id)}
+        cancelText="Không"
+      >
+        <Button>Tái kiểm</Button>
+      </Popconfirm>
+      )
     },
   ];
 
+  const recheck = async (id) => {
+    // var res = await recheck({id});
+  }
   const [dataDetail, setDataDetail] = useState([]);
 
   function btn_click() {
@@ -876,15 +891,6 @@ const QualityPQC = (props) => {
           </Row>
         </Col>
       </Row>
-
-      <Modal
-        title="Bạn cho phép tái kiểm lô hàng?"
-        open={isModalOpen}
-        onOk={()=>console.log('Tái kiểm')}
-        onCancel={closeModal}
-        width={300}
-      >
-      </Modal>
       <Modal
         title="Báo cáo"
         open={isModalBCOpen}
