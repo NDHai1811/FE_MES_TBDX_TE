@@ -85,7 +85,7 @@ const tableColumns = [
 ];
 
 const Mapping = () => {
-  const {machine_id} = useParams();
+  const { machine_id } = useParams();
   const [visible, setVisible] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -107,8 +107,8 @@ const Mapping = () => {
     };
     getEquipmentLogs(resData)
       .then((res) => {
-        setLogs(res.data);
-        if (res.data.lenght > 0) {
+        setLogs(res.data.data);
+        if (res.data.data.length > 0) {
           setSelectedItem([res.data[0]]);
         }
       })
@@ -126,8 +126,8 @@ const Mapping = () => {
     },
     {
       title: "Mã KH",
-      dataIndex: "ma_kh",
-      key: "ma_kh",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
       align: "center",
       width: "20%",
       render: (value) => value || "-",
