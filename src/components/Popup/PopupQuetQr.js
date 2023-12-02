@@ -66,7 +66,7 @@ function PopupQuetQr(props) {
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR isHideButton={false} />
+        <ScanQR isHideButton={true} />
         <Row className="mt-3">
           <Col span={24}>
             <Table
