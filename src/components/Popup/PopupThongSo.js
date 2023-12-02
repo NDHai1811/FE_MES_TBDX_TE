@@ -17,7 +17,7 @@ function PopupThongSo(props) {
 
   const getParamaterList = () => {
     getParamaters({ machine_id })
-      .then((res) => setData(res))
+      .then((res) => setData(res.data))
       .catch((err) => console.log("Lấy danh sách thông số thất bại: ", err));
   };
 

@@ -53,7 +53,12 @@ const Equipment = (props) => {
     startDate: dayjs(),
     endDate: dayjs(),
   });
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{
+    "thoi_gian_chay": 0,
+    "thoi_gian_dung": 0,
+    "so_lan_dung": 0,
+    "ty_le_van_hanh": 0
+  }]);
   // useEffect(() => {
   //   (async () => {
   //     const list_line = await getLine({ type: "tb" });
@@ -72,7 +77,6 @@ const Equipment = (props) => {
         "screen",
         JSON.stringify({ ...screen, equipment: machine_id ? machine_id : "" })
       );
-      getOverAll();
     } else {
       history.push("/equipment/S01");
     }
@@ -158,6 +162,8 @@ const Equipment = (props) => {
         </Col>
         <Col span={18}>
           <Table
+            size="small"
+            className="custom-table"
             dataSource={overall}
             columns={columns}
             bordered

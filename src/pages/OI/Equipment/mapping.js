@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Table, DatePicker, Button } from "antd";
 import PopupQuetQr from "../../../components/Popup/PopupQuetQr";
 import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 const data = [
   {
@@ -129,6 +130,7 @@ const tableData = [
 ];
 
 const Mapping = () => {
+  const {machine_id} = useParams();
   const [visible, setVisible] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
 
