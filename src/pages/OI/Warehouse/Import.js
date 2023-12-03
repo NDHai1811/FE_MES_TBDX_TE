@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { Row, Col, Table, Button, Modal } from "antd";
+import { Row, Col, Table, Button } from "antd";
 import "../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import SelectButton from "../../../components/Button/SelectButton";
-import { warehousNvlData } from "./mock-data";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import ScanQR from "../../../components/Scanner";
 import PopupInTem from "../../../components/Popup/PopupInTem";
+import { useEffect } from "react";
+import { getTablesNvl } from "../../../api/oi/warehouse";
+import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
 
 const columnDetail = [
   {
@@ -45,15 +46,15 @@ const importColumns = [
   },
   {
     title: "Mã cuộn TBDX",
-    dataIndex: "ma_cuon_tbdx",
-    key: "ma_cuon_tbdx",
+    dataIndex: "material_id",
+    key: "material_id",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Mã cuộn NCC",
-    dataIndex: "nha_cung_cap",
-    key: "nha_cung_cap",
+    dataIndex: "ma_cuon_ncc",
+    key: "ma_cuon_ncc",
     align: "center",
     render: (value) => value || "-",
   },
@@ -80,8 +81,8 @@ const importColumns = [
   },
   {
     title: "Khổ",
-    dataIndex: "kho",
-    key: "kho",
+    dataIndex: "kho_giay",
+    key: "kho_giay",
     align: "center",
     render: (value) => value || "-",
   },
@@ -153,6 +154,7 @@ const Import = (props) => {
   ]);
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [logs, setLogs] = useState([]);
   // const [valueQR, setValueQR] = useState("");
 
   const onShowPopup = () => {
@@ -170,6 +172,18 @@ const Import = (props) => {
       soCuonTonTrongKho: 0,
     },
   ]);
+
+  useEffect(() => {
+    getLogs();
+  }, []);
+
+  const getLogs = () => {
+    getTablesNvl()
+      .then((res) => setLogs(res.data))
+      .catch((err) =>
+        console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
+      );
+  };
 
   // const getLotCurrent = async (e) => {
   //   const res = await getProposeWareHouse({ lot_id: e.target.value });
@@ -301,7 +315,7 @@ const Import = (props) => {
             bordered
             className="mb-4"
             columns={importColumns}
-            dataSource={warehousNvlData}
+            dataSource={logs}
             onRow={(record) => {
               return {
                 onClick: () => onSelectItem(record),
@@ -311,22 +325,7 @@ const Import = (props) => {
         </Col>
       </Row>
       {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
-      {isScan && (
-        <Modal
-          title="Quét QR"
-          open={isScan}
-          onCancel={() => setIsScan(false)}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isScan}
-            onResult={(res) => {
-              onScan(res);
-              setIsScan(false);
-            }}
-          />
-        </Modal>
-      )}
+      {isScan && <PopupNhapKhoNvl visible={isScan} setVisible={setIsScan} />}
     </React.Fragment>
   );
 };
