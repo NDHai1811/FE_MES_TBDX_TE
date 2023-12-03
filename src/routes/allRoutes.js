@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom";
 
 import Login from "../pages/Authentication/Login";
 import Screen from "../pages/screen";
-import UI from "../pages/UI";
+import UI from "../pages/UI/Home";
 import Manufacture from "../pages/OI/Manufacture";
 import Quality from "../pages/OI/Quality";
 import Equipment from "../pages/OI/Equipment";

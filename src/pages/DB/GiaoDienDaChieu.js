@@ -8,17 +8,17 @@ const GiaoDienDaChieu = () => {
     <Canvas style={{ width: "100vw", height: "100vh" }}>
       <Suspense fallback={null}>
         <ambientLight intensity={1} />
-        <color attach="background" args={["#152845"]} />
+        <color attach="background" args={["#6c757d"]} />
         <Model
           objPath="/assets/machine1.obj"
           mtlPath="/assets/machine1.mtl"
-          position={[30, 0, -10]}
+          position={[30, 0, -30]}
           scale={0.1}
         />
         <Model
           objPath="/assets/machine2.obj"
           mtlPath="/assets/machine2.mtl"
-          position={[30, 0, 10]}
+          position={[30, 0, -10]}
           scale={0.1}
         />
         <Model
@@ -30,12 +30,18 @@ const GiaoDienDaChieu = () => {
         <Model
           objPath="/assets/machine4.obj"
           mtlPath="/assets/machine4.mtl"
-          position={[30, 0, -100]}
+          position={[30, 0, -95]}
           scale={0.1}
         />
         <Model
           objPath="/assets/may-song.obj"
           mtlPath="/assets/may-song.mtl"
+          position={[0, 0, -5]}
+          scale={1.1}
+        />
+        <Model
+          objPath="/Layout.obj"
+          mtlPath="/Layout.mtl"
           position={[0, 0, 0]}
           scale={1.1}
         />

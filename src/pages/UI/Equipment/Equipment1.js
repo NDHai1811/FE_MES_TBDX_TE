@@ -16,12 +16,6 @@ import { Column } from "@ant-design/plots";
 import React, { useState, useEffect } from "react";
 import { Pie } from "@ant-design/charts";
 import {
-  getErrorsMachine,
-  getMachineOfLine,
-  getCustomers,
-  getProducts,
-  getStaffs,
-  getLoSanXuat,
   getMachineError,
 } from "../../../api/ui/main";
 import { exportMachineError } from "../../../api/ui/export";

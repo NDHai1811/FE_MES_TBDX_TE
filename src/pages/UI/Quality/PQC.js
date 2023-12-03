@@ -6,31 +6,17 @@ import {
   DatePicker,
   Divider,
   Form,
-  Input,
-  Layout,
-  Radio,
   Row,
   Select,
-  AutoComplete,
   Table,
-  Tabs,
-  Typography,
   Space,
   Spin,
-  Checkbox,
   message,
   Popconfirm,
 } from "antd";
-import { Content } from "antd/es/layout/layout";
 import React, { useState, useEffect } from "react";
-import { Pie, Column, Line, DualAxes } from "@ant-design/plots";
-import DataDetail from "../../../components/DataDetail";
-import {
-  getLines,
-  getCustomers,
-  getPQCHistory,
-  getDataFilterUI,
-} from "../../../api/ui/main";
+import { Pie, DualAxes } from "@ant-design/plots";
+import { getLines } from "../../../api/ui/main";
 import dayjs from "dayjs";
 import {
   exportPQC,
@@ -40,18 +26,11 @@ import {
 import { baseURL } from "../../../config";
 import { getErrorDetailList } from "../../../api/ui/quality";
 
-const { Sider } = Layout;
-const { RangePicker } = DatePicker;
-
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
   const [listLines, setListLines] = useState([]);
-  const [listMachines, setListMachines] = useState([]);
-  const [listIdProducts, setListIdProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
-  const [listStaffs, setListStaffs] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
-  const [listErrors, setListErrors] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
   const [listNameProducts, setListNameProducts] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
@@ -125,68 +104,52 @@ const QualityPQC = (props) => {
   const [dataLineChart, setDataLineChart] = useState([]);
   const [dataPieChart, setDataPieChart] = useState([
     {
-      error: 'P01',
+      error: "P01",
       value: 27,
     },
     {
-      error: 'P02',
+      error: "P02",
       value: 25,
     },
     {
-      error: 'P03',
+      error: "P03",
       value: 18,
     },
     {
-      error: 'P04',
+      error: "P04",
       value: 15,
     },
     {
-      error: 'P05',
+      error: "P05",
       value: 10,
     },
   ]);
   const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
 
-  const configLineChart = {
-    data: dataLineChart,
-    height: 200,
-    xField: "date",
-    yField: "value",
-    seriesField: "error",
-    legend: {
-      position: "top",
-    },
-    smooth: true,
-    animation: {
-      appear: {
-        animation: "path-in",
-        duration: 5000,
-      },
-    },
-  };
   const configPieChart = {
     data: dataPieChart,
     height: 200,
-    angleField: 'value',
-    colorField: 'error',
+    angleField: "value",
+    colorField: "error",
     radius: 0.5,
     innerRadius: 0.6,
     label: {
-      type: 'outer',
-      offset: '120%',
-      content: ({ error, percent }) => `${error}` + " " + `${(percent * 100).toFixed(0)}%`,
+      type: "outer",
+      offset: "120%",
+      content: ({ error, percent }) =>
+        `${error}` + " " + `${(percent * 100).toFixed(0)}%`,
       style: {
-        textAlign: 'center',
+        textAlign: "center",
         fontSize: 14,
       },
     },
     legend: false,
     interactions: [
       {
-        type: 'element-selected',
+        type: "element-selected",
       },
       {
-        type: 'element-active',
+        type: "element-active",
       },
     ],
     statistic: {
@@ -196,124 +159,124 @@ const QualityPQC = (props) => {
   };
   const uvBillData = [
     {
-      time: '2023-03',
+      time: "2023-03",
       value: 350,
-      type: 'Lot NG',
+      type: "Lot NG",
     },
     {
-      time: '2023-04',
+      time: "2023-04",
       value: 900,
-      type: 'Lot NG',
+      type: "Lot NG",
     },
     {
-      time: '2023-05',
+      time: "2023-05",
       value: 300,
-      type: 'Lot NG',
+      type: "Lot NG",
     },
     {
-      time: '2023-06',
+      time: "2023-06",
       value: 450,
-      type: 'Lot NG',
+      type: "Lot NG",
     },
     {
-      time: '2023-07',
+      time: "2023-07",
       value: 470,
-      type: 'Lot NG',
+      type: "Lot NG",
     },
     {
-      time: '2023-03',
+      time: "2023-03",
       value: 220,
-      type: 'Lot OK',
+      type: "Lot OK",
     },
     {
-      time: '2023-04',
+      time: "2023-04",
       value: 300,
-      type: 'Lot OK',
+      type: "Lot OK",
     },
     {
-      time: '2023-05',
+      time: "2023-05",
       value: 250,
-      type: 'Lot OK',
+      type: "Lot OK",
     },
     {
-      time: '2023-06',
+      time: "2023-06",
       value: 220,
-      type: 'Lot OK',
+      type: "Lot OK",
     },
     {
-      time: '2023-07',
+      time: "2023-07",
       value: 362,
-      type: 'Lot OK',
+      type: "Lot OK",
     },
   ];
   const transformData = [
     {
-      time: '2023-03',
+      time: "2023-03",
       count: 100,
-      name: 'tieu_chuan',
+      name: "tieu_chuan",
     },
     {
-      time: '2023-04',
+      time: "2023-04",
       count: 100,
-      name: 'tieu_chuan',
+      name: "tieu_chuan",
     },
     {
-      time: '2023-05',
+      time: "2023-05",
       count: 100,
-      name: 'tieu_chuan',
+      name: "tieu_chuan",
     },
     {
-      time: '2023-06',
+      time: "2023-06",
       count: 100,
-      name: 'tieu_chuan',
+      name: "tieu_chuan",
     },
     {
-      time: '2023-07',
+      time: "2023-07",
       count: 100,
-      name: 'tieu_chuan',
+      name: "tieu_chuan",
     },
     {
-      time: '2023-03',
+      time: "2023-03",
       count: 75,
-      name: 'ti_le',
+      name: "ti_le",
     },
     {
-      time: '2023-04',
+      time: "2023-04",
       count: 65,
-      name: 'ti_le',
+      name: "ti_le",
     },
     {
-      time: '2023-05',
+      time: "2023-05",
       count: 45,
-      name: 'ti_le',
+      name: "ti_le",
     },
     {
-      time: '2023-06',
+      time: "2023-06",
       count: 40,
-      name: 'ti_le',
+      name: "ti_le",
     },
     {
-      time: '2023-07',
+      time: "2023-07",
       count: 32,
-      name: 'ti_le',
+      name: "ti_le",
     },
   ];
   const configColumnLine = {
     data: [uvBillData, transformData],
     height: 170,
     autoFit: true,
-    xField: 'time',
-    yField: ['value', 'count'],
+    xField: "time",
+    yField: ["value", "count"],
     geometryOptions: [
       {
-        geometry: 'column',
+        geometry: "column",
         isStack: true,
-        seriesField: 'type',
+        seriesField: "type",
         columnWidthRatio: 0.4,
       },
       {
-        geometry: 'line',
-        seriesField: 'name',
+        geometry: "line",
+        seriesField: "name",
         lineStyle: ({ name }) => {
           // if (name === 'tieu_chuan') {
           //   return {
@@ -468,31 +431,32 @@ const QualityPQC = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      render: (value, record)=>value === 1 ? 'OK' : value === 2 ? 'NG' : 'waiting'
+      render: (value, record) =>
+        value === 1 ? "OK" : value === 2 ? "NG" : "waiting",
     },
     {
       title: "Cho phép tái kiểm",
       dataIndex: "cho_phep_tai_kiem",
       key: "cho_phep_tai_kiem",
       align: "center",
-      render: (value, record)=>(
+      render: (value, record) => (
         <Popconfirm
-        title="Tái kiểm"
-        description="Cho phép tái kiểm lot này?"
-        okText="Có"
-        placement="topRight"
-        onConfirm={()=>recheck(record.id)}
-        cancelText="Không"
-      >
-        <Button>Tái kiểm</Button>
-      </Popconfirm>
-      )
+          title="Tái kiểm"
+          description="Cho phép tái kiểm lot này?"
+          okText="Có"
+          placement="topRight"
+          onConfirm={() => recheck(record.id)}
+          cancelText="Không"
+        >
+          <Button>Tái kiểm</Button>
+        </Popconfirm>
+      ),
     },
   ];
 
   const recheck = async (id) => {
     // var res = await recheck({id});
-  }
+  };
   const [dataDetail, setDataDetail] = useState([]);
 
   function btn_click() {
@@ -599,41 +563,41 @@ const QualityPQC = (props) => {
   };
   const summaryTable = [
     {
-      title: 'Sản lượng đếm được',
-      key: 'san_luong_dem_duoc',
-      dataIndex: 'san_luong_dem_duoc',
-      align: 'center'
+      title: "Sản lượng đếm được",
+      key: "san_luong_dem_duoc",
+      dataIndex: "san_luong_dem_duoc",
+      align: "center",
     },
     {
-      title: 'Lỗi ngoại quan',
-      key: 'sl_ngoai_quan',
-      dataIndex: 'sl_ngoai_quan',
-      align: 'center'
+      title: "Lỗi ngoại quan",
+      key: "sl_ngoai_quan",
+      dataIndex: "sl_ngoai_quan",
+      align: "center",
     },
     {
-      title: 'Lỗi tính năng',
-      key: 'sl_tinh_nang',
-      dataIndex: 'sl_tinh_nang',
-      align: 'center'
+      title: "Lỗi tính năng",
+      key: "sl_tinh_nang",
+      dataIndex: "sl_tinh_nang",
+      align: "center",
     },
     {
-      title: 'Tỷ lệ lỗi',
-      key: 'ti_le_loi',
-      dataIndex: 'ti_le_loi',
-      align: 'center'
+      title: "Tỷ lệ lỗi",
+      key: "ti_le_loi",
+      dataIndex: "ti_le_loi",
+      align: "center",
     },
     {
-      title: 'Số phế',
-      key: 'sl_ng',
-      dataIndex: 'sl_ng',
-      align: 'center'
+      title: "Số phế",
+      key: "sl_ng",
+      dataIndex: "sl_ng",
+      align: "center",
     },
     {
-      title: 'Tỷ lệ phế',
-      key: 'ti_le_ng',
-      dataIndex: 'ti_le_ng',
-      align: 'center'
-    }
+      title: "Tỷ lệ phế",
+      key: "ti_le_ng",
+      dataIndex: "ti_le_ng",
+      align: "center",
+    },
   ];
   const [summaryData, setSummaryData] = useState([
     {
@@ -641,9 +605,9 @@ const QualityPQC = (props) => {
       sl_ngoai_quan: 10,
       sl_tinh_nang: 5,
       sl_ng: 10,
-      ti_le_loi: '2%',
-      ti_le_ng: '1%'
-    }
+      ti_le_loi: "2%",
+      ti_le_ng: "1%",
+    },
   ]);
 
   return (
@@ -651,7 +615,10 @@ const QualityPQC = (props) => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
+          <Card
+            style={{ height: "100%" }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+          >
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>

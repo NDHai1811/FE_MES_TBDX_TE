@@ -8,6 +8,11 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const items = [
   {
+    label: "Trang chủ",
+    key: "home",
+    permission: "ui-home",
+  },
+  {
     label: "Sản xuất",
     key: "manufacture",
     children: [
