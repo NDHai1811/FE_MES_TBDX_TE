@@ -28,6 +28,7 @@ import {
 } from "../../../api";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
+import { getListPlanMaterialExport } from "../../../api/ui/warehouse";
 
 const { TabPane } = Tabs;
 
@@ -167,6 +168,7 @@ const WarehouseExportPlan = (props) => {
   // const [listNameProducts, setListNameProducts] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
+  const [logs, setLogs] = useState([]);
   const onChangeChecbox = (e) => {
     if (e.target.checked) {
       if (!listCheck.includes(e.target.value)) {
@@ -179,6 +181,18 @@ const WarehouseExportPlan = (props) => {
         );
       }
     }
+  };
+
+  useEffect(() => {
+    getLogs();
+  }, []);
+
+  const getLogs = () => {
+    getListPlanMaterialExport()
+      .then((res) => setLogs(res.data))
+      .catch((err) =>
+        console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
+      );
   };
 
   // useEffect(() => {
@@ -223,14 +237,14 @@ const WarehouseExportPlan = (props) => {
     },
     {
       title: "Mã cuộn TBDX",
-      dataIndex: "ma_cuon_tbdx",
-      key: "ma_cuon_tbdx",
+      dataIndex: "id",
+      key: "id",
       align: "center",
     },
     {
       title: "Mã vật tư",
-      dataIndex: "vat_tu_id",
-      key: "vat_tu_id",
+      dataIndex: "ma_vat_tu",
+      key: "ma_vat_tu",
       align: "center",
     },
     {
@@ -242,7 +256,7 @@ const WarehouseExportPlan = (props) => {
     {
       title: "Mã cuộn nhà cung cấp",
       dataIndex: "ma_cuon_ncc",
-      key: "tong_kg",
+      key: "ma_cuon_ncc",
       align: "center",
     },
     {
@@ -271,8 +285,8 @@ const WarehouseExportPlan = (props) => {
     },
     {
       title: "IQC OK/NG",
-      dataIndex: "ok_ng",
-      key: "ok_ng",
+      dataIndex: "iqc",
+      key: "iqc",
       align: "center",
     },
   ];
@@ -559,8 +573,8 @@ const WarehouseExportPlan = (props) => {
         >
           <EditableTable
             bordered
-            columns={currentTab === "1" ? customColumns : columns1}
-            dataSource={data}
+            columns={currentTab === "1" ? columns : columns1}
+            dataSource={currentTab === "1" ? logs : data}
             scroll={{
               x: "130vw",
               y: "55vh",
