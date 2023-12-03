@@ -26,6 +26,7 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
+import { getCells } from "../../../api";
 
 const token =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiIxODE2MGYyMi00NmU5LTQwMmUtOTFkMC1lZjdhNDliZjY2NDQiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTIyOTIzNywiZXhwIjoxNzAxMjM4MjM3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.aR-bTzZc70GNvQ1b57ZWSmTkpvqIhHFGN_Nx5nyCXYocOliTj9syzmy54U8VkNushvTfX5DAsjG3KiA_cCRw8w";

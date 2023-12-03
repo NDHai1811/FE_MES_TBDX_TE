@@ -101,6 +101,31 @@ const columns3 = [
     render: (value, record, index) => index + 1,
   },
   {
+    title: "Ngày sản xuất",
+    dataIndex: "ngay_sx",
+    key: "ngay_sx",
+    align: "center",
+    fixed: "left",
+    width: '4%',
+  },
+  {
+    title: "Xưởng",
+    dataIndex: "xuong",
+    key: "machine_id",
+    align: "center",
+    fixed: "left",
+    width: '4%',
+  },
+  {
+    title: "Công đoạn",
+    dataIndex: "line",
+    key: "line",
+    align: "center",
+    fixed: "left",
+    width: '4%',
+    render: (value)=>value?.name
+  },
+  {
     title: "Máy",
     dataIndex: "machine_id",
     key: "machine_id",
@@ -137,6 +162,13 @@ const columns3 = [
     fixed: "left",
   },
   {
+    title: "Mã layout",
+    dataIndex: "layout_id",
+    key: "layout_id",
+    align: "center",
+    fixed: "left",
+  },
+  {
     title: "Quy cách",
     dataIndex: "quy_cach",
     key: "quy_cach",
@@ -147,6 +179,18 @@ const columns3 = [
     title: "Kế hoạch",
     children: [
       {
+        title: "Thời gian bắt đầu",
+        dataIndex: "thoi_gian_bat_dau_kh",
+        key: "thoi_gian_bat_dau_kh",
+        align: "center",
+      },
+      {
+        title: "Thời gian kết thúc",
+        dataIndex: "thoi_gian_ket_thuc_kh",
+        key: "thoi_gian_ket_thuc_kh",
+        align: "center",
+      },
+      {
         title: "Số lượng đầu vào",
         dataIndex: "sl_dau_vao_kh",
         key: "sl_dau_vao_kh",
@@ -156,6 +200,12 @@ const columns3 = [
         title: "Số lượng đầu ra",
         dataIndex: "sl_dau_ra_kh",
         key: "sl_dau_ra_kh",
+        align: "center",
+      },
+      {
+        title: "Cycle time lý thuyết",
+        dataIndex: "cycle_time_kh",
+        key: "cycle_time_kh",
         align: "center",
       },
     ],
@@ -176,7 +226,13 @@ const columns3 = [
         align: "center",
       },
       {
-        title: "Sản lượng đếm được",
+        title: "Sản lượng đầu vào",
+        dataIndex: "sl_dau_vao_hang_loat",
+        key: "sl_dau_vao_hang_loat",
+        align: "center",
+      },
+      {
+        title: "Sản lượng đầu ra",
         dataIndex: "sl_dau_ra_hang_loat",
         key: "sl_dau_ra_hang_loat",
         align: "center",
@@ -199,12 +255,42 @@ const columns3 = [
         key: "ty_le_dau_ra_vao",
         align: "center",
       },
+      {
+        title: "Cycle time",
+        dataIndex: "cycle_time_tt",
+        key: "cycle_time_tt",
+        align: "center",
+      },
     ],
   },
   {
-    title: "Cycle time lý thuyết",
-    dataIndex: "cycle_time",
-    key: "cycle_time",
+    title: "Chênh lệch",
+    dataIndex: "chenh_lech",
+    key: "chenh_lech",
+    align: "center",
+  },
+  {
+    title: "Tỷ lệ đạt (%)",
+    dataIndex: "ty_le_ok",
+    key: "ty_le_ok",
+    align: "center",
+  },
+  {
+    title: "TT thực tế",
+    dataIndex: "tt_thuc_te",
+    key: "tt_thuc_te",
+    align: "center",
+  },
+  {
+    title: "Leadtime",
+    dataIndex: "lead_time",
+    key: "lead_time",
+    align: "center",
+  },
+  {
+    title: "Tên công nhân sản xuất",
+    dataIndex: "user_name",
+    key: "user_name",
     align: "center",
   },
 ];
