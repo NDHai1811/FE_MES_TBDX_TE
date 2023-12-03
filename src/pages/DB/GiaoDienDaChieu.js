@@ -1,11 +1,30 @@
 import React, { Suspense } from "react";
 import { Canvas } from "react-three-fiber";
-import { OrbitControls } from "@react-three/drei";
 import Model from "./Model";
+import CameraController from "./CameraController";
+// import { Tree } from "antd";
+
+// const treeData = [
+//   {
+//     title: "Parent 1",
+//     key: "0-0",
+//     children: [
+//       {
+//         title: "Child 1",
+//         key: "0-0-0",
+//       },
+//       {
+//         title: "Child 2",
+//         key: "0-0-1",
+//       },
+//     ],
+//   },
+// ];
 
 const GiaoDienDaChieu = () => {
   return (
     <Canvas style={{ width: "100vw", height: "100vh" }}>
+      {/* <Tree.DirectoryTree defaultExpandAll treeData={treeData} /> */}
       <Suspense fallback={null}>
         <ambientLight intensity={1} />
         <color attach="background" args={["#6c757d"]} />
@@ -46,7 +65,7 @@ const GiaoDienDaChieu = () => {
           scale={1.1}
         />
       </Suspense>
-      <OrbitControls />
+      <CameraController />
     </Canvas>
   );
 };
