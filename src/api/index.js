@@ -546,3 +546,8 @@ export async function exportOrders(params){
     const res = await axios.get('/orders/export', {params});
     return res;
 }
+
+export async function getTem(params){
+  const res = await axios.get('/intem', {params});
+  return res.data;
+}
