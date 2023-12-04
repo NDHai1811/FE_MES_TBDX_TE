@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, DatePicker, Modal } from "antd";
+import { Row, Col, Button, Table, Spin, DatePicker, Modal, Select } from "antd";
 
 import "../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import SelectButton from "../../../components/Button/SelectButton";
 import {
   getOverAll,
   getLotByMachine,
@@ -26,7 +25,6 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
-import { getCells } from "../../../api";
 
 const token =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiIxODE2MGYyMi00NmU5LTQwMmUtOTFkMC1lZjdhNDliZjY2NDQiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTIyOTIzNywiZXhwIjoxNzAxMjM4MjM3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.aR-bTzZc70GNvQ1b57ZWSmTkpvqIhHFGN_Nx5nyCXYocOliTj9syzmy54U8VkNushvTfX5DAsjG3KiA_cCRw8w";
@@ -128,32 +126,7 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
 ];
-const overallColumns = [
-  {
-    title: "K.H Ca",
-    dataIndex: "kh_ca",
-    key: "kh_ca",
-    align: "center",
-  },
-  {
-    title: "SL ca",
-    dataIndex: "san_luong",
-    key: "san_luong",
-    align: "center",
-  },
-  {
-    title: "% KH Ca",
-    dataIndex: "ti_le_ca",
-    key: "ti_le_ca",
-    align: "center",
-  },
-  {
-    title: "Tổng phế",
-    dataIndex: "tong_phe",
-    key: "tong_phe",
-    align: "center",
-  },
-];
+
 
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
@@ -184,6 +157,49 @@ const Manufacture1 = (props) => {
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
   const ws = useRef(null);
+
+  const overallColumns = [
+    {
+      title: "Công đoạn",
+      dataIndex: "cong_doan",
+      key: "cong_doan",
+      align: "center",
+      render: () => (
+        <Select
+          options={machineOptions}
+          value={machine_id}
+          onChange={onChangeLine}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
+    {
+      title: "K.H Ca",
+      dataIndex: "kh_ca",
+      key: "kh_ca",
+      align: "center",
+    },
+    {
+      title: "SL ca",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+    },
+    {
+      title: "% KH Ca",
+      dataIndex: "ti_le_ca",
+      key: "ti_le_ca",
+      align: "center",
+    },
+    {
+      title: "Tổng phế",
+      dataIndex: "tong_phe",
+      key: "tong_phe",
+      align: "center",
+    },
+  ];
+
   useEffect(() => {
     (async () => {
       if (machine_id) {
@@ -399,15 +415,7 @@ const Manufacture1 = (props) => {
     <React.Fragment>
       <Spin spinning={loading}>
         <Row className="mt-3" gutter={[6, 8]}>
-          <Col span={window.screen.width < 720 ? 7 : 5}>
-            <SelectButton
-              options={machineOptions}
-              value={machine_id}
-              label="Máy"
-              onChange={onChangeLine}
-            />
-          </Col>
-          <Col span={window.screen.width < 720 ? 17 : 19}>
+          <Col span={24}>
             <Table
               size="small"
               pagination={false}

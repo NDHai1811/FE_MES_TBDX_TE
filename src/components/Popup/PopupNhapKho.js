@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Row, Col, Table } from "antd";
+import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
@@ -12,35 +12,69 @@ const columns = [
     dataIndex: "material_id",
     key: "material_id",
     align: "center",
-    render: (value) => value || "-",
+    render: (value, record) => (
+      <span style={{ color: record.status === 1 ? "black" : "gray" }}>
+        {value}
+      </span>
+    ),
   },
   {
     title: "Số kg",
     dataIndex: "so_kg",
     key: "so_kg",
     align: "center",
-    render: (value) => value || "-",
+    render: (value, record) => (
+      <span style={{ color: record.status === 1 ? "black" : "gray" }}>
+        {value}
+      </span>
+    ),
   },
   {
     title: "Vị trí",
     dataIndex: "locator_id",
     key: "locator_id",
     align: "center",
-    render: (value) => value || "-",
+    render: (value, record) => (
+      <span style={{ color: record.status === 1 ? "black" : "gray" }}>
+        {value}
+      </span>
+    ),
   },
 ];
 
 function PopupNhapKhoNvl(props) {
-  const { visible, setVisible } = props;
-  const [data, setData] = useState([]);
+  const { visible, setVisible, setCurrentScan } = props;
+  const items = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
+  const [data, setData] = useState(items || []);
+  const [currentData, setCurrentData] = useState({});
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (currentData?.material_id) {
+      getData();
+    }
+  }, [currentData?.material_id]);
 
   const getData = () => {
-    getScanList({ material_id: "C0004" })
-      .then((res) => setData(res.data))
+    getScanList({ material_id: currentData?.material_id })
+      .then((res) => {
+        const response = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
+        if (response?.length > 0) {
+          response.map((val) => {
+            if (val.material_id === currentData.material_id) {
+              val.status = 1;
+            }
+            return { ...val };
+          });
+        }
+        window.localStorage.setItem(
+          "ScanNhapNvl",
+          response?.length > 0
+            ? JSON.stringify(response)
+            : JSON.stringify(res.data)
+        );
+        setData(response?.length > 0 ? response : res.data);
+        setCurrentScan([res.data[0]]);
+      })
       .catch((err) => console.log("Lấy danh sách scan thất bại: ", err));
   };
 
@@ -49,7 +83,7 @@ function PopupNhapKhoNvl(props) {
       ?.filter((item) => item.status === 1)
       .map((val) => ({ material_id: val.material_id }));
     sendResultScan(resData)
-      .then(res => console.log(res))
+      .then((res) => console.log(res))
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };
 
@@ -62,6 +96,10 @@ function PopupNhapKhoNvl(props) {
     setVisible(false);
   };
 
+  const onScanResult = (value) => {
+    setCurrentData(JSON.parse(value));
+  };
+
   return (
     <div>
       <Modal
@@ -72,7 +110,7 @@ function PopupNhapKhoNvl(props) {
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR isHideButton={true} />
+        <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
         <Row className="mt-3">
           <Col span={24}>
             <Table

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Tabs, Card, Table } from "antd";
+import { Row, Col, Tabs, Card, Table, Select } from "antd";
 import { withRouter } from "react-router-dom";
-import SelectButton from "../../../components/Button/SelectButton";
 import "../style.scss";
 import { useHistory, useParams } from "react-router-dom";
 import Error from "./error";
@@ -10,37 +9,6 @@ import Mapping from "./mapping";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
 import { formatDateTime } from "../../../commons/utils";
-
-const columns = [
-  {
-    title: "Tg chạy",
-    dataIndex: "thoi_gian_chay",
-    key: "thoi_gian_chay",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Tg dừng",
-    dataIndex: "thoi_gian_dung",
-    key: "thoi_gian_dung",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Số lần dừng",
-    dataIndex: "so_lan_dung",
-    key: "so_lan_dung",
-    align: "center",
-    width: "20%",
-  },
-  {
-    title: "Tỷ lệ vận hành",
-    dataIndex: "ty_le_van_hanh",
-    key: "ty_le_van_hanh",
-    align: "center",
-    width: "20%",
-  },
-];
 
 const Equipment = (props) => {
   document.title = "Thiết bị";
@@ -52,12 +20,60 @@ const Equipment = (props) => {
     startDate: dayjs(),
     endDate: dayjs(),
   });
-  const [overall, setOverall] = useState([{
-    "thoi_gian_chay": 0,
-    "thoi_gian_dung": 0,
-    "so_lan_dung": 0,
-    "ty_le_van_hanh": 0
-  }]);
+  const [overall, setOverall] = useState([
+    {
+      thoi_gian_chay: 0,
+      thoi_gian_dung: 0,
+      so_lan_dung: 0,
+      ty_le_van_hanh: 0,
+    },
+  ]);
+
+  const columns = [
+    {
+      title: "Công đoạn",
+      dataIndex: "cong_doan",
+      key: "cong_doan",
+      align: "center",
+      render: () => (
+        <Select
+          options={machines}
+          value={machine_id}
+          onChange={onChangeLine}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
+    {
+      title: "Tg chạy",
+      dataIndex: "thoi_gian_chay",
+      key: "thoi_gian_chay",
+      align: "center",
+      width: "20%",
+    },
+    {
+      title: "Tg dừng",
+      dataIndex: "thoi_gian_dung",
+      key: "thoi_gian_dung",
+      align: "center",
+      width: "20%",
+    },
+    {
+      title: "Số lần dừng",
+      dataIndex: "so_lan_dung",
+      key: "so_lan_dung",
+      align: "center",
+      width: "20%",
+    },
+    {
+      title: "Tỷ lệ vận hành",
+      dataIndex: "ty_le_van_hanh",
+      key: "ty_le_van_hanh",
+      align: "center",
+      width: "20%",
+    },
+  ];
 
   useEffect(() => {
     if (machine_id) {
@@ -116,22 +132,14 @@ const Equipment = (props) => {
     },
   ];
   const onChangeLine = (value) => {
-    history.push("/equipment/" + value.key);
-    setMachine(value.value);
+    console.log(value);
+    history.push("/equipment/" + value);
+    setMachine(value);
   };
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[2, 12]}>
-        <Col span={6}>
-          <SelectButton
-            value={machine}
-            options={machines}
-            label="Công đoạn"
-            onChange={(value) => onChangeLine(value)}
-            labelInValue={true}
-          />
-        </Col>
-        <Col span={18}>
+        <Col span={24}>
           <Table
             size="small"
             className="custom-table"
