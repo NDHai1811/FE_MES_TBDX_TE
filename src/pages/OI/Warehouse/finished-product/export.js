@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Row, Col, Table, Button, Modal } from "antd";
+import { Row, Col, Table, Button, Modal, Select } from "antd";
 import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import SelectButton from "../../../../components/Button/SelectButton";
 import { warehousExportTPData } from "../mock-data";
 import ScanQR from "../../../../components/Scanner";
 import PopupInTem from "../../../../components/Popup/PopupInTem";
@@ -87,37 +86,6 @@ const exportColumns = [
   },
 ];
 
-const column2 = [
-  {
-    title: "Sl nhập",
-    dataIndex: "sl_nhap",
-    key: "sl_nhap",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl xuất",
-    dataIndex: "sl_xuat",
-    key: "sl_xuat",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl tồn",
-    dataIndex: "sl_ton",
-    key: "sl_ton",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số ngày tồn kho",
-    dataIndex: "so_ngay_ton_kho",
-    key: "so_ngay_ton_kho",
-    align: "center",
-    render: (value) => value || "-",
-  },
-];
-
 const options = [
   {
     label: "Nhập",
@@ -144,10 +112,55 @@ const Import = (props) => {
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
 
+  const column2 = [
+    {
+      title: "Kho",
+      dataIndex: "kho",
+      key: "kho",
+      align: "center",
+      render: () => (
+        <Select
+          options={options}
+          value={line}
+          onChange={onChangeLine}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
+    {
+      title: "Sl nhập",
+      dataIndex: "sl_nhap",
+      key: "sl_nhap",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl xuất",
+      dataIndex: "sl_xuat",
+      key: "sl_xuat",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl tồn",
+      dataIndex: "sl_ton",
+      key: "sl_ton",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số ngày tồn kho",
+      dataIndex: "so_ngay_ton_kho",
+      key: "so_ngay_ton_kho",
+      align: "center",
+      render: (value) => value || "-",
+    },
+  ];
+
   const onShowPopup = () => {
     setVisible(true);
   };
-
 
   const onChangeLine = (value) => {
     history.push("/warehouse/kho-tp/" + value);
@@ -167,23 +180,8 @@ const Import = (props) => {
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[4, 12]}>
-        <Col span={6}>
-          <SelectButton
-            value={line}
-            options={options}
-            label="Kho"
-            onChange={onChangeLine}
-          />
-        </Col>
-        <Col span={18}>
+        <Col span={24}>
           <Table
-            // rowClassName={(record, index) =>
-            //   record.status === 1
-            //     ? "table-row-yellow"
-            //     : record.status === 2
-            //     ? "table-row-grey"
-            //     : "table-row-green"
-            // }
             pagination={false}
             bordered
             className="mb-1"
@@ -193,13 +191,6 @@ const Import = (props) => {
         </Col>
         <Col span={24}>
           <Table
-            // rowClassName={(record, index) =>
-            //   record.status === 1
-            //     ? "table-row-yellow"
-            //     : record.status === 2
-            //     ? "table-row-grey"
-            //     : "table-row-green"
-            // }
             pagination={false}
             bordered
             className="mb-1"

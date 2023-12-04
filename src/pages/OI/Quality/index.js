@@ -10,6 +10,7 @@ import {
   message,
   Radio,
   DatePicker,
+  Select,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
@@ -17,7 +18,6 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import SelectButton from "../../../components/Button/SelectButton";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getListMachine } from "../../../api";
 import {
@@ -41,64 +41,7 @@ const Quality = (props) => {
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [openModal, setOpenModal] = useState(false);
-  const [data, setData] = useState([
-    {
-      lot_id: "xxxxxxxx.01",
-      san_luong: "100",
-      sl_loi: "0",
-      sl_ng: "0",
-      result: 0,
-    },
-    {
-      lot_id: "xxxxxxxx.02",
-      san_luong: "100",
-      sl_loi: "0",
-      sl_ng: "0",
-      result: 0,
-    },
-    {
-      lot_id: "xxxxxxxx.03",
-      san_luong: "100",
-      sl_loi: "0",
-      sl_ng: "0",
-      result: 0,
-    },
-    {
-      lot_id: "xxxxxxxx.04",
-      san_luong: "100",
-      sl_loi: "0",
-      sl_ng: "0",
-      result: 0,
-    },
-    {
-      lot_id: "xxxxxxxx.05",
-      san_luong: "100",
-      sl_loi: "0",
-      sl_ng: "0",
-      result: 2,
-    },
-    {
-      lot_id: "xxxxxxxx.06",
-      san_luong: "100",
-      sl_loi: "0",
-      sl_ng: "0",
-      result: 1,
-    },
-    {
-      lot_id: "xxxxxxxx.07",
-      san_luong: "100",
-      sl_loi: "1",
-      sl_ng: "100",
-      result: 1,
-    },
-    {
-      lot_id: "xxxxxxxx.08",
-      san_luong: "100",
-      sl_loi: "1",
-      sl_ng: "100",
-      result: 1,
-    },
-  ]);
+  const [data, setData] = useState([]);
   const [lineOptions, setLineOptions] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
@@ -107,32 +50,43 @@ const Quality = (props) => {
 
   const overallColumns = [
     {
+      title: "Công đoạn",
+      dataIndex: "cong_doan",
+      key: "cong_doan",
+      align: "center",
+      render: () => (
+        <Select
+          options={machineOptions}
+          value={machine_id}
+          onChange={onChangeLine}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
+    {
       title: "Tổng Lot Kiểm",
       dataIndex: "tong_lot_kiem",
       key: "tong_lot_kiem",
       align: "center",
-      width: 100 / 4 + "%",
     },
     {
       title: "Số Lot Đạt",
       dataIndex: "so_lot_dat",
       key: "so_lot_dat",
       align: "center",
-      width: 100 / 4 + "%",
     },
     {
       title: "Tổng phế (SX+OC)",
       dataIndex: "tong_phe",
       key: "tong_phe",
       align: "center",
-      width: 100 / 4 + "%",
     },
     {
       title: "Tỉ lệ thành phẩm OK",
       dataIndex: "ti_le",
       key: "ti_le",
       align: "center",
-      width: 100 / 4 + "%",
     },
   ];
 
@@ -190,7 +144,9 @@ const Quality = (props) => {
         <InputNumber
           value={text}
           onChange={(value) => handleInputChange(record, value)}
-          onPressEnter={(event)=>onSubmitSLP({sl_ng_qc: event.target.value})}
+          onPressEnter={(event) =>
+            onSubmitSLP({ sl_ng_qc: event.target.value })
+          }
           placeholder="Nhập số lượng"
         />
       ),
@@ -336,9 +292,9 @@ const Quality = (props) => {
   };
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({...params, machine_id});
+    var overall = await getQCOverall({ ...params, machine_id });
     setOverall(overall.data);
-    var res = await getLotQCList({...params, machine_id});
+    var res = await getLotQCList({ ...params, machine_id });
     setData(res.data);
     if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
@@ -404,15 +360,7 @@ const Quality = (props) => {
     <React.Fragment>
       <Spin spinning={loading}>
         <Row gutter={[6, 8]} className="mt-3">
-          <Col span={window.screen.width < 720 ? 7 : 5}>
-            <SelectButton
-              options={machineOptions}
-              value={machine_id}
-              label="Máy"
-              onChange={onChangeLine}
-            />
-          </Col>
-          <Col span={window.screen.width < 720 ? 17 : 19}>
+          <Col span={24}>
             <Table
               locale={{ emptyText: "Trống" }}
               pagination={false}
@@ -432,7 +380,7 @@ const Quality = (props) => {
           </Col>
         </Row>
 
-        <Row className="mt-3" style={{ justifyContent: "space-between" }}>
+        <Row className="mt-2" style={{ justifyContent: "space-between" }}>
           <Col span={24}>
             <Table
               locale={{ emptyText: "Trống" }}
@@ -525,7 +473,11 @@ const Quality = (props) => {
             onFinish={onSubmitSLP}
           >
             <Form.Item name={"sl_ng_qc"}>
-              <InputNumber style={{ width: "100%" }} inputMode="numeric" onPressEnter={()=>form1.submit()}/>
+              <InputNumber
+                style={{ width: "100%" }}
+                inputMode="numeric"
+                onPressEnter={() => form1.submit()}
+              />
             </Form.Item>
           </Form>
         </Modal>

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Row, Col, Table, Button } from "antd";
+import { Row, Col, Table, Button, Select } from "antd";
 import "../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import SelectButton from "../../../components/Button/SelectButton";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import PopupInTem from "../../../components/Popup/PopupInTem";
 import { useEffect } from "react";
@@ -15,8 +14,8 @@ import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
 const columnDetail = [
   {
     title: "Mã cuộn TBDX",
-    dataIndex: "ma_cuon_tbdx",
-    key: "ma_cuon_tbdx",
+    dataIndex: "material_id",
+    key: "material_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -29,8 +28,8 @@ const columnDetail = [
   },
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -95,37 +94,6 @@ const importColumns = [
   },
 ];
 
-const column2 = [
-  {
-    title: "Sl nhập",
-    dataIndex: "sl_nhap",
-    key: "sl_nhap",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl xuất",
-    dataIndex: "sl_xuat",
-    key: "sl_xuat",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl tồn",
-    dataIndex: "sl_ton",
-    key: "sl_ton",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số ngày tồn kho",
-    dataIndex: "so_ngay_ton_kho",
-    key: "so_ngay_ton_kho",
-    align: "center",
-    render: (value) => value || "-",
-  },
-];
-
 const options = [
   {
     label: "Nhập",
@@ -155,6 +123,7 @@ const Import = (props) => {
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [currentScan, setCurrentScan] = useState([]);
   // const [valueQR, setValueQR] = useState("");
 
   const onShowPopup = () => {
@@ -172,6 +141,52 @@ const Import = (props) => {
       soCuonTonTrongKho: 0,
     },
   ]);
+
+  const column2 = [
+    {
+      title: "Kho",
+      dataIndex: "kho",
+      key: "kho",
+      align: "center",
+      render: () => (
+        <Select
+          options={options}
+          value={line}
+          onChange={onChangeLine}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
+    {
+      title: "Sl nhập",
+      dataIndex: "sl_nhap",
+      key: "sl_nhap",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl xuất",
+      dataIndex: "sl_xuat",
+      key: "sl_xuat",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl tồn",
+      dataIndex: "sl_ton",
+      key: "sl_ton",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số ngày tồn kho",
+      dataIndex: "so_ngay_ton_kho",
+      key: "so_ngay_ton_kho",
+      align: "center",
+      render: (value) => value || "-",
+    },
+  ];
 
   useEffect(() => {
     getLogs();
@@ -223,27 +238,11 @@ const Import = (props) => {
   //   loadInfo();
   // }, []);
 
-  const onScan = () => {};
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 12]}>
-        <Col span={6}>
-          <SelectButton
-            value={line}
-            options={options}
-            label="Chọn"
-            onChange={onChangeLine}
-          />
-        </Col>
-        <Col span={18}>
+        <Col span={24}>
           <Table
-            // rowClassName={(record, index) =>
-            //   record.status === 1
-            //     ? "table-row-yellow"
-            //     : record.status === 2
-            //     ? "table-row-grey"
-            //     : "table-row-green"
-            // }
             pagination={false}
             bordered
             className="mb-1"
@@ -253,18 +252,11 @@ const Import = (props) => {
         </Col>
         <Col span={24}>
           <Table
-            // rowClassName={(record, index) =>
-            //   record.status === 1
-            //     ? "table-row-yellow"
-            //     : record.status === 2
-            //     ? "table-row-grey"
-            //     : "table-row-green"
-            // }
             pagination={false}
             bordered
             className="mb-1"
             columns={columnDetail}
-            dataSource={selectedItem}
+            dataSource={currentScan}
           />
         </Col>
         <Col span={12}>
@@ -325,7 +317,13 @@ const Import = (props) => {
         </Col>
       </Row>
       {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
-      {isScan && <PopupNhapKhoNvl visible={isScan} setVisible={setIsScan} />}
+      {isScan && (
+        <PopupNhapKhoNvl
+          visible={isScan}
+          setVisible={setIsScan}
+          setCurrentScan={setCurrentScan}
+        />
+      )}
     </React.Fragment>
   );
 };
