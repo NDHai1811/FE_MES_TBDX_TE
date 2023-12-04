@@ -4,7 +4,7 @@ import "./PopupQuetQr.css";
 import { sendResultPrint } from "../../api/oi/warehouse";
 
 function PopupInTemKhoNvl(props) {
-  const { visible, setVisible, data } = props;
+  const { visible, setVisible, data, setCurrentScan } = props;
 
   const [value, setValue] = useState("");
 
@@ -43,7 +43,16 @@ function PopupInTemKhoNvl(props) {
       material_id: data?.[0]?.material_id,
       so_kg: parseInt(value, 10),
     })
-      .then((res) => console.log(res.data))
+      .then((res) => {
+        console.log(res.data);
+        setCurrentScan([
+          {
+            material_id: res.data.parent_id,
+            so_kg: res.data.so_kg,
+            locator_id: res.data.locator_id,
+          },
+        ]);
+      })
       .catch((err) => console.log("Gửi dữ liệu in tem thất bại: ", err));
   };
 

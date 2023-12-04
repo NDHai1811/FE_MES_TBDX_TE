@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
@@ -48,6 +48,8 @@ function PopupNhapKhoNvl(props) {
   const [data, setData] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
 
+  const isSendRef = useRef(false);
+
   useEffect(() => {
     if (currentData) {
       getData();
@@ -88,43 +90,25 @@ function PopupNhapKhoNvl(props) {
       });
   };
 
-  const sendResult = () => {
+  const sendResult = (value) => {
     const materialIds = data
       ?.filter((item) => item.status === 1)
       .map((val) => val.material_id);
     const resData = {
       material_id: materialIds,
-      locator_id: data[0].locator_id,
+      locator_id: value,
     };
     sendResultScan(resData)
       .then((res) => {
         console.log(res);
         window.localStorage.removeItem("ScanNhapNvl");
+        handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };
 
-  const onScanLocation = (value) => {
-    const id = data.find(
-      (val) => val.locator_id === value && !val.isScanLocation
-    )?.material_id;
-
-    const items = data.map((val) => {
-      if (val.material_id === id) {
-        val.isScanLocation = true;
-      }
-      return { ...val };
-    });
-
-    setData(items);
-  };
-
   const handleOk = () => {
-    if (list) {
-      sendResult();
-    } else {
-      window.localStorage.setItem("ScanNhapNvl", JSON.stringify(data));
-    }
+    window.localStorage.setItem("ScanNhapNvl", JSON.stringify(data));
     setVisible(false);
   };
 
@@ -134,9 +118,12 @@ function PopupNhapKhoNvl(props) {
 
   const onScanResult = (value) => {
     if (list) {
-      const isLocation = data.filter((val) => val.locator_id === value);
-      if (isLocation?.length > 0) {
-        onScanLocation(value);
+      const isLocation = data.some((val) => val.locator_id === value);
+      if (isLocation) {
+        if (!isSendRef.current) {
+          isSendRef.current = true;
+          sendResult(value);
+        }
       } else {
         message.error(
           "Vị trí hiện tại không đúng, xin vui lòng quét vị trí lại"
@@ -153,7 +140,7 @@ function PopupNhapKhoNvl(props) {
         title="In Tem"
         open={visible}
         onOk={handleOk}
-        okText={list ? "Gửi dữ liệu" : "Lưu"}
+        okText={!list ? "Lưu" : null}
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >

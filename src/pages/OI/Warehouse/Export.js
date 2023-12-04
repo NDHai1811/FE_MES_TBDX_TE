@@ -521,7 +521,7 @@ const Export = (props) => {
               justifyContent: "center",
             }}
           >
-            In tem pallet
+            In tem
           </Button>
         </Col>
         <Col span={24}>
