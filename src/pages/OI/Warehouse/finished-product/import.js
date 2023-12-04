@@ -7,7 +7,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import { warehousTPData } from "../mock-data";
 import ScanQR from "../../../../components/Scanner";
-import PopupInTem from "../../../../components/Popup/PopupInTem";
+import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 
 const columnDetail = [
@@ -258,7 +258,9 @@ const Import = (props) => {
           />
         </Col>
       </Row>
-      {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupQuetQrNhapKho visible={visible} setVisible={setVisible} />
+      )}
       {isScan && (
         <Modal
           title="Quét QR"

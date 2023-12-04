@@ -61,7 +61,7 @@ const data = [
   },
 ];
 
-function PopupInTem(props) {
+function PopupQuetQrNhapKho(props) {
   const { visible, setVisible } = props;
 
   const handleOk = () => {
@@ -75,7 +75,7 @@ function PopupInTem(props) {
   return (
     <div>
       <Modal
-        title="In Tem"
+        title="Quét mã"
         open={visible}
         onOk={handleOk}
         okText="Lưu"
@@ -99,4 +99,4 @@ function PopupInTem(props) {
   );
 }
 
-export default PopupInTem;
+export default PopupQuetQrNhapKho;

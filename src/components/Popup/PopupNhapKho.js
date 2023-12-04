@@ -46,21 +46,21 @@ function PopupNhapKhoNvl(props) {
   const { visible, setVisible, setCurrentScan } = props;
   const items = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
   const [data, setData] = useState(items || []);
-  const [currentData, setCurrentData] = useState({});
+  const [currentData, setCurrentData] = useState("");
 
   useEffect(() => {
-    if (currentData?.material_id) {
+    if (currentData) {
       getData();
     }
-  }, [currentData?.material_id]);
+  }, [currentData]);
 
   const getData = () => {
-    getScanList({ material_id: currentData?.material_id })
+    getScanList({ material_id: currentData })
       .then((res) => {
         const response = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
         if (response?.length > 0) {
           response.map((val) => {
-            if (val.material_id === currentData.material_id) {
+            if (val.material_id === currentData) {
               val.status = 1;
             }
             return { ...val };
@@ -97,7 +97,7 @@ function PopupNhapKhoNvl(props) {
   };
 
   const onScanResult = (value) => {
-    setCurrentData(JSON.parse(value));
+    setCurrentData(value);
   };
 
   return (

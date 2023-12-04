@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Table, Button, Select } from "antd";
 import "../style.scss";
 import {
@@ -6,10 +6,9 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import PopupInTem from "../../../components/Popup/PopupInTem";
-import { useEffect } from "react";
 import { getTablesNvl } from "../../../api/oi/warehouse";
 import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
+import PopupInTemKhoNvl from "../../../components/Popup/PopupInTemKhoNvl";
 
 const columnDetail = [
   {
@@ -316,7 +315,13 @@ const Import = (props) => {
           />
         </Col>
       </Row>
-      {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupInTemKhoNvl
+          visible={visible}
+          setVisible={setVisible}
+          data={currentScan}
+        />
+      )}
       {isScan && (
         <PopupNhapKhoNvl
           visible={isScan}
