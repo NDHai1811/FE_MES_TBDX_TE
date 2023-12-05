@@ -5,25 +5,24 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import SelectButton from "../../../components/Button/SelectButton";
 import { useReactToPrint } from "react-to-print";
 import { warehousExportNVLData } from "./mock-data";
-import ScanQR from "../../../components/Scanner";
-import PopupInTem from "../../../components/Popup/PopupInTem";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+import PopupInTemKhoNvl from "../../../components/Popup/PopupInTemKhoNvl";
+import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
 
 const columnDetail = [
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Mã cuộn TBDX",
-    dataIndex: "TBDX_id",
-    key: "TBDX_id",
+    dataIndex: "material_id",
+    key: "material_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -191,6 +190,7 @@ const Export = (props) => {
   const onChangeLine = (value) => {
     history.push("/warehouse/kho-nvl/" + value);
   };
+  const [currentScan, setCurrentScan] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [row1, setRow1] = useState([
     {
@@ -521,7 +521,7 @@ const Export = (props) => {
               justifyContent: "center",
             }}
           >
-            In tem pallet
+            In tem
           </Button>
         </Col>
         <Col span={24}>
@@ -549,22 +549,19 @@ const Export = (props) => {
           />
         </Col>
       </Row>
-      {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupInTemKhoNvl
+          visible={visible}
+          setVisible={setVisible}
+          data={currentScan}
+        />
+      )}
       {isScan && (
-        <Modal
-          title="Quét QR"
-          open={isScan}
-          onCancel={() => setIsScan(false)}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isScan}
-            onResult={(res) => {
-              onScan(res);
-              setIsScan(false);
-            }}
-          />
-        </Modal>
+        <PopupNhapKhoNvl
+          visible={isScan}
+          setVisible={setIsScan}
+          setCurrentScan={setCurrentScan}
+        />
       )}
     </React.Fragment>
   );

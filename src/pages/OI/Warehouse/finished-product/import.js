@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Table, Button, Modal, Select } from "antd";
 import "../../style.scss";
 import {
@@ -7,8 +7,9 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import { warehousTPData } from "../mock-data";
 import ScanQR from "../../../../components/Scanner";
-import PopupInTem from "../../../../components/Popup/PopupInTem";
+import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+import { getWarehouseOverall } from "../../../../api/oi/warehouse";
 
 const columnDetail = [
   {
@@ -101,6 +102,8 @@ const Import = (props) => {
   document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
+
+  const [logs, setLogs] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
       so_pallet: "T300/3",
@@ -108,6 +111,18 @@ const Import = (props) => {
       vi_tri: "A01",
     },
   ]);
+
+  useEffect(() => {
+    getLogs();
+  }, []);
+
+  const getLogs = () => {
+    getWarehouseOverall()
+      .then((res) => setLogs(res.data))
+      .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
+  };
+
+  console.log({logs})
 
   const column2 = [
     {
@@ -228,7 +243,7 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                In tem pallet
+                In tem
               </Button>
             </Col>
           </Row>
@@ -258,7 +273,9 @@ const Import = (props) => {
           />
         </Col>
       </Row>
-      {visible && <PopupInTem visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupQuetQrNhapKho visible={visible} setVisible={setVisible} />
+      )}
       {isScan && (
         <Modal
           title="Quét QR"

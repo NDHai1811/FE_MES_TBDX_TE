@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Layout,
   Divider,
@@ -18,17 +18,19 @@ import {
   Space,
   Tree,
 } from "antd";
+import { useReactToPrint } from "react-to-print";
 import "../style.scss";
 import { baseURL } from "../../../config";
 import {
   createWareHouseExport,
   deleteWareHouseExport,
-  getListWarehouseExportPlan,
+  getListWarehouseMLTImport,
   updateWareHouseExport,
 } from "../../../api";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
 import { getListPlanMaterialExport } from "../../../api/ui/warehouse";
+import TemNVL from "./TemNVL";
 
 const { TabPane } = Tabs;
 
@@ -162,6 +164,7 @@ const WarehouseExportPlan = (props) => {
   document.title = "UI - Kế hoạch xuất kho";
   const [data, setData] = useState([]);
   const [listCheck, setListCheck] = useState([]);
+  const [listMaterialCheck, setListMaterialCheck] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
   // const [listCustomers, setListCustomers] = useState([]);
   // const [listIdProducts, setListIdProducts] = useState([]);
@@ -182,6 +185,11 @@ const WarehouseExportPlan = (props) => {
       }
     }
   };
+  useEffect(() => {
+    const new_data = logs.filter((datainput) => listCheck.includes(datainput.material_id));
+    console.log(new_data);
+    setListMaterialCheck(new_data);
+  }, [listCheck]);
 
   useEffect(() => {
     getLogs();
@@ -227,25 +235,28 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "name1",
       key: "name1",
       align: "center",
+      width: '4%',
       render: (value, item, index) => (
         <Checkbox
-          value={item.id}
+          value={item.material_id}
           onChange={onChangeChecbox}
-          checked={listCheck.includes(item.id) ? true : false}
+          checked={listCheck.includes(item.material_id) ? true : false}
         ></Checkbox>
       ),
     },
     {
       title: "Mã cuộn TBDX",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "material_id",
+      key: "material_id",
       align: "center",
+      width: '10%'
     },
     {
       title: "Mã vật tư",
       dataIndex: "ma_vat_tu",
       key: "ma_vat_tu",
       align: "center",
+      width: '8%'
     },
     {
       title: "Tên nhà cung cấp",
@@ -264,30 +275,36 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
+      width: '5%'
     },
     {
       title: "Loại giấy",
       dataIndex: "loai_giay",
       key: "loai_giay",
       align: "center",
+      width: '5%'
     },
     {
       title: "Khổ giấy",
       dataIndex: "kho_giay",
       key: "kho_giay",
       align: "center",
+      width: '5%'
     },
     {
       title: "Định lượng",
       dataIndex: "dinh_luong",
       key: "dinh_luong",
       align: "center",
+      width: '5%'
     },
     {
       title: "IQC OK/NG",
       dataIndex: "iqc",
       key: "iqc",
       align: "center",
+      width: '10%',
+      render: (value, item, index) => value === 0 ? 'Chưa kiểm tra' : (value === 1 ? 'OK' : 'NG')
     },
   ];
   const mergedKey = "khach_hang";
@@ -343,8 +360,8 @@ const WarehouseExportPlan = (props) => {
   };
 
   const loadListTable = async () => {
-    const res = await getListWarehouseExportPlan(params);
-    setData(res.sort((a, b) => a[mergedKey].localeCompare(b[mergedKey])));
+    const res = await getListWarehouseMLTImport(params);
+    setData(res.data);
   };
 
   useEffect(() => {
@@ -385,6 +402,12 @@ const WarehouseExportPlan = (props) => {
       setTitleMdlEdit("Cập nhật");
     }
   };
+  const componentRef1 = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef1.current
+  });
+
   const onInsert = () => {
     setTitleMdlEdit("Thêm mới");
     form.resetFields();
@@ -529,7 +552,7 @@ const WarehouseExportPlan = (props) => {
                 <Upload
                   showUploadList={false}
                   name="file"
-                  action={baseURL + "/api/upload-ke-hoach-xuat-kho"}
+                  action={baseURL + "/api/upload-nhap-kho-nvl"}
                   headers={{
                     authorization: "authorization-text",
                   }}
@@ -562,10 +585,12 @@ const WarehouseExportPlan = (props) => {
                   Sửa
                 </Button>
                 <Button type="primary" onClick={onInsert}>
-                  Chèn
+                  Thêm
                 </Button>
-                <Button type="primary">Lưu</Button>
-                <Button type="primary">In tem NVL</Button>
+                <Button type="primary" onClick={handlePrint}>In tem NVL</Button>
+                <div className="report-history-invoice">
+                  <TemNVL listCheck={listMaterialCheck} ref={componentRef1} />
+                </div>
               </Space>
             ) : null
           }
@@ -576,12 +601,12 @@ const WarehouseExportPlan = (props) => {
             columns={currentTab === "1" ? columns : columns1}
             dataSource={currentTab === "1" ? logs : data}
             scroll={{
-              x: "130vw",
+              x: "100vw",
               y: "55vh",
             }}
             pagination={false}
             size="small"
-            setDataSource={setData}
+            setDataSource={data}
             onEditEnd={() => null}
           />
         </Card>

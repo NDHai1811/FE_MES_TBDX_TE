@@ -12,8 +12,8 @@ export async function getListLot(params) {
   const res = await axios.get("/lot/list-table", { params: params });
   return res.data;
 }
-export async function getListWarehouseExportPlan(params) {
-  const res = await axios.get("/warehouse/list-export-plan", { params });
+export async function getListWarehouseMLTImport(params) {
+  const res = await axios.get("/ui/warehouse/list-material-import", { params });
   return res.data;
 }
 export async function getListProductPlan(params) {

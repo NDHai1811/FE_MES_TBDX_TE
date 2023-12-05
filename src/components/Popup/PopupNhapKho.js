@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
@@ -35,7 +35,7 @@ const columns = [
     key: "locator_id",
     align: "center",
     render: (value, record) => (
-      <span style={{ color: record.status === 1 ? "black" : "gray" }}>
+      <span style={{ color: record.isScanLocation ? "black" : "gray" }}>
         {value}
       </span>
     ),
@@ -44,51 +44,71 @@ const columns = [
 
 function PopupNhapKhoNvl(props) {
   const { visible, setVisible, setCurrentScan } = props;
-  const items = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
-  const [data, setData] = useState(items || []);
-  const [currentData, setCurrentData] = useState({});
+  const list = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
+  const [data, setData] = useState(list || []);
+  const [currentData, setCurrentData] = useState("");
+
+  const isSendRef = useRef(false);
 
   useEffect(() => {
-    if (currentData?.material_id) {
+    if (currentData) {
       getData();
     }
-  }, [currentData?.material_id]);
+  }, [currentData]);
 
   const getData = () => {
-    getScanList({ material_id: currentData?.material_id })
+    getScanList({ material_id: currentData })
       .then((res) => {
-        const response = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
-        if (response?.length > 0) {
-          response.map((val) => {
-            if (val.material_id === currentData.material_id) {
+        if (res.data.length > 1) {
+          const items = data?.map((val) => {
+            if (val.material_id === currentData) {
               val.status = 1;
             }
-            return { ...val };
+            return {
+              ...val,
+            };
           });
+          setData(
+            data?.length > 0
+              ? items
+              : res.data?.map((val) => ({ ...val, isScanLocation: false }))
+          );
+        } else if (res.data.length === 1) {
+          window.localStorage.setItem(
+            "ScanNhapNvl",
+            JSON.stringify(
+              res.data?.map((val) => ({ ...val, isScanLocation: false }))
+            )
+          );
+          handleCancel();
         }
-        window.localStorage.setItem(
-          "ScanNhapNvl",
-          response?.length > 0
-            ? JSON.stringify(response)
-            : JSON.stringify(res.data)
-        );
-        setData(response?.length > 0 ? response : res.data);
         setCurrentScan([res.data[0]]);
       })
-      .catch((err) => console.log("Lấy danh sách scan thất bại: ", err));
+      .catch((err) => {
+        console.log("Lấy danh sách scan thất bại: ", err);
+        message.error("Mã cuộn không tồn tại");
+      });
   };
 
-  const sendResult = () => {
-    const resData = data
+  const sendResult = (value) => {
+    const materialIds = data
       ?.filter((item) => item.status === 1)
-      .map((val) => ({ material_id: val.material_id }));
+      .map((val) => val.material_id);
+    const resData = {
+      material_id: materialIds,
+      locator_id: value,
+    };
     sendResultScan(resData)
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+        window.localStorage.removeItem("ScanNhapNvl");
+        handleCancel();
+      })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };
 
   const handleOk = () => {
-    sendResult();
+    window.localStorage.setItem("ScanNhapNvl", JSON.stringify(data));
     setVisible(false);
   };
 
@@ -97,7 +117,21 @@ function PopupNhapKhoNvl(props) {
   };
 
   const onScanResult = (value) => {
-    setCurrentData(JSON.parse(value));
+    if (list) {
+      const isLocation = data.some((val) => val.locator_id === value);
+      if (isLocation) {
+        if (!isSendRef.current) {
+          isSendRef.current = true;
+          sendResult(value);
+        }
+      } else {
+        message.error(
+          "Vị trí hiện tại không đúng, xin vui lòng quét vị trí lại"
+        );
+      }
+    } else {
+      setCurrentData(value);
+    }
   };
 
   return (
@@ -106,7 +140,7 @@ function PopupNhapKhoNvl(props) {
         title="In Tem"
         open={visible}
         onOk={handleOk}
-        okText="Lưu"
+        okText={!list ? "Lưu" : null}
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >
