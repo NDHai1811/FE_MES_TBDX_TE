@@ -15,3 +15,7 @@ export const sendResultScan = async (data) => {
 export const sendResultPrint = async (data) => {
   return await axios.post("/oi/warehouse/mlt/import/retype", data);
 };
+
+export const getWarehouseOverall = async () => {
+  return await axios.get("oi/warehouse/mlt/import/overall");
+};

@@ -9,6 +9,7 @@ import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { getTablesNvl } from "../../../api/oi/warehouse";
 import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
 import PopupInTemKhoNvl from "../../../components/Popup/PopupInTemKhoNvl";
+import { getWarehouseOverall } from "../../../api/oi/warehouse";
 
 const columnDetail = [
   {
@@ -108,22 +109,12 @@ const Import = (props) => {
   document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [isScan, setIsScan] = useState(0);
-  // const [dataTable, setDataTable] = useState([]);
-  // const [lotID, setLotID] = useState([]);
-  const [selectedItem, setSelectedItem] = useState([
-    {
-      ma_cuon_tbdx: "456",
-      so_kg: "1800",
-      vi_tri: "A01",
-    },
-  ]);
+
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [overall, setOverall] = useState([]);
   const [currentScan, setCurrentScan] = useState([]);
-  // const [valueQR, setValueQR] = useState("");
 
   const onShowPopup = () => {
     setVisible(true);
@@ -189,7 +180,14 @@ const Import = (props) => {
 
   useEffect(() => {
     getLogs();
+    getOverAll();
   }, []);
+
+  const getOverAll = () => {
+    getWarehouseOverall()
+      .then((res) => setOverall(res.data))
+      .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
+  };
 
   const getLogs = () => {
     getTablesNvl()
@@ -198,44 +196,6 @@ const Import = (props) => {
         console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
       );
   };
-
-  // const getLotCurrent = async (e) => {
-  //   const res = await getProposeWareHouse({ lot_id: e.target.value });
-  //   setCurrentLot(res);
-  //   setValueQR("");
-  // };
-
-  // const loadListTable = async () => {
-  //   setDataTable(await getListImportWareHouse());
-  // };
-
-  // const loadInfo = async () => {
-  //   setRow1(await getInfoImportWareHouse());
-  // };
-
-  // const saveLotInWareHouse = async (e) => {
-  //   if (e.target.value === currentLot[0].vi_tri_de_xuat) {
-  //     const res = await importWareHouse({
-  //       lot_id: currentLot[0].ma_thung,
-  //       cell_id: e.target.value,
-  //     });
-  //     loadListTable();
-  //     loadInfo();
-  //     setCurrentLot([]);
-  //     setValueQR("");
-  //   } else {
-  //     message.error("Không đúng vị trí đề xuất");
-  //   }
-  // };
-
-  const onSelectItem = (val) => {
-    setSelectedItem([val]);
-  };
-
-  // useEffect(() => {
-  //   loadListTable();
-  //   loadInfo();
-  // }, []);
 
   return (
     <React.Fragment>
@@ -287,7 +247,7 @@ const Import = (props) => {
             }}
             onClick={onShowPopup}
           >
-            In tem pallet
+            In tem
           </Button>
         </Col>
         <Col span={24}>
@@ -307,11 +267,6 @@ const Import = (props) => {
             className="mb-4"
             columns={importColumns}
             dataSource={logs}
-            onRow={(record) => {
-              return {
-                onClick: () => onSelectItem(record),
-              };
-            }}
           />
         </Col>
       </Row>
@@ -320,6 +275,7 @@ const Import = (props) => {
           visible={visible}
           setVisible={setVisible}
           data={currentScan}
+          setCurrentScan={setCurrentScan}
         />
       )}
       {isScan && (
