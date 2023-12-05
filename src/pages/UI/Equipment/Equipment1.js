@@ -11,6 +11,7 @@ import {
   Select,
   Space,
   Spin,
+  Tree,
 } from "antd";
 import { Column } from "@ant-design/plots";
 import React, { useState, useEffect } from "react";
@@ -22,6 +23,7 @@ import { exportMachineError } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import "../style.scss";
+import { getErrorMachineFrenquency, getMachineErrorList, getMachinePerformance } from "../../../api/ui/machine";
 
 const columnTable = [
   {
@@ -33,20 +35,20 @@ const columnTable = [
   },
   {
     title: "Máy",
-    dataIndex: "may",
-    key: "may",
+    dataIndex: "machine_id",
+    key: "machine_id",
     align: "center",
   },
   {
     title: "Khách hàng",
     dataIndex: "khach_hang",
-    key: "ca_sx",
+    key: "khach_hang",
     align: "center",
   },
   {
     title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    dataIndex: "ma_don_hang",
+    key: "ma_don_hang",
     align: "center",
     render: (value) => value || "-",
   },
@@ -59,15 +61,15 @@ const columnTable = [
   },
   {
     title: "Thời gian dừng",
-    dataIndex: "thoi_gian_dung",
-    key: "thoi_gian_dung",
+    dataIndex: "start_time",
+    key: "start_time",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Thời gian chạy",
-    dataIndex: "thoi_gian_chay",
-    key: "thoi_gian_chay",
+    dataIndex: "end_time",
+    key: "end_time",
     align: "center",
     render: (value) => value || "-",
   },
@@ -115,10 +117,10 @@ const columnTable = [
   },
   {
     title: "Tình trạng",
-    dataIndex: "tinh_trang",
-    key: "tinh_trang",
+    dataIndex: "da_xu_ly",
+    key: "da_xu_ly",
     render: (record) => {
-      return record == 1 ? (
+      return record ? (
         <Tag style={{ wordWrap: "break-word" }} color="#87d068">
           Đã hoàn thành
         </Tag>
@@ -349,92 +351,140 @@ const Equipment1 = (props) => {
   // const [selectedError, setSelectedError] = useState();
   const [data, setData] = useState();
   const [dataTable, setDataTable] = useState();
-  const [dataPieChart, setDataPieChart] = useState([]);
-  const [dataColChart, setDataColChart] = useState([]);
+  const [dataPieChart, setDataPieChart] = useState([
+    {
+      name:'P01',
+      value: 18
+    },
+    {
+      name:'P02',
+      value: 5
+    },
+    {
+      name:'D01',
+      value: 9
+    },
+    {
+      name:'D02',
+      value: 20
+    },
+    {
+      name:'S01',
+      value: 11
+    },
+  ]);
+  const [dataColChart, setDataColChart] = useState([
+    {
+      name: 'Máy in P.06',
+      percent: 50,
+    },
+    {
+      name: 'Máy in P.05',
+      percent: 60,
+    },
+    {
+      name: 'Máy dán P.06',
+      percent: 70,
+    },
+    {
+      name: 'Máy in P.15',
+      percent: 30,
+    },
+    {
+      name: 'Chuyền máy dợn sóng',
+      percent: 25,
+    },
+  ]);
   const [activeTab, setActiveTab] = useState("Time");
   const [params, setParams] = useState({
     machine_code: "",
     date: [dayjs(), dayjs()],
   });
   const [loading, setLoading] = useState(false);
-  // useEffect(() => {
-  //   (async () => {
-  //     setLoading(false);
-  //     const res2 = await getProducts();
-  //     setListIdProducts(
-  //       res2.data.map((e) => {
-  //         return { ...e, label: e.id, value: e.id };
-  //       })
-  //     );
-  //     const res3 = await getLoSanXuat();
-  //     setListLoSX(
-  //       res3.data.map((e) => {
-  //         return { ...e, label: e, value: e };
-  //       })
-  //     );
-  //     const res4 = await getStaffs();
-  //     setListStaffs(
-  //       res4.data.map((e) => {
-  //         return { ...e, label: e.name, value: e.id };
-  //       })
-  //     );
+  useEffect(() => {
+    //   (async () => {
+    //     setLoading(false);
+    //     const res2 = await getProducts();
+    //     setListIdProducts(
+    //       res2.data.map((e) => {
+    //         return { ...e, label: e.id, value: e.id };
+    //       })
+    //     );
+    //     const res3 = await getLoSanXuat();
+    //     setListLoSX(
+    //       res3.data.map((e) => {
+    //         return { ...e, label: e, value: e };
+    //       })
+    //     );
+    //     const res4 = await getStaffs();
+    //     setListStaffs(
+    //       res4.data.map((e) => {
+    //         return { ...e, label: e.name, value: e.id };
+    //       })
+    //     );
 
-  //     const res5 = await getCustomers();
-  //     setListCustomers(
-  //       res5.data.map((e) => {
-  //         return { ...e, label: e.name, value: e.id };
-  //       })
-  //     );
-  //     const res6 = await getErrorsMachine();
-  //     setListErrorsMachine(
-  //       res6.data.map((e) => {
-  //         return { ...e, label: e.noi_dung, value: e.id };
-  //       })
-  //     );
-  //     const res7 = await getMachineOfLine();
-  //     setListMachines(
-  //       res7.data.map((e) => {
-  //         return { ...e, label: e.name, value: e.code };
-  //       })
-  //     );
-  //     setLoading(false);
-  //   })();
-  //   btn_click();
-  // }, []);
+    //     const res5 = await getCustomers();
+    //     setListCustomers(
+    //       res5.data.map((e) => {
+    //         return { ...e, label: e.name, value: e.id };
+    //       })
+    //     );
+    //     const res6 = await getErrorsMachine();
+    //     setListErrorsMachine(
+    //       res6.data.map((e) => {
+    //         return { ...e, label: e.noi_dung, value: e.id };
+    //       })
+    //     );
+    //     const res7 = await getMachineOfLine();
+    //     setListMachines(
+    //       res7.data.map((e) => {
+    //         return { ...e, label: e.name, value: e.code };
+    //       })
+    //     );
+    //     setLoading(false);
+    //   })();
+    btn_click();
+  }, []);
 
   function btn_click() {
     (async () => {
       setLoading(false);
-      const res = await getMachineError(params);
-      setData(res.data);
+      const res1 = await getMachineErrorList(params);
+      setData(res1.data);
+      const res2 = await getErrorMachineFrenquency(params);
+      // setDataPieChart(res2.data);
+      // const res3 = await getMachinePerformance(params);
+      // setDataColChart(res3.data);
+      // const res4 = await getMachineError(params);
+      // setData(res4.data);
       setLoading(false);
     })();
   }
-  useEffect(() => {
-    if (!data) return;
-    setDataTable(data.table);
+  // useEffect(() => {
+  //   if (!data) return;
+  //   setDataTable(data.table);
 
-    setDataPieChart(
-      Object.keys(data.chart_err).map((item, i) => {
-        return {
-          id: data.chart_err[item]["id"],
-          error:
-            data.chart_err[item]["id"] + " " + data.chart_err[item]["name"],
-          value: parseInt(data.chart_err[item]["value"]),
-        };
-      })
-    );
+  //   setDataPieChart(
+  //     Object.keys(data.chart_err).map((item, i) => {
+  //       return {
+  //         id: data.chart_err[item]["id"],
+  //         error:
+  //           data.chart_err[item]["id"] + " " + data.chart_err[item]["name"],
+  //         value: parseInt(data.chart_err[item]["value"]),
+  //       };
+  //     })
+  //   );
 
-    setDataColChart(
-      Object.keys(data.perfomance).map((item, i) => {
-        console.log(data.perfomance[item]);
-        return {
-          type: data.perfomance[item]["machine_name"],
-          value: data.perfomance[item]["percent"],
-        };
-      })
-    );
-  }, [data]);
+  //   setDataColChart(
+  //     Object.keys(data.perfomance).map((item, i) => {
+  //       console.log(data.perfomance[item]);
+  //       return {
+  //         type: data.perfomance[item]["machine_name"],
+  //         value: data.perfomance[item]["percent"],
+  //       };
+  //     })
+  //   );
+  // }, [data]);
 
   useEffect(() => {
     console.log(dataColChart);
@@ -442,20 +492,21 @@ const Equipment1 = (props) => {
 
   var configColChart = {
     data: dataColChart,
-    xField: "type",
-    yField: "value",
+    xField: "name",
+    yField: "percent",
     label: {
       position: "top",
       offsetY: 10,
-      formatter: (value) => {
-        console.log(value);
-        return value.value ? `${value.value}%` : "";
-      },
+      // formatter: (value) => {
+      //   console.log(value);
+      //   return value.value ? `${value.value}%` : "";
+      // },
     },
     xAxis: {
       label: {
         autoHide: false,
-        autoRotate: true,
+        autoRotate: false,
+        rotate: -270
       },
     },
     yAxis: {
@@ -481,6 +532,60 @@ const Equipment1 = (props) => {
     setExportLoading(false);
   };
 
+  const itemsMenu = [
+    {
+      title: "Sóng",
+      key: "30",
+      children: [
+        {
+          title: "Chuyền máy dợn sóng",
+          key: "S01",
+        },
+      ],
+    },
+    {
+      title: "In",
+      key: "31",
+      children: [
+        {
+          title: "Máy in P.06",
+          key: "P06",
+        },
+        {
+          title: "Máy in P.15",
+          key: "P15",
+        },
+      ],
+    },
+    {
+      title: "Dán",
+      key: "32",
+      children: [
+        {
+          title: "Máy dán D.05",
+          key: "D05",
+        },
+        {
+          title: "Máy dán D.06",
+          key: "D06",
+        },
+      ],
+    },
+  ];
+
+  const configPieChart = {
+    appendPadding: 10,
+    // height:200,
+    data:dataPieChart,
+    angleField: 'value',
+    colorField: 'name',
+    radius: 0.8,
+    label: {
+      type: 'outer',
+      content: ({name, percent }) => `${name}`+' '+`${(percent * 100).toFixed(0)}%`,
+    },
+  };
+
   return (
     <>
       <Row style={{ padding: "8px" }} gutter={[8, 8]}>
@@ -493,13 +598,14 @@ const Equipment1 = (props) => {
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>
                 <Form.Item className="mb-3">
-                  <Select
-                    allowClear
-                    onChange={(value) =>
-                      setParams({ ...params, line_id: value })
-                    }
-                    placeholder="Nhập công đoạn"
-                    options={listLines}
+                  <Tree
+                    checkable
+                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
+                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
+                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
+                    // onSelect={onSelect}
+                    // onCheck={onCheck}
+                    treeData={itemsMenu}
                   />
                 </Form.Item>
               </Form>
@@ -635,61 +741,19 @@ const Equipment1 = (props) => {
         <Col span={20}>
           <Row gutter={[8, 8]}>
             <Col span={12}>
-              <Card
-                bodyStyle={{ height: "100%" }}
-                style={{
-                  height: 300,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Space direction="vertical">
-                    <Pie
-                      {...config}
-                      // style={{ width: "20%" }}
-                      innerRadius={0.8}
-                      statistic={{
-                        title: false,
-                        content: {
-                          style: {
-                            whiteSpace: "pre-wrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            fontSize: 14,
-                          },
-                          content: "OEE",
-                        },
-                      }}
-                    />
-                    <Pie
-                      {...config2}
-                      // style={{ width: "20%" }}
-                      innerRadius={0.8}
-                      statistic={{
-                        title: false,
-                        content: {
-                          style: {
-                            whiteSpace: "pre-wrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            fontSize: 12,
-                          },
-                          content: "Tỷ lệ\nvận hành",
-                        },
-                      }}
-                    />
-                  </Space>
-                  <Column {...config3} />
-                </div>
+              <Card title="Tần suất phát sinh lỗi"
+                bodyStyle={{ height: '90%' }}
+                style={
+                  {
+                    height: 300,
+                    padding: '0px'
+                  }
+                }>
+                {!loading && <Pie {...configPieChart} />}
               </Card>
             </Col>
             <Col span={12}>
-              <Card
+              {/* <Card
                 bodyStyle={{ height: "90%" }}
                 style={{
                   height: 300,
@@ -705,6 +769,16 @@ const Equipment1 = (props) => {
                   pagination={false}
                   bordered
                 />
+              </Card> */}
+              <Card title="Hiệu suất máy"
+                bodyStyle={{ height: '90%' }}
+                style={
+                  {
+                    height: 300,
+                    padding: '0px'
+                  }
+                }>
+                <Column {...configColChart} />
               </Card>
             </Col>
             <Col span={24}>
@@ -731,7 +805,7 @@ const Equipment1 = (props) => {
                       y: "50vh",
                     }}
                     columns={columnTable}
-                    dataSource={logs}
+                    dataSource={data}
                   />
                 </Spin>
               </Card>

@@ -12,8 +12,9 @@ import {
   Space,
   Modal,
   Checkbox,
+  Tree,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getThongSoMay,
 } from "../../../api/ui/main";
@@ -29,6 +30,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { getMachineParamLogs } from "../../../api/ui/machine";
 
 const dataChart = Array.from({ length: 12 }, (_, i) => ({
   time: `10:${String(i * 5).padStart(2, "0")}`,
@@ -89,8 +91,8 @@ const col_detailTable = [
   },
   {
     title: "Máy",
-    dataIndex: "may",
-    key: "may",
+    dataIndex: "machine_id",
+    key: "machine_id",
     align: "center",
   },
   {
@@ -101,8 +103,8 @@ const col_detailTable = [
   },
   {
     title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    dataIndex: "ma_don_hang",
+    key: "ma_don_hang",
     align: "center",
   },
   {
@@ -113,8 +115,8 @@ const col_detailTable = [
   },
   {
     title: "Thời gian",
-    dataIndex: "thoi_gian",
-    key: "thoi_gian",
+    dataIndex: "created_at",
+    key: "created_at",
     align: "center",
   },
   {
@@ -122,36 +124,42 @@ const col_detailTable = [
     dataIndex: "do_nhot_ho",
     key: "do_nhot_ho",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Nhiệt độ",
     dataIndex: "nhiet_do",
     key: "nhiet_do",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Lực ép lô làng C",
     dataIndex: "lo_lang_c",
     key: "lo_lang_c",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Lực ép lô sóng C",
     dataIndex: "lo_song_c",
     key: "lo_song_c",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Khe hở lô hồ",
     dataIndex: "khe_ho",
     key: "khe_ho",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Thông số...",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
+    render:(value)=>value??"-"
   },
 
   {
@@ -159,24 +167,28 @@ const col_detailTable = [
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Thông số...",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Thông số...",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
+    render:(value)=>value??"-"
   },
   {
     title: "Thông số...",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
+    render:(value)=>value??"-"
   },
 ];
 
@@ -254,28 +266,29 @@ const Equipment2 = (props) => {
   async function btn_click() {
     setLoSX();
     setLoading(false);
-    const res = await getThongSoMay(params);
+    const res = await getMachineParamLogs(params);
     if (res.success) {
-      setData(
-        res.data.map((e) => {
-          let dataIf = e.data_if;
-          Object.keys(dataIf ?? {}).forEach(function (key, index) {
-            dataIf[key] = { is_if: true, value: dataIf[key] };
-          });
-          let dataInput = e.data_input;
-          Object.keys(dataInput ?? {}).forEach(function (key, index) {
-            dataInput[key] = { is_if: false, value: dataInput[key] };
-          });
-          return { ...e, ...dataIf, ...dataInput };
-        })
-      );
+      setData(res.data)
+      // setData(
+      //   res.data.map((e) => {
+      //     let dataIf = e.data_if;
+      //     Object.keys(dataIf ?? {}).forEach(function (key, index) {
+      //       dataIf[key] = { is_if: true, value: dataIf[key] };
+      //     });
+      //     let dataInput = e.data_input;
+      //     Object.keys(dataInput ?? {}).forEach(function (key, index) {
+      //       dataInput[key] = { is_if: false, value: dataInput[key] };
+      //     });
+      //     return { ...e, ...dataIf, ...dataInput };
+      //   })
+      // );
     }
     setLoading(false);
   }
 
-  // useEffect(() => {
-  //   btn_click();
-  // }, []);
+  useEffect(() => {
+    btn_click();
+  }, []);
   const [loading, setLoading] = useState(false);
 
   const [exportLoading, setExportLoading] = useState(false);
@@ -558,6 +571,46 @@ const Equipment2 = (props) => {
       </div>
     );
   };
+  const itemsMenu = [
+    {
+      title: "Sóng",
+      key: "30",
+      children: [
+        {
+          title: "Chuyền máy dợn sóng",
+          key: "S01",
+        },
+      ],
+    },
+    {
+      title: "In",
+      key: "31",
+      children: [
+        {
+          title: "Máy in P.06",
+          key: "P06",
+        },
+        {
+          title: "Máy in P.15",
+          key: "P15",
+        },
+      ],
+    },
+    {
+      title: "Dán",
+      key: "32",
+      children: [
+        {
+          title: "Máy dán D.05",
+          key: "D05",
+        },
+        {
+          title: "Máy dán D.06",
+          key: "D06",
+        },
+      ],
+    },
+  ];
   return (
     <>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
@@ -566,13 +619,14 @@ const Equipment2 = (props) => {
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Form.Item label="Công đoạn" className="mb-3">
-                  <Select
-                    allowClear
-                    placeholder="Chọn công đoạn"
-                    options={listMachines}
-                    onChange={(value) =>
-                      setParams({ ...params, machine_code: value })
-                    }
+                  <Tree
+                    checkable
+                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
+                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
+                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
+                    // onSelect={onSelect}
+                    // onCheck={onCheck}
+                    treeData={itemsMenu}
                   />
                 </Form.Item>
               </Form>
@@ -724,7 +778,7 @@ const Equipment2 = (props) => {
               </>
             }
           >
-            <ResponsiveContainer width="100%" height={300}>
+            {/* <ResponsiveContainer width="100%" height={300}>
               <LineChart
                 data={dataChart}
                 margin={{
@@ -748,7 +802,7 @@ const Equipment2 = (props) => {
             </ResponsiveContainer>
             <Row style={{ justifyContent: "space-between" }}>
               {cards.map(renderCard)}
-            </Row>
+            </Row> */}
             <Spin spinning={loading}>
               <Table
                 size="small"
@@ -767,7 +821,7 @@ const Equipment2 = (props) => {
                   };
                 }}
                 columns={col_detailTable}
-                dataSource={dataTable}
+                dataSource={data}
               />
             </Spin>
           </Card>

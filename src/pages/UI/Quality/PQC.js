@@ -13,9 +13,10 @@ import {
   Spin,
   message,
   Popconfirm,
+  Tree,
 } from "antd";
 import React, { useState, useEffect } from "react";
-import { Pie, DualAxes } from "@ant-design/plots";
+import { Pie, DualAxes, Line } from "@ant-design/plots";
 import { getLines } from "../../../api/ui/main";
 import dayjs from "dayjs";
 import {
@@ -24,7 +25,7 @@ import {
   exportReportQC,
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
-import { getErrorDetailList } from "../../../api/ui/quality";
+import { getErrorDetailList, getQualityOverall, getTopError } from "../../../api/ui/quality";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
@@ -101,27 +102,63 @@ const QualityPQC = (props) => {
 
   const [data, setData] = useState();
   const [dataTable2, setDataTable2] = useState();
-  const [dataLineChart, setDataLineChart] = useState([]);
+  const [dataLineChart, setDataLineChart] = useState([
+    {
+      date: '12/01',
+      error: 'P01',
+      value: 14,
+    },
+    {
+      date: '12/01',
+      error: 'D01',
+      value: 29,
+    },
+    {
+      date: '12/02',
+      error: 'D01',
+      value: 5,
+    },
+    {
+      date: '12/03',
+      error: 'P01',
+      value: 7,
+    },
+    {
+      date: '12/03',
+      error: 'S01',
+      value: 14,
+    },
+    {
+      date: '12/03',
+      error: 'S02',
+      value: 10,
+    },
+    {
+      date: '12/04',
+      error: 'S01',
+      value: 3,
+    },
+  ]);
   const [dataPieChart, setDataPieChart] = useState([
     {
-      error: "P01",
-      value: 27,
-    },
-    {
-      error: "P02",
-      value: 25,
-    },
-    {
-      error: "P03",
-      value: 18,
-    },
-    {
-      error: "P04",
-      value: 15,
-    },
-    {
-      error: "P05",
       value: 10,
+      error: 'D01'
+    },
+    {
+      value: 12,
+      error: 'S01'
+    },
+    {
+      value: 5,
+      error: 'P01'
+    },
+    {
+      value: 7,
+      error: 'S02'
+    },
+    {
+      value: 9,
+      error: 'D02'
     },
   ]);
   const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
@@ -157,140 +194,22 @@ const QualityPQC = (props) => {
       content: false,
     },
   };
-  const uvBillData = [
-    {
-      time: "2023-03",
-      value: 350,
-      type: "Lot NG",
+  const configLineChart = {
+    data:dataLineChart,
+    height:200,
+    xField: 'date',
+    yField: 'value',
+    seriesField: 'error',
+    legend: {
+        position: 'top',
     },
-    {
-      time: "2023-04",
-      value: 900,
-      type: "Lot NG",
-    },
-    {
-      time: "2023-05",
-      value: 300,
-      type: "Lot NG",
-    },
-    {
-      time: "2023-06",
-      value: 450,
-      type: "Lot NG",
-    },
-    {
-      time: "2023-07",
-      value: 470,
-      type: "Lot NG",
-    },
-    {
-      time: "2023-03",
-      value: 220,
-      type: "Lot OK",
-    },
-    {
-      time: "2023-04",
-      value: 300,
-      type: "Lot OK",
-    },
-    {
-      time: "2023-05",
-      value: 250,
-      type: "Lot OK",
-    },
-    {
-      time: "2023-06",
-      value: 220,
-      type: "Lot OK",
-    },
-    {
-      time: "2023-07",
-      value: 362,
-      type: "Lot OK",
-    },
-  ];
-  const transformData = [
-    {
-      time: "2023-03",
-      count: 100,
-      name: "tieu_chuan",
-    },
-    {
-      time: "2023-04",
-      count: 100,
-      name: "tieu_chuan",
-    },
-    {
-      time: "2023-05",
-      count: 100,
-      name: "tieu_chuan",
-    },
-    {
-      time: "2023-06",
-      count: 100,
-      name: "tieu_chuan",
-    },
-    {
-      time: "2023-07",
-      count: 100,
-      name: "tieu_chuan",
-    },
-    {
-      time: "2023-03",
-      count: 75,
-      name: "ti_le",
-    },
-    {
-      time: "2023-04",
-      count: 65,
-      name: "ti_le",
-    },
-    {
-      time: "2023-05",
-      count: 45,
-      name: "ti_le",
-    },
-    {
-      time: "2023-06",
-      count: 40,
-      name: "ti_le",
-    },
-    {
-      time: "2023-07",
-      count: 32,
-      name: "ti_le",
-    },
-  ];
-  const configColumnLine = {
-    data: [uvBillData, transformData],
-    height: 170,
-    autoFit: true,
-    xField: "time",
-    yField: ["value", "count"],
-    geometryOptions: [
-      {
-        geometry: "column",
-        isStack: true,
-        seriesField: "type",
-        columnWidthRatio: 0.4,
-      },
-      {
-        geometry: "line",
-        seriesField: "name",
-        lineStyle: ({ name }) => {
-          // if (name === 'tieu_chuan') {
-          //   return {
-          //     lineDash: [1, 4],
-          //     opacity: 1,
-          //   };
-          // }
-
-          return {
-            opacity: 0.5,
-          };
+    smooth: true,
+    animation: {
+        appear: {
+        animation: 'path-in',
+        duration: 5000,
         },
-      },
-    ],
+    },
   };
 
   async function btnNG_click(record) {
@@ -441,6 +360,7 @@ const QualityPQC = (props) => {
       align: "center",
       render: (value, record) => (
         <Popconfirm
+          disabled={record.phan_dinh !== 2}
           title="Tái kiểm"
           description="Cho phép tái kiểm lot này?"
           okText="Có"
@@ -448,7 +368,7 @@ const QualityPQC = (props) => {
           onConfirm={() => recheck(record.id)}
           cancelText="Không"
         >
-          <Button>Tái kiểm</Button>
+          <Button disabled={record.phan_dinh !== 2}>Tái kiểm</Button>
         </Popconfirm>
       ),
     },
@@ -462,8 +382,14 @@ const QualityPQC = (props) => {
   function btn_click() {
     (async () => {
       setLoading(true);
-      const res = await getErrorDetailList(params);
-      setDataDetail(res.data);
+      const res1 = await getErrorDetailList(params);
+      setDataDetail(res1.data);
+      const res2 = await getQualityOverall(params);
+      setSummaryData(res2.data);
+      // const res3 = await getTopError(params);
+      // setDataPieChart(res3.data);
+      // const res4 = await getTopError(params);
+      // setDataLineChart(res4.data);
       setLoading(false);
     })();
   }
@@ -567,36 +493,42 @@ const QualityPQC = (props) => {
       key: "san_luong_dem_duoc",
       dataIndex: "san_luong_dem_duoc",
       align: "center",
+      render:(value)=>value??0
     },
     {
       title: "Lỗi ngoại quan",
       key: "sl_ngoai_quan",
       dataIndex: "sl_ngoai_quan",
       align: "center",
+      render:(value)=>value??0
     },
     {
       title: "Lỗi tính năng",
       key: "sl_tinh_nang",
       dataIndex: "sl_tinh_nang",
       align: "center",
+      render:(value)=>value??0
     },
     {
       title: "Tỷ lệ lỗi",
       key: "ti_le_loi",
       dataIndex: "ti_le_loi",
       align: "center",
+      render:(value)=>value??0
     },
     {
       title: "Số phế",
       key: "sl_ng",
       dataIndex: "sl_ng",
       align: "center",
+      render:(value)=>value??0
     },
     {
       title: "Tỷ lệ phế",
       key: "ti_le_ng",
       dataIndex: "ti_le_ng",
       align: "center",
+      render:(value)=>value??0
     },
   ];
   const [summaryData, setSummaryData] = useState([
@@ -610,6 +542,46 @@ const QualityPQC = (props) => {
     },
   ]);
 
+  const itemsMenu = [
+    {
+      title: "Sóng",
+      key: "30",
+      children: [
+        {
+          title: "Chuyền máy dợn sóng",
+          key: "S01",
+        },
+      ],
+    },
+    {
+      title: "In",
+      key: "31",
+      children: [
+        {
+          title: "Máy in P.06",
+          key: "P06",
+        },
+        {
+          title: "Máy in P.15",
+          key: "P15",
+        },
+      ],
+    },
+    {
+      title: "Dán",
+      key: "32",
+      children: [
+        {
+          title: "Máy dán D.05",
+          key: "D05",
+        },
+        {
+          title: "Máy dán D.06",
+          key: "D06",
+        },
+      ],
+    },
+  ];
   return (
     <React.Fragment>
       {contextHolder}
@@ -623,13 +595,14 @@ const QualityPQC = (props) => {
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>
                 <Form.Item className="mb-3">
-                  <Select
-                    allowClear
-                    onChange={(value) =>
-                      setParams({ ...params, line_id: value })
-                    }
-                    placeholder="Nhập công đoạn"
-                    options={listLines}
+                  <Tree
+                    checkable
+                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
+                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
+                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
+                    // onSelect={onSelect}
+                    // onCheck={onCheck}
+                    treeData={itemsMenu}
                   />
                 </Form.Item>
               </Form>
@@ -780,7 +753,7 @@ const QualityPQC = (props) => {
 
         <Col span={20}>
           <Row gutter={[8, 8]}>
-            <Col span={24}>
+            {/* <Col span={24}>
               <Card
                 title="Tóm tắt chất lượng"
                 style={{ height: "100%", padding: "0px" }}
@@ -794,23 +767,15 @@ const QualityPQC = (props) => {
                   pagination={false}
                 />
               </Card>
-            </Col>
-            <Col span={8}>
-              <Card
-                title="Top 5 lỗi"
-                style={{ height: 250, padding: "0px" }}
-                bodyStyle={{ padding: 12 }}
-              >
-                <Pie {...configPieChart} />
+            </Col> */}
+            <Col span={16}>
+              <Card title="Biểu đồ xu hướng lỗi" style={{ height: '100%',padding: '0px'}} bodyStyle={{padding:12}}>
+                <Line {...configLineChart}/>
               </Card>
             </Col>
-            <Col span={16}>
-              <Card
-                title="Biểu đồ"
-                style={{ height: 250, padding: "0px" }}
-                bodyStyle={{ padding: 12 }}
-              >
-                <DualAxes {...configColumnLine} />
+            <Col span={8}>
+              <Card title="5 lỗi công đoạn" style={{ height: '100%',padding: '0px'}} bodyStyle={{padding:12}}>
+                <Pie {...configPieChart}/>
               </Card>
             </Col>
             <Col span={24}>

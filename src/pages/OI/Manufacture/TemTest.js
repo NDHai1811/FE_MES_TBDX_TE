@@ -111,7 +111,7 @@ const PrintTemplate = ({ detail }) => {
     </div>
   );
 };
-export default class Tem extends React.Component {
+export default class TemTest extends React.Component {
   render() {
     let printingPages = [];
     const { listCheck } = this.props;
