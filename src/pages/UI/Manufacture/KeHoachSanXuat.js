@@ -16,6 +16,7 @@ import {
   Space,
   Modal,
   Spin,
+  Tree,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -374,6 +375,47 @@ const KeHoachSanXuat = () => {
   };
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const itemsMenu = [
+    {
+      title: "Sóng",
+      key: "30",
+      children: [
+        {
+          title: "Chuyền máy dợn sóng",
+          key: "S01",
+        },
+      ],
+    },
+    {
+      title: "In",
+      key: "31",
+      children: [
+        {
+          title: "Máy in P.06",
+          key: "P06",
+        },
+        {
+          title: "Máy in P.15",
+          key: "P15",
+        },
+      ],
+    },
+    {
+      title: "Dán",
+      key: "32",
+      children: [
+        {
+          title: "Máy dán D.05",
+          key: "D05",
+        },
+        {
+          title: "Máy dán D.06",
+          key: "D06",
+        },
+      ],
+    },
+  ];
   return (
     <>
       {contextHolder}
@@ -387,14 +429,14 @@ const KeHoachSanXuat = () => {
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>
                 <Form.Item className="mb-3">
-                  <Select
-                    allowClear
-                    value={selectedLine}
-                    onChange={(value) =>
-                      setParams({ ...params, line_id: value })
-                    }
-                    placeholder="Nhập công đoạn"
-                    options={listLines}
+                  <Tree
+                    checkable
+                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
+                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
+                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
+                    // onSelect={onSelect}
+                    // onCheck={onCheck}
+                    treeData={itemsMenu}
                   />
                 </Form.Item>
               </Form>
