@@ -459,6 +459,7 @@ const WarehouseExportPlan = (props) => {
           onSelect={onSelect}
           onCheck={onCheck}
           treeData={itemsMenu}
+          style={{ maxHeight: '80px', overflowY: 'auto' }}
         />
         <Divider>Thời gian truy vấn</Divider>
         <div className="mb-3">

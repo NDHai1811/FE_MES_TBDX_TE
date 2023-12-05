@@ -118,11 +118,9 @@ const Import = (props) => {
 
   const getLogs = () => {
     getWarehouseOverall()
-      .then((res) => setLogs(res.data))
+      .then((res) => setLogs([res.data]))
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
-
-  console.log({logs})
 
   const column2 = [
     {
@@ -163,8 +161,8 @@ const Import = (props) => {
     },
     {
       title: "Số ngày tồn kho",
-      dataIndex: "so_ngay_ton_kho",
-      key: "so_ngay_ton_kho",
+      dataIndex: "so_ngay_ton",
+      key: "so_ngay_ton",
       align: "center",
       render: (value) => value || "-",
     },
@@ -173,13 +171,7 @@ const Import = (props) => {
   const onChangeLine = (value) => {
     history.push("/warehouse/kho-tp/" + value);
   };
-  const [currentLot, setCurrentLot] = useState([
-    {
-      soPalletNhapTrongNgay: 0,
-      soPalletXuatTrongNgay: 0,
-      soPalletTonTrongKho: 0,
-    },
-  ]);
+
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -200,7 +192,7 @@ const Import = (props) => {
             bordered
             className="mb-1"
             columns={column2}
-            dataSource={currentLot}
+            dataSource={logs}
           />
         </Col>
         <Col span={24}>
@@ -251,7 +243,8 @@ const Import = (props) => {
         <Col span={24}>
           <Table
             scroll={{
-              x: window.screen.width,
+              x: "calc(700px + 50%)",
+              y: 300,
             }}
             rowClassName={(record, index) =>
               record.status === 1

@@ -1,4 +1,4 @@
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import React, { useEffect } from "react";
 import "./scanner.scss";
 const qrcodeRegionId = "html5qr-code-full-region";
@@ -17,6 +17,15 @@ const createConfig = (props) => {
   }
   if (props.disableFlip !== undefined) {
     config.disableFlip = props.disableFlip;
+  }
+  if (props.facingMode) {
+    config.facingMode = props.facingMode;
+  }
+  if (props.formatsToSupport) {
+    config.formatsToSupport = props.formatsToSupport;
+  }
+  if (props.disableCameraSelect !== undefined) {
+    config.disableCameraSelect = props.disableCameraSelect;
   }
   return config;
 };
@@ -64,11 +73,17 @@ const ScanQR = (props) => {
   return (
     <div width="100%">
       <Html5QrcodePlugin
-        fps={10}
-        qrbox={250}
+        fps={30}
+        qrbox={150}
         disableFlip={true}
         qrCodeSuccessCallback={onNewScanResult}
         isHideButton={isHideButton}
+        facingMode="environment"
+        formatsToSupport={[
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+        ]}
+        disableCameraSelect={true}
       />
     </div>
   );

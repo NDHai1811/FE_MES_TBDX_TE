@@ -9,109 +9,49 @@ import "../style.scss";
 import { useEffect } from "react";
 import { getErrorLogs } from "../../../api/oi/equipment";
 
-const data = [
-  {
-    tg_dung: "13:10:01",
-    tg_chay: "13:20:15",
-    ten_su_co: "",
-    nguyen_nhan: "",
-    cach_xu_ly: "",
-  },
-];
-
 const tableColumns = [
   {
     title: "TT",
     dataIndex: "thu_tu",
     key: "thu_tu",
     align: "center",
-    width: "5%",
-    render: (value, record, index)=>index+1
+    render: (value, record, index) => index + 1,
   },
   {
     title: "Thời gian dừng",
     dataIndex: "start_time",
     key: "start_time",
     align: "center",
-    width: "14%",
   },
   {
     title: "Thời gian chạy",
     dataIndex: "end_time",
     key: "end_time",
     align: "center",
-    width: "14%",
   },
   {
     title: "Mã sự cố",
     dataIndex: "code",
     key: "code",
     align: "center",
-    width: "15%",
   },
   {
     title: "Tên sự cố",
     dataIndex: "ten_su_co",
     key: "ten_su_co",
     align: "center",
-    width: "20%",
   },
   {
     title: "Nguyên nhân",
     dataIndex: "nguyen_nhan",
     key: "nguyen_nhan",
     align: "center",
-    width: "20%",
   },
   {
     title: "Cách xử lý",
     dataIndex: "cach_xu_ly",
     key: "cach_xu_ly",
     align: "center",
-    width: "20%",
-  },
-];
-
-const tableData = [
-  {
-    thu_tu: "4",
-    tg_dung: "13:10:01",
-    tg_chay: "13:20:15",
-    ma_su_co: "SC04",
-    ten_su_co: "",
-    nguyen_nhan: "Đã ",
-    cach_xu_ly: "",
-    trang_thai: "Chờ xử lý",
-  },
-  {
-    thu_tu: "3",
-    tg_dung: "12:10:01",
-    tg_chay: "12:20:15",
-    ma_su_co: "SC06",
-    ten_su_co: "Đổi đơn hàng",
-    nguyen_nhan: "Đổi đơn hàng",
-    cach_xu_ly: "",
-    trang_thai: "Chờ xử lý",
-  },
-  {
-    thu_tu: "2",
-    tg_dung: "10:10:01",
-    tg_chay: "11:20:15",
-    ma_su_co: "SC03",
-    ten_su_co: "",
-    nguyen_nhan: "Đổi MQL",
-    cach_xu_ly: "",
-    trang_thai: "Chờ xử lý",
-  },
-  {
-    thu_tu: "1",
-    tg_dung: "09:10:01",
-    tg_chay: "09:20:15",
-    ma_su_co: "SC13",
-    ten_su_co: "Máy hư",
-    nguyen_nhan: "Hư bơm",
-    cach_xu_ly: "Thay bơm",
-    trang_thai: "Chờ xử lý",
   },
 ];
 
@@ -138,7 +78,7 @@ const Error = () => {
       dataIndex: "start_time",
       key: "start_time",
       align: "center",
-      render: (text) => text ? text : "-",
+      render: (text) => (text ? text : "-"),
       width: "20%",
     },
     {
@@ -146,7 +86,7 @@ const Error = () => {
       dataIndex: "end_time",
       key: "end_time",
       align: "center",
-      render: (text) => text ? text : "-",
+      render: (text) => (text ? text : "-"),
       width: "20%",
     },
     {
@@ -155,7 +95,7 @@ const Error = () => {
       key: "ten_su_co",
       align: "center",
       width: "20%",
-      render: (text) => text ? text : "-",
+      render: (text) => (text ? text : "-"),
       onHeaderCell: () => {
         return {
           onClick: onShowPopup,
@@ -168,7 +108,7 @@ const Error = () => {
       key: "nguyen_nhan",
       align: "center",
       width: "20%",
-      render: (text) => text ? text : "-",
+      render: (text) => (text ? text : "-"),
       onHeaderCell: () => {
         return {
           onClick: onShowPopup,
@@ -181,7 +121,7 @@ const Error = () => {
       key: "cach_xu_ly",
       align: "center",
       width: "20%",
-      render: (text) => text ? text : "-",
+      render: (text) => (text ? text : "-"),
       onHeaderCell: () => {
         return {
           onClick: onShowPopup,
@@ -238,7 +178,8 @@ const Error = () => {
           pagination={false}
           bordered={true}
           scroll={{
-            x: '96vw',
+            x: "calc(700px + 50%)",
+            y: 300,
           }}
           columns={tableColumns}
           dataSource={logs}
@@ -253,7 +194,11 @@ const Error = () => {
         />
       </Row>
       {visible && (
-        <Popup visible={visible} setVisible={setVisible} selectedError={selectedError}/>
+        <Popup
+          visible={visible}
+          setVisible={setVisible}
+          selectedError={selectedError}
+        />
       )}
     </React.Fragment>
   );

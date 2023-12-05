@@ -74,7 +74,6 @@ const columns = [
     dataIndex: "lot_id",
     key: "lot_id",
     align: "center",
-    width: "14%",
     render: (value) => value || "-",
   },
   {
@@ -82,7 +81,6 @@ const columns = [
     dataIndex: "san_luong_kh",
     key: "san_luong_kh",
     align: "center",
-    width: "14%",
     render: (value) => value || "-",
   },
   {
@@ -90,7 +88,6 @@ const columns = [
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
-    width: "12%",
     render: (value) => value || "-",
   },
   {
@@ -98,15 +95,13 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    width: "14%",
-    render: (value) => value === 1 ? 'OK' : "-",
+    render: (value) => (value === 1 ? "OK" : "-"),
   },
   {
     title: "Mã layout",
     dataIndex: "layout_id",
     key: "layout_id",
     align: "center",
-    width: "14%",
     render: (value) => value || "-",
   },
   {
@@ -114,7 +109,6 @@ const columns = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width: "14%",
     render: (value, record, index) => value || "-",
   },
   {
@@ -122,7 +116,6 @@ const columns = [
     dataIndex: "mql",
     key: "mql",
     align: "center",
-    width: "14%",
     render: (value, record, index) => value || "-",
   },
   {
@@ -130,7 +123,6 @@ const columns = [
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-    width: "15%",
     render: (value, record, index) => value || "-",
   },
   {
@@ -141,7 +133,6 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
 ];
-
 
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
@@ -512,7 +503,8 @@ const Manufacture1 = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: "110vw"
+                x: "calc(700px + 50%)",
+                y: 300,
               }}
               size="small"
               rowClassName={(record, index) =>
