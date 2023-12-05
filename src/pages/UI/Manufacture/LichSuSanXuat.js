@@ -109,14 +109,6 @@ const columns3 = [
     width: '4%',
   },
   {
-    title: "Xưởng",
-    dataIndex: "xuong",
-    key: "machine_id",
-    align: "center",
-    fixed: "left",
-    width: '4%',
-  },
-  {
     title: "Công đoạn",
     dataIndex: "line",
     key: "line",

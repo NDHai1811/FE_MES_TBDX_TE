@@ -173,37 +173,36 @@ const Quality = (props) => {
 
   const columns = [
     {
+      title: "Máy",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: "14%",
+      render: (value) => value || "-",
+    },
+    {
       title: "Mã Lot",
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
-      width: "32%",
+      width: "28%",
     },
     {
-      title: "Khách hàng",
-      dataIndex: "san_luong",
-      key: "san_luong",
+      title: "S.L lỗi tính năng",
+      dataIndex: "sl_loi_tinh_nang",
+      key: "sl_loi_tinh_nang",
       align: "center",
-      width: "18%",
+      width: "14%",
     },
     {
-      title: "Quá trình",
-      dataIndex: "sl_loi",
-      key: "sl_loi",
+      title: "S.L lỗi ngoại quan",
+      dataIndex: "sl_loi_ngoai_quan",
+      key: "sl_loi_ngoai_quan",
       align: "center",
-      width: "18%",
+      width: "14%",
     },
     {
-      title: "Tổng lỗi",
-      dataIndex: "sl_ng",
-      key: "sl_ng",
-      align: "center",
-      width: "16%",
-      render: (value, record, index) =>
-        value ? value : record.phan_dinh !== 0 ? value : "-",
-    },
-    {
-      title: "Phế QC",
+      title: "Tổng phế",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
@@ -369,13 +368,13 @@ const Quality = (props) => {
               dataSource={overall}
               size="small"
               style={{ borderRadius: 12 }}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
+            // scroll={
+            //   window.screen.width < 720
+            //     ? {
+            //         x: window.screen.width,
+            //       }
+            //     : false
+            // }
             />
           </Col>
         </Row>
@@ -389,8 +388,8 @@ const Quality = (props) => {
               scroll={
                 window.screen.width < 720
                   ? {
-                      x: window.screen.width,
-                    }
+                    x: window.screen.width,
+                  }
                   : false
               }
               columns={checkingTable}

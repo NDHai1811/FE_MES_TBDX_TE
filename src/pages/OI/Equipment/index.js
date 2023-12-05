@@ -46,14 +46,14 @@ const Equipment = (props) => {
       ),
     },
     {
-      title: "Tg chạy",
+      title: "Thời gian chạy",
       dataIndex: "thoi_gian_chay",
       key: "thoi_gian_chay",
       align: "center",
       width: "20%",
     },
     {
-      title: "Tg dừng",
+      title: "Thời gian dừng",
       dataIndex: "thoi_gian_dung",
       key: "thoi_gian_dung",
       align: "center",

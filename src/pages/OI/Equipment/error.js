@@ -29,18 +29,18 @@ const tableColumns = [
     render: (value, record, index)=>index+1
   },
   {
-    title: "Tg dừng",
+    title: "Thời gian dừng",
     dataIndex: "start_time",
     key: "start_time",
     align: "center",
-    width: "8%",
+    width: "14%",
   },
   {
-    title: "Tg chạy",
+    title: "Thời gian chạy",
     dataIndex: "end_time",
     key: "end_time",
     align: "center",
-    width: "8%",
+    width: "14%",
   },
   {
     title: "Mã sự cố",
@@ -134,7 +134,7 @@ const Error = () => {
 
   const columns = [
     {
-      title: "Tg dừng",
+      title: "Thời gian dừng",
       dataIndex: "start_time",
       key: "start_time",
       align: "center",
@@ -142,7 +142,7 @@ const Error = () => {
       width: "20%",
     },
     {
-      title: "Tg chạy",
+      title: "Thời gian chạy",
       dataIndex: "end_time",
       key: "end_time",
       align: "center",
@@ -238,7 +238,7 @@ const Error = () => {
           pagination={false}
           bordered={true}
           scroll={{
-            x: window.screen.width,
+            x: '96vw',
           }}
           columns={tableColumns}
           dataSource={logs}

@@ -101,17 +101,17 @@ const TinhHinhSanXuat = () => {
   // const history = useHistory();
   const [isFullCreen, setIsFullScreen] = useState(false);
   const [clock, setClock] = useState(new Date());
-  useEffect(() => {
-    setInterval(() => tick(), 1000);
-    (async () => {
-      const res1 = await getProductFMB();
-      setDataTable(
-        res1.data.map((e) => {
-          return { ...e };
-        })
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   setInterval(() => tick(), 1000);
+  //   (async () => {
+  //     const res1 = await getProductFMB();
+  //     setDataTable(
+  //       res1.data.map((e) => {
+  //         return { ...e };
+  //       })
+  //     );
+  //   })();
+  // }, []);
   const tick = () => {
     setClock(new Date());
   };

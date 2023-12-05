@@ -13,24 +13,20 @@ const Screen = (props) => {
   const { Title } = Typography;
   document.title = "Danh sách màn hình";
   const dashboard = [
-    {
-      title: "Dashboard",
-      link: "/dashboard-slide",
-    },
+    // {
+    //   title: "Dashboard",
+    //   link: "/dashboard-slide",
+    // },
     {
       title: "Tình hình sản xuất",
       link: "/dashboard/tinh-hinh-san-xuat",
     },
-    {
-      title: "Hiệu suất thiết bị",
-      link: "/dashboard/hieu-suat-thiet-bi",
-    },
+    // {
+    //   title: "Cảnh báo bất thường",
+    //   link: "/dashboard/canh-bao-bat-thuong",
+    // },
     {
       title: "Cảnh báo bất thường",
-      link: "/dashboard/canh-bao-bat-thuong",
-    },
-    {
-      title: "3D",
       link: "/dashboard/giao-dien-da-chieu",
     },
   ];

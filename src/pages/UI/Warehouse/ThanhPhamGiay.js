@@ -344,6 +344,7 @@ const ThanhPhamGiay = (props) => {
             style={{ height: "100%" }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
           >
+            <Divider>Tổ chức</Divider>
             <Tree
               checkable
               defaultExpandedKeys={["0-0-0", "0-0-1"]}

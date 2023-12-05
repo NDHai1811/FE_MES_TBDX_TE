@@ -63,12 +63,12 @@ const items = [
     key: "warehouse",
     children: [
       {
-        label: "Quản lý kho thành phẩm giấy",
-        key: "warehouse/thanh-pham-giay",
+        label: "Quản lý kho",
+        key: "warehouse/quan-ly-kho",
       },
       {
-        label: "Kế hoạch xuất kho",
-        key: "warehouse/ke-hoach-xuat-kho",
+        label: "Quản lý giấy cuộn",
+        key: "warehouse/quan-ly-giay-cuon",
       },
     ],
     permission: "ui-kho",
