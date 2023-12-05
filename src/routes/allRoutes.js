@@ -64,10 +64,10 @@ const authProtectedRoutes = [
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
   { path: ["/ui/equipment/thong-so-may"], component: UIEquipment2 },
   {
-    path: ["/ui", "/ui/warehouse/ke-hoach-xuat-kho"],
+    path: ["/ui", "/ui/warehouse/quan-ly-giay-cuon"],
     component: WarehouseExportPlan,
   },
-  { path: ["/ui/warehouse/thanh-pham-giay"], component: ThanhPhamGiay },
+  { path: ["/ui/warehouse/quan-ly-kho"], component: ThanhPhamGiay },
   { path: ["/ui/kpi"], component: UIKPI },
   { path: ["/ui/abnormal/kich-ban-bat-thuong"], component: Kichban },
   { path: ["/ui/abnormal/lich-su-bat-thuong"], component: Giamsat },

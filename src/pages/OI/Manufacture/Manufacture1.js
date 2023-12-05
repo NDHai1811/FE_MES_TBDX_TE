@@ -39,23 +39,30 @@ const currentColumns = [
     render: (value) => value || "-",
   },
   {
-    title: "SL kế hoạch",
+    title: "Sản lượng kế hoạch",
     dataIndex: "san_luong_kh",
     key: "san_luong_kh",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "SL đầu ra",
+    title: "Sản lượng đầu ra",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "SL đạt",
+    title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Phán định",
+    dataIndex: "phan_dinh",
+    key: "phan_dinh",
     align: "center",
     render: (value) => value || "-",
   },
@@ -83,8 +90,16 @@ const columns = [
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
-    width: "14%",
+    width: "12%",
     render: (value) => value || "-",
+  },
+  {
+    title: "Phán định",
+    dataIndex: "phan_dinh",
+    key: "phan_dinh",
+    align: "center",
+    width: "14%",
+    render: (value) => value === 1 ? 'OK' : "-",
   },
   {
     title: "Mã layout",
@@ -181,7 +196,7 @@ const Manufacture1 = (props) => {
       align: "center",
     },
     {
-      title: "SL ca",
+      title: "Sản lượng ca",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
@@ -497,7 +512,7 @@ const Manufacture1 = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: "170vw",
+                x: "110vw"
               }}
               size="small"
               rowClassName={(record, index) =>

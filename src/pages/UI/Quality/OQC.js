@@ -59,12 +59,6 @@ const columns2 = [
     align: "center",
   },
   {
-    title: "Xưởng",
-    dataIndex: "xuong",
-    key: "xuong",
-    align: "center",
-  },
-  {
     title: "Tên SP",
     dataIndex: "ten_sp",
     key: "ten_sp",

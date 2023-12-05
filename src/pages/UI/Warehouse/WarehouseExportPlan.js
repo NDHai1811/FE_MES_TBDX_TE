@@ -166,9 +166,6 @@ const WarehouseExportPlan = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
-  // const [listCustomers, setListCustomers] = useState([]);
-  // const [listIdProducts, setListIdProducts] = useState([]);
-  // const [listNameProducts, setListNameProducts] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -263,12 +260,14 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "ten_ncc",
       key: "ten_ncc",
       align: "center",
+      width: '16%'
     },
     {
       title: "Mã cuộn nhà cung cấp",
       dataIndex: "ma_cuon_ncc",
       key: "ma_cuon_ncc",
       align: "center",
+      width: '14%'
     },
     {
       title: "Số kg",
@@ -283,6 +282,14 @@ const WarehouseExportPlan = (props) => {
       key: "loai_giay",
       align: "center",
       width: '5%'
+    },
+    {
+      title: "FSC",
+      dataIndex: "fsc",
+      key: "fsc",
+      align: "center",
+      width: '5%',
+      render: (value, item, index) => value === 1 ? 'X' : ''
     },
     {
       title: "Khổ giấy",
@@ -443,6 +450,7 @@ const WarehouseExportPlan = (props) => {
           paddingTop: "15px",
         }}
       >
+        <Divider>Tổ chức</Divider>
         <Tree
           checkable
           defaultExpandedKeys={["0-0-0", "0-0-1"]}
@@ -632,48 +640,28 @@ const WarehouseExportPlan = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Khách hàng"
-                name="khach_hang"
+                label="Mã cuộn"
+                name="material_id"
                 className="mb-3"
                 rules={[{ required: true }]}
               >
-                <Input placeholder="Nhập khách hàng"></Input>
+                <Input placeholder="Nhập mã cuộn"></Input>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Ngày xuất hàng(YYYY-MM-DD HH:mm:ss)"
-                name="ngay_xuat_hang"
+                label="Loại giấy"
+                name="loai_giay"
                 className="mb-3"
                 rules={[{ required: true }]}
               >
-                <Input placeholder="Nhập ngày xuất hàng"></Input>
+                <Input placeholder="Nhập loại giấy"></Input>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Mã hàng"
-                name="product_id"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Tên sản phẩm"
-                name="ten_san_pham"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập tên sản phẩm"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="PO pending"
-                name="po_pending"
+                label="FSC"
+                name="fsc"
                 className="mb-3"
                 rules={[{ required: true }]}
               >
@@ -682,119 +670,40 @@ const WarehouseExportPlan = (props) => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Số lượng yêu cầu giao"
-                name="sl_yeu_cau_giao"
+                label="Khổ giấy"
+                name="kho_giay"
                 className="mb-3"
                 rules={[{ required: true }]}
               >
-                <Input></Input>
+                <Input placeholder="Nhập khổ giấy"></Input>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Đơn vị tính"
-                name="dvt"
+                label="Định lượng"
+                name="dinh_luong"
                 className="mb-3"
                 rules={[{ required: true }]}
               >
-                <Input placeholder="Nhập đơn vị tính"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Tổng kg" name="tong_kg" className="mb-3">
-                <Input placeholder="Nhập tổng kg"></Input>
+                <Input placeholder="Nhập định lượng"></Input>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Quy cách"
-                name="quy_cach"
+                label="Số kg"
+                name="so_kg"
                 className="mb-3"
                 rules={[{ required: true }]}
               >
-                <Input placeholder="Nhập quy cách"></Input>
+                <Input placeholder="Nhập số kg"></Input>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="Số lượng thùng chẵn"
-                name="sl_thung_chan"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số lượng thùng chẵn"></Input>
+              <Form.Item label="Mã cuộn NCC" name="ma_cuon_ncc" className="mb-3">
+                <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số lượng hàng lẻ"
-                name="sl_hang_le"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số lượng hàng lẻ"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Tồn kho"
-                name="ton_kho"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập tồn kho"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Xác nhận sản xuất"
-                name="xac_nhan_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số lượng chênh lệch"
-                name="sl_chenh_lech"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số lượng chênh lệch"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số lượng thực xuất"
-                name="sl_thuc_xuat"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Số lượng thực xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Cửa xuất hàng"
-                name="cua_xuat_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Địa chỉ" name="dia_chi" className="mb-3">
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Ghi chú" name="ghi_chu" className="mb-3">
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
+
           </Row>
           <Form.Item className="mb-0">
             <Button type="primary" htmlType="submit">

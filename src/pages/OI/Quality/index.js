@@ -174,18 +174,26 @@ const Quality = (props) => {
 
   const columns = [
     {
+      title: "Máy",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: "14%",
+      render: (value) => value || "-",
+    },
+    {
       title: "Mã Lot",
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
-      width: "32%",
+      width: "28%",
     },
     {
-      title: "Khách hàng",
-      dataIndex: "san_luong",
-      key: "san_luong",
+      title: "S.L lỗi tính năng",
+      dataIndex: "sl_loi_tinh_nang",
+      key: "sl_loi_tinh_nang",
       align: "center",
-      width: "18%",
+      width: "14%",
     },
     {
       title: "SL lỗi tính năng",
@@ -367,13 +375,13 @@ const Quality = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
+            // scroll={
+            //   window.screen.width < 720
+            //     ? {
+            //         x: window.screen.width,
+            //       }
+            //     : false
+            // }
             />
           </Col>
         </Row>
@@ -387,8 +395,8 @@ const Quality = (props) => {
               scroll={
                 window.screen.width < 720
                   ? {
-                      x: window.screen.width,
-                    }
+                    x: window.screen.width,
+                  }
                   : false
               }
               columns={checkingTable}

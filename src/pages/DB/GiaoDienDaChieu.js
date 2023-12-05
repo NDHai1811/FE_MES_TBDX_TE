@@ -2,59 +2,42 @@ import React, { Suspense, useEffect, useState } from "react";
 import { Canvas } from "react-three-fiber";
 import Model from "./Model";
 import CameraController from "./CameraController";
-import { Tree, Col, List, Layout, Row } from "antd";
+import { Tree, Col, List, Layout, Row, Divider } from "antd";
 import ReactFullscreen from "react-easyfullscreen";
 import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 
 const treeData = [
   {
-    title: "Data 0",
+    title: "Sóng",
     key: "0-0",
-    children: [
-      {
-        title: "Data 0-1",
-        key: "0-1",
-        isLeaf: true,
-      },
-      {
-        title: "Data 0-2",
-        key: "0-2",
-        isLeaf: true,
-      },
-      {
-        title: "Data 0-3",
-        key: "0-3",
-        isLeaf: true,
-      },
-    ],
   },
   {
-    title: "Data 1",
+    title: "In",
     key: "1-0",
     children: [
       {
-        title: "Data 1-1",
+        title: "Máy in P.06",
         key: "1-1",
         isLeaf: true,
       },
       {
-        title: "Data 1-2",
+        title: "Máy in P.16",
         key: "1-2",
         isLeaf: true,
       },
     ],
   },
   {
-    title: "Data 2",
+    title: "Dán",
     key: "2-0",
     children: [
       {
-        title: "Data 2-1",
+        title: "Máy dán D.05",
         key: "2-1",
         isLeaf: true,
       },
       {
-        title: "Data 2-2",
+        title: "Máy dán D.06",
         key: "2-2",
         isLeaf: true,
       },
@@ -64,16 +47,16 @@ const treeData = [
 
 const data = [
   {
-    title: "Ant Design Title 1",
+    title: "Cảnh báo sản xuất",
   },
   {
-    title: "Ant Design Title 2",
+    title: "Cảnh báo chất lượng",
   },
   {
-    title: "Ant Design Title 3",
+    title: "Cảnh báo sản xuất",
   },
   {
-    title: "Ant Design Title 4",
+    title: "Cảnh báo chất lượng",
   },
 ];
 
@@ -133,6 +116,7 @@ const GiaoDienDaChieu = () => {
             </Row>
             <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
               <Col span={3} style={{ backgroundColor: "white" }}>
+                <Divider>Tổ chức</Divider>
                 <Tree
                   checkable
                   defaultExpandedKeys={["0-0-0", "0-0-1"]}
@@ -187,6 +171,7 @@ const GiaoDienDaChieu = () => {
                 </Canvas>
               </Col>
               <Col span={3} style={{ backgroundColor: "white" }}>
+                <Divider>Danh sách cảnh báo</Divider>
                 <List
                   itemLayout="horizontal"
                   dataSource={data}
@@ -194,7 +179,7 @@ const GiaoDienDaChieu = () => {
                     <List.Item>
                       <List.Item.Meta
                         title={<a href="https://ant.design">{item.title}</a>}
-                        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                        description="Nội dung cảnh báo bất thường"
                       />
                     </List.Item>
                   )}

@@ -171,8 +171,8 @@ const Import = (props) => {
     },
     {
       title: "Số ngày tồn kho",
-      dataIndex: "so_ngay_ton_kho",
-      key: "so_ngay_ton_kho",
+      dataIndex: "so_ngay_ton",
+      key: "so_ngay_ton",
       align: "center",
       render: (value) => value || "-",
     },
@@ -206,7 +206,7 @@ const Import = (props) => {
             bordered
             className="mb-1"
             columns={column2}
-            dataSource={currentLot}
+            dataSource={[overall]}
           />
         </Col>
         <Col span={24}>
