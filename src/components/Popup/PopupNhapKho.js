@@ -117,6 +117,7 @@ function PopupNhapKhoNvl(props) {
   };
 
   const onScanResult = (value) => {
+    console.log({value})
     if (list) {
       const isLocation = data.some((val) => val.locator_id === value);
       if (isLocation) {

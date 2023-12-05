@@ -33,16 +33,16 @@ import dayjs from "dayjs";
 import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
-const Quality = (props) => {
+const QCByLine = (props) => {
   document.title = "Kiểm tra chất lượng";
   const { line } = useParams();
-  const { machine_id } = useParams();
   const history = useHistory();
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
+  const [lineOptions, setLineOptions] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
   const [overall, setOverall] = useState([]);
@@ -56,8 +56,8 @@ const Quality = (props) => {
       align: "center",
       render: () => (
         <Select
-          options={machineOptions}
-          value={machine_id}
+          options={lineOptions}
+          value={line}
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
@@ -111,7 +111,7 @@ const Quality = (props) => {
             selectedLot={selectedRow}
             onSubmit={onSubmitResult}
             onClose={() => setOpenModal(false)}
-            machine_id={machine_id}
+            machine_id={line}
           />
         </div>
       ),
@@ -129,7 +129,7 @@ const Quality = (props) => {
             selectedLot={selectedRow}
             onSubmit={onSubmitResult}
             onClose={() => setOpenModal(false)}
-            machine_id={machine_id}
+            machine_id={line}
           />
         </div>
       ),
@@ -173,35 +173,32 @@ const Quality = (props) => {
 
   const columns = [
     {
-      title: "Máy",
-      dataIndex: "machine_id",
-      key: "machine_id",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
       title: "Mã Lot",
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
+      width: "32%",
     },
     {
-      title: "S.L lỗi tính năng",
-      dataIndex: "sl_loi_tinh_nang",
-      key: "sl_loi_tinh_nang",
+      title: "Khách hàng",
+      dataIndex: "san_luong",
+      key: "san_luong",
       align: "center",
+      width: "18%",
     },
     {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
+      width: "18%",
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
+      width: "16%",
       render: (value, record, index) =>
         value ? value : record.phan_dinh !== 0 ? value : "-",
     },
@@ -210,6 +207,7 @@ const Quality = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
+      width: "16%",
       render: (value, record, index) =>
         value ? value : record.phan_dinh !== 0 ? value : "-",
     },
@@ -218,6 +216,7 @@ const Quality = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
+      width: "16%",
       render: (value) => {
         switch (value) {
           case 0:
@@ -291,9 +290,9 @@ const Quality = (props) => {
   };
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({ ...params, machine_id });
+    var overall = await getQCOverall({ ...params, line_id: line });
     setOverall(overall.data);
-    var res = await getLotQCList({ ...params, machine_id });
+    var res = await getLotQCList({ ...params, line_id: line });
     setData(res.data);
     if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
@@ -301,14 +300,14 @@ const Quality = (props) => {
     setLoading(false);
   }
   useEffect(() => {
-    if (machine_id) {
+    if (line) {
       getData();
     }
-  }, machine_id);
+  }, line);
   useEffect(() => {
     if (machineOptions.length > 0) {
-      var target = machineOptions.find((e) => e.value === machine_id);
-      if (!target) {
+      var target = machineOptions.find(e=>e.value === line);
+      if(!target){
         target = machineOptions[0];
       }
       console.log(target);
@@ -347,7 +346,7 @@ const Quality = (props) => {
 
   const onSubmitResult = async (values) => {
     var res = await sendQCResult({
-      machine_id: machine_id,
+      machine_id: line,
       lot_id: selectedRow?.lot_id,
       data: values,
     });
@@ -367,6 +366,13 @@ const Quality = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
+              // scroll={
+              //   window.screen.width < 720
+              //     ? {
+              //         x: window.screen.width,
+              //       }
+              //     : false
+              // }
             />
           </Col>
         </Row>
@@ -377,6 +383,13 @@ const Quality = (props) => {
               locale={{ emptyText: "Trống" }}
               pagination={false}
               bordered={true}
+              scroll={
+                window.screen.width < 720
+                  ? {
+                      x: window.screen.width,
+                    }
+                  : false
+              }
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"
@@ -418,8 +431,7 @@ const Quality = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
-            x: "calc(700px + 50%)",
-            y: 300,
+            x: window.screen.width,
           }}
           pagination={false}
           bordered={true}
@@ -515,4 +527,4 @@ const Quality = (props) => {
   );
 };
 
-export default withRouter(Quality);
+export default withRouter(QCByLine);
