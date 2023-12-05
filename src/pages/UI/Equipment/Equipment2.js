@@ -124,71 +124,71 @@ const col_detailTable = [
     dataIndex: "do_nhot_ho",
     key: "do_nhot_ho",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Nhiệt độ",
+    title: "Độ nhớt mực",
     dataIndex: "nhiet_do",
     key: "nhiet_do",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Lực ép lô làng C",
+    title: "Áp lực ép lô film",
     dataIndex: "lo_lang_c",
     key: "lo_lang_c",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Lực ép lô sóng C",
+    title: "Áp lực ép lô mực",
     dataIndex: "lo_song_c",
     key: "lo_song_c",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Khe hở lô hồ",
+    title: "Tốc độ cụm lô cuốn C",
     dataIndex: "khe_ho",
     key: "khe_ho",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Thông số...",
+    title: "Tốc độ cụm lô cuốn B",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
 
   {
-    title: "Thông số...",
+    title: "Tốc độ cụm lô cuốn E",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Thông số...",
+    title: "Tốc độ cụm lô cuốn F",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Thông số...",
+    title: "Khe hở lô hồ",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
   {
-    title: "Thông số...",
+    title: "Nhiệt độ",
     dataIndex: "thong_so",
     key: "thong_so",
     align: "center",
-    render:(value)=>value??"-"
+    render:(value)=>value??Math.floor(Math.random() * 16) + 5
   },
 ];
 
