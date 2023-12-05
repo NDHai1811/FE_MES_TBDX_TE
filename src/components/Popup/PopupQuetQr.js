@@ -1,57 +1,95 @@
-import React, { useState } from "react";
-import { Modal, Row, Col, Table } from "antd";
+import React, { useState, useMemo } from "react";
+import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
-
-const columns = [
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-    width: "25%",
-  },
-  {
-    title: "Mã film",
-    dataIndex: "film_id",
-    key: "film_id",
-    align: "center",
-    width: "25%",
-  },
-  {
-    title: "Mã mực",
-    dataIndex: "ma_muc",
-    key: "ma_muc",
-    align: "center",
-    width: "25%",
-  },
-  {
-    title: "OK/NG",
-    dataIndex: "ok_ng",
-    key: "ok_ng",
-    align: "center",
-    width: "25%",
-  },
-];
-
-const data = [
-  {
-    vi_tri: "Khối in",
-    film_id: "",
-    ma_muc: "",
-    ok_ng: "",
-  },
-];
+import { useEffect } from "react";
+import {
+  getEquipmentMappingList,
+  mappingCheckMaterial,
+} from "../../api/oi/equipment";
 
 function PopupQuetQr(props) {
-
   const { visible, setVisible } = props;
+  const [data, setData] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [checkData, setCheckData] = useState([]);
+  const [currentResult, setCurrentResult] = useState("");
 
-  const handleOk = () => {
-    setVisible(false);
+  const resultQuantity = checkData?.reduce((sum, val) => {
+    return val.isScan ? sum + 1 : sum;
+  }, 0);
+
+  useEffect(() => {
+    getMappingList();
+  }, []);
+
+  useEffect(() => {
+    if (resultQuantity === checkData.length && checkData.length > 0) {
+      cancel();
+    }
+  }, [resultQuantity]);
+
+  const onCheckMaterial = () => {
+    mappingCheckMaterial({ material_id: currentResult })
+      .then((res) => console.log(res))
+      .catch((err) => console.log("Gửi thông tin thất bại: ", err));
   };
 
-  const handleCancel = () => {
+  useEffect(() => {
+    if (currentResult) {
+      const item = checkData.find((val) => !val.isScan);
+      if (currentResult === item.value) {
+        setData(data.map((val) => ({ ...val, [item.key]: currentResult })));
+        setCheckData(
+          checkData.map((val) => {
+            return val.key === item.key ? { ...val, isScan: true } : val;
+          })
+        );
+        if (item.check_api === 1) {
+          onCheckMaterial();
+        }
+      } else {
+        message.error("Mã không đúng yêu cầu");
+      }
+    }
+  }, [currentResult]);
+
+  const getMappingList = async () => {
+    try {
+      const res = await getEquipmentMappingList();
+      const keys = res.data.key;
+      const columns = res.data.label.map((item, index) => {
+        const key = keys[index];
+        return {
+          title: item,
+          dataIndex: key,
+          key: key,
+          align: "center",
+          render: (value) => value || "-",
+        };
+      });
+      setColumns(columns);
+
+      const result = keys.map((key) => ({ [key]: "" }));
+      setData([result]);
+
+      const checkData = res.data.check_api.map((val, index) => ({
+        check_api: val,
+        value: res.data.value[index],
+        isScan: false,
+        key: keys[index],
+      }));
+      setCheckData(checkData);
+    } catch (err) {
+      console.log("Lấy danh sách mapping thất bại: ", err);
+    }
+  };
+
+  const onScanResult = (value) => {
+    setCurrentResult(value);
+  };
+
+  const cancel = () => {
     setVisible(false);
   };
 
@@ -60,18 +98,13 @@ function PopupQuetQr(props) {
       <Modal
         title="Mapping"
         open={visible}
-        onOk={handleOk}
-        okText="Lưu"
-        onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
+        okButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR isHideButton={true} />
+        <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
         <Row className="mt-3">
           <Col span={24}>
             <Table
-              // scroll={{
-              //   x: "170vw",
-              // }}
               size="small"
               pagination={false}
               bordered
