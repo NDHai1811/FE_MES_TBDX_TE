@@ -16,7 +16,6 @@ import { useEffect } from "react";
 import { getChecksheetList } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Checksheet1 = (props) => {
-    const { line } = useParams();
     const { text, selectedLot, onSubmit, machine_id } = props;
     const closeModal = () => {
         setOpen(false);
@@ -54,7 +53,7 @@ const Checksheet1 = (props) => {
     }, [machine_id]);
     useEffect(() => {
         form.resetFields();
-    }, [checksheet, line]);
+    }, [checksheet]);
     const hanleClickOk = () => {
         form.setFieldValue("result", 1);
         form.submit();
@@ -116,7 +115,7 @@ const Checksheet1 = (props) => {
                                                     }}
                                                 >
                                                     {e.hang_muc}
-                                                    {e?.note?.trim() && ". (" + e?.note + ")"}
+                                                    {e?.note && ". (" + e?.note + ")"}
                                                 </div>
                                             </Col>
                                             <Col span={6}>
@@ -201,8 +200,8 @@ const Checksheet1 = (props) => {
                                                         flexWrap: "wrap",
                                                     }}
                                                 >
-                                                    {e.hang_muc}
-                                                    {e.tieu_chuan.trim() && ". (" + e.tieu_chuan + ")"}
+                                                    {e?.hang_muc}
+                                                    {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
                                                 </div>
                                             </Col>
                                             <Col span={12}>

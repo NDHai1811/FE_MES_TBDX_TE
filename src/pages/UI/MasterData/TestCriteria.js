@@ -48,6 +48,13 @@ const TestCriteria = () => {
       fixed: "left",
     },
     {
+      title: "Mã tiêu chí",
+      dataIndex: "id",
+      key: "id",
+      align: "center",
+      fixed: "left",
+    },
+    {
       title: "Hạng mục",
       dataIndex: "hang_muc",
       key: "hang_muc",

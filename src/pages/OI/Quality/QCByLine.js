@@ -33,10 +33,9 @@ import dayjs from "dayjs";
 import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
-const Quality = (props) => {
+const QCByLine = (props) => {
   document.title = "Kiểm tra chất lượng";
   const { line } = useParams();
-  const { machine_id } = useParams();
   const history = useHistory();
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -57,8 +56,8 @@ const Quality = (props) => {
       align: "center",
       render: () => (
         <Select
-          options={machineOptions}
-          value={machine_id}
+          options={lineOptions}
+          value={line}
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
@@ -112,7 +111,7 @@ const Quality = (props) => {
             selectedLot={selectedRow}
             onSubmit={onSubmitResult}
             onClose={() => setOpenModal(false)}
-            machine_id={machine_id}
+            machine_id={line}
           />
         </div>
       ),
@@ -130,7 +129,7 @@ const Quality = (props) => {
             selectedLot={selectedRow}
             onSubmit={onSubmitResult}
             onClose={() => setOpenModal(false)}
-            machine_id={machine_id}
+            machine_id={line}
           />
         </div>
       ),
@@ -291,9 +290,9 @@ const Quality = (props) => {
   };
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({ ...params, machine_id });
+    var overall = await getQCOverall({ ...params, line_id: line });
     setOverall(overall.data);
-    var res = await getLotQCList({ ...params, machine_id });
+    var res = await getLotQCList({ ...params, line_id: line });
     setData(res.data);
     if (res.data.length > 0 && res.data[0].phan_dinh === 0) {
       setSelectedRow(res.data[0]);
@@ -301,13 +300,13 @@ const Quality = (props) => {
     setLoading(false);
   }
   useEffect(() => {
-    if (machine_id) {
+    if (line) {
       getData();
     }
-  }, machine_id);
+  }, line);
   useEffect(() => {
     if (machineOptions.length > 0) {
-      var target = machineOptions.find(e=>e.value === machine_id);
+      var target = machineOptions.find(e=>e.value === line);
       if(!target){
         target = machineOptions[0];
       }
@@ -347,7 +346,7 @@ const Quality = (props) => {
 
   const onSubmitResult = async (values) => {
     var res = await sendQCResult({
-      machine_id: machine_id,
+      machine_id: line,
       lot_id: selectedRow?.lot_id,
       data: values,
     });
@@ -528,4 +527,4 @@ const Quality = (props) => {
   );
 };
 
-export default withRouter(Quality);
+export default withRouter(QCByLine);
