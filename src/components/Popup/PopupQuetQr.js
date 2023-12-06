@@ -29,29 +29,31 @@ function PopupQuetQr(props) {
     }
   }, [resultQuantity]);
 
-  const onCheckMaterial = () => {
-    mappingCheckMaterial({ material_id: currentResult })
-      .then((res) => console.log(res))
-      .catch((err) => console.log("Gửi thông tin thất bại: ", err));
-  };
+  // const onCheckMaterial = async () => {
+  //   return await mappingCheckMaterial({ material_id: currentResult });
+  // };
 
   useEffect(() => {
-    if (currentResult) {
-      const item = checkData.find((val) => !val.isScan);
-      if (currentResult === item.value) {
-        setData(data.map((val) => ({ ...val, [item.key]: currentResult })));
-        setCheckData(
-          checkData.map((val) => {
-            return val.key === item.key ? { ...val, isScan: true } : val;
-          })
-        );
+    (async () => {
+      if (currentResult) {
+        console.log(currentResult);
+        const item = checkData.find((val) => !val.isScan);
+        let result = currentResult;
         if (item.check_api === 1) {
-          onCheckMaterial();
+          result = await mappingCheckMaterial({ material_id: currentResult });
         }
-      } else {
-        message.error("Mã không đúng yêu cầu");
+        if (result === item.value) {
+          setData(data.map((val) => ({ ...val, [item.key]: currentResult })));
+          setCheckData(
+            checkData.map((val) => {
+              return val.key === item.key ? { ...val, isScan: true } : val;
+            })
+          );
+        } else {
+          message.error("Mã không đúng yêu cầu");
+        }
       }
-    }
+    })()
   }, [currentResult]);
 
   const getMappingList = async () => {
