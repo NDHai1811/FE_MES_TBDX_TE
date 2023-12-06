@@ -31,3 +31,7 @@ export const getQuantityLot = async (params) => {
 export const sendStorePallet = async (params) => {
   return await axios.post("/oi/warehouse/fg/store-pallet", params);
 };
+
+export const importData = async (params) => {
+  return await axios.post("/oi/warehouse/fg/import/save", params);
+};

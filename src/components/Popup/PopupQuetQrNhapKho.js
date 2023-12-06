@@ -11,7 +11,7 @@ import {
 } from "../../api/oi/warehouse";
 
 function PopupQuetQrNhapKho(props) {
-  const { visible, setVisible } = props;
+  const { visible, setVisible, setResData } = props;
 
   const [columns, setColumns] = useState([]);
   const [currentResult, setCurrentResult] = useState("");
@@ -48,6 +48,10 @@ function PopupQuetQrNhapKho(props) {
     getSuggestPallet()
       .then((res) => {
         setPalletId(res.data.pallet_id);
+        setResData?.({
+          locator_id: res.data.locator_id,
+          pallet_id: res.data.pallet_id,
+        });
         setColumns([
           {
             title: res.data.pallet_id,
@@ -96,7 +100,7 @@ function PopupQuetQrNhapKho(props) {
       so_luong: totalQuantity,
       lot_id: lotIds,
     };
-    
+
     sendStorePallet(resData)
       .then((res) => console.log(res.data))
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
