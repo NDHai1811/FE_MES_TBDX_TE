@@ -74,6 +74,12 @@ export const getEquipmentMappingList = async () => {
 };
 
 export const mappingCheckMaterial = async (params) => {
-  const res = await axios.get("/oi/equipment/mapping/check-material", { params });
+  const res = await axios.get("/oi/equipment/mapping/check-material", {
+    params,
+  });
   return res.data;
+};
+
+export const sendMappingResult = async (params) => {
+  return await axios.post("oi/equipment/mapping/result", params);
 };

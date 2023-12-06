@@ -6,10 +6,11 @@ import { useEffect } from "react";
 import {
   getEquipmentMappingList,
   mappingCheckMaterial,
+  sendMappingResult,
 } from "../../api/oi/equipment";
 
 function PopupQuetQr(props) {
-  const { visible, setVisible } = props;
+  const { visible, setVisible, loSx } = props;
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [checkData, setCheckData] = useState([]);
@@ -26,6 +27,7 @@ function PopupQuetQr(props) {
   useEffect(() => {
     if (resultQuantity === checkData.length && checkData.length > 0) {
       cancel();
+      onSendResult();
     }
   }, [resultQuantity]);
 
@@ -33,10 +35,15 @@ function PopupQuetQr(props) {
   //   return await mappingCheckMaterial({ material_id: currentResult });
   // };
 
+  const onSendResult = () => {
+    sendMappingResult({ lo_sx: loSx })
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log("Gửi dữ liệu mapping thất bại: ", err));
+  };
+
   useEffect(() => {
     (async () => {
       if (currentResult) {
-        console.log(currentResult);
         const item = checkData.find((val) => !val.isScan);
         let result = currentResult;
         if (item.check_api === 1) {
@@ -53,7 +60,7 @@ function PopupQuetQr(props) {
           message.error("Mã không đúng yêu cầu");
         }
       }
-    })()
+    })();
   }, [currentResult]);
 
   const getMappingList = async () => {

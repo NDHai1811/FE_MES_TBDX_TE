@@ -99,9 +99,6 @@ const Mapping = () => {
     getEquipmentLogs(resData)
       .then((res) => {
         setLogs(res.data.data);
-        if (res.data.data.length > 0) {
-          setSelectedItem([res.data[0]]);
-        }
       })
       .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
   };
@@ -140,7 +137,7 @@ const Mapping = () => {
       render: (text) => <div>{text || "-"}</div>,
       onHeaderCell: () => {
         return {
-          onClick: onShowPopup,
+          onClick: selectedItem[0]?.lo_sx && onShowPopup,
         };
       },
     },
@@ -153,7 +150,7 @@ const Mapping = () => {
       render: (value) => value || "-",
       onHeaderCell: () => {
         return {
-          onClick: onShowPopupParameter,
+          onClick: selectedItem[0]?.lo_sx && onShowPopupParameter,
         };
       },
     },
@@ -230,7 +227,13 @@ const Mapping = () => {
           }}
         />
       </Row>
-      {visible && <PopupQuetQr visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupQuetQr
+          visible={visible}
+          setVisible={setVisible}
+          loSx={selectedItem[0].lo_sx}
+        />
+      )}
       {isShowPopup && (
         <PopupThongSo visible={isShowPopup} setVisible={setIsShowPopup} />
       )}
