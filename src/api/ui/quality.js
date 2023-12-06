@@ -12,3 +12,7 @@ export async function getTopError(params) {
     const res = await axios.get('ui/quality/top-error', {params});
     return res;
 }
+export async function recheckQC(params) {
+    const res = await axios.post("ui/quality/recheck", params );
+    return res;
+}

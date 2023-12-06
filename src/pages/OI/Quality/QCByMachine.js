@@ -21,12 +21,9 @@ import {
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getListMachine } from "../../../api";
 import {
-  getIQCOverall,
-  getLotIQCList,
   getLotQCList,
   getQCLine,
   getQCOverall,
-  sendIQCResult,
   sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -36,9 +33,9 @@ import dayjs from "dayjs";
 import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
-const QCByLine = (props) => {
+const QCByMachine = (props) => {
   document.title = "Kiểm tra chất lượng";
-  const { line_id } = useParams();
+  const { machine_id } = useParams();
   const history = useHistory();
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -60,8 +57,8 @@ const QCByLine = (props) => {
       align: "center",
       render: () => (
         <Select
-          options={lineOptions}
-          value={line_id}
+          options={machineOptions}
+          value={machine_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
@@ -122,7 +119,7 @@ const QCByLine = (props) => {
       //       selectedLot={selectedRow}
       //       onSubmit={onSubmitResult}
       //       onClose={() => setOpenModal(false)}
-      //       line_id={line_id}
+      //       machine_id={machine_id}
       //     />
       //   </div>
       // ),
@@ -147,7 +144,7 @@ const QCByLine = (props) => {
       //       selectedLot={selectedRow}
       //       onSubmit={onSubmitResult}
       //       onClose={() => setOpenModal(false)}
-      //       line_id={line_id}
+      //       machine_id={machine_id}
       //     />
       //   </div>
       // ),
@@ -170,7 +167,7 @@ const QCByLine = (props) => {
       //     value={text}
       //     onChange={(value) => handleInputChange(record, value)}
       //     onPressEnter={(event) =>
-      //       onSubmitSLP({ sl_ng: event.target.value })
+      //       onSubmitSLP({ sl_ng_qc: event.target.value })
       //     }
       //     placeholder="Nhập số lượng"
       //   />
@@ -198,23 +195,16 @@ const QCByLine = (props) => {
 
   const columns = [
     {
-      title: "Mã cuộn",
+      title: "Mã Lot",
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
       width: "32%",
     },
     {
-      title: line_id === 'iqc' ? "Nhà cung cấp" : "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-      width: "16%",
-    },
-    {
-      title: "Sản lượng đầu ra",
-      dataIndex: "sl_dau_ra_hang_loat",
-      key: "sl_dau_ra_hang_loat",
+      title: "Khách hàng",
+      dataIndex: "san_luong",
+      key: "san_luong",
       align: "center",
       width: "18%",
     },
@@ -245,12 +235,12 @@ const QCByLine = (props) => {
     },
     {
       title: "Phán định",
-      dataIndex: "log",
-      key: "log",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
       align: "center",
       width: "16%",
       render: (value) => {
-        switch (value?.phan_dinh) {
+        switch (value) {
           case 0:
             return "waiting";
           case 1:
@@ -258,7 +248,7 @@ const QCByLine = (props) => {
           case 2:
             return "NG";
           default:
-            return "waiting";
+            return "";
         }
       },
     },
@@ -299,6 +289,7 @@ const QCByLine = (props) => {
 
   useEffect(() => {
     getListOption();
+    // getMachineList();
   }, []);
 
   const getMachineList = () => {
@@ -309,35 +300,36 @@ const QCByLine = (props) => {
 
   const getListOption = async () => {
     setLoading(true);
-    var res = await getQCLine();
-    console.log(res);
-    setLineOptions(res.data);
+    var machine = await getQCLine();
+    console.log(machine);
+    setMachineOptions(machine.data);
     setLoading(false);
   };
   async function getData() {
     setLoading(true);
-    var overall = await getIQCOverall({ ...params, line_id: line_id });
+    var overall = await getQCOverall({ ...params, machine_id: machine_id });
     setOverall(overall.data);
-    var res = await getLotIQCList({ ...params, line_id: line_id });
+    var res = await getLotQCList({ ...params, machine_id: machine_id });
     setData(res.data);
     if(res.data.length > 0){
-      var current = res.data.find(e=>e.id===selectedRow?.id);
-      if(current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh){
+      var current = res.data.find(e=>e.id===selectedRow.id);
+      if(current.phan_dinh !== selectedRow.phan_dinh){
         setSelectedRow();
       }
     }
     setLoading(false);
   }
   useEffect(() => {
-    if (line_id) {
+    if (machine_id) {
       getData();
     }
-  }, line_id);
+  }, machine_id);
   useEffect(() => {
-    if (lineOptions.length > 0) {
-      var target = lineOptions.find(e=>e.value === line_id);
+    console.log(machineOptions);
+    if (machineOptions.length > 0) {
+      var target = machineOptions.find(e=>e.value === machine_id);
       if(!target){
-        target = lineOptions[0];
+        target = machineOptions[0];
       }
       console.log(target);
       const screen = JSON.parse(localStorage.getItem("screen"));
@@ -346,17 +338,17 @@ const QCByLine = (props) => {
         JSON.stringify({ ...screen, quality: target ? target.value : "" })
       );
       if(qcPermission.length > 0){
-        history.push('/quality/qc/'+target.value);
+        history.push('/quality/qc/' + target.value);
       }else{
-        history.push('/quality/sx/'+target.value);
+        history.push('/quality/sx/' + target.value);
       }
     }
-  }, [lineOptions]);
+  }, [machineOptions]);
   const onChangeLine = (value) => {
     if(qcPermission.length > 0){
-      history.push('/quality/qc/'+value);
+      history.push('/quality/qc/' + value);
     }else{
-      history.push('/quality/sx/'+value);
+      history.push('/quality/sx/' + value);
     }
   };
   const [form1] = Form.useForm();
@@ -382,19 +374,11 @@ const QCByLine = (props) => {
   const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
-    if(line_id === 'iqc'){
-      var res = await sendIQCResult({
-        line_id: line_id,
-        lot_id: selectedRow?.lot_id,
-        data: values,
-      });
-    }else{
-      var res = await sendQCResult({
-        machine_id: selectedRow?.machine_id,
-        lot_id: selectedRow?.lot_id,
-        data: values,
-      });
-    }
+    var res = await sendQCResult({
+      machine_id: machine_id,
+      lot_id: selectedRow?.lot_id,
+      data: values,
+    });
     getData();
   };
   return (
@@ -573,17 +557,17 @@ const QCByLine = (props) => {
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK1}
-        line_id={line_id}
+        machine_id={machine_id}
       />
       <Checksheet2
         open={openModalCK2}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK2}
-        line_id={line_id}
+        machine_id={machine_id}
       />
     </React.Fragment>
   );
 };
 
-export default withRouter(QCByLine);
+export default withRouter(QCByMachine);

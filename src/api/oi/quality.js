@@ -34,3 +34,19 @@ export async function sendQCResult(params) {
 export async function checkUserPermission(params) {
   return await axios.get("oi/qc/check-permission", params);
 }
+
+export async function getIQCOverall(params) {
+  return await axios.get("oi/iqc/overall", { params });
+}
+
+export async function getLotIQCList(params) {
+  return await axios.get("oi/iqc/lot/list", { params });
+}
+
+export async function getIQCChecksheetList(params) {
+  return await axios.get("/oi/iqc/checksheet/list", { params: params });
+}
+
+export async function sendIQCResult(params) {
+  return await axios.post("/oi/iqc/save-result", params );
+}

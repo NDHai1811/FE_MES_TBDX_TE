@@ -313,21 +313,21 @@ const Quality = (props) => {
       getData();
     }
   }, machine_id);
-  useEffect(() => {
-    if (machineOptions.length > 0) {
-      var target = machineOptions.find(e=>e.value === machine_id);
-      if(!target){
-        target = machineOptions[0];
-      }
-      console.log(target);
-      const screen = JSON.parse(localStorage.getItem("screen"));
-      localStorage.setItem(
-        "screen",
-        JSON.stringify({ ...screen, quality: target ? target.value : "" })
-      );
-      history.push("/quality/" + target.value);
-    }
-  }, [machineOptions]);
+  // useEffect(() => {
+  //   if (machineOptions.length > 0) {
+  //     var target = machineOptions.find(e=>e.value === machine_id);
+  //     if(!target){
+  //       target = machineOptions[0];
+  //     }
+  //     console.log(target);
+  //     const screen = JSON.parse(localStorage.getItem("screen"));
+  //     localStorage.setItem(
+  //       "screen",
+  //       JSON.stringify({ ...screen, quality: target ? target.value : "" })
+  //     );
+  //     history.push("/quality/" + target.value);
+  //   }
+  // }, [machineOptions]);
   const onChangeLine = (value) => {
     history.push("/quality/" + value);
   };
@@ -347,9 +347,18 @@ const Quality = (props) => {
     setOpenModal2(false);
     form2.resetFields();
   };
-  const qcPermission = ["pqc", "oqc", "*"].filter((value) =>
+  const qcPermission = ["pqc", "oqc", "iqc"].filter((value) =>
     (userProfile?.permission ?? []).includes(value)
   );
+  useEffect(()=>{
+    console.log(line);
+    if(qcPermission.length > 0){
+      history.push('/quality/qc/iqc');
+    }else{
+      history.push('/quality/sx/S01');
+    }
+  }, [line])
+  
   const [openModal1, setOpenModal1] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
 

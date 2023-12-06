@@ -25,7 +25,7 @@ import {
   exportReportQC,
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
-import { getErrorDetailList, getQualityOverall, getTopError } from "../../../api/ui/quality";
+import { getErrorDetailList, getQualityOverall, getTopError, recheckQC } from "../../../api/ui/quality";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
@@ -375,7 +375,7 @@ const QualityPQC = (props) => {
   ];
 
   const recheck = async (id) => {
-    // var res = await recheck({id});
+    var res = await recheckQC({id});
   };
   const [dataDetail, setDataDetail] = useState([]);
 
