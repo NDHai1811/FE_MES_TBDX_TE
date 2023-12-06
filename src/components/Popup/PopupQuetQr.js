@@ -99,6 +99,7 @@ function PopupQuetQr(props) {
         title="Mapping"
         open={visible}
         cancelButtonProps={{ style: { display: "none" } }}
+        onCancel={cancel}
         okButtonProps={{ style: { display: "none" } }}
       >
         <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
