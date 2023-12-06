@@ -66,11 +66,11 @@ export const sendErrorInputResults = async (data) => {
 };
 
 export const getEquipmentLogs = async (params) => {
-  return await axios.get("/oi/equipment/mapping-list", { params });
+  return await axios.get("/oi/equipment/parameters/list", { params });
 };
 
 export const getEquipmentMappingList = async () => {
-  return await axios.get("oi/equipment/mapping/list");
+  return await axios.get("/oi/equipment/mapping/list");
 };
 
 export const mappingCheckMaterial = async (params) => {
