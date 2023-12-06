@@ -117,7 +117,6 @@ function PopupNhapKhoNvl(props) {
   };
 
   const onScanResult = (value) => {
-    console.log({value})
     if (list) {
       const isLocation = data.some((val) => val.locator_id === value);
       if (isLocation) {
@@ -138,7 +137,7 @@ function PopupNhapKhoNvl(props) {
   return (
     <div>
       <Modal
-        title="In Tem"
+        title="Quét mã"
         open={visible}
         onOk={handleOk}
         okText={!list ? "Lưu" : null}
