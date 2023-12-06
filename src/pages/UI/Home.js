@@ -172,7 +172,7 @@ const HomeUi = () => {
         </Card>
       </Col>
       <Col span={20}>
-        <Row style={{ padding: "4px" }} gutter={[4, 8]}>
+        <Row gutter={[4, 8]}>
           <Col span={12}>
             <Card
               title="Sản xuất"

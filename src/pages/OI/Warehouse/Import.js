@@ -17,6 +17,7 @@ const columnDetail = [
     dataIndex: "material_id",
     key: "material_id",
     align: "center",
+    width: `${100 / 3}%`,
     render: (value) => value || "-",
   },
   {
@@ -24,6 +25,7 @@ const columnDetail = [
     dataIndex: "so_kg",
     key: "so_kg",
     align: "center",
+    width: `${100 / 3}%`,
     render: (value) => value || "-",
   },
   {
@@ -31,6 +33,7 @@ const columnDetail = [
     dataIndex: "locator_id",
     key: "locator_id",
     align: "center",
+    width: `${100 / 3}%`,
     render: (value) => value || "-",
   },
 ];
@@ -114,7 +117,13 @@ const Import = (props) => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
-  const [currentScan, setCurrentScan] = useState([]);
+  const [currentScan, setCurrentScan] = useState([
+    {
+      material_id: "",
+      so_kg: "",
+      locator_id: "",
+    },
+  ]);
 
   const onShowPopup = () => {
     setVisible(true);
@@ -123,14 +132,6 @@ const Import = (props) => {
   const onChangeLine = (value) => {
     history.push("/warehouse/kho-nvl/" + value);
   };
-  const [currentLot, setCurrentLot] = useState([
-    {
-      soKgNhapTrongNgay: 0,
-      soCuonNhapTrongNgay: 0,
-      soKgTonTrongKho: 0,
-      soCuonTonTrongKho: 0,
-    },
-  ]);
 
   const column2 = [
     {
@@ -253,7 +254,8 @@ const Import = (props) => {
         <Col span={24}>
           <Table
             scroll={{
-              x: window.screen.width,
+              x: "calc(700px + 50%)",
+              y: 300,
             }}
             rowClassName={(record, index) =>
               record.status === 1

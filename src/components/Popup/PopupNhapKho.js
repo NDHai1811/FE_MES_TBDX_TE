@@ -137,7 +137,7 @@ function PopupNhapKhoNvl(props) {
   return (
     <div>
       <Modal
-        title="In Tem"
+        title="Quét mã"
         open={visible}
         onOk={handleOk}
         okText={!list ? "Lưu" : null}

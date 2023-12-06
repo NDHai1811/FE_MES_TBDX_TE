@@ -527,7 +527,8 @@ const Export = (props) => {
         <Col span={24}>
           <Table
             scroll={{
-              x: window.screen.width,
+              x: "calc(700px + 50%)",
+              y: 300,
             }}
             rowClassName={(record, index) =>
               record.status === 1

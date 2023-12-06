@@ -615,6 +615,7 @@ const LichSuSanXuat = (props) => {
                     // onSelect={onSelect}
                     // onCheck={onCheck}
                     treeData={itemsMenu}
+                    style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>

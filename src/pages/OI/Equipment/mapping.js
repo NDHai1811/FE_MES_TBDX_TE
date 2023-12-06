@@ -16,7 +16,6 @@ const tableColumns = [
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -24,7 +23,6 @@ const tableColumns = [
     dataIndex: "ma_kh",
     key: "ma_kh",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -32,7 +30,6 @@ const tableColumns = [
     dataIndex: "layout_id",
     key: "layout_id",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -40,7 +37,6 @@ const tableColumns = [
     dataIndex: "ma_don_hang",
     key: "ma_don_hang",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -48,7 +44,6 @@ const tableColumns = [
     dataIndex: "ma_quan_ly",
     key: "ma_quan_ly",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -56,14 +51,12 @@ const tableColumns = [
     dataIndex: "mapping",
     key: "mapping",
     align: "center",
-    width: "20%",
   },
   {
     title: "TS XYZ",
     dataIndex: "ts_xyz",
     key: "ts_xyz",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -71,7 +64,6 @@ const tableColumns = [
     dataIndex: "ts_xyz",
     key: "ts_xyz",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
   {
@@ -79,7 +71,6 @@ const tableColumns = [
     dataIndex: "ts_xyz",
     key: "ts_xyz",
     align: "center",
-    width: "20%",
     render: (value) => value || "-",
   },
 ];
@@ -108,9 +99,6 @@ const Mapping = () => {
     getEquipmentLogs(resData)
       .then((res) => {
         setLogs(res.data.data);
-        if (res.data.data.length > 0) {
-          setSelectedItem([res.data[0]]);
-        }
       })
       .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
   };
@@ -149,7 +137,7 @@ const Mapping = () => {
       render: (text) => <div>{text || "-"}</div>,
       onHeaderCell: () => {
         return {
-          onClick: onShowPopup,
+          onClick: selectedItem[0]?.lo_sx && onShowPopup,
         };
       },
     },
@@ -162,7 +150,7 @@ const Mapping = () => {
       render: (value) => value || "-",
       onHeaderCell: () => {
         return {
-          onClick: onShowPopupParameter,
+          onClick: selectedItem[0]?.lo_sx && onShowPopupParameter,
         };
       },
     },
@@ -224,7 +212,8 @@ const Mapping = () => {
           pagination={false}
           bordered={true}
           scroll={{
-            x: window.screen.width,
+            x: "calc(700px + 50%)",
+            y: 300,
           }}
           columns={tableColumns}
           dataSource={logs}
@@ -238,7 +227,13 @@ const Mapping = () => {
           }}
         />
       </Row>
-      {visible && <PopupQuetQr visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupQuetQr
+          visible={visible}
+          setVisible={setVisible}
+          loSx={selectedItem[0].lo_sx}
+        />
+      )}
       {isShowPopup && (
         <PopupThongSo visible={isShowPopup} setVisible={setIsShowPopup} />
       )}

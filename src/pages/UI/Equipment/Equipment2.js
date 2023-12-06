@@ -614,7 +614,7 @@ const Equipment2 = (props) => {
   return (
     <>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
-        <Col span={3}>
+        <Col span={4}>
           <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -627,6 +627,7 @@ const Equipment2 = (props) => {
                     // onSelect={onSelect}
                     // onCheck={onCheck}
                     treeData={itemsMenu}
+                    style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>
@@ -755,7 +756,7 @@ const Equipment2 = (props) => {
           </Card>
         </Col>
 
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             extra={

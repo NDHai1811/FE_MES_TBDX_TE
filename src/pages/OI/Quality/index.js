@@ -43,7 +43,6 @@ const Quality = (props) => {
   const [selectedRow, setSelectedRow] = useState();
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
-  const [lineOptions, setLineOptions] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
   const [overall, setOverall] = useState([]);
@@ -178,7 +177,6 @@ const Quality = (props) => {
       dataIndex: "machine_id",
       key: "machine_id",
       align: "center",
-      width: "14%",
       render: (value) => value || "-",
     },
     {
@@ -186,28 +184,24 @@ const Quality = (props) => {
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
-      width: "28%",
     },
     {
       title: "S.L lỗi tính năng",
       dataIndex: "sl_loi_tinh_nang",
       key: "sl_loi_tinh_nang",
       align: "center",
-      width: "14%",
     },
     {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      width: "18%",
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
         value ? value : record.phan_dinh !== 0 ? value : "-",
     },
@@ -216,7 +210,6 @@ const Quality = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
         value ? value : record.phan_dinh !== 0 ? value : "-",
     },
@@ -225,7 +218,6 @@ const Quality = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      width: "16%",
       render: (value) => {
         switch (value) {
           case 0:
@@ -384,13 +376,6 @@ const Quality = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-            // scroll={
-            //   window.screen.width < 720
-            //     ? {
-            //         x: window.screen.width,
-            //       }
-            //     : false
-            // }
             />
           </Col>
         </Row>
@@ -401,13 +386,6 @@ const Quality = (props) => {
               locale={{ emptyText: "Trống" }}
               pagination={false}
               bordered={true}
-              scroll={
-                window.screen.width < 720
-                  ? {
-                    x: window.screen.width,
-                  }
-                  : false
-              }
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"
@@ -449,7 +427,8 @@ const Quality = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
-            x: window.screen.width,
+            x: "calc(700px + 50%)",
+            y: 300,
           }}
           pagination={false}
           bordered={true}
