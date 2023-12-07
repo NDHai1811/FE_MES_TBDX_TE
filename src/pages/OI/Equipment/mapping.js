@@ -54,7 +54,7 @@ const columns1 = [
     dataIndex: "mapping",
     key: "mapping",
     align: "center",
-    render: (value) => (value ? "1" : "0"),
+    render: (value) => (value ? "Đã mapping" : "-"),
   },
 ];
 
@@ -126,7 +126,7 @@ const Mapping = () => {
       key: "mapping",
       align: "center",
       width: "20%",
-      render: (text) => <div>{text ? "Đã mapping" : "-"}</div>,
+      render: (text) => <div>{text || "-"}</div>,
       onHeaderCell: () => {
         return {
           onClick: selectedItem[0]?.lo_sx && onShowPopup,
@@ -231,6 +231,7 @@ const Mapping = () => {
           visible={visible}
           setVisible={setVisible}
           loSx={selectedItem[0].lo_sx}
+          setSelectedItem={setSelectedItem}
         />
       )}
       {isShowPopup && (
