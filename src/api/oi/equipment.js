@@ -38,7 +38,7 @@ export async function getMachineOverall(params) {
 }
 
 export const getMachines = async () => {
-  return await axios.get("/machine/list");
+  return await axios.get("/oi/machine/list");
 };
 
 export const updateErrorStatus = async (params) => {

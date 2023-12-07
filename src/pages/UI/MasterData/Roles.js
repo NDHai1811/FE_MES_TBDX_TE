@@ -171,11 +171,11 @@ const Roles = () => {
     if (listCheck.length !== 1) {
       message.info("Chọn 1 bản ghi để chỉnh sửa");
     } else {
-      const result = data.find((record) => record.id === listCheck[0]);
+      const result = listCheck[0];
       console.log(result);
       form.setFieldsValue({
         ...result,
-        permissions: result?.permissions.map((e) => e.id),
+        permissions: (result?.permissions??[]).map((e) => e.id),
       });
       setOpenMdl(true);
     }
@@ -198,7 +198,8 @@ const Roles = () => {
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
+      console.log(selectedRowKeys, selectedRows);
+      setListCheck(selectedRows);
     },
   };
   return (
