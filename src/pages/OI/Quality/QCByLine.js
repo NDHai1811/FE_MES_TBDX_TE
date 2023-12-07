@@ -248,12 +248,12 @@ const QCByLine = (props) => {
     },
     {
       title: "Phán định",
-      dataIndex: "log",
-      key: "log",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
       align: "center",
       width: "16%",
       render: (value) => {
-        switch (value?.phan_dinh) {
+        switch (value) {
           case 0:
             return "waiting";
           case 1:
@@ -261,7 +261,7 @@ const QCByLine = (props) => {
           case 2:
             return "NG";
           default:
-            return "waiting";
+            return "";
         }
       },
     },
