@@ -11,7 +11,10 @@ import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
 const Screen = (props) => {
   const { userProfile } = useProfile();
   const { Title } = Typography;
-  document.title = "Danh sách màn hình";
+
+  const userPermissions = JSON.parse(window.localStorage.getItem("authUser"));
+  const isRawMaterialWarehouse = userPermissions.permission.includes("kho-nvl");
+
   const dashboard = [
     // {
     //   title: "Dashboard",
@@ -47,14 +50,9 @@ const Screen = (props) => {
       permission: "oi-tb",
     },
     {
-      title: "Kho NVL",
-      link: "/warehouse/kho-nvl/nhap",
-      permission: "kho-nvl",
-    },
-    {
-      title: "Kho TP",
-      link: "/warehouse/kho-tp/nhap",
-      permission: "kho-tp",
+      title: `Kho ${isRawMaterialWarehouse ? "NVL" : "TP"}`,
+      link: `/warehouse/${isRawMaterialWarehouse ? "kho-nvl" : "kho-tp"}/nhap`,
+      permission: "oi-kho",
     },
   ];
   const listUI = [
