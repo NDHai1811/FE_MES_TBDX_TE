@@ -2,74 +2,123 @@ import React from "react";
 import { Modal, Row, Col, Table } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
-
-const columns = [
-  {
-    title: "BBB",
-    children: [
-      {
-        title: "STT",
-        dataIndex: "index",
-        key: "index",
-        align: "center",
-        render: (value, record, index) => index + 1,
-      },
-      {
-        title: "Mã lot",
-        dataIndex: "lot_id",
-        key: "lot_id",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
-  },
-  {
-    title: "480",
-    align: "center",
-    children: [
-      {
-        title: "Số lượng",
-        dataIndex: "so_luong",
-        key: "so_luong",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
-  },
-];
-
-const data = [
-  {
-    lot_id: "S2301",
-    so_luong: "50",
-  },
-  {
-    lot_id: "S2302",
-    so_luong: "30",
-  },
-  {
-    lot_id: "S2303",
-    so_luong: "40",
-  },
-  {
-    lot_id: "",
-    so_luong: "",
-  },
-  {
-    lot_id: "",
-    so_luong: "",
-  },
-];
+import { useState } from "react";
+import { useEffect } from "react";
+import {
+  getQuantityLot,
+  getSuggestPallet,
+  sendStorePallet,
+} from "../../api/oi/warehouse";
 
 function PopupQuetQrNhapKho(props) {
-  const { visible, setVisible } = props;
+  const { visible, setVisible, setResData } = props;
+
+  const [columns, setColumns] = useState([]);
+  const [currentResult, setCurrentResult] = useState("");
+  const [data, setData] = useState([]);
+  const [palletId, setPalletId] = useState("");
+
+  useEffect(() => {
+    getSuggestList();
+  }, []);
+
+  useEffect(() => {
+    if (currentResult) {
+      const isExisted = data?.some((val) => val?.lot_id === currentResult);
+      if (!isExisted) {
+        getQuantity();
+      }
+    }
+  }, [currentResult]);
+
+  const getQuantity = () => {
+    getQuantityLot({ lot_id: currentResult })
+      .then((res) => {
+        if (res.data?.id) {
+          setData((prevData) => [
+            ...prevData,
+            { lot_id: res.data.id, so_luong: res.data.so_luong },
+          ]);
+        }
+      })
+      .catch((err) => console.log("Lấy thông tin số lượng thất bại: ", err));
+  };
+
+  const getSuggestList = () => {
+    getSuggestPallet()
+      .then((res) => {
+        setPalletId(res.data.pallet_id);
+        setResData?.({
+          locator_id: res.data.locator_id,
+          pallet_id: res.data.pallet_id,
+        });
+        setColumns([
+          {
+            title: res.data.pallet_id,
+            children: [
+              {
+                title: "STT",
+                dataIndex: "index",
+                key: "index",
+                align: "center",
+                render: (value, record, index) => index + 1,
+              },
+              {
+                title: "Mã lot",
+                dataIndex: "lot_id",
+                key: "lot_id",
+                align: "center",
+                render: (value) => value || "-",
+              },
+            ],
+          },
+          {
+            title: `${res.data.so_luong}`,
+            align: "center",
+            children: [
+              {
+                title: "Số lượng",
+                dataIndex: "so_luong",
+                key: "so_luong",
+                align: "center",
+                render: (value) => value || "-",
+              },
+            ],
+          },
+        ]);
+      })
+      .catch((err) => console.log("Lấy danh sách đề xuất thất bại: ", err));
+  };
+
+  const sendResult = () => {
+    const totalQuantity = data.reduce((sum, val) => sum + val.so_luong, 0);
+    const lotIds = data.map((val) => val.lot_id);
+
+    const resData = {
+      pallet_id: palletId,
+      number_of_lot: data.length,
+      so_luong: totalQuantity,
+      lot_id: lotIds,
+    };
+
+    sendStorePallet(resData)
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
+  };
 
   const handleOk = () => {
     setVisible(false);
+    if (data.length > 0) {
+      sendResult();
+    }
   };
 
   const handleCancel = () => {
     setVisible(false);
+  };
+
+  const onScanResult = (val) => {
+    setCurrentResult(val);
   };
 
   return (
@@ -81,8 +130,9 @@ function PopupQuetQrNhapKho(props) {
         okText="Lưu"
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
+        okButtonProps={{ disabled: data.length <= 0 }}
       >
-        <ScanQR isHideButton={true} />
+        <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
         <Row className="mt-3">
           <Col span={24}>
             <Table

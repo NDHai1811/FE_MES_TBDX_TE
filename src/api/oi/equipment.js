@@ -38,7 +38,7 @@ export async function getMachineOverall(params) {
 }
 
 export const getMachines = async () => {
-  return await axios.get("/machine/list");
+  return await axios.get("/oi/machine/list");
 };
 
 export const updateErrorStatus = async (params) => {
@@ -66,15 +66,20 @@ export const sendErrorInputResults = async (data) => {
 };
 
 export const getEquipmentLogs = async (params) => {
-  return await axios.get("/oi/equipment/mapping-list", { params });
+  return await axios.get("/oi/equipment/parameters/list", { params });
 };
 
 export const getEquipmentMappingList = async () => {
-  return await axios.get("oi/equipment/mapping/list");
+  return await axios.get("/oi/equipment/mapping/list");
 };
 
 export const mappingCheckMaterial = async (params) => {
-  const res = await axios.get("/oi/equipment/mapping/check-material", { params });
+  const res = await axios.get("/oi/equipment/mapping/check-material", {
+    params,
+  });
   return res.data;
 };
 
+export const sendMappingResult = async (params) => {
+  return await axios.post("oi/equipment/mapping/result", params);
+};

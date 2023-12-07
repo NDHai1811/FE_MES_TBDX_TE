@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, DatePicker, Button } from "antd";
+import { Row, Col, Table, DatePicker } from "antd";
 import PopupQuetQr from "../../../components/Popup/PopupQuetQr";
 import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
@@ -10,7 +10,7 @@ import { getEquipmentLogs } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
 import { formatDateTime } from "../../../commons/utils";
 
-const tableColumns = [
+const columns1 = [
   {
     title: "Lô",
     dataIndex: "lo_sx",
@@ -20,8 +20,8 @@ const tableColumns = [
   },
   {
     title: "Mã KH",
-    dataIndex: "ma_kh",
-    key: "ma_kh",
+    dataIndex: "ma_khach_hang",
+    key: "ma_khach_hang",
     align: "center",
     render: (value) => value || "-",
   },
@@ -34,15 +34,15 @@ const tableColumns = [
   },
   {
     title: "Đơn hàng",
-    dataIndex: "ma_don_hang",
-    key: "ma_don_hang",
+    dataIndex: "don_hang",
+    key: "don_hang",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Mã QL",
-    dataIndex: "ma_quan_ly",
-    key: "ma_quan_ly",
+    dataIndex: "mql",
+    key: "mql",
     align: "center",
     render: (value) => value || "-",
   },
@@ -51,27 +51,7 @@ const tableColumns = [
     dataIndex: "mapping",
     key: "mapping",
     align: "center",
-  },
-  {
-    title: "TS XYZ",
-    dataIndex: "ts_xyz",
-    key: "ts_xyz",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "TS XYZ",
-    dataIndex: "ts_xyz",
-    key: "ts_xyz",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "TS XYZ",
-    dataIndex: "ts_xyz",
-    key: "ts_xyz",
-    align: "center",
-    render: (value) => value || "-",
+    render: (value) => (value ? "1" : "0"),
   },
 ];
 
@@ -85,6 +65,7 @@ const Mapping = () => {
     endDate: dayjs(),
   });
   const [selectedItem, setSelectedItem] = useState([]);
+  const [tableColumns, setTableColumns] = useState(columns1);
 
   useEffect(() => {
     getLogs();
@@ -99,9 +80,12 @@ const Mapping = () => {
     getEquipmentLogs(resData)
       .then((res) => {
         setLogs(res.data.data);
-        if (res.data.data.length > 0) {
-          setSelectedItem([res.data[0]]);
-        }
+        const newColumns = res.data.columns.map((val) => ({
+          ...val,
+          render: (value) => value || "-",
+          align: "center",
+        }));
+        setTableColumns((prevColumns) => prevColumns.concat(newColumns));
       })
       .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
   };
@@ -117,8 +101,8 @@ const Mapping = () => {
     },
     {
       title: "Mã KH",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      dataIndex: "ma_khach_hang",
+      key: "ma_khach_hang",
       align: "center",
       width: "20%",
       render: (value) => value || "-",
@@ -137,10 +121,10 @@ const Mapping = () => {
       key: "mapping",
       align: "center",
       width: "20%",
-      render: (text) => <div>{text || "-"}</div>,
+      render: (text) => <div>{text ? "Đã mapping" : "-"}</div>,
       onHeaderCell: () => {
         return {
-          onClick: onShowPopup,
+          onClick: selectedItem[0]?.lo_sx && onShowPopup,
         };
       },
     },
@@ -153,7 +137,7 @@ const Mapping = () => {
       render: (value) => value || "-",
       onHeaderCell: () => {
         return {
-          onClick: onShowPopupParameter,
+          onClick: selectedItem[0]?.lo_sx && onShowPopupParameter,
         };
       },
     },
@@ -230,9 +214,19 @@ const Mapping = () => {
           }}
         />
       </Row>
-      {visible && <PopupQuetQr visible={visible} setVisible={setVisible} />}
+      {visible && (
+        <PopupQuetQr
+          visible={visible}
+          setVisible={setVisible}
+          loSx={selectedItem[0].lo_sx}
+        />
+      )}
       {isShowPopup && (
-        <PopupThongSo visible={isShowPopup} setVisible={setIsShowPopup} />
+        <PopupThongSo
+          visible={isShowPopup}
+          setVisible={setIsShowPopup}
+          lo_sx={selectedItem?.[0]?.lo_sx}
+        />
       )}
     </React.Fragment>
   );

@@ -339,7 +339,7 @@ const ThanhPhamGiay = (props) => {
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={5}>
+        <Col span={4}>
           <Card
             style={{ height: "100%" }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
@@ -423,7 +423,7 @@ const ThanhPhamGiay = (props) => {
             </div>
           </Card>
         </Col>
-        <Col span={19}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             extra={

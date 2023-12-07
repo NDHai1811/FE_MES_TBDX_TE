@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Row, Col, Input, Form } from "antd";
+import { Modal, Row, Col, Input, Form, message } from "antd";
 import "./PopupQuetQr.css";
 import { getParamaters, sendErrorInputResults } from "../../api/oi/equipment";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 function PopupThongSo(props) {
-  const { visible, setVisible } = props;
+  const { visible, setVisible, lo_sx } = props;
   const { machine_id } = useParams();
   const [form] = Form.useForm();
 
@@ -16,8 +16,14 @@ function PopupThongSo(props) {
   }, []);
 
   const getParamaterList = () => {
-    getParamaters({ machine_id })
-      .then((res) => setData(res.data))
+    getParamaters({ machine_id, lo_sx })
+      .then((res) => {
+        setData(res.data);
+        if(res.data.length === 0){
+          message.success("Đã mapping");
+          handleCancel();
+        }
+      })
       .catch((err) => console.log("Lấy danh sách thông số thất bại: ", err));
   };
 

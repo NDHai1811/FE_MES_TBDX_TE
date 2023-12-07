@@ -9,6 +9,7 @@ import {
   Space,
   InputNumber,
   Input,
+  message,
 } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
@@ -18,12 +19,12 @@ import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import ScanButton from "../Button/ScanButton";
 const Checksheet2 = (props) => {
   const { line } = useParams();
-  const { text, selectedLot, onSubmit, machine_id } = props;
+  const { text, selectedLot, onSubmit, machine_id = null, line_id = null, open, setOpen } = props;
   const closeModal = () => {
     setOpen(false);
     form.resetFields();
   };
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [checksheet, setChecksheet] = useState([]);
 
@@ -46,40 +47,30 @@ const Checksheet2 = (props) => {
     }
   };
   useEffect(() => {
-    if (machine_id) {
-      (async () => {
-        var res = await getChecksheetList({ machine_id: machine_id });
-        setChecksheet(res.data);
-      })();
-    }
-  }, [machine_id]);
-  useEffect(() => {
     form.resetFields();
   }, [checksheet, line]);
-  const hanleClickOk = () => {
-    form.setFieldValue("result", 1);
-    form.submit();
-  };
-  const hanleClickNG = () => {
-    form.setFieldValue("result", 2);
-    form.submit();
-  };
   const [errorsList, setErrorsList] = useState([]);
   const onScan = async (result) => {
-    var res = await scanError({ machine_id: machine_id, error_id: result });
+    var res = await scanError({ error_id: result, lo_sx: selectedLot.lo_sx, machine_id: selectedLot.machine_id });
     if (res.success) {
       setErrorsList([...errorsList, res.data]);
     }
   };
+  const [messageApi, contextHolder] = message.useMessage();
+  const onSubmitFail = ({ values, errorFields, outOfDate }) => {
+    // console.log(values, errorFields, outOfDate);
+    messageApi.error('Chưa hoàn thành chỉ tiêu kiểm tra')
+  }
   return (
     <React.Fragment>
-      <Button
+      {contextHolder}
+      {/* <Button
         disabled={!selectedLot?.lot_id}
         danger={selectedLot?.phan_dinh === 2}
         size="large"
         className="w-100 text-wrap h-100"
         onClick={
-          selectedLot?.phan_dinh === 0
+          !selectedLot?.phan_dinh
             ? () => {
               setOpen(true);
             }
@@ -87,7 +78,7 @@ const Checksheet2 = (props) => {
         }
       >
         {text}
-      </Button>
+      </Button> */}
       <Modal
         title={"Kiểm tra"}
         open={open}
@@ -95,7 +86,7 @@ const Checksheet2 = (props) => {
         footer={
           (
             <Space>
-              <Button onClick={() => {onSubmit({ ngoai_quan: [] }); closeModal()}} type="primary">Duyệt</Button>
+              <Button onClick={() => { onSubmit({ ngoai_quan: [] }); closeModal() }} type="primary">Duyệt</Button>
               <Button onClick={() => form.submit()} type="primary">Lưu</Button>
               <Button onClick={() => setOpen(false)}>Huỷ</Button>
             </Space>
@@ -107,7 +98,7 @@ const Checksheet2 = (props) => {
           placeholder={"Nhập mã lỗi hoặc quét mã QR"}
           onScan={onScan}
         />
-        <Form form={form} onFinish={onFinish} colon={false} className="mt-3">
+        <Form form={form} onFinish={onFinish} colon={false} className="mt-3"  onFinishFailed={onSubmitFail}>
           <Form.List name={"ngoai_quan"}>
             {(fields, { add, remove }, { errors }) =>
               (errorsList ?? []).map((e, index) => {
@@ -130,7 +121,7 @@ const Checksheet2 = (props) => {
                       </div>
                     </Col>
                     <Col span={6}>
-                      <Form.Item noStyle name={[e.id, "value"]}>
+                      <Form.Item noStyle name={[e.id, "value"]} rules={[{required: true}]}>
                         <InputNumber
                           className=" text-center h-100 d-flex align-items-center justify-content-center"
                           inputMode="numeric"
@@ -141,11 +132,9 @@ const Checksheet2 = (props) => {
                             form.setFieldValue(
                               ["ngoai_quan", e.id, "result"],
                               parseFloat(value) >=
-                                parseFloat(e.tieu_chuan) -
-                                parseFloat(e.delta) &&
+                                parseFloat(e.min) &&
                                 value <=
-                                parseFloat(e.tieu_chuan) +
-                                parseFloat(e.delta)
+                                parseFloat(e.max)
                                 ? 1
                                 : 2
                             )
@@ -160,6 +149,7 @@ const Checksheet2 = (props) => {
                       >
                         {({ getFieldValue }) => (
                           <Form.Item
+                            rules={[{required: true}]}
                             name={[e.id, "result"]}
                             noStyle
                             className="w-100 h-100"

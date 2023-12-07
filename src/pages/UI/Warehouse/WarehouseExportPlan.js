@@ -183,7 +183,9 @@ const WarehouseExportPlan = (props) => {
     }
   };
   useEffect(() => {
-    const new_data = logs.filter((datainput) => listCheck.includes(datainput.material_id));
+    const new_data = logs.filter((datainput) =>
+      listCheck.includes(datainput.material_id)
+    );
     console.log(new_data);
     setListMaterialCheck(new_data);
   }, [listCheck]);
@@ -232,7 +234,7 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "name1",
       key: "name1",
       align: "center",
-      width: '4%',
+      width: "4%",
       render: (value, item, index) => (
         <Checkbox
           value={item.material_id}
@@ -246,72 +248,73 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "material_id",
       key: "material_id",
       align: "center",
-      width: '10%'
+      width: "10%",
     },
     {
       title: "Mã vật tư",
       dataIndex: "ma_vat_tu",
       key: "ma_vat_tu",
       align: "center",
-      width: '8%'
+      width: "8%",
     },
     {
       title: "Tên nhà cung cấp",
       dataIndex: "ten_ncc",
       key: "ten_ncc",
       align: "center",
-      width: '16%'
+      width: "16%",
     },
     {
       title: "Mã cuộn nhà cung cấp",
       dataIndex: "ma_cuon_ncc",
       key: "ma_cuon_ncc",
       align: "center",
-      width: '14%'
+      width: "14%",
     },
     {
       title: "Số kg",
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "Loại giấy",
       dataIndex: "loai_giay",
       key: "loai_giay",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "FSC",
       dataIndex: "fsc",
       key: "fsc",
       align: "center",
-      width: '5%',
-      render: (value, item, index) => value === 1 ? 'X' : ''
+      width: "5%",
+      render: (value, item, index) => (value === 1 ? "X" : ""),
     },
     {
       title: "Khổ giấy",
       dataIndex: "kho_giay",
       key: "kho_giay",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "Định lượng",
       dataIndex: "dinh_luong",
       key: "dinh_luong",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "IQC OK/NG",
       dataIndex: "iqc",
       key: "iqc",
       align: "center",
-      width: '10%',
-      render: (value, item, index) => value === 0 ? 'Chưa kiểm tra' : (value === 1 ? 'OK' : 'NG')
+      width: "10%",
+      render: (value, item, index) =>
+        value === 0 ? "Chưa kiểm tra" : value === 1 ? "OK" : "NG",
     },
   ];
   const mergedKey = "khach_hang";
@@ -412,7 +415,7 @@ const WarehouseExportPlan = (props) => {
   const componentRef1 = useRef();
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef1.current
+    content: () => componentRef1.current,
   });
 
   const onInsert = () => {
@@ -439,186 +442,201 @@ const WarehouseExportPlan = (props) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       {contextHolder}
-      <Sider
-        style={{
-          backgroundColor: "white",
-          height: "100vh",
-          overflow: "auto",
-          float: "left",
-          paddingTop: "15px",
-        }}
-      >
-        <Divider>Tổ chức</Divider>
-        <Tree
-          checkable
-          defaultExpandedKeys={["0-0-0", "0-0-1"]}
-          defaultSelectedKeys={["0-0-0", "0-0-1"]}
-          defaultCheckedKeys={["0-0-0", "0-0-1"]}
-          onSelect={onSelect}
-          onCheck={onCheck}
-          treeData={itemsMenu}
-          style={{ maxHeight: '80px', overflowY: 'auto' }}
-        />
-        <Divider>Thời gian truy vấn</Divider>
-        <div className="mb-3">
-          <Form style={{ margin: "0 15px" }} layout="vertical">
-            {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-            <Space direction="vertical" style={{ width: "100%" }}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Bắt đầu"
-                style={{ width: "100%" }}
-                onChange={(value) =>
-                  setParams({ ...params, date: [value, params.date[1]] })
-                }
-                value={params.date[0]}
-              />
-              <DatePicker
-                allowClear={false}
-                placeholder="Kết thúc"
-                style={{ width: "100%" }}
-                onChange={(value) =>
-                  setParams({ ...params, date: [params.date[0], value] })
-                }
-                value={params.date[1]}
-              />
-            </Space>
-          </Form>
-        </div>
-        <Divider>Điều kiện truy vấn</Divider>
-        <div className="mb-3">
-          <Form style={{ margin: "0 15px" }} layout="vertical">
-            <Form.Item
-              label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
-              className="mb-3"
-            >
-              <Input
-                placeholder={
-                  currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
-                }
-              />
-            </Form.Item>
-            <Form.Item
-              label={currentTab === "1" ? "Tên nhà cung cấp" : "Đầu sóng"}
-              className="mb-3"
-            >
-              <Input
-                placeholder={
-                  currentTab === "1" ? "Nhập tên NCC" : "Nhập đầu sóng"
-                }
-              />
-            </Form.Item>
-            <Form.Item
-              label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
-              className="mb-3"
-            >
-              <Input
-                placeholder={
-                  currentTab === "1" ? "Nhập mã cuộn NCC" : "Nhập mã vật tư"
-                }
-              />
-            </Form.Item>
-            <Form.Item
-              label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
-              className="mb-3"
-            >
-              <Input
-                placeholder={
-                  currentTab === "1" ? "Nhập loại giấy" : "Nhập mã cuộn TBDX"
-                }
-              />
-            </Form.Item>
-          </Form>
-        </div>
-        <div
-          style={{
-            padding: "10px",
-            textAlign: "center",
-          }}
-          layout="vertical"
-        >
-          <Button type="primary" onClick={btn_click} style={{ width: "80%" }}>
-            Truy vấn
-          </Button>
-        </div>
-      </Sider>
-      <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
-        <Card
-          title={
-            <Tabs
-              defaultActiveKey="1"
-              onChange={(activeKey) => setCurrentTab(activeKey)}
-            >
-              <TabPane tab="Nhập dữ liệu nhập kho" key="1"></TabPane>
-              <TabPane tab="Theo dõi xuất hàng" key="2"></TabPane>
-            </Tabs>
-          }
-          extra={
-            currentTab === "1" ? (
-              <Space>
-                <Upload
-                  showUploadList={false}
-                  name="file"
-                  action={baseURL + "/api/upload-nhap-kho-nvl"}
-                  headers={{
-                    authorization: "authorization-text",
-                  }}
-                  onChange={(info) => {
-                    setLoading(true);
-                    if (info.file.status === "error") {
-                      error();
-                      setLoading(false);
-                    } else if (info.file.status === "done") {
-                      if (info.file.response.success === true) {
-                        loadListTable();
-                        success();
-                        setLoading(false);
-                      } else {
-                        loadListTable();
-                        message.error(info.file.response.message);
-                        setLoading(false);
-                      }
+      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+        <Col span={4}>
+          <Card
+            style={{ height: "100%" }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+          >
+            <Divider>Tổ chức</Divider>
+            <Tree
+              checkable
+              defaultExpandedKeys={["0-0-0", "0-0-1"]}
+              defaultSelectedKeys={["0-0-0", "0-0-1"]}
+              defaultCheckedKeys={["0-0-0", "0-0-1"]}
+              onSelect={onSelect}
+              onCheck={onCheck}
+              treeData={itemsMenu}
+              style={{ maxHeight: "80px", overflowY: "auto" }}
+            />
+            <Divider>Thời gian truy vấn</Divider>
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Bắt đầu"
+                    style={{ width: "100%" }}
+                    onChange={(value) =>
+                      setParams({ ...params, date: [value, params.date[1]] })
                     }
-                  }}
+                    value={params.date[0]}
+                  />
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Kết thúc"
+                    style={{ width: "100%" }}
+                    onChange={(value) =>
+                      setParams({ ...params, date: [params.date[0], value] })
+                    }
+                    value={params.date[1]}
+                  />
+                </Space>
+              </Form>
+            </div>
+            <Divider>Điều kiện truy vấn</Divider>
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item
+                  label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
+                  className="mb-3"
                 >
-                  <Button type="primary" loading={loading}>
-                    Upload excel
-                  </Button>
-                </Upload>
-                <Button type="primary" onClick={deleteRecord}>
-                  Xóa
-                </Button>
-                <Button type="primary" onClick={onEdit}>
-                  Sửa
-                </Button>
-                <Button type="primary" onClick={onInsert}>
-                  Thêm
-                </Button>
-                <Button type="primary" onClick={handlePrint}>In tem NVL</Button>
-                <div className="report-history-invoice">
-                  <TemNVL listCheck={listMaterialCheck} ref={componentRef1} />
-                </div>
-              </Space>
-            ) : null
-          }
-          style={{ width: "100%" }}
-        >
-          <EditableTable
-            bordered
-            columns={currentTab === "1" ? columns : columns1}
-            dataSource={currentTab === "1" ? logs : data}
-            scroll={{
-              x: "100vw",
-              y: "55vh",
-            }}
-            pagination={false}
-            size="small"
-            setDataSource={data}
-            onEditEnd={() => null}
-          />
-        </Card>
+                  <Input
+                    placeholder={
+                      currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={currentTab === "1" ? "Tên nhà cung cấp" : "Đầu sóng"}
+                  className="mb-3"
+                >
+                  <Input
+                    placeholder={
+                      currentTab === "1" ? "Nhập tên NCC" : "Nhập đầu sóng"
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
+                  className="mb-3"
+                >
+                  <Input
+                    placeholder={
+                      currentTab === "1" ? "Nhập mã cuộn NCC" : "Nhập mã vật tư"
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
+                  className="mb-3"
+                >
+                  <Input
+                    placeholder={
+                      currentTab === "1"
+                        ? "Nhập loại giấy"
+                        : "Nhập mã cuộn TBDX"
+                    }
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+            <div
+              style={{
+                padding: "10px",
+                textAlign: "center",
+              }}
+              layout="vertical"
+            >
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
+              >
+                Truy vấn
+              </Button>
+            </div>
+          </Card>
+        </Col>
+        <Col span={20}>
+          <Row
+            style={{ paddingLeft: "4px", paddingRight: "4px", height: "100vh" }}
+            gutter={[8, 8]}
+          >
+            <Card
+              title={
+                <Tabs
+                  defaultActiveKey="1"
+                  onChange={(activeKey) => setCurrentTab(activeKey)}
+                >
+                  <TabPane tab="Nhập dữ liệu nhập kho" key="1"></TabPane>
+                  <TabPane tab="Theo dõi xuất hàng" key="2"></TabPane>
+                </Tabs>
+              }
+              extra={
+                currentTab === "1" ? (
+                  <Space>
+                    <Upload
+                      showUploadList={false}
+                      name="file"
+                      action={baseURL + "/api/upload-nhap-kho-nvl"}
+                      headers={{
+                        authorization: "authorization-text",
+                      }}
+                      onChange={(info) => {
+                        setLoading(true);
+                        if (info.file.status === "error") {
+                          error();
+                          setLoading(false);
+                        } else if (info.file.status === "done") {
+                          if (info.file.response.success === true) {
+                            loadListTable();
+                            success();
+                            setLoading(false);
+                          } else {
+                            loadListTable();
+                            message.error(info.file.response.message);
+                            setLoading(false);
+                          }
+                        }
+                      }}
+                    >
+                      <Button type="primary" loading={loading}>
+                        Upload excel
+                      </Button>
+                    </Upload>
+                    <Button type="primary" onClick={deleteRecord}>
+                      Xóa
+                    </Button>
+                    <Button type="primary" onClick={onEdit}>
+                      Sửa
+                    </Button>
+                    <Button type="primary" onClick={onInsert}>
+                      Thêm
+                    </Button>
+                    <Button type="primary" onClick={handlePrint}>
+                      In tem NVL
+                    </Button>
+                    <div className="report-history-invoice">
+                      <TemNVL
+                        listCheck={listMaterialCheck}
+                        ref={componentRef1}
+                      />
+                    </div>
+                  </Space>
+                ) : null
+              }
+              style={{ width: "100%" }}
+            >
+              <EditableTable
+                bordered
+                columns={currentTab === "1" ? columns : columns1}
+                dataSource={currentTab === "1" ? logs : data}
+                scroll={{
+                  x: "100vw",
+                  y: "55vh",
+                }}
+                pagination={false}
+                size="small"
+                setDataSource={data}
+                onEditEnd={() => null}
+              />
+            </Card>
+          </Row>
+        </Col>
       </Row>
       <Modal
         title={titleMdlEdit}
@@ -700,11 +718,14 @@ const WarehouseExportPlan = (props) => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Mã cuộn NCC" name="ma_cuon_ncc" className="mb-3">
+              <Form.Item
+                label="Mã cuộn NCC"
+                name="ma_cuon_ncc"
+                className="mb-3"
+              >
                 <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
               </Form.Item>
             </Col>
-
           </Row>
           <Form.Item className="mb-0">
             <Button type="primary" htmlType="submit">
@@ -713,7 +734,7 @@ const WarehouseExportPlan = (props) => {
           </Form.Item>
         </Form>
       </Modal>
-    </React.Fragment>
+    </>
   );
 };
 

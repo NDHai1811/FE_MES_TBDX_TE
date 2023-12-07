@@ -9,23 +9,25 @@ import {
     Space,
     InputNumber,
     Input,
+    message,
 } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
 import { useEffect } from "react";
-import { getChecksheetList } from "../../api/oi/quality";
+import { getChecksheetList, getIQCChecksheetList } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Checksheet1 = (props) => {
-    const { text, selectedLot, onSubmit, machine_id } = props;
+    const { text, selectedLot, onSubmit, machine_id = null, line_id = null, open, setOpen } = props;
     const closeModal = () => {
         setOpen(false);
         form.resetFields();
     };
-    const [open, setOpen] = useState(false);
+    // const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
     const [checksheet, setChecksheet] = useState([]);
 
     const onFinish = async (values) => {
+        console.log(values);
         if (selectedLot?.lot_id) {
             Object.keys(values["tinh_nang"]).forEach((key) => {
                 const isNullish = Object.values(values["tinh_nang"][key]).every((value) => {
@@ -44,33 +46,34 @@ const Checksheet1 = (props) => {
         }
     };
     useEffect(() => {
-        if (machine_id) {
-            (async () => {
-                var res = await getChecksheetList({ machine_id: machine_id });
+        (async () => {
+            if (machine_id) {
+                var res = await getChecksheetList({ machine_id: machine_id, lo_sx: selectedLot?.lo_sx });
                 setChecksheet(res.data);
-            })();
-        }
-    }, [machine_id]);
+            }else{
+                var res = await getIQCChecksheetList({ line_id: line_id, lo_sx: selectedLot?.lo_sx, machine_id: selectedLot?.machine_id });
+                setChecksheet(res.data);
+            }
+        })();
+    }, [selectedLot]);
     useEffect(() => {
         form.resetFields();
     }, [checksheet]);
-    const hanleClickOk = () => {
-        form.setFieldValue("result", 1);
-        form.submit();
-    };
-    const hanleClickNG = () => {
-        form.setFieldValue("result", 2);
-        form.submit();
-    };
+    const [messageApi, contextHolder] = message.useMessage();
+    const onSubmitFail = ({ values, errorFields, outOfDate }) => {
+        // console.log(values, errorFields, outOfDate);
+        messageApi.error('Chưa hoàn thành chỉ tiêu kiểm tra')
+    }
     return (
         <React.Fragment>
-            <Button
+            {contextHolder}
+            {/* <Button
                 disabled={!selectedLot?.lot_id}
                 danger={selectedLot?.phan_dinh === 2}
                 size="large"
                 className="w-100 text-wrap h-100"
                 onClick={
-                    selectedLot?.phan_dinh === 0
+                    !selectedLot?.phan_dinh
                         ? () => {
                             setOpen(true);
                         }
@@ -78,7 +81,7 @@ const Checksheet1 = (props) => {
                 }
             >
                 {text}
-            </Button>
+            </Button> */}
             <Modal
                 title={"Kiểm tra"}
                 open={open}
@@ -94,7 +97,7 @@ const Checksheet1 = (props) => {
                 }
                 width={500}
             >
-                <Form form={form} onFinish={onFinish} colon={false}>
+                <Form form={form} onFinish={onFinish} colon={false} onFinishFailed={onSubmitFail}>
                     <Form.List name={"tinh_nang"}>
                         {(fields, { add, remove }, { errors }) =>
                             (checksheet ?? []).map((e, index) => {
@@ -114,12 +117,12 @@ const Checksheet1 = (props) => {
                                                         flexWrap: "wrap",
                                                     }}
                                                 >
-                                                    {e.hang_muc}
-                                                    {e?.note && ". (" + e?.note + ")"}
+                                                    {e.name}
+                                                    {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
                                                 </div>
                                             </Col>
                                             <Col span={6}>
-                                                <Form.Item noStyle name={[e.key, "value"]}>
+                                                <Form.Item noStyle name={[e.id, "value"]} rules={[{required: true}]}>
                                                     <InputNumber
                                                         className=" text-center h-100 d-flex align-items-center justify-content-center"
                                                         inputMode="numeric"
@@ -128,13 +131,11 @@ const Checksheet1 = (props) => {
                                                         style={{ width: "100%" }}
                                                         onChange={(value) =>
                                                             form.setFieldValue(
-                                                                ["tinh_nang", e.key, "result"],
+                                                                ["tinh_nang", e.id, "result"],
                                                                 parseFloat(value) >=
-                                                                    parseFloat(e.tieu_chuan) -
-                                                                    parseFloat(e.delta) &&
+                                                                    parseFloat(e.min) &&
                                                                     value <=
-                                                                    parseFloat(e.tieu_chuan) +
-                                                                    parseFloat(e.delta)
+                                                                    parseFloat(e.max)
                                                                     ? 1
                                                                     : 2
                                                             )
@@ -149,15 +150,16 @@ const Checksheet1 = (props) => {
                                                 >
                                                     {({ getFieldValue }) => (
                                                         <Form.Item
-                                                            name={[e.key, "result"]}
+                                                            name={[e.id, "result"]}
                                                             noStyle
                                                             className="w-100 h-100"
+                                                            rules={[{required: true}]}
                                                         >
-                                                            {!getFieldValue(["tinh_nang", e.key, "value"]) ? (
+                                                            {!getFieldValue(["tinh_nang", e.id, "value"]) ? (
                                                                 <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
                                                                     OK/NG
                                                                 </Button>
-                                                            ) : getFieldValue(["tinh_nang", e.key, "result"]) === 1 ? (
+                                                            ) : getFieldValue(["tinh_nang", e.id, "result"]) === 1 ? (
                                                                 <Button
                                                                     className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
                                                                     style={{
@@ -200,12 +202,12 @@ const Checksheet1 = (props) => {
                                                         flexWrap: "wrap",
                                                     }}
                                                 >
-                                                    {e?.hang_muc}
+                                                    {e?.name}
                                                     {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
                                                 </div>
                                             </Col>
                                             <Col span={12}>
-                                                <Form.Item name={[e.key, "result"]} noStyle>
+                                                <Form.Item name={[e.id, "result"]} noStyle>
                                                     <Radio.Group
                                                         style={{
                                                             float: "right",
@@ -226,7 +228,7 @@ const Checksheet1 = (props) => {
                                                             OK
                                                         </Radio.Button>
                                                         <Radio.Button
-                                                            value={0}
+                                                            value={2}
                                                             className="negative-radio text-center h-100 d-flex align-items-center justify-content-center"
                                                             style={{ flex: 1 }}
                                                         >

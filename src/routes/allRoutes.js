@@ -46,6 +46,8 @@ import Maintenance from "../pages/UI/MasterData/Maintenance/";
 import CreateMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import ChangePassword from "../pages/Authentication/ChangePassword";
+import QCByMachine from "../pages/OI/Quality/QCByMachine";
+import QCByLine from "../pages/OI/Quality/QCByLine";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -75,7 +77,9 @@ const authProtectedRoutes = [
   //OI
   { path: ["/tao-tem"], component: InTem },
   { path: ["/manufacture", "/manufacture/:machine_id"], component: Manufacture, },
-  { path: ["/quality", "/quality/:machine_id"], component: Quality },
+  { path: ["/quality", "/quality/:line"], component: Quality },
+  { path: ["/quality/sx", "/quality/sx/:machine_id"], component: QCByMachine },
+  { path: ["/quality/qc", "/quality/qc/:line_id"], component: QCByLine },
   { path: ["/equipment", "/equipment/:machine_id"], component: Equipment },
   { path: ["/warehouse", "/warehouse/kho-nvl/:line"], component: Warehouse },
   { path: ["/warehouse", "/warehouse/kho-tp/:line"], component: WarehouseTP },
