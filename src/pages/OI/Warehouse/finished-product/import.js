@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Button, Modal, Select } from "antd";
+import { Row, Col, Table, Button, Modal, Select, message } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -9,7 +9,7 @@ import { warehousTPData } from "../mock-data";
 import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { getWarehouseOverall } from "../../../../api/oi/warehouse";
+import { getWarehouseOverall, importData } from "../../../../api/oi/warehouse";
 
 const columnDetail = [
   {
@@ -174,14 +174,36 @@ const Import = (props) => {
 
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [resData, setResData] = useState({
+    locator_id: "",
+    pallet_id: "",
+  });
+  const [result, setResult] = useState("");
+
+  useEffect(() => {
+    if (result && resData.locator_id) {
+      if (result === resData.locator_id) {
+        importWarehouse();
+      }
+    }
+  }, [result]);
+
+  const importWarehouse = () => {
+    importData(resData)
+      .then((res) => {
+        console.log(res.data);
+        message.success("Nhập kho thành phẩm thành công!");
+      })
+      .catch((err) => console.log("Nhập kho thành phẩm thất bại: ", err));
+  };
 
   const onShowPopup = () => {
     setVisible(true);
   };
 
-  const onSelectItem = (val) => {
-    setSelectedItem([val]);
-  };
+  // const onSelectItem = (val) => {
+  //   setSelectedItem([val]);
+  // };
 
   return (
     <React.Fragment>
@@ -258,16 +280,20 @@ const Import = (props) => {
             className="mb-4"
             columns={importColumns}
             dataSource={warehousTPData}
-            onRow={(record) => {
-              return {
-                onClick: () => onSelectItem(record),
-              };
-            }}
+            // onRow={(record) => {
+            //   return {
+            //     onClick: () => onSelectItem(record),
+            //   };
+            // }}
           />
         </Col>
       </Row>
       {visible && (
-        <PopupQuetQrNhapKho visible={visible} setVisible={setVisible} />
+        <PopupQuetQrNhapKho
+          visible={visible}
+          setVisible={setVisible}
+          setResData={setResData}
+        />
       )}
       {isScan && (
         <Modal
@@ -279,6 +305,7 @@ const Import = (props) => {
           <ScanQR
             isScan={isScan}
             onResult={(res) => {
+              setResult(res);
               setIsScan(false);
             }}
           />
