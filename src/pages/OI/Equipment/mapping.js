@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, DatePicker } from "antd";
+import { Row, Col, Table, DatePicker, message } from "antd";
 import PopupQuetQr from "../../../components/Popup/PopupQuetQr";
 import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
-import { getEquipmentLogs } from "../../../api/oi/equipment";
+import { getEquipmentLogs, getEquipmentMappingList } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
 import { formatDateTime } from "../../../commons/utils";
 
@@ -68,10 +68,10 @@ const Mapping = () => {
   const [tableColumns, setTableColumns] = useState(columns1);
 
   useEffect(() => {
-    if(machine_id){
+    if (machine_id) {
       getLogs();
     }
-    
+
   }, [machine_id, date.startDate, date.endDate]);
 
   const getLogs = () => {
@@ -88,7 +88,7 @@ const Mapping = () => {
           render: (value) => value || "-",
           align: "center",
         }));
-        setTableColumns((prevColumns) => prevColumns.concat(newColumns));
+        setTableColumns(columns1.concat(newColumns));
       })
       .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
   };
@@ -146,8 +146,11 @@ const Mapping = () => {
     },
   ];
 
-  const onShowPopup = () => {
-    setVisible(true);
+  const onShowPopup = async () => {
+    const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
+    if (res.data.length > 0) {
+      setVisible(true);
+    }
   };
 
   const onShowPopupParameter = () => {
