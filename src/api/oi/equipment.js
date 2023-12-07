@@ -77,3 +77,4 @@ export const mappingCheckMaterial = async (params) => {
   const res = await axios.get("/oi/equipment/mapping/check-material", { params });
   return res.data;
 };
+
