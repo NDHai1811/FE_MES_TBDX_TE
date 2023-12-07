@@ -38,7 +38,7 @@ const Screen = (props) => {
     },
     {
       title: "Chất lượng",
-      link: "/quality",
+      link: "/quality/sx",
       permission: "oi-cl",
     },
     {
