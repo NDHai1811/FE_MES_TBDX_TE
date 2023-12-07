@@ -335,7 +335,7 @@ const Manufacture1 = (props) => {
     if (listCheck.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id == "P06" || machine_id == "P16") {
+      } else if (machine_id == "P06" || machine_id == "P15") {
         printIn();
       } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();

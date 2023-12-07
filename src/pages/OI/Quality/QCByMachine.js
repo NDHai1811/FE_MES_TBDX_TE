@@ -108,7 +108,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            setOpenModalCK1(true);
+            selectedRow && !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
           },
         };
       },
@@ -133,7 +133,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            setOpenModalCK2(true);
+            selectedRow && !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
           },
         };
       },
@@ -158,7 +158,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            setOpenModal1(true);
+            selectedRow && !selectedRow?.checked_sl_ng && setOpenModal1(true);
           },
         };
       },
@@ -201,16 +201,12 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
-      title: "Khách hàng",
-      dataIndex: "san_luong",
-      key: "san_luong",
-      align: "center",
-    },
-    {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
+      render: (value, record, index) =>
+        value ? value : record.phan_dinh !== 0 ? value : "-",
     },
     {
       title: "SL lỗi ngoại quan",
@@ -245,6 +241,30 @@ const QCByMachine = (props) => {
             return "";
         }
       },
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+    },
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
     },
   ];
 
@@ -364,6 +384,15 @@ const QCByMachine = (props) => {
   const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
+    if(values?.tinh_nang){
+      setSelectedRow({...selectedRow, checked_tinh_nang: true});
+    }
+    else if(values?.ngoai_quan){
+      setSelectedRow({...selectedRow, checked_ngoai_quan: true});
+    }
+    else if(values?.sl_ng_sx){
+      setSelectedRow({...selectedRow, checked_sl_ng: true});
+    }
     var res = await sendQCResult({
       machine_id: machine_id,
       lot_id: selectedRow?.lot_id,
