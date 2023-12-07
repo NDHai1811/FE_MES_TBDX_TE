@@ -13,9 +13,14 @@ const Warehouse = (props) => {
   const { line } = useParams();
   const history = useHistory();
 
+  const userPermissions = JSON.parse(window.localStorage.getItem("authUser"));
+  const isRawMaterialWarehouse = userPermissions.permission.includes("kho-nvl");
+
   useEffect(() => {
     if (!line) {
-      history.push("/warehouse/kho-nvl/nhap");
+      history.push(
+        `/warehouse/${isRawMaterialWarehouse ? "kho-nvl" : "kho-tp"}/nhap`
+      );
     }
   }, [line]);
   return (

@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom/cjs/react-router-dom";
 import {
   getEquipmentLogs,
   getEquipmentMappingList,
+  getParamaters,
 } from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
 import { formatDateTime } from "../../../commons/utils";
@@ -155,8 +156,14 @@ const Mapping = () => {
     }
   };
 
-  const onShowPopupParameter = () => {
-    setIsShowPopup(true);
+  const onShowPopupParameter = async () => {
+    const res = await getParamaters({
+      machine_id,
+      lo_sx: selectedItem?.[0]?.lo_sx,
+    });
+    if (res.data) {
+      setIsShowPopup(true);
+    }
   };
 
   const onSelectRow = (item) => {

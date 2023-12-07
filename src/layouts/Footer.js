@@ -49,9 +49,9 @@ const Footer = () => {
   const [selectedItem, setSelectedItem] = useState();
   useEffect(() => {
     setScreen(location.pathname.split("/")[1]);
-    var current = items.find(scr=>{return scr.key.split('/').includes(screen)})
-    console.log(current);
-    setSelectedItem(current)
+    var current = items.find((scr) => scr.key.split("/").includes(screen));
+    // console.log(current);
+    setSelectedItem(current);
   }, [location]);
   const history = useHistory();
   const onChangeScreen = (key) => {
