@@ -19,7 +19,7 @@ export async function getErrorOfLine(params) {
   return await axios.get("/line/error", { params: params });
 }
 
-export async function getMachineLog(params) {}
+export async function getMachineLog(params) { }
 
 export async function updateMachineLog(params) {
   return await axios.post("/machine/machine-log/save", params);
@@ -69,8 +69,8 @@ export const getEquipmentLogs = async (params) => {
   return await axios.get("/oi/equipment/parameters/list", { params });
 };
 
-export const getEquipmentMappingList = async () => {
-  return await axios.get("/oi/equipment/mapping/list");
+export const getEquipmentMappingList = async (params) => {
+  return await axios.get("/oi/equipment/mapping/list", { params });
 };
 
 export const mappingCheckMaterial = async (params) => {

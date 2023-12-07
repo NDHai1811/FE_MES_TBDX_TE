@@ -65,7 +65,7 @@ function PopupQuetQr(props) {
 
   const getMappingList = async () => {
     try {
-      const res = await getEquipmentMappingList();
+      const res = await getEquipmentMappingList({ lo_sx: loSx });
       const keys = res.data.key;
       const columns = res.data.label.map((item, index) => {
         const key = keys[index];
