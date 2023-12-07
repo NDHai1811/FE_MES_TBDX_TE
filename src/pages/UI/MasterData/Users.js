@@ -88,6 +88,7 @@ const Users = () => {
       key: "roles",
       select: {
         options: roles,
+        mode: "multiple"
       },
     },
   ];

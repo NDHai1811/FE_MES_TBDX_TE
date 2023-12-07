@@ -49,12 +49,12 @@ const Screen = (props) => {
     {
       title: "Kho NVL",
       link: "/warehouse/kho-nvl/nhap",
-      permission: "oi-kho",
+      permission: "kho-nvl",
     },
     {
       title: "Kho TP",
       link: "/warehouse/kho-tp/nhap",
-      permission: "oi-kho",
+      permission: "kho-tp",
     },
   ];
   const listUI = [

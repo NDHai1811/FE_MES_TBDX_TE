@@ -41,14 +41,18 @@ const Checksheet2 = (props) => {
           delete values["ngoai_quan"][key];
         }
       });
-      console.log(values);
+      if(!values.ngoai_quan){
+        messageApi.error('Không có dữ liệu lỗi ngoại quan');
+        return 0;
+      }
       closeModal();
       onSubmit(values);
     }
   };
   useEffect(() => {
     form.resetFields();
-  }, [checksheet, line]);
+    setErrorsList([])
+  }, [line]);
   const [errorsList, setErrorsList] = useState([]);
   const onScan = async (result) => {
     var res = await scanError({ error_id: result, lo_sx: selectedLot.lo_sx, machine_id: selectedLot.machine_id });

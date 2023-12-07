@@ -114,7 +114,7 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            setOpenModalCK1(true);
+            selectedRow && !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
           }
         };
       },
@@ -139,7 +139,7 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            setOpenModalCK2(true);
+            selectedRow && !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
           }
         };
       },
@@ -164,7 +164,7 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            setOpenModal1(true);
+            selectedRow && !selectedRow?.checked_sl_ng && setOpenModal1(true);
           }
         };
       },
