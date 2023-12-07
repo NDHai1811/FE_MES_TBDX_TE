@@ -31,6 +31,7 @@ function PopupThongSo(props) {
     const resData = {
       machine_id,
       lot_id: "",
+      lo_sx,
       layout_id: "",
       data: values,
     };
