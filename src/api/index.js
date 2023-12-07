@@ -320,7 +320,11 @@ export async function exportUsers(params) {
 }
 
 //Roles
-export async function getRoles(params) {
+export async function getRolesTree(params) {
+  const res = await axios.get("/roles/tree", { params });
+  return res.data;
+}
+export async function getRolesList(params) {
   const res = await axios.get("/roles/list", { params });
   return res.data;
 }

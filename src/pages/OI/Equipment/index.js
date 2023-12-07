@@ -77,18 +77,6 @@ const Equipment = (props) => {
 
   useEffect(() => {
     if (machine_id) {
-      const screen = JSON.parse(localStorage.getItem("screen"));
-      localStorage.setItem(
-        "screen",
-        JSON.stringify({ ...screen, equipment: machine_id ? machine_id : "" })
-      );
-    } else {
-      history.push("/equipment/S01");
-    }
-  }, [machine_id]);
-
-  useEffect(() => {
-    if (machine_id) {
       getOverAll();
     }
   }, [machine_id, date.startDate, date.endDate]);
@@ -118,6 +106,16 @@ const Equipment = (props) => {
       })
       .catch((err) => console.log("Lấy danh sách máy thất bại: ", err));
   };
+
+  useEffect(()=>{
+    if (machines.length > 0) {
+      var target = machines.find(e=>e.value === machine_id);
+      if(!target){
+        target = machines[0];
+      }
+      history.push('/equipment/' + target.value);
+    }
+  }, [machines])
 
   const items = [
     {

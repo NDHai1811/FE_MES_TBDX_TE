@@ -87,7 +87,6 @@ const Users = () => {
       title: "Bộ phận",
       key: "roles",
       select: {
-        mode: "multiple",
         options: roles,
       },
     },

@@ -68,12 +68,15 @@ const Mapping = () => {
   const [tableColumns, setTableColumns] = useState(columns1);
 
   useEffect(() => {
-    getLogs();
+    if(machine_id){
+      getLogs();
+    }
+    
   }, [machine_id, date.startDate, date.endDate]);
 
   const getLogs = () => {
     const resData = {
-      machine_id,
+      machine_id: machine_id,
       start_date: formatDateTime(date.startDate, COMMON_DATE_FORMAT_REQUEST),
       end_date: formatDateTime(date.endDate, COMMON_DATE_FORMAT_REQUEST),
     };

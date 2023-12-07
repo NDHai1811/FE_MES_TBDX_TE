@@ -207,23 +207,26 @@ const Manufacture1 = (props) => {
   ];
 
   useEffect(() => {
-    (async () => {
-      if (machine_id) {
-        const resData = await getListLotDetail();
-        setData(resData);
-        setSelectedLot(resData?.[0]);
-        getOverAllDetail();
-        const device_id = machineOptions.find((obj) => {
-          return obj.value === machine_id;
-        })?.device_id;
-        if (ws.current) {
-          ws.current.close();
+    if(machineOptions.length > 0){
+      (async () => {
+        if (machine_id) {
+          const resData = await getListLotDetail();
+          setData(resData);
+          setSelectedLot(resData?.[0]);
+          getOverAllDetail();
+          const device_id = machineOptions.find((obj) => {
+            return obj.value === machine_id;
+          })?.device_id;
+          if (ws.current) {
+            ws.current.close();
+          }
+          if (device_id) {
+            connectWebsocket(device_id, resData);
+          }
         }
-        if (device_id) {
-          connectWebsocket(device_id, resData);
-        }
-      }
-    })();
+      })();
+    }
+    
   }, [machine_id, machineOptions, loadData]);
 
   useEffect(() => {
@@ -232,12 +235,6 @@ const Manufacture1 = (props) => {
       if(!target){
         target = machineOptions[0];
       }
-      console.log(target);
-      const screen = JSON.parse(localStorage.getItem("screen"));
-      localStorage.setItem(
-        "screen",
-        JSON.stringify({ ...screen, quality: target ? target.value : "" })
-      );
       history.push('/manufacture/'+target.value);
     }
   }, [machineOptions]);

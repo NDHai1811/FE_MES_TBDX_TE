@@ -28,7 +28,7 @@ const Footer = () => {
     {
       label: "Chất lượng",
       icon: <StarOutlined />,
-      key: "quality",
+      key: "quality/sx",
       permission: "oi-cl",
     },
     {
@@ -46,15 +46,16 @@ const Footer = () => {
   ];
   const location = useLocation();
   const [screen, setScreen] = useState("");
-
+  const [selectedItem, setSelectedItem] = useState();
   useEffect(() => {
     setScreen(location.pathname.split("/")[1]);
+    var current = items.find(scr=>{return scr.key.split('/').includes(screen)})
+    console.log(current);
+    setSelectedItem(current)
   }, [location]);
   const history = useHistory();
   const onChangeScreen = (key) => {
-    const screen = JSON.parse(localStorage.getItem("screen"));
-    const params = screen && screen[key] !== undefined ? "/" + screen[key] : "";
-    history.push("/" + key + (params ?? ""));
+    history.push("/" + key);
   };
 
   return (
@@ -85,7 +86,7 @@ const Footer = () => {
                   alignItems: "center",
                   display: "flex",
                   cursor: "pointer",
-                  opacity: screen === e.key ? 1 : 0.5,
+                  opacity: e?.key === selectedItem?.key ? 1 : 0.5,
                 }}
                 onClick={() => onChangeScreen(e.key)}
               >

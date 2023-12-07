@@ -31,6 +31,8 @@ import {
   getRoles,
   updateRoles,
   getRolePermissions,
+  getRolesTree,
+  getRolesList,
 } from "../../../api";
 
 const Roles = () => {
@@ -42,6 +44,7 @@ const Roles = () => {
   const [params, setParams] = useState({});
   const [permissions, setPermissions] = useState([]);
   const [data, setData] = useState([]);
+  const [options, setOptions] = useState([]);
   const col_detailTable = [
     {
       title: "Tên",
@@ -84,7 +87,7 @@ const Roles = () => {
       title: "Thuộc bộ phận",
       key: "parent_id",
       select: {
-        options: data.map(e=>({value: e.id, label: e.name})),
+        options: options.map(e=>({value: e.id, label: e.name})),
       },
     },
     {
@@ -104,12 +107,8 @@ const Roles = () => {
   
   const loadListTable = async (params) => {
     setLoading(true);
-    const res = await getRoles(params);
-    setData(
-      res.map((e) => {
-        return { ...e, key: e.id };
-      })
-    );
+    setData(await getRolesTree(params));
+    setOptions(await getRolesList(params));
     setLoading(false);
   };
   useEffect(() => {

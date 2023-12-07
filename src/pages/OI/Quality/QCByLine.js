@@ -52,9 +52,12 @@ const QCByLine = (props) => {
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
+  const qcPermission = ["pqc", "oqc", "iqc"].filter((value) =>
+    (userProfile?.permission ?? []).includes(value)
+  );
   const overallColumns = [
     {
-      title: "Công đoạn",
+      title: qcPermission.length > 0 ? "IQC/PQC/OQC" : "Công đoạn",
       dataIndex: "cong_doan",
       key: "cong_doan",
       align: "center",
@@ -340,11 +343,6 @@ const QCByLine = (props) => {
         target = lineOptions[0];
       }
       console.log(target);
-      const screen = JSON.parse(localStorage.getItem("screen"));
-      localStorage.setItem(
-        "screen",
-        JSON.stringify({ ...screen, quality: target ? target.value : "" })
-      );
       if(qcPermission.length > 0){
         history.push('/quality/qc/'+target.value);
       }else{
@@ -375,9 +373,7 @@ const QCByLine = (props) => {
     setOpenModal2(false);
     form2.resetFields();
   };
-  const qcPermission = ["pqc", "oqc", "iqc"].filter((value) =>
-    (userProfile?.permission ?? []).includes(value)
-  );
+  
   const [openModal1, setOpenModal1] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
 

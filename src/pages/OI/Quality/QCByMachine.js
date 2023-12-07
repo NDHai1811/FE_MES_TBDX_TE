@@ -331,12 +331,6 @@ const QCByMachine = (props) => {
       if(!target){
         target = machineOptions[0];
       }
-      console.log(target);
-      const screen = JSON.parse(localStorage.getItem("screen"));
-      localStorage.setItem(
-        "screen",
-        JSON.stringify({ ...screen, quality: target ? target.value : "" })
-      );
       if(qcPermission.length > 0){
         history.push('/quality/qc/' + target.value);
       }else{

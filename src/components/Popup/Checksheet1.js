@@ -46,15 +46,18 @@ const Checksheet1 = (props) => {
         }
     };
     useEffect(() => {
-        (async () => {
-            if (machine_id) {
-                var res = await getChecksheetList({ machine_id: machine_id, lo_sx: selectedLot?.lo_sx });
-                setChecksheet(res.data);
-            }else{
-                var res = await getIQCChecksheetList({ line_id: line_id, lo_sx: selectedLot?.lo_sx, machine_id: selectedLot?.machine_id });
-                setChecksheet(res.data);
-            }
-        })();
+        if(selectedLot){
+            (async () => {
+                if (machine_id) {
+                    var res = await getChecksheetList({ machine_id: machine_id, lo_sx: selectedLot?.lo_sx });
+                    setChecksheet(res.data);
+                }else{
+                    var res = await getIQCChecksheetList({ line_id: line_id, lo_sx: selectedLot?.lo_sx, machine_id: selectedLot?.machine_id });
+                    setChecksheet(res.data);
+                }
+            })();
+        }
+        
     }, [selectedLot]);
     useEffect(() => {
         form.resetFields();
