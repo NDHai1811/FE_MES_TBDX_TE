@@ -291,7 +291,9 @@ const QCByLine = (props) => {
   };
 
   const onClickRow = (event, record) => {
-    // setSelectedRow(record);
+    if (!record.phan_dinh) {
+      setSelectedRow(record);
+    }
   };
 
   const onDBClickRow = (event, record, index) => {
@@ -335,7 +337,7 @@ const QCByLine = (props) => {
     if (line_id) {
       getData();
     }
-  }, line_id);
+  }, [line_id]);
   useEffect(() => {
     if (lineOptions.length > 0) {
       var target = lineOptions.find(e=>e.value === line_id);
@@ -485,9 +487,9 @@ const QCByLine = (props) => {
               onClick: (event) => {
                 onClickRow(event, record);
               }, // click row
-              onDoubleClick: (event) => {
-                onDBClickRow(event, record, index);
-              }, // double click row
+              // onDoubleClick: (event) => {
+              //   onDBClickRow(event, record, index);
+              // }, // double click row
             };
           }}
           components={{

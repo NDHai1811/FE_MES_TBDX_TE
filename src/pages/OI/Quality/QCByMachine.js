@@ -278,7 +278,9 @@ const QCByMachine = (props) => {
   };
 
   const onClickRow = (event, record) => {
-    // setSelectedRow(record);
+    if (!record.phan_dinh) {
+      setSelectedRow(record);
+    }
   };
 
   const onDBClickRow = (event, record, index) => {
@@ -313,7 +315,7 @@ const QCByMachine = (props) => {
     setData(res.data);
     if(res.data.length > 0){
       var current = res.data.find(e=>e.id===selectedRow?.id);
-      if(current?.phan_dinh !== selectedRow?.phan_dinh){
+      if(current.phan_dinh !== selectedRow.phan_dinh){
         setSelectedRow();
       }
     }
@@ -323,7 +325,7 @@ const QCByMachine = (props) => {
     if (machine_id) {
       getData();
     }
-  }, machine_id);
+  }, [machine_id]);
   useEffect(() => {
     console.log(machineOptions);
     if (machineOptions.length > 0) {
@@ -467,9 +469,9 @@ const QCByMachine = (props) => {
               onClick: (event) => {
                 onClickRow(event, record);
               }, // click row
-              onDoubleClick: (event) => {
-                onDBClickRow(event, record, index);
-              }, // double click row
+              // onDoubleClick: (event) => {
+              //   onDBClickRow(event, record, index);
+              // }, // double click row
             };
           }}
           components={{
