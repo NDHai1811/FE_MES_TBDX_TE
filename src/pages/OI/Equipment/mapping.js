@@ -6,7 +6,10 @@ import dayjs from "dayjs";
 
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
-import { getEquipmentLogs, getEquipmentMappingList } from "../../../api/oi/equipment";
+import {
+  getEquipmentLogs,
+  getEquipmentMappingList,
+} from "../../../api/oi/equipment";
 import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
 import { formatDateTime } from "../../../commons/utils";
 
@@ -71,7 +74,6 @@ const Mapping = () => {
     if (machine_id) {
       getLogs();
     }
-
   }, [machine_id, date.startDate, date.endDate]);
 
   const getLogs = () => {
@@ -148,7 +150,7 @@ const Mapping = () => {
 
   const onShowPopup = async () => {
     const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
-    if (res.data.length > 0) {
+    if (res.data) {
       setVisible(true);
     }
   };
@@ -200,7 +202,11 @@ const Mapping = () => {
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>
         <Table
-          rowClassName={(record, index) => "table-row-light"}
+          rowClassName={(record, index) => {
+            return record.lo_sx === selectedItem[0]?.lo_sx
+              ? "no-hover " + "table-row-green"
+              : "table-row-light";
+          }}
           locale={{ emptyText: "Trống" }}
           pagination={false}
           bordered={true}
