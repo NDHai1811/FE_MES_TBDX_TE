@@ -14,7 +14,7 @@ import {
   scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "./Tem";
+import TemTest from "./TemTest";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
 import {
@@ -25,9 +25,10 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
+import { getTem } from "../../../api";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiIxODE2MGYyMi00NmU5LTQwMmUtOTFkMC1lZjdhNDliZjY2NDQiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTIyOTIzNywiZXhwIjoxNzAxMjM4MjM3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.aR-bTzZc70GNvQ1b57ZWSmTkpvqIhHFGN_Nx5nyCXYocOliTj9syzmy54U8VkNushvTfX5DAsjG3KiA_cCRw8w";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJlNTYzZjM4ZC00MmVkLTQ0ZmUtODMwOC1iNzc5ZWYxYWMzN2IiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTkzNjcyNywiZXhwIjoxNzAxOTQ1NzI3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.VQyIcN6k7KOZZGl1Dautpw-0N9fByGck8HsNiCzgF5BWypMb8YHyceXjpo-gegh2aNXjTdkyFTmWQMLicXsCfw";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
@@ -256,6 +257,10 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     getListMachine();
+    (async ()=>{
+      var res = await getTem();
+      setListCheck(res) 
+    })()
   }, []);
 
   const getListMachine = () => {
@@ -389,19 +394,22 @@ const Manufacture1 = (props) => {
       const Error_Counter = receivedMsg.data?.Error_Counter
         ? parseInt(receivedMsg.data.Error_Counter[0][1])
         : 0;
-      let san_luong = 0;
-      let sl_ok = 0;
+      let san_luong = resData[0]?.san_luong;
+      let sl_ok = resData[0]?.sl_ok;
       if (Pre_Counter > 0) {
-        san_luong = Pre_Counter - resData[0]?.tong_sl_lo_sx;
+        san_luong = (Pre_Counter - resData[0]?.start_sl) % resData[0]?.dinh_muc;
+        if (Error_Counter) {
+          var sl_ng = Error_Counter - resData[0]?.end_ng;
+          sl_ok = san_luong - sl_ng;
+        }
       } else {
         san_luong = data[0]?.san_luong;
+        if (Error_Counter) {
+          var sl_ng = Error_Counter - resData[0]?.end_ng;
+          sl_ok = san_luong - sl_ng;
+        }
       }
-      if (Error_Counter) {
-        sl_ok =
-          san_luong - (parseInt(resData[0]?.tong_ng_lo_sx) + Error_Counter);
-      } else {
-        sl_ok = san_luong - parseInt(resData[0]?.tong_sl_lo_sx);
-      }
+      
       console.log(Pre_Counter, Error_Counter, resData[0]);
       if (sl_ok >= resData[0]?.dinh_muc) {
         // setLoadData(!loadData);
@@ -514,7 +522,7 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
+                <TemTest listCheck={listCheck} ref={componentRef1} />
                 <TemIn listCheck={listCheck} ref={componentRef2} />
                 <TemDan listCheck={listCheck} ref={componentRef3} />
               </div>
