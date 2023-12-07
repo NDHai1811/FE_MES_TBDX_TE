@@ -23,12 +23,11 @@ const PrintTemplate = ({ detail }) => {
                             <th style={{ width: "20%" }}></th>
                             <th style={{ width: "20%" }}></th>
                             <th style={{ width: "20%" }}></th>
-                            <th style={{ width: "20%" }}></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colSpan={5}>
+                            <td colSpan={45}>
                                 <div className="d-flex justify-content-between">
                                     <QRCode
                                         style={{ marginRight: "5px" }}
