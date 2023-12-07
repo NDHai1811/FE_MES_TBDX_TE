@@ -15,6 +15,7 @@ import {
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import TemTest from "./TemTest";
+import Tem from "./Tem";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
 import {
@@ -257,10 +258,10 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     getListMachine();
-    (async ()=>{
-      var res = await getTem();
-      setListCheck(res) 
-    })()
+    // (async ()=>{
+    //   var res = await getTem();
+    //   setListCheck(res) 
+    // })()
   }, []);
 
   const getListMachine = () => {
@@ -522,7 +523,7 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <TemTest listCheck={listCheck} ref={componentRef1} />
+                <Tem listCheck={listCheck} ref={componentRef1} />
                 <TemIn listCheck={listCheck} ref={componentRef2} />
                 <TemDan listCheck={listCheck} ref={componentRef3} />
               </div>
