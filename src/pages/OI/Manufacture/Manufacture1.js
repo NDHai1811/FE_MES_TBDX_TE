@@ -235,7 +235,6 @@ const Manufacture1 = (props) => {
         }
       })();
     }
-    
   }, [machine_id, machineOptions, loadData]);
 
   useEffect(() => {
@@ -340,6 +339,10 @@ const Manufacture1 = (props) => {
       } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();
       }
+      (async ()=>{
+        setData(await getListLotDetail());
+        getOverAllDetail();
+      })()
     }
     setListCheck([]);
   }, [listCheck.length]);
