@@ -84,6 +84,13 @@ const columns = [
     render: (value) => value || "-",
   },
   {
+    title: "Sản lượng đầu ra",
+    dataIndex: "san_luong",
+    key: "san_luong",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
