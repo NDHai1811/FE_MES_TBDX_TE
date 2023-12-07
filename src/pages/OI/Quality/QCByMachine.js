@@ -314,8 +314,8 @@ const QCByMachine = (props) => {
     var res = await getLotQCList({ ...params, machine_id: machine_id });
     setData(res.data);
     if(res.data.length > 0){
-      var current = res.data.find(e=>e.id===selectedRow?.id);
-      if(current.phan_dinh !== selectedRow.phan_dinh){
+      var current = res.data.find(e=>e?.id===selectedRow?.id);
+      if(current?.phan_dinh !== selectedRow?.phan_dinh){
         setSelectedRow();
       }
     }
