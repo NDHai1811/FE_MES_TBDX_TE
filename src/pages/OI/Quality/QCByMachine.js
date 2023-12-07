@@ -109,7 +109,7 @@ const QCByMachine = (props) => {
         return {
           onClick: () => {
             setOpenModalCK1(true);
-          }
+          },
         };
       },
       // render: () => (
@@ -134,7 +134,7 @@ const QCByMachine = (props) => {
         return {
           onClick: () => {
             setOpenModalCK2(true);
-          }
+          },
         };
       },
       // render: () => (
@@ -159,7 +159,7 @@ const QCByMachine = (props) => {
         return {
           onClick: () => {
             setOpenModal1(true);
-          }
+          },
         };
       },
       // render: (text, record) => (
@@ -199,28 +199,24 @@ const QCByMachine = (props) => {
       dataIndex: "lot_id",
       key: "lot_id",
       align: "center",
-      width: "32%",
     },
     {
       title: "Khách hàng",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
-      width: "18%",
     },
     {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      width: "18%",
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
         value ? value : record.phan_dinh !== 0 ? value : "-",
     },
@@ -229,7 +225,6 @@ const QCByMachine = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
         value ? value : record.phan_dinh !== 0 ? value : "-",
     },
@@ -238,7 +233,6 @@ const QCByMachine = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      width: "16%",
       render: (value) => {
         switch (value) {
           case 0:
@@ -313,9 +307,9 @@ const QCByMachine = (props) => {
     setOverall(overall.data);
     var res = await getLotQCList({ ...params, machine_id: machine_id });
     setData(res.data);
-    if(res.data.length > 0){
-      var current = res.data.find(e=>e?.id===selectedRow?.id);
-      if(current?.phan_dinh !== selectedRow?.phan_dinh){
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e?.id === selectedRow?.id);
+      if (current?.phan_dinh !== selectedRow?.phan_dinh) {
         setSelectedRow();
       }
     }
@@ -329,22 +323,22 @@ const QCByMachine = (props) => {
   useEffect(() => {
     console.log(machineOptions);
     if (machineOptions.length > 0) {
-      var target = machineOptions.find(e=>e.value === machine_id);
-      if(!target){
+      var target = machineOptions.find((e) => e.value === machine_id);
+      if (!target) {
         target = machineOptions[0];
       }
-      if(qcPermission.length > 0){
-        history.push('/quality/qc/' + target.value);
-      }else{
-        history.push('/quality/sx/' + target.value);
+      if (qcPermission.length > 0) {
+        history.push("/quality/qc/" + target.value);
+      } else {
+        history.push("/quality/sx/" + target.value);
       }
     }
   }, [machineOptions]);
   const onChangeLine = (value) => {
-    if(qcPermission.length > 0){
-      history.push('/quality/qc/' + value);
-    }else{
-      history.push('/quality/sx/' + value);
+    if (qcPermission.length > 0) {
+      history.push("/quality/qc/" + value);
+    } else {
+      history.push("/quality/sx/" + value);
     }
   };
   const [form1] = Form.useForm();
@@ -456,7 +450,8 @@ const QCByMachine = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
-            x: window.screen.width,
+            x: "calc(700px + 50%)",
+            y: 300,
           }}
           pagination={false}
           bordered={true}
