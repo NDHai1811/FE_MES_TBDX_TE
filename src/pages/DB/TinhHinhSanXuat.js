@@ -20,8 +20,8 @@ const colTable = [
   },
   {
     title: "MỤC TIÊU HIỆN TẠI",
-    dataIndex: "muc_tieu_hien_tai",
-    key: "muc_tieu_hien_tai",
+    dataIndex: "sl_muc_tieu",
+    key: "sl_muc_tieu",
     align: "center",
   },
   {
@@ -32,22 +32,22 @@ const colTable = [
   },
   {
     title: "TỈ LỆ %",
-    dataIndex: "ti_le_ht",
-    key: "ti_le_ht",
+    dataIndex: "ti_le",
+    key: "ti_le",
     align: "center",
     render: (value) => `${value}%`,
   },
   {
     title: "Đánh giá",
-    dataIndex: "ti_le_ht",
-    key: "ti_le_ht",
+    dataIndex: "status",
+    key: "status",
     render: (value) => {
       let color = "";
-      if (value < 90) {
+      if (value == 3) {
         color = "red";
-      } else if (value >= 90 && value < 95) {
+      } else if (value == 2) {
         color = "yellow";
-      } else if (value >= 95) {
+      } else if (value == 1) {
         color = "green";
       }
       return (
@@ -101,20 +101,20 @@ const TinhHinhSanXuat = () => {
   // const history = useHistory();
   const [isFullCreen, setIsFullScreen] = useState(false);
   const [clock, setClock] = useState(new Date());
-  // useEffect(() => {
-  //   setInterval(() => tick(), 1000);
-  //   (async () => {
-  //     const res1 = await getProductFMB();
-  //     setDataTable(
-  //       res1.data.map((e) => {
-  //         return { ...e };
-  //       })
-  //     );
-  //   })();
-  // }, []);
   const tick = () => {
     setClock(new Date());
   };
+  useEffect(() => {
+    setInterval(() => tick(), 1000);
+    (async () => {
+      const res1 = await getProductFMB();
+      setDataTable(
+        res1.data.map((e) => {
+          return { ...e };
+        })
+      );
+    })();
+  }, []);
 
   const [dataTable, setDataTable] = useState([]);
   // useEffect(() => {
@@ -195,7 +195,7 @@ const TinhHinhSanXuat = () => {
                   pagination={false}
                   scroll={{ x: "100%", y: "100vh" }}
                   columns={colTable}
-                  dataSource={mockData}
+                  dataSource={dataTable}
                 />
               </Col>
             </Row>
