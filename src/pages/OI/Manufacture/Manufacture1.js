@@ -399,6 +399,7 @@ const Manufacture1 = (props) => {
         if(Pre_Counter < resData[0]?.end_sl){
           setLoadData(!loadData);
         }
+        console.log('res',Pre_Counter,resData[0]?.start_sl);
         san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
         if (Error_Counter) {
           sl_ng = parseInt(Error_Counter - resData[0]?.end_ng);
@@ -408,6 +409,7 @@ const Manufacture1 = (props) => {
         if (sl_ok >= resData[0]?.dinh_muc) {
           setLoadData(!loadData);
         } else {
+          console.log('san_luong',san_luong);
           const new_data = resData.map((value, index) => {
             if (index === 0) {
               value.san_luong = isNaN(san_luong) ? 0 : san_luong;
@@ -417,6 +419,7 @@ const Manufacture1 = (props) => {
               return value;
             }
           });
+          console.log(new_data);
           setData(new_data);
           setSelectedLot(new_data[0]);
         }
