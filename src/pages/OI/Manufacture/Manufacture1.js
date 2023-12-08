@@ -29,7 +29,7 @@ import { getMachines } from "../../../api/oi/equipment";
 import { getTem } from "../../../api";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI1ZGIwYjFhYS1mYzljLTRiZjAtODYzMy03NDJhOWIxNmQ2NDAiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAwNTI3MCwiZXhwIjoxNzAyMDE0MjcwLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.1qUXt0lAWUYqiYdAJH8R0ZbqDw0Cf-FjCyie0NGBdSKNcfaRAO9u-7WsC_q8OBkZ2aRfuJ8J1bBVUZiCB8nBmQ";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJjNjZjNjQ2ZC05ZjBlLTRhYTEtOTk5MS0zMzkxNGZhYThiOWUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAxNzI0NywiZXhwIjoxNzAyMDI2MjQ3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.7RZkdljzbZwgFiRPh8UbdZIN2yI_qsT4MBQyE-hOlIadS-3kbVMaiclPz1TfwF9E3yhoqdYT53ZK5X1Ybrr-NA";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
@@ -45,21 +45,21 @@ const currentColumns = [
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value,
   },
   {
     title: "Sản lượng đầu ra",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value,
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value,
   },
   {
     title: "Phán định",
@@ -83,21 +83,18 @@ const columns = [
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
-    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đầu ra",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
-    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
-    render: (value) => value || "-",
   },
   {
     title: "Phán định",
@@ -396,17 +393,13 @@ const Manufacture1 = (props) => {
       let sl_ok = parseInt(resData[0]?.sl_ok);
       let sl_ng = parseInt(resData[0]?.end_ng);
       if (Pre_Counter > 0) {
-        if(Pre_Counter < resData[0]?.end_sl){
-          setLoadData(!loadData);
-        }
         san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
         if (Error_Counter) {
           sl_ng = parseInt(Error_Counter - resData[0]?.end_ng);
         }
         sl_ok = parseInt(san_luong - sl_ng);
-        console.log(Pre_Counter, Error_Counter, resData[0]);
         if (sl_ok >= resData[0]?.dinh_muc) {
-          setLoadData(!loadData);
+          reloadData();
         } else {
           const new_data = resData.map((value, index) => {
             if (index === 0) {
@@ -417,6 +410,7 @@ const Manufacture1 = (props) => {
               return value;
             }
           });
+          console.log(Pre_Counter, Error_Counter, new_data[0]);
           setData(new_data);
           setSelectedLot(new_data[0]);
         }
