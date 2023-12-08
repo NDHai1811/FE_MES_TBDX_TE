@@ -173,17 +173,20 @@ const Manufacture1 = (props) => {
   const reloadData = async () =>{
     const resData = await getListLotDetail();
     setData(resData);
-    setSelectedLot(resData?.[0]);
+    if(resData?.[0]?.status === 1){
+      setSelectedLot(resData?.[0]);
+    }
+    
     getOverAllDetail();
-    const device_id = machineOptions.find((obj) => {
-      return obj.value === machine_id;
-    })?.device_id;
-    if (ws.current) {
-      ws.current.close();
-    }
-    if (device_id) {
-      connectWebsocket(device_id, resData);
-    }
+    // const device_id = machineOptions.find((obj) => {
+    //   return obj.value === machine_id;
+    // })?.device_id;
+    // if (ws.current) {
+    //   ws.current.close();
+    // }
+    // if (device_id) {
+    //   connectWebsocket(device_id, resData);
+    // }
   }
   const overallColumns = [
     {
@@ -437,6 +440,27 @@ const Manufacture1 = (props) => {
   const onChangeEndDate = (value) => {
     setParams({ ...params, end_date: value });
   };
+
+  let interval;
+  useEffect(() => {
+    interval = setInterval(() => {
+      (async ()=>{
+        const resData = {
+          machine_id,
+          start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
+          end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+        };
+        const list = await getLotByMachine(resData);
+        setData(list.data)
+        if(list.data?.[0]?.status === 1){
+          setSelectedLot(list.data?.[0]);
+        }
+        const overall = await getOverAll(resData);
+        setOverall(overall.data)
+      })()
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <React.Fragment>
