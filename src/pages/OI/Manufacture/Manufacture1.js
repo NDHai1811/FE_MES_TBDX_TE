@@ -29,7 +29,7 @@ import { getMachines } from "../../../api/oi/equipment";
 import { getTem } from "../../../api";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJlNTYzZjM4ZC00MmVkLTQ0ZmUtODMwOC1iNzc5ZWYxYWMzN2IiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMTkzNjcyNywiZXhwIjoxNzAxOTQ1NzI3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.VQyIcN6k7KOZZGl1Dautpw-0N9fByGck8HsNiCzgF5BWypMb8YHyceXjpo-gegh2aNXjTdkyFTmWQMLicXsCfw";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI1ZGIwYjFhYS1mYzljLTRiZjAtODYzMy03NDJhOWIxNmQ2NDAiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAwNTI3MCwiZXhwIjoxNzAyMDE0MjcwLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.1qUXt0lAWUYqiYdAJH8R0ZbqDw0Cf-FjCyie0NGBdSKNcfaRAO9u-7WsC_q8OBkZ2aRfuJ8J1bBVUZiCB8nBmQ";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
@@ -42,8 +42,8 @@ const currentColumns = [
   },
   {
     title: "Sản lượng kế hoạch",
-    dataIndex: "san_luong_kh",
-    key: "san_luong_kh",
+    dataIndex: "dinh_muc",
+    key: "dinh_muc",
     align: "center",
     render: (value) => value || "-",
   },
@@ -80,8 +80,8 @@ const columns = [
   },
   {
     title: "Sản lượng kế hoạch",
-    dataIndex: "san_luong_kh",
-    key: "san_luong_kh",
+    dataIndex: "dinh_muc",
+    key: "dinh_muc",
     align: "center",
     render: (value) => value || "-",
   },
@@ -173,6 +173,21 @@ const Manufacture1 = (props) => {
   const [isScan, setIsScan] = useState(0);
   const ws = useRef(null);
 
+  const reloadData = async () =>{
+    const resData = await getListLotDetail();
+    setData(resData);
+    setSelectedLot(resData?.[0]);
+    getOverAllDetail();
+    const device_id = machineOptions.find((obj) => {
+      return obj.value === machine_id;
+    })?.device_id;
+    if (ws.current) {
+      ws.current.close();
+    }
+    if (device_id) {
+      connectWebsocket(device_id, resData);
+    }
+  }
   const overallColumns = [
     {
       title: "Công đoạn",
@@ -219,19 +234,7 @@ const Manufacture1 = (props) => {
     if(machineOptions.length > 0){
       (async () => {
         if (machine_id) {
-          const resData = await getListLotDetail();
-          setData(resData);
-          setSelectedLot(resData?.[0]);
-          getOverAllDetail();
-          const device_id = machineOptions.find((obj) => {
-            return obj.value === machine_id;
-          })?.device_id;
-          if (ws.current) {
-            ws.current.close();
-          }
-          if (device_id) {
-            connectWebsocket(device_id, resData);
-          }
+          reloadData();
         }
       })();
     }
@@ -294,15 +297,6 @@ const Manufacture1 = (props) => {
     const res = await getLotByMachine(resData);
     setLoading(true);
     return res.data;
-    // await getLotByMachine(resData)
-    //   .then((res) => {
-    //     setSelectedLot([res.data?.[0]]);
-    //     setData(res.data);
-    //   })
-    //   .catch((err) => {
-    //     console.error("Get list lot error: ", err);
-    //   })
-    //   .finally(() => setLoading(false));
   };
 
   const onChangeLine = (value) => {
@@ -311,7 +305,7 @@ const Manufacture1 = (props) => {
 
   const onScan = async (result) => {
     scanQrCode({ lot_id: result })
-      .then()
+      .then(reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
 
@@ -398,37 +392,34 @@ const Manufacture1 = (props) => {
       const Error_Counter = receivedMsg.data?.Error_Counter
         ? parseInt(receivedMsg.data.Error_Counter[0][1])
         : 0;
-      let san_luong = resData[0]?.san_luong;
-      let sl_ok = resData[0]?.sl_ok;
+      let san_luong = parseInt(resData[0]?.san_luong);
+      let sl_ok = parseInt(resData[0]?.sl_ok);
+      let sl_ng = parseInt(resData[0]?.end_ng);
       if (Pre_Counter > 0) {
-        san_luong = (Pre_Counter - resData[0]?.start_sl) % resData[0]?.dinh_muc;
-        if (Error_Counter) {
-          var sl_ng = Error_Counter - resData[0]?.end_ng;
-          sl_ok = san_luong - sl_ng;
+        if(Pre_Counter < resData[0]?.end_sl){
+          setLoadData(!loadData);
         }
-      } else {
-        san_luong = data[0]?.san_luong;
+        san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
         if (Error_Counter) {
-          var sl_ng = Error_Counter - resData[0]?.end_ng;
-          sl_ok = san_luong - sl_ng;
+          sl_ng = parseInt(Error_Counter - resData[0]?.end_ng);
         }
-      }
-      
-      console.log(Pre_Counter, Error_Counter, resData[0]);
-      if (sl_ok >= resData[0]?.dinh_muc) {
-        // setLoadData(!loadData);
-      } else {
-        const new_data = resData.map((value, index) => {
-          if (index === 0) {
-            value.san_luong = san_luong;
-            value.sl_ok = sl_ok;
-            return value;
-          } else {
-            return value;
-          }
-        });
-        setData(new_data);
-        setSelectedLot(new_data[0]);
+        sl_ok = parseInt(san_luong - sl_ng);
+        console.log(Pre_Counter, Error_Counter, resData[0]);
+        if (sl_ok >= resData[0]?.dinh_muc) {
+          setLoadData(!loadData);
+        } else {
+          const new_data = resData.map((value, index) => {
+            if (index === 0) {
+              value.san_luong = isNaN(san_luong) ? 0 : san_luong;
+              value.sl_ok = isNaN(sl_ok) ? 0 : sl_ok;
+              return value;
+            } else {
+              return value;
+            }
+          });
+          setData(new_data);
+          setSelectedLot(new_data[0]);
+        }
       }
     };
 
