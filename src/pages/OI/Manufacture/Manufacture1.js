@@ -45,21 +45,21 @@ const currentColumns = [
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value,
   },
   {
     title: "Sản lượng đầu ra",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value,
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value,
   },
   {
     title: "Phán định",
@@ -83,21 +83,18 @@ const columns = [
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
-    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đầu ra",
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
-    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
-    render: (value) => value || "-",
   },
   {
     title: "Phán định",
@@ -405,9 +402,8 @@ const Manufacture1 = (props) => {
           sl_ng = parseInt(Error_Counter - resData[0]?.end_ng);
         }
         sl_ok = parseInt(san_luong - sl_ng);
-        console.log(Pre_Counter, Error_Counter, resData[0]);
         if (sl_ok >= resData[0]?.dinh_muc) {
-          setLoadData(!loadData);
+          reloadData();
         } else {
           console.log('san_luong',san_luong);
           const new_data = resData.map((value, index) => {
