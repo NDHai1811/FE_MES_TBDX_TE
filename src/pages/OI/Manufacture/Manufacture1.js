@@ -394,7 +394,7 @@ const Manufacture1 = (props) => {
       let sl_ng = parseInt(resData[0]?.end_ng);
       if (Pre_Counter > 0) {
         if(Pre_Counter < resData[0]?.end_sl){
-          setLoadData(!loadData);
+          // setLoadData(!loadData);
         }
         console.log('res',Pre_Counter,resData[0]?.start_sl);
         san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
@@ -403,7 +403,7 @@ const Manufacture1 = (props) => {
         }
         sl_ok = parseInt(san_luong - sl_ng);
         if (sl_ok >= resData[0]?.dinh_muc) {
-          reloadData();
+          // reloadData();
         } else {
           console.log('san_luong',san_luong);
           const new_data = resData.map((value, index) => {
