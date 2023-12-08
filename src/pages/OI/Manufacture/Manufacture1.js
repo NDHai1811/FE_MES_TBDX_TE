@@ -29,7 +29,7 @@ import { getMachines } from "../../../api/oi/equipment";
 import { getTem } from "../../../api";
 
 const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiJjNjZjNjQ2ZC05ZjBlLTRhYTEtOTk5MS0zMzkxNGZhYThiOWUiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAxNzI0NywiZXhwIjoxNzAyMDI2MjQ3LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.7RZkdljzbZwgFiRPh8UbdZIN2yI_qsT4MBQyE-hOlIadS-3kbVMaiclPz1TfwF9E3yhoqdYT53ZK5X1Ybrr-NA";
+  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const currentColumns = [
@@ -382,6 +382,9 @@ const Manufacture1 = (props) => {
     };
 
     ws.current.onmessage = async function (event) {
+      if(resData[0]?.status !== 1){
+        return 0;
+      }
       const receivedMsg = JSON.parse(event.data);
       const Pre_Counter = receivedMsg.data?.Pre_Counter
         ? parseInt(receivedMsg.data?.Pre_Counter[0][1])
@@ -391,14 +394,15 @@ const Manufacture1 = (props) => {
         : 0;
       let san_luong = parseInt(resData[0]?.san_luong);
       let sl_ok = parseInt(resData[0]?.sl_ok);
-      let sl_ng = parseInt(resData[0]?.end_ng);
+      let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
+      console.log(Pre_Counter, Error_Counter, resData[0]);
       if (Pre_Counter > 0) {
         san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
         if (Error_Counter) {
-          sl_ng = parseInt(Error_Counter - resData[0]?.end_ng);
+          sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
         }
         sl_ok = parseInt(san_luong - sl_ng);
-        if (sl_ok >= resData[0]?.dinh_muc) {
+        if (sl_ok >= resData[0]?.dinh_muc || resData[0]?.sl_ok - Pre_Counter > 10) {
           reloadData();
         } else {
           const new_data = resData.map((value, index) => {
@@ -410,7 +414,7 @@ const Manufacture1 = (props) => {
               return value;
             }
           });
-          console.log(Pre_Counter, Error_Counter, new_data[0]);
+          
           setData(new_data);
           setSelectedLot(new_data[0]);
         }
