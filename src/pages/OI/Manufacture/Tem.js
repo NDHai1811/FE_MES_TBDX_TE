@@ -82,9 +82,9 @@ const PrintTemplate = ({ detail }) => {
             </tr>
             <tr>
               <td className="text-center">{detail.kho}</td>
-              <td className="text-center">{detail.dai}</td>
+              <td className="text-center">{detail.dai_tam}</td>
               <td className="text-center">{detail.so_dao}</td>
-              <td className="text-center"></td>
+              <td className="text-center">{detail.so_ra}</td>
               <td className="text-center">{detail.so_lop}</td>
             </tr>
             <tr>
