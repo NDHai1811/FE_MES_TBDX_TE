@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Table, Col, Row } from "antd";
 import ReactFullscreen from "react-easyfullscreen";
-import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
+import {
+  FullscreenOutlined,
+  FullscreenExitOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import { getProductFMB } from "../../api/db/main";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import "./THSX.css";
 
 const colTable = [
@@ -132,6 +137,7 @@ const TinhHinhSanXuat = () => {
               style={{
                 verticalAlign: "center",
                 justifyContent: "space-between",
+                alignItems: "center",
                 padding: "10px",
                 backgroundColor: "#2462a3",
                 color: "white",
@@ -149,23 +155,30 @@ const TinhHinhSanXuat = () => {
               <div style={{ fontWeight: 700, fontSize: "3em" }}>
                 TÌNH HÌNH SẢN XUẤT
               </div>
-              {isFullCreen == false ? (
+              <div>
                 <FullscreenOutlined
                   style={{ fontSize: "30px" }}
                   onClick={() => {
-                    onRequest();
-                    setIsFullScreen(true);
+                    if (isFullCreen) {
+                      onExit();
+                      setIsFullScreen(false);
+                    } else {
+                      onRequest();
+                      setIsFullScreen(true);
+                    }
                   }}
                 />
-              ) : (
-                <FullscreenExitOutlined
-                  style={{ fontSize: "30px" }}
-                  onClick={() => {
-                    onExit();
-                    setIsFullScreen(false);
-                  }}
-                />
-              )}
+                <Link to={"/screen"} style={{ margin: "auto 0" }}>
+                  <CloseOutlined
+                    className="text-white"
+                    style={{
+                      fontSize: "30px",
+                      marginLeft: 24,
+                      marginRight: 12,
+                    }}
+                  />
+                </Link>
+              </div>
             </Row>
             <Row style={{ padding: "15px", height: "100%" }} gutter={[8, 8]}>
               <Col span={24} style={{ height: "100%" }}>
