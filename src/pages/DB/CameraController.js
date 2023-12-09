@@ -14,7 +14,7 @@ const CameraController = () => {
     ];
 
     controls.current.target.set(...avgPosition);
-    camera.position.set(-86, 107, -33);
+    camera.position.set(-119, 52, -43);
     camera.zoom = 2;
     camera.updateProjectionMatrix();
   }, [camera]);

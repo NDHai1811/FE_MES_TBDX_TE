@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, DatePicker, message } from "antd";
+import { Row, Col, Table, DatePicker } from "antd";
 import PopupQuetQr from "../../../components/Popup/PopupQuetQr";
 import PopupThongSo from "../../../components/Popup/PopupThongSo";
 import dayjs from "dayjs";
@@ -101,7 +101,7 @@ const Mapping = () => {
   };
 
   const disabledEndDate = (current) => {
-    return current && current.startOf("day") < date.start_date.startOf("day");
+    return current && current.startOf("day") < date.startDate.startOf("day");
   };
 
   const columns = [
@@ -135,7 +135,7 @@ const Mapping = () => {
       key: "mapping",
       align: "center",
       width: "20%",
-      render: (text) => <div>{text || "-"}</div>,
+      render: (text) => <div>{text === "1" ? "Đã mapping" : text || "-"}</div>,
       onHeaderCell: () => {
         return {
           onClick: selectedItem[0]?.lo_sx && onShowPopup,
@@ -205,7 +205,7 @@ const Mapping = () => {
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
             disabledDate={disabledStartDate}
-            onChange={(value) => setDate({ ...date, start_date: value })}
+            onChange={(value) => setDate({ ...date, startDate: value })}
           />
         </Col>
         <Col span={12}>
@@ -215,7 +215,7 @@ const Mapping = () => {
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
             disabledDate={disabledEndDate}
-            onChange={(value) => setDate({ ...date, end_date: value })}
+            onChange={(value) => setDate({ ...date, endDate: value })}
           />
         </Col>
       </Row>

@@ -20,6 +20,19 @@ function PopupQuetQr(props) {
     return val.isScan ? sum + 1 : sum;
   }, 0);
 
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
+
   useEffect(() => {
     getMappingList();
   }, []);
@@ -65,7 +78,7 @@ function PopupQuetQr(props) {
             })
           );
         } else {
-          message.error("Mã không đúng yêu cầu");
+          messageAlert("Mã không đúng yêu cầu");
         }
       }
     })();
@@ -112,6 +125,7 @@ function PopupQuetQr(props) {
 
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Mapping"
         open={visible}

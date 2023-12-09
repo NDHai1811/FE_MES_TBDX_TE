@@ -112,6 +112,18 @@ const Import = (props) => {
     },
   ]);
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
+
   useEffect(() => {
     getLogs();
   }, []);
@@ -192,7 +204,7 @@ const Import = (props) => {
     importData(resData)
       .then((res) => {
         console.log(res.data);
-        message.success("Nhập kho thành phẩm thành công!");
+        messageAlert("Nhập kho thành phẩm thành công!");
       })
       .catch((err) => console.log("Nhập kho thành phẩm thất bại: ", err));
   };
@@ -207,6 +219,7 @@ const Import = (props) => {
 
   return (
     <React.Fragment>
+      {contextHolder}
       <Row className="mt-3" gutter={[4, 12]}>
         <Col span={24}>
           <Table
