@@ -17,9 +17,18 @@ import { useEffect } from "react";
 import { getChecksheetList, scanError } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import ScanButton from "../Button/ScanButton";
+
 const Checksheet2 = (props) => {
   const { line } = useParams();
-  const { text, selectedLot, onSubmit, machine_id = null, line_id = null, open, setOpen } = props;
+  const {
+    text,
+    selectedLot,
+    onSubmit,
+    machine_id = null,
+    line_id = null,
+    open,
+    setOpen,
+  } = props;
   const closeModal = () => {
     setOpen(false);
     form.resetFields();
@@ -31,18 +40,20 @@ const Checksheet2 = (props) => {
   const onFinish = async (values) => {
     if (selectedLot?.lot_id) {
       Object.keys(values["ngoai_quan"] ?? {}).forEach((key) => {
-        const isNullish = Object.values(values["ngoai_quan"][key]).every((value) => {
-          if (!value) {
-            return true;
+        const isNullish = Object.values(values["ngoai_quan"][key]).every(
+          (value) => {
+            if (!value) {
+              return true;
+            }
+            return false;
           }
-          return false;
-        });
+        );
         if (isNullish) {
           delete values["ngoai_quan"][key];
         }
       });
-      if(!values.ngoai_quan){
-        messageApi.error('Không có dữ liệu lỗi ngoại quan');
+      if (!values.ngoai_quan) {
+        messageApi.error("Không có dữ liệu lỗi ngoại quan");
         return 0;
       }
       closeModal();
@@ -51,11 +62,15 @@ const Checksheet2 = (props) => {
   };
   useEffect(() => {
     form.resetFields();
-    setErrorsList([])
+    setErrorsList([]);
   }, [line]);
   const [errorsList, setErrorsList] = useState([]);
   const onScan = async (result) => {
-    var res = await scanError({ error_id: result, lo_sx: selectedLot.lo_sx, machine_id: selectedLot.machine_id });
+    var res = await scanError({
+      error_id: result,
+      lo_sx: selectedLot.lo_sx,
+      machine_id: selectedLot.machine_id,
+    });
     if (res.success) {
       setErrorsList([...errorsList, res.data]);
     }
@@ -63,8 +78,8 @@ const Checksheet2 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const onSubmitFail = ({ values, errorFields, outOfDate }) => {
     // console.log(values, errorFields, outOfDate);
-    messageApi.error('Chưa hoàn thành chỉ tiêu kiểm tra')
-  }
+    messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
+  };
   return (
     <React.Fragment>
       {contextHolder}
@@ -88,13 +103,21 @@ const Checksheet2 = (props) => {
         open={open}
         onCancel={closeModal}
         footer={
-          (
-            <Space>
-              <Button onClick={() => { onSubmit({ ngoai_quan: [] }); closeModal() }} type="primary">Duyệt</Button>
-              <Button onClick={() => form.submit()} type="primary">Lưu</Button>
-              <Button onClick={() => setOpen(false)}>Huỷ</Button>
-            </Space>
-          )
+          <Space>
+            <Button
+              onClick={() => {
+                onSubmit({ ngoai_quan: [] });
+                closeModal();
+              }}
+              type="primary"
+            >
+              Duyệt
+            </Button>
+            <Button onClick={() => form.submit()} type="primary">
+              Lưu
+            </Button>
+            <Button onClick={() => setOpen(false)}>Huỷ</Button>
+          </Space>
         }
         width={500}
       >
@@ -102,7 +125,13 @@ const Checksheet2 = (props) => {
           placeholder={"Nhập mã lỗi hoặc quét mã QR"}
           onScan={onScan}
         />
-        <Form form={form} onFinish={onFinish} colon={false} className="mt-3"  onFinishFailed={onSubmitFail}>
+        <Form
+          form={form}
+          onFinish={onFinish}
+          colon={false}
+          className="mt-3"
+          onFinishFailed={onSubmitFail}
+        >
           <Form.List name={"ngoai_quan"}>
             {(fields, { add, remove }, { errors }) =>
               (errorsList ?? []).map((e, index) => {
@@ -125,7 +154,11 @@ const Checksheet2 = (props) => {
                       </div>
                     </Col>
                     <Col span={6}>
-                      <Form.Item noStyle name={[e.id, "value"]} rules={[{required: true}]}>
+                      <Form.Item
+                        noStyle
+                        name={[e.id, "value"]}
+                        rules={[{ required: true }]}
+                      >
                         <InputNumber
                           className=" text-center h-100 d-flex align-items-center justify-content-center"
                           inputMode="numeric"
@@ -135,10 +168,8 @@ const Checksheet2 = (props) => {
                           onChange={(value) =>
                             form.setFieldValue(
                               ["ngoai_quan", e.id, "result"],
-                              parseFloat(value) >=
-                                parseFloat(e.min) &&
-                                value <=
-                                parseFloat(e.max)
+                              parseFloat(value) >= parseFloat(e.min) &&
+                                value <= parseFloat(e.max)
                                 ? 1
                                 : 2
                             )
@@ -153,7 +184,7 @@ const Checksheet2 = (props) => {
                       >
                         {({ getFieldValue }) => (
                           <Form.Item
-                            rules={[{required: true}]}
+                            rules={[{ required: true }]}
                             name={[e.id, "result"]}
                             noStyle
                             className="w-100 h-100"
@@ -162,7 +193,11 @@ const Checksheet2 = (props) => {
                               <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
                                 OK/NG
                               </Button>
-                            ) : getFieldValue(["ngoai_quan", e.id, "result"]) === 1 ? (
+                            ) : getFieldValue([
+                                "ngoai_quan",
+                                e.id,
+                                "result",
+                              ]) === 1 ? (
                               <Button
                                 className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
                                 style={{

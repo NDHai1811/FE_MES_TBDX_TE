@@ -18,9 +18,51 @@ function PopupQuetQrNhapKho(props) {
   const [data, setData] = useState([]);
   const [palletId, setPalletId] = useState("");
 
+  console.log({ data });
+
+  const totalQuantity = data?.reduce((sum, val) => sum + val?.so_luong, 0);
+
   useEffect(() => {
     getSuggestList();
   }, []);
+
+  useEffect(() => {
+    totalQuantity > 0 &&
+      setColumns([
+        {
+          title: palletId,
+          children: [
+            {
+              title: "STT",
+              dataIndex: "index",
+              key: "index",
+              align: "center",
+              render: (value, record, index) => index + 1,
+            },
+            {
+              title: "Mã lot",
+              dataIndex: "lot_id",
+              key: "lot_id",
+              align: "center",
+              render: (value) => value || "-",
+            },
+          ],
+        },
+        {
+          title: totalQuantity,
+          align: "center",
+          children: [
+            {
+              title: "Số lượng",
+              dataIndex: "so_luong",
+              key: "so_luong",
+              align: "center",
+              render: (value) => value || "-",
+            },
+          ],
+        },
+      ]);
+  }, [totalQuantity]);
 
   useEffect(() => {
     if (currentResult) {

@@ -96,6 +96,14 @@ const Mapping = () => {
       .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
   };
 
+  const disabledStartDate = (current) => {
+    return current && current < dayjs().subtract(7, "day");
+  };
+
+  const disabledEndDate = (current) => {
+    return current && current.startOf("day") < date.start_date.startOf("day");
+  };
+
   const columns = [
     {
       title: "Lô SX",
@@ -196,6 +204,8 @@ const Mapping = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
+            disabledDate={disabledStartDate}
+            onChange={(value) => setDate({ ...date, start_date: value })}
           />
         </Col>
         <Col span={12}>
@@ -204,6 +214,8 @@ const Mapping = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
+            disabledDate={disabledEndDate}
+            onChange={(value) => setDate({ ...date, end_date: value })}
           />
         </Col>
       </Row>
