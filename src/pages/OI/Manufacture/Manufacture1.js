@@ -317,8 +317,10 @@ const Manufacture1 = (props) => {
       return "table-row-yellow";
     }
     if (record.status === 3) {
-      return "table-row-yellow blink";
+      if (record.phan_dinh === 2) return "table-row-red";
+      else return "table-row-yellow blink";
     }
+    
     if (record.status === 4) {
       return "table-row-grey";
     }
