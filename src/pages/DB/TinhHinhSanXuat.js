@@ -11,31 +11,35 @@ const colTable = [
     dataIndex: "cong_doan",
     key: "cong_doan",
     align: "center",
+    render: (text) => <div style={{ fontSize: "70px" }}>{text}</div>,
   },
   {
     title: "KẾ HOẠCH CA",
     dataIndex: "ke_hoach_ca",
     key: "ke_hoach_ca",
     align: "center",
+    render: (text) => <div style={{ fontSize: "70px" }}>{text}</div>,
   },
   {
     title: "MỤC TIÊU HIỆN TẠI",
     dataIndex: "sl_muc_tieu",
     key: "sl_muc_tieu",
     align: "center",
+    render: (text) => <div style={{ fontSize: "70px" }}>{text}</div>,
   },
   {
     title: "SẢN LƯỢNG HIỆN TẠI",
     dataIndex: "sl_hien_tai",
     key: "sl_hien_tai",
     align: "center",
+    render: (text) => <div style={{ fontSize: "70px" }}>{text}</div>,
   },
   {
     title: "TỈ LỆ %",
     dataIndex: "ti_le",
     key: "ti_le",
     align: "center",
-    render: (value) => `${value}%`,
+    render: (text) => <div style={{ fontSize: "70px" }}>{`${text || 0}%`}</div>,
   },
   {
     title: "Đánh giá",
@@ -43,11 +47,11 @@ const colTable = [
     key: "status",
     render: (value) => {
       let color = "";
-      if (value == 3) {
+      if (value === 3) {
         color = "red";
-      } else if (value == 2) {
+      } else if (value === 2) {
         color = "yellow";
-      } else if (value == 1) {
+      } else if (value === 1) {
         color = "green";
       }
       return (
@@ -60,8 +64,8 @@ const colTable = [
         >
           <div
             style={{
-              height: 60,
-              width: 60,
+              height: 100,
+              width: 100,
               backgroundColor: color,
               borderRadius: "50%",
             }}
@@ -70,30 +74,6 @@ const colTable = [
       );
     },
     align: "center",
-  },
-];
-
-const mockData = [
-  {
-    cong_doan: "SÓNG",
-    ke_hoach_ca: "1500",
-    muc_tieu_hien_tai: "1000",
-    sl_hien_tai: "900",
-    ti_le_ht: 90,
-  },
-  {
-    cong_doan: "IN",
-    ke_hoach_ca: "1500",
-    muc_tieu_hien_tai: "1000",
-    sl_hien_tai: "950",
-    ti_le_ht: 95,
-  },
-  {
-    cong_doan: "DÁN",
-    ke_hoach_ca: "1500",
-    muc_tieu_hien_tai: "1000",
-    sl_hien_tai: "850",
-    ti_le_ht: 85,
   },
 ];
 
@@ -187,8 +167,8 @@ const TinhHinhSanXuat = () => {
                 />
               )}
             </Row>
-            <Row style={{ padding: "15px", height:'100%' }} gutter={[8, 8]}>
-              <Col span={24} style={{height:'100%'}}>
+            <Row style={{ padding: "15px", height: "100%" }} gutter={[8, 8]}>
+              <Col span={24} style={{ height: "100%" }}>
                 <Table
                   className="mt-3 table-db"
                   bordered

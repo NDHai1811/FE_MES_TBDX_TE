@@ -19,7 +19,7 @@ function PopupThongSo(props) {
     getParamaters({ machine_id, lo_sx })
       .then((res) => {
         setData(res.data);
-        if(res.data.length === 0){
+        if (res.data.length === 0) {
           message.success("Đã mapping");
           handleCancel();
         }
@@ -92,6 +92,16 @@ function PopupThongSo(props) {
                 {
                   required: true,
                   message: `Vui lòng nhập ${item.name.toLowerCase()}`,
+                },
+                {
+                  validator: (_, value) =>
+                    value >= 15 && value <= 30
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error(
+                            "Giá trị phải nằm trong khoảng từ 15 đến 30"
+                          )
+                        ),
                 },
               ]}
             >
