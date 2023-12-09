@@ -35,3 +35,11 @@ export const sendStorePallet = async (params) => {
 export const importData = async (params) => {
   return await axios.post("/oi/warehouse/fg/import/save", params);
 };
+
+export const getExportNvlLogs = async () => {
+  return await axios.get("oi/warehouse/mlt/export/list");
+};
+
+export const exportNvlData = async (data) => {
+  return await axios.post("/oi/warehouse/mlt/export/save", data);
+};

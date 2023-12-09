@@ -102,18 +102,23 @@ const GiaoDienDaChieu = () => {
                 GIAO DIỆN 3D
               </div>
               <div>
-                <FullscreenOutlined
-                  style={{ fontSize: "30px" }}
-                  onClick={() => {
-                    if (isFullCreen) {
-                      onExit();
+                {isFullCreen ? (
+                  <FullscreenExitOutlined
+                    style={{ fontSize: "30px" }}
+                    onClick={() => {
+                      if (isFullCreen) onExit();
                       setIsFullScreen(false);
-                    } else {
+                    }}
+                  />
+                ) : (
+                  <FullscreenOutlined
+                    style={{ fontSize: "30px" }}
+                    onClick={() => {
                       onRequest();
                       setIsFullScreen(true);
-                    }
-                  }}
-                />
+                    }}
+                  />
+                )}
                 <Link to={"/screen"} style={{ margin: "auto 0" }}>
                   <CloseOutlined
                     className="text-white"
@@ -141,7 +146,7 @@ const GiaoDienDaChieu = () => {
                 <Canvas style={{ width: "100vw", height: "100vh" }}>
                   <Suspense fallback={null}>
                     <ambientLight intensity={1} />
-                    <color attach="background" args={["#6c757d"]} />
+                    <color attach="background" args={["#e6f4ff"]} />
                     <Model
                       objPath="/assets/machine1.obj"
                       mtlPath="/assets/machine1.mtl"
@@ -190,7 +195,7 @@ const GiaoDienDaChieu = () => {
                   renderItem={(item, index) => (
                     <List.Item>
                       <List.Item.Meta
-                        title={<a href="https://ant.design">{item.title}</a>}
+                        title={item.title}
                         description="Nội dung cảnh báo bất thường"
                       />
                     </List.Item>
