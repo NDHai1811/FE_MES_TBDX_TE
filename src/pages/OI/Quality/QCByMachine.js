@@ -49,6 +49,10 @@ const QCByMachine = (props) => {
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
+  const [date, setDate] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const overallColumns = [
     {
       title: "Công đoạn",
@@ -108,7 +112,9 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
+            selectedRow &&
+              !selectedRow?.checked_tinh_nang &&
+              setOpenModalCK1(true);
           },
         };
       },
@@ -133,7 +139,9 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
+            selectedRow &&
+              !selectedRow?.checked_ngoai_quan &&
+              setOpenModalCK2(true);
           },
         };
       },
@@ -275,6 +283,14 @@ const QCByMachine = (props) => {
     setData(newData);
   };
 
+  const disabledStartDate = (current) => {
+    return current && current < dayjs().subtract(7, "day");
+  };
+
+  const disabledEndDate = (current) => {
+    return current && current.startOf("day") < date.start_date.startOf("day");
+  };
+
   const rowClassName = (record, index) => {
     if (record.lot_id === selectedRow?.lot_id) {
       return "table-row-green";
@@ -384,14 +400,12 @@ const QCByMachine = (props) => {
   const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
-    if(values?.tinh_nang){
-      setSelectedRow({...selectedRow, checked_tinh_nang: true});
-    }
-    else if(values?.ngoai_quan){
-      setSelectedRow({...selectedRow, checked_ngoai_quan: true});
-    }
-    else if(values?.sl_ng_sx){
-      setSelectedRow({...selectedRow, checked_sl_ng: true});
+    if (values?.tinh_nang) {
+      setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
+    } else if (values?.ngoai_quan) {
+      setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
+    } else if (values?.sl_ng_sx) {
+      setSelectedRow({ ...selectedRow, checked_sl_ng: true });
     }
     var res = await sendQCResult({
       machine_id: machine_id,
@@ -456,9 +470,8 @@ const QCByMachine = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              onChange={(value) =>
-                value.isValid() && setParams({ ...params, start_date: value })
-              }
+              disabledDate={disabledStartDate}
+              onChange={(value) => setDate({ ...date, start_date: value })}
             />
           </Col>
           <Col span={12}>
@@ -467,9 +480,8 @@ const QCByMachine = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              onChange={(value) =>
-                value.isValid() && setParams({ ...params, end_date: value })
-              }
+              disabledDate={disabledEndDate}
+              onChange={(value) => setDate({ ...date, end_date: value })}
             />
           </Col>
         </Row>

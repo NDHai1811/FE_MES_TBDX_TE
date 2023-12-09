@@ -66,7 +66,18 @@ const currentColumns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => {
+      switch (value) {
+        case 0:
+          return "waiting";
+        case 1:
+          return "OK";
+        case 2:
+          return "NG";
+        default:
+          return "";
+      }
+    },
   },
 ];
 
@@ -101,7 +112,18 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => (value === 1 ? "OK" : "-"),
+    render: (value) => {
+      switch (value) {
+        case 0:
+          return "waiting";
+        case 1:
+          return "OK";
+        case 2:
+          return "NG";
+        default:
+          return "";
+      }
+    },
   },
   {
     title: "Mã layout",
@@ -170,13 +192,13 @@ const Manufacture1 = (props) => {
   const [isScan, setIsScan] = useState(0);
   const ws = useRef(null);
 
-  const reloadData = async () =>{
+  const reloadData = async () => {
     const resData = await getListLotDetail();
     setData(resData);
-    if(resData?.[0]?.status === 1){
+    if (resData?.[0]?.status === 1) {
       setSelectedLot(resData?.[0]);
     }
-    
+
     getOverAllDetail();
     // const device_id = machineOptions.find((obj) => {
     //   return obj.value === machine_id;
@@ -187,7 +209,7 @@ const Manufacture1 = (props) => {
     // if (device_id) {
     //   connectWebsocket(device_id, resData);
     // }
-  }
+  };
   const overallColumns = [
     {
       title: "Công đoạn",
@@ -231,7 +253,7 @@ const Manufacture1 = (props) => {
   ];
 
   useEffect(() => {
-    if(machineOptions.length > 0){
+    if (machineOptions.length > 0) {
       (async () => {
         if (machine_id) {
           reloadData();
@@ -242,11 +264,11 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     if (machineOptions.length > 0) {
-      var target = machineOptions.find(e=>e.value === machine_id);
-      if(!target){
+      var target = machineOptions.find((e) => e.value === machine_id);
+      if (!target) {
         target = machineOptions[0];
       }
-      history.push('/manufacture/'+target.value);
+      history.push("/manufacture/" + target.value);
     }
   }, [machineOptions]);
 
@@ -262,9 +284,17 @@ const Manufacture1 = (props) => {
     getListMachine();
     // (async ()=>{
     //   var res = await getTem();
-    //   setListCheck(res) 
+    //   setListCheck(res)
     // })()
   }, []);
+
+  const disabledStartDate = (current) => {
+    return current && current < dayjs().subtract(7, "day");
+  };
+
+  const disabledEndDate = (current) => {
+    return current && current.startOf("day") < params.start_date.startOf("day");
+  };
 
   const getListMachine = () => {
     getMachines()
@@ -304,7 +334,7 @@ const Manufacture1 = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lot_id: result })
+    scanQrCode({ lot_id: result, machine_id: machine_id })
       .then(reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
@@ -317,8 +347,10 @@ const Manufacture1 = (props) => {
       return "table-row-yellow";
     }
     if (record.status === 3) {
-      return "table-row-yellow blink";
+      if (record.phan_dinh === 2) return "table-row-red";
+      else return "table-row-yellow blink";
     }
+
     if (record.status === 4) {
       return "table-row-grey";
     }
@@ -333,10 +365,10 @@ const Manufacture1 = (props) => {
       } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();
       }
-      (async ()=>{
+      (async () => {
         setData(await getListLotDetail());
         getOverAllDetail();
-      })()
+      })();
     }
     setListCheck([]);
   }, [listCheck.length]);
@@ -385,7 +417,7 @@ const Manufacture1 = (props) => {
     };
 
     ws.current.onmessage = async function (event) {
-      if(resData[0]?.status !== 1){
+      if (resData[0]?.status !== 1) {
         return 0;
       }
       const receivedMsg = JSON.parse(event.data);
@@ -400,19 +432,22 @@ const Manufacture1 = (props) => {
       let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
       console.log(Pre_Counter, Error_Counter, resData[0]);
       if (Pre_Counter > 0) {
-        if(Pre_Counter < resData[0]?.end_sl){
+        if (Pre_Counter < resData[0]?.end_sl) {
           // setLoadData(!loadData);
         }
-        console.log('res',Pre_Counter,resData[0]?.start_sl);
+        console.log("res", Pre_Counter, resData[0]?.start_sl);
         san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
         if (Error_Counter) {
           sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
         }
         sl_ok = parseInt(san_luong - sl_ng);
-        if (sl_ok >= resData[0]?.dinh_muc || resData[0]?.sl_ok - Pre_Counter > 10) {
+        if (
+          sl_ok >= resData[0]?.dinh_muc ||
+          resData[0]?.sl_ok - Pre_Counter > 10
+        ) {
           reloadData();
         } else {
-          console.log('san_luong',san_luong);
+          console.log("san_luong", san_luong);
           const new_data = resData.map((value, index) => {
             if (index === 0) {
               value.san_luong = isNaN(san_luong) ? 0 : san_luong;
@@ -422,7 +457,7 @@ const Manufacture1 = (props) => {
               return value;
             }
           });
-          
+
           setData(new_data);
           setSelectedLot(new_data[0]);
         }
@@ -449,23 +484,26 @@ const Manufacture1 = (props) => {
   let interval;
   useEffect(() => {
     interval = setInterval(() => {
-      (async ()=>{
+      (async () => {
         const resData = {
           machine_id,
-          start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
+          start_date: formatDateTime(
+            params.start_date,
+            COMMON_DATE_FORMAT_REQUEST
+          ),
           end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
         };
         const list = await getLotByMachine(resData);
-        if(list.success){
-          setData(list.data)
-          if(list.data?.[0]?.status === 1){
+        if (list.success) {
+          setData(list.data);
+          if (list.data?.[0]?.status === 1) {
             setSelectedLot(list.data?.[0]);
           }
         }
-        
+
         const overall = await getOverAll(resData);
-        setOverall(overall.data)
-      })()
+        setOverall(overall.data);
+      })();
     }, 3000);
     return () => clearInterval(interval);
   }, [machine_id]);
@@ -518,6 +556,7 @@ const Manufacture1 = (props) => {
                 format={COMMON_DATE_FORMAT}
                 defaultValue={dayjs()}
                 onChange={onChangeStartDate}
+                disabledDate={disabledStartDate}
               />
             </Col>
             <Col span={9}>
@@ -527,6 +566,7 @@ const Manufacture1 = (props) => {
                 format={COMMON_DATE_FORMAT}
                 defaultValue={dayjs()}
                 onChange={onChangeEndDate}
+                disabledDate={disabledEndDate}
               />
             </Col>
             <Col span={3}>

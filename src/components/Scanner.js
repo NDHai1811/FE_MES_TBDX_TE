@@ -5,7 +5,9 @@ const qrcodeRegionId = "html5qr-code-full-region";
 
 // Creates the configuration object for Html5QrcodeScanner.
 const createConfig = (props) => {
-  let config = {};
+  let config = {
+    facingMode: "environment",
+  };
   if (props.fps) {
     config.fps = props.fps;
   }
@@ -23,9 +25,6 @@ const createConfig = (props) => {
   }
   if (props.formatsToSupport) {
     config.formatsToSupport = props.formatsToSupport;
-  }
-  if (props.disableCameraSelect !== undefined) {
-    config.disableCameraSelect = props.disableCameraSelect;
   }
   return config;
 };
@@ -71,10 +70,10 @@ const ScanQR = (props) => {
   };
 
   return (
-    <div width="100%">
+    <div style={{ height: "10%" }}>
       <Html5QrcodePlugin
         fps={30}
-        qrbox={150}
+        qrbox={250}
         disableFlip={true}
         qrCodeSuccessCallback={onNewScanResult}
         isHideButton={isHideButton}
@@ -83,7 +82,6 @@ const ScanQR = (props) => {
           Html5QrcodeSupportedFormats.QR_CODE,
           Html5QrcodeSupportedFormats.CODE_128,
         ]}
-        disableCameraSelect={true}
       />
     </div>
   );

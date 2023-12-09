@@ -102,66 +102,9 @@ const QualityPQC = (props) => {
 
   const [data, setData] = useState();
   const [dataTable2, setDataTable2] = useState();
-  const [dataLineChart, setDataLineChart] = useState([
-    {
-      date: '12/01',
-      error: 'P01',
-      value: 14,
-    },
-    {
-      date: '12/01',
-      error: 'D01',
-      value: 29,
-    },
-    {
-      date: '12/02',
-      error: 'D01',
-      value: 5,
-    },
-    {
-      date: '12/03',
-      error: 'P01',
-      value: 7,
-    },
-    {
-      date: '12/03',
-      error: 'S01',
-      value: 14,
-    },
-    {
-      date: '12/03',
-      error: 'S02',
-      value: 10,
-    },
-    {
-      date: '12/04',
-      error: 'S01',
-      value: 3,
-    },
-  ]);
-  const [dataPieChart, setDataPieChart] = useState([
-    {
-      value: 10,
-      error: 'D01'
-    },
-    {
-      value: 12,
-      error: 'S01'
-    },
-    {
-      value: 5,
-      error: 'P01'
-    },
-    {
-      value: 7,
-      error: 'S02'
-    },
-    {
-      value: 9,
-      error: 'D02'
-    },
-  ]);
-  const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
+  const [dataLineChart, setDataLineChart] = useState([]);
+  const [dataPieChart, setDataPieChart] = useState([]);
+  const [dataPieChart_NG, setDataPieChart_NG] = useState([])
 
   const configPieChart = {
     data: dataPieChart,
@@ -386,10 +329,10 @@ const QualityPQC = (props) => {
       setDataDetail(res1.data);
       const res2 = await getQualityOverall(params);
       setSummaryData(res2.data);
-      // const res3 = await getTopError(params);
-      // setDataPieChart(res3.data);
-      // const res4 = await getTopError(params);
-      // setDataLineChart(res4.data);
+      const res3 = await getTopError(params);
+      setDataPieChart(res3.data);
+      const res4 = await getTopError(params);
+      setDataLineChart(res4.data);
       setLoading(false);
     })();
   }

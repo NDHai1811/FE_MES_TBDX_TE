@@ -4,46 +4,51 @@ import Model from "./Model";
 import CameraController from "./CameraController";
 import { Tree, Col, List, Layout, Row, Divider } from "antd";
 import ReactFullscreen from "react-easyfullscreen";
-import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
+import {
+  FullscreenOutlined,
+  FullscreenExitOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
-const treeData = [
-  {
-    title: "Sóng",
-    key: "0-0",
-  },
-  {
-    title: "In",
-    key: "1-0",
-    children: [
-      {
-        title: "Máy in P.06",
-        key: "1-1",
-        isLeaf: true,
-      },
-      {
-        title: "Máy in P.16",
-        key: "1-2",
-        isLeaf: true,
-      },
-    ],
-  },
-  {
-    title: "Dán",
-    key: "2-0",
-    children: [
-      {
-        title: "Máy dán D.05",
-        key: "2-1",
-        isLeaf: true,
-      },
-      {
-        title: "Máy dán D.06",
-        key: "2-2",
-        isLeaf: true,
-      },
-    ],
-  },
-];
+// const treeData = [
+//   {
+//     title: "Sóng",
+//     key: "0-0",
+//   },
+//   {
+//     title: "In",
+//     key: "1-0",
+//     children: [
+//       {
+//         title: "Máy in P.06",
+//         key: "1-1",
+//         isLeaf: true,
+//       },
+//       {
+//         title: "Máy in P.16",
+//         key: "1-2",
+//         isLeaf: true,
+//       },
+//     ],
+//   },
+//   {
+//     title: "Dán",
+//     key: "2-0",
+//     children: [
+//       {
+//         title: "Máy dán D.05",
+//         key: "2-1",
+//         isLeaf: true,
+//       },
+//       {
+//         title: "Máy dán D.06",
+//         key: "2-2",
+//         isLeaf: true,
+//       },
+//     ],
+//   },
+// ];
 
 const data = [
   {
@@ -96,26 +101,38 @@ const GiaoDienDaChieu = () => {
               <div style={{ fontWeight: 700, fontSize: "24px" }}>
                 GIAO DIỆN 3D
               </div>
-              {isFullCreen == false ? (
-                <FullscreenOutlined
-                  style={{ fontSize: "30px" }}
-                  onClick={() => {
-                    onRequest();
-                    setIsFullScreen(true);
-                  }}
-                />
-              ) : (
-                <FullscreenExitOutlined
-                  style={{ fontSize: "30px" }}
-                  onClick={() => {
-                    onExit();
-                    setIsFullScreen(false);
-                  }}
-                />
-              )}
+              <div>
+                {isFullCreen ? (
+                  <FullscreenExitOutlined
+                    style={{ fontSize: "30px" }}
+                    onClick={() => {
+                      if (isFullCreen) onExit();
+                      setIsFullScreen(false);
+                    }}
+                  />
+                ) : (
+                  <FullscreenOutlined
+                    style={{ fontSize: "30px" }}
+                    onClick={() => {
+                      onRequest();
+                      setIsFullScreen(true);
+                    }}
+                  />
+                )}
+                <Link to={"/screen"} style={{ margin: "auto 0" }}>
+                  <CloseOutlined
+                    className="text-white"
+                    style={{
+                      fontSize: "30px",
+                      marginLeft: 24,
+                      marginRight: 12,
+                    }}
+                  />
+                </Link>
+              </div>
             </Row>
             <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
-              <Col span={3} style={{ backgroundColor: "white" }}>
+              {/* <Col span={3} style={{ backgroundColor: "white" }}>
                 <Divider>Tổ chức</Divider>
                 <Tree
                   checkable
@@ -124,12 +141,12 @@ const GiaoDienDaChieu = () => {
                   defaultCheckedKeys={["0-0-0", "0-0-1"]}
                   treeData={treeData}
                 />
-              </Col>
-              <Col span={18}>
+              </Col> */}
+              <Col span={21}>
                 <Canvas style={{ width: "100vw", height: "100vh" }}>
                   <Suspense fallback={null}>
                     <ambientLight intensity={1} />
-                    <color attach="background" args={["#6c757d"]} />
+                    <color attach="background" args={["#e6f4ff"]} />
                     <Model
                       objPath="/assets/machine1.obj"
                       mtlPath="/assets/machine1.mtl"
@@ -178,7 +195,7 @@ const GiaoDienDaChieu = () => {
                   renderItem={(item, index) => (
                     <List.Item>
                       <List.Item.Meta
-                        title={<a href="https://ant.design">{item.title}</a>}
+                        title={item.title}
                         description="Nội dung cảnh báo bất thường"
                       />
                     </List.Item>

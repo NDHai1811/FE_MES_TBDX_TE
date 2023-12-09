@@ -61,6 +61,10 @@ const Error = () => {
   const [selectedError, setSelectedError] = useState();
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [date, setDate] = useState({
+    startDate: dayjs(),
+    endDate: dayjs(),
+  });
 
   useEffect(() => {
     getLogs();
@@ -138,6 +142,14 @@ const Error = () => {
     setVisible(true);
   };
 
+  const disabledStartDate = (current) => {
+    return current && current < dayjs().subtract(7, "day");
+  };
+
+  const disabledEndDate = (current) => {
+    return current && current.startOf("day") < date.start_date.startOf("day");
+  };
+
   return (
     <React.Fragment>
       <Row className="mt-1" style={{ justifyContent: "space-between" }}>
@@ -160,6 +172,8 @@ const Error = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
+            disabledDate={disabledStartDate}
+            onChange={(value) => setDate({ ...date, start_date: value })}
           />
         </Col>
         <Col span={12}>
@@ -168,6 +182,8 @@ const Error = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
+            disabledDate={disabledEndDate}
+            onChange={(value) => setDate({ ...date, end_date: value })}
           />
         </Col>
       </Row>
