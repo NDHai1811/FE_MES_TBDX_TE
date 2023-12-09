@@ -14,6 +14,9 @@ const CameraController = () => {
     ];
 
     controls.current.target.set(...avgPosition);
+    camera.position.set(-86, 107, -33);
+    camera.zoom = 2;
+    camera.updateProjectionMatrix();
   }, [camera]);
 
   return <OrbitControls ref={controls} args={[camera, gl.domElement]} />;

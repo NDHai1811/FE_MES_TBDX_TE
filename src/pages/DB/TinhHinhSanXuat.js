@@ -156,18 +156,23 @@ const TinhHinhSanXuat = () => {
                 TÌNH HÌNH SẢN XUẤT
               </div>
               <div>
-                <FullscreenOutlined
-                  style={{ fontSize: "30px" }}
-                  onClick={() => {
-                    if (isFullCreen) {
-                      onExit();
+                {isFullCreen ? (
+                  <FullscreenExitOutlined
+                    style={{ fontSize: "30px" }}
+                    onClick={() => {
+                      if (isFullCreen) onExit();
                       setIsFullScreen(false);
-                    } else {
+                    }}
+                  />
+                ) : (
+                  <FullscreenOutlined
+                    style={{ fontSize: "30px" }}
+                    onClick={() => {
                       onRequest();
                       setIsFullScreen(true);
-                    }
-                  }}
-                />
+                    }}
+                  />
+                )}
                 <Link to={"/screen"} style={{ margin: "auto 0" }}>
                   <CloseOutlined
                     className="text-white"
