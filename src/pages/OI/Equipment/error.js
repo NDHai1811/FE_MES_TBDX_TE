@@ -147,7 +147,7 @@ const Error = () => {
   };
 
   const disabledEndDate = (current) => {
-    return current && current.startOf("day") < date.start_date.startOf("day");
+    return current && current.startOf("day") < date.startDate.startOf("day");
   };
 
   return (
@@ -173,7 +173,7 @@ const Error = () => {
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
             disabledDate={disabledStartDate}
-            onChange={(value) => setDate({ ...date, start_date: value })}
+            onChange={(value) => setDate({ ...date, startDate: value })}
           />
         </Col>
         <Col span={12}>
@@ -183,7 +183,7 @@ const Error = () => {
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
             disabledDate={disabledEndDate}
-            onChange={(value) => setDate({ ...date, end_date: value })}
+            onChange={(value) => setDate({ ...date, endDate: value })}
           />
         </Col>
       </Row>

@@ -48,6 +48,19 @@ function PopupNhapKhoNvl(props) {
   const [data, setData] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
 
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
+
   const isSendRef = useRef(false);
 
   useEffect(() => {
@@ -86,7 +99,7 @@ function PopupNhapKhoNvl(props) {
       })
       .catch((err) => {
         console.log("Lấy danh sách scan thất bại: ", err);
-        message.error("Mã cuộn không tồn tại");
+        messageAlert("Mã cuộn không tồn tại");
       });
   };
 
@@ -125,7 +138,7 @@ function PopupNhapKhoNvl(props) {
           sendResult(value);
         }
       } else {
-        message.error(
+        messageAlert(
           "Vị trí hiện tại không đúng, xin vui lòng quét vị trí lại"
         );
       }
@@ -136,6 +149,7 @@ function PopupNhapKhoNvl(props) {
 
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Quét mã"
         open={visible}

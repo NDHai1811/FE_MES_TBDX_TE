@@ -13,6 +13,7 @@ import {
   getExportNvlLogs,
   getWarehouseOverall,
 } from "../../../api/oi/warehouse";
+import "./style.css";
 
 const columnDetail = [
   {
@@ -124,6 +125,17 @@ const Export = (props) => {
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
   const [locaion, setLocaion] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
 
   useEffect(() => {
     getLogs();
@@ -217,38 +229,35 @@ const Export = (props) => {
     content: () => componentRef1.current,
   });
 
-  console.log({ locaion });
-
   const onScanLocation = (result) => {
-    console.log(result);
-    console.log(selectedItem[0]);
     if (result === selectedItem[0].locator_id) {
       setLocaion(result);
     } else {
-      message.error("Vị trí chưa đúng, vui lòng quét lại vị trí!");
+      messageAlert("Vị trí chưa đúng, vui lòng quét lại vị trí!");
     }
   };
 
   const onScanMaterial = (result) => {
-    console.log(selectedItem[0]);
     if (result === selectedItem[0].material_id) {
       exportNvlData({ id: selectedItem[0].id })
         .then((res) => {
-          message.success("Xuất kho thành công!");
+          messageAlert("Xuất kho thành công!", "success");
           console.log(res.data);
+          getLogs();
           setLocaion("");
         })
         .catch((err) => {
-          message.error("Xuất kho thất bại!");
+          messageAlert("Xuất kho thất bại!");
           console.log("Xuất kho thất bại: ", err);
         });
     } else {
-      message.error("Mã cuộn chưa đúng, vui lòng quét lại mã cuộn!");
+      messageAlert("Mã cuộn chưa đúng, vui lòng quét lại mã cuộn!");
     }
   };
 
   return (
     <React.Fragment>
+      {contextHolder}
       <Row className="mt-3" gutter={[6, 12]}>
         <Col span={24}>
           <Table
@@ -306,13 +315,11 @@ const Export = (props) => {
               x: "calc(700px + 50%)",
               y: 300,
             }}
-            rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : ""
-            }
+            rowClassName={(record, index) => {
+              return record.id === selectedItem[0]?.id
+                ? "no-hover " + "table-row-green"
+                : "table-row-light";
+            }}
             pagination={false}
             bordered
             className="mb-4"

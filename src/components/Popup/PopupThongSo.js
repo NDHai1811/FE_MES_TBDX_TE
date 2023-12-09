@@ -11,6 +11,19 @@ function PopupThongSo(props) {
 
   const [data, setData] = useState([]);
 
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
+
   useEffect(() => {
     getParamaterList();
   }, []);
@@ -20,7 +33,7 @@ function PopupThongSo(props) {
       .then((res) => {
         setData(res.data);
         if (res.data.length === 0) {
-          message.success("Đã mapping");
+          messageAlert("Đã mapping", "success");
           handleCancel();
         }
       })
@@ -115,6 +128,7 @@ function PopupThongSo(props) {
 
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Thông số"
         open={visible}

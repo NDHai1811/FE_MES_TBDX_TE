@@ -51,7 +51,7 @@ const Screen = (props) => {
     },
     {
       title: `Kho ${isRawMaterialWarehouse ? "NVL" : "TP"}`,
-      link: `/warehouse/${isRawMaterialWarehouse ? "kho-nvl" : "kho-tp"}/nhap`,
+      link: `/warehouse/${"kho-nvl"}/nhap`,
       permission: "oi-kho",
     },
   ];

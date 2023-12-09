@@ -48,7 +48,7 @@ const Popup = (props) => {
   };
 
   const onFinish = async (values) =>{
-    var res = await updateErrorStatus({...values, machine_id: machine_id, id: selectedError.id});
+    var res = await updateErrorStatus({...values, machine_id: machine_id, id: selectedError?.id});
     form.resetFields();
     setVisible(false);
   }

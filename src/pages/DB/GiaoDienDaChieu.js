@@ -1,8 +1,8 @@
 import React, { Suspense, useEffect, useState } from "react";
-import { Canvas } from "react-three-fiber";
+import { Canvas, useThree } from "react-three-fiber";
 import Model from "./Model";
 import CameraController from "./CameraController";
-import { Tree, Col, List, Layout, Row, Divider } from "antd";
+import { Col, List, Layout, Row, Divider } from "antd";
 import ReactFullscreen from "react-easyfullscreen";
 import {
   FullscreenOutlined,
@@ -10,6 +10,28 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { GridHelper } from "three";
+
+function Grid({ position }) {
+  const { scene } = useThree();
+  const grid = new GridHelper(10000, 2500);
+  grid.position.set(...position);
+  scene.add(grid);
+  return null;
+}
+
+const modelPositions = [
+  [30, 0, -30],
+  [30, 0, -10],
+  [50, 0, -60],
+  [30, 0, -95],
+  [0, 0, -5],
+  [0, 0, 0],
+];
+
+const averagePosition = modelPositions
+  .reduce((acc, pos) => acc.map((val, i) => val + pos[i]), [0, 0, 0])
+  .map((val) => val / modelPositions.length);
 
 // const treeData = [
 //   {
@@ -143,26 +165,33 @@ const GiaoDienDaChieu = () => {
                 />
               </Col> */}
               <Col span={21}>
-                <Canvas style={{ width: "100vw", height: "100vh" }}>
+                <Canvas
+                  style={{
+                    position: "fixed",
+                    width: "100%",
+                    height: "100%",
+                  }}
+                >
                   <Suspense fallback={null}>
                     <ambientLight intensity={1} />
-                    <color attach="background" args={["#e6f4ff"]} />
+                    <color attach="background" args={["#ffffff"]} />
+                    <Grid position={averagePosition} />
                     <Model
                       objPath="/assets/machine1.obj"
                       mtlPath="/assets/machine1.mtl"
-                      position={[30, 0, -30]}
+                      position={[2, 0, -5]}
                       scale={0.1}
                     />
                     <Model
                       objPath="/assets/machine2.obj"
                       mtlPath="/assets/machine2.mtl"
-                      position={[30, 0, -10]}
+                      position={[2, 0, -35]}
                       scale={0.1}
                     />
                     <Model
                       objPath="/assets/machine3.obj"
                       mtlPath="/assets/machine3.mtl"
-                      position={[50, 0, -60]}
+                      position={[50, 0, -50]}
                       scale={0.1}
                     />
                     <Model
@@ -174,7 +203,7 @@ const GiaoDienDaChieu = () => {
                     <Model
                       objPath="/assets/may-song.obj"
                       mtlPath="/assets/may-song.mtl"
-                      position={[0, 0, -5]}
+                      position={[75, 0, -5]}
                       scale={1.1}
                     />
                     <Model
