@@ -456,16 +456,19 @@ const Manufacture1 = (props) => {
           end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
         };
         const list = await getLotByMachine(resData);
-        setData(list.data)
-        if(list.data?.[0]?.status === 1){
-          setSelectedLot(list.data?.[0]);
+        if(list.success){
+          setData(list.data)
+          if(list.data?.[0]?.status === 1){
+            setSelectedLot(list.data?.[0]);
+          }
         }
+        
         const overall = await getOverAll(resData);
         setOverall(overall.data)
       })()
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [machine_id]);
 
   return (
     <React.Fragment>
