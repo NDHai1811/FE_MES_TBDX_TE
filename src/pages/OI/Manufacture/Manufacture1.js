@@ -66,7 +66,18 @@ const currentColumns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => {
+      switch (value) {
+        case 0:
+          return "waiting";
+        case 1:
+          return "OK";
+        case 2:
+          return "NG";
+        default:
+          return "";
+      }
+    },
   },
 ];
 
@@ -101,7 +112,18 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => (value === 1 ? "OK" : "-"),
+    render: (value) => {
+      switch (value) {
+        case 0:
+          return "waiting";
+        case 1:
+          return "OK";
+        case 2:
+          return "NG";
+        default:
+          return "";
+      }
+    },
   },
   {
     title: "Mã layout",
@@ -304,7 +326,7 @@ const Manufacture1 = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lot_id: result })
+    scanQrCode({ lot_id: result, machine_id: machine_id })
       .then(reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
