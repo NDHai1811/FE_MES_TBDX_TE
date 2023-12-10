@@ -91,14 +91,23 @@ const TinhHinhSanXuat = () => {
   };
   useEffect(() => {
     setInterval(() => tick(), 1000);
-    (async () => {
-      const res1 = await getProductFMB();
-      setDataTable(
-        res1.data.map((e) => {
-          return { ...e };
-        })
-      );
-    })();
+    getData();
+  }, []);
+
+  const getData = async () => {
+    const res1 = await getProductFMB();
+    setDataTable(
+      res1.data.map((e) => {
+        return { ...e };
+      })
+    );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getData();
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const [dataTable, setDataTable] = useState([]);

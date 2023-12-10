@@ -452,9 +452,9 @@ const Equipment1 = (props) => {
       const res1 = await getMachineErrorList(params);
       setData(res1.data);
       const res2 = await getErrorMachineFrenquency(params);
-      // setDataPieChart(res2.data);
-      // const res3 = await getMachinePerformance(params);
-      // setDataColChart(res3.data);
+      setDataPieChart(res2.data);
+      const res3 = await getMachinePerformance(params);
+      setDataColChart(res3.data);
       // const res4 = await getMachineError(params);
       // setData(res4.data);
       setLoading(false);
