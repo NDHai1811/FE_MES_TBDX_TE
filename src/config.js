@@ -12,4 +12,3 @@ module.exports = {
   },
   baseURL: "https://bemes.ouransoft.vn",
 };
-

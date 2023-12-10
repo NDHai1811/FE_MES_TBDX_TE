@@ -110,14 +110,14 @@ const QualityPQC = (props) => {
     data: dataPieChart,
     height: 200,
     angleField: "value",
-    colorField: "error",
+    colorField: "name",
     radius: 0.5,
     innerRadius: 0.6,
     label: {
       type: "outer",
       offset: "120%",
-      content: ({ error, percent }) =>
-        `${error}` + " " + `${(percent * 100).toFixed(0)}%`,
+      content: ({ name, percent }) =>
+        `${name}` + " " + `${(percent * 100).toFixed(0)}%`,
       style: {
         textAlign: "center",
         fontSize: 14,
@@ -330,9 +330,21 @@ const QualityPQC = (props) => {
       const res2 = await getQualityOverall(params);
       setSummaryData(res2.data);
       const res3 = await getTopError(params);
-      setDataPieChart(res3.data);
+      setDataPieChart(Object.keys(res3.data ?? {}).map(key=>{
+        return res3.data[key]
+      }));
       const res4 = await getTrendingError(params);
-      setDataLineChart(res4.data);
+      var line_data = [];
+      Object.keys(res4.data ?? {}).map(key=>{
+        Object.keys(res4.data[key] ?? {}).map(error_key=>{
+          line_data.push({
+            date:key,
+            error:error_key,
+            value:res4.data[key][error_key]
+          })
+        })
+      })
+      setDataLineChart(line_data);
       setLoading(false);
     })();
   }
