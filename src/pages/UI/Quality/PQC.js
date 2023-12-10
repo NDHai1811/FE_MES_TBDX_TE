@@ -25,7 +25,7 @@ import {
   exportReportQC,
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
-import { getErrorDetailList, getQualityOverall, getTopError, recheckQC } from "../../../api/ui/quality";
+import { getErrorDetailList, getQualityOverall, getTopError, getTrendingError, recheckQC } from "../../../api/ui/quality";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
@@ -331,7 +331,7 @@ const QualityPQC = (props) => {
       setSummaryData(res2.data);
       const res3 = await getTopError(params);
       setDataPieChart(res3.data);
-      const res4 = await getTopError(params);
+      const res4 = await getTrendingError(params);
       setDataLineChart(res4.data);
       setLoading(false);
     })();
