@@ -112,16 +112,16 @@ const table1 = [
     render: (value) => value || "-",
   },
   {
-    title: "Mã tem (pallet)",
-    dataIndex: "pallet_id",
-    key: "pallet_id",
+    title: "Tên nhà cung cấp",
+    dataIndex: "ten_ncc",
+    key: "ten_ncc",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Mã Lot",
-    dataIndex: "lot_id",
-    key: "lot_id",
+    title: "Mã cuộn NCC",
+    dataIndex: "material_id_ncc",
+    key: "material_id_ncc",
     align: "center",
     render: (value) => value || "-",
   },
@@ -133,9 +133,23 @@ const table1 = [
     render: (value) => value || "-",
   },
   {
-    title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    title: "Loại giấy",
+    dataIndex: "loai_giay",
+    key: "loai_giay",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Khổ",
+    dataIndex: "kho",
+    key: "kho",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Định lượng",
+    dataIndex: "dinh_luong",
+    key: "dinh_luong",
     align: "center",
     render: (value) => value || "-",
   },
@@ -179,6 +193,13 @@ const table1 = [
         title: "SL xuất",
         dataIndex: "sl_xuat",
         key: "sl_xuat",
+        align: "center",
+        render: (value) => value || "-",
+      },
+      {
+        title: "Đầu sóng",
+        dataIndex: "dau_song",
+        key: "dau_song",
         align: "center",
         render: (value) => value || "-",
       },
@@ -261,7 +282,7 @@ const itemsMenu = [
   },
 ];
 
-const ThanhPhamGiay = (props) => {
+const KhoNvl = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
@@ -388,17 +409,17 @@ const ThanhPhamGiay = (props) => {
                 <Form.Item label="Vị trí" className="mb-3">
                   <Input placeholder="Nhập mã vị trí" />
                 </Form.Item>
-                <Form.Item label="Mã tem (pallet)" className="mb-3">
-                  <Input placeholder="Nhập mã tem (pallet)" />
+                <Form.Item label="Mã cuộn TBDX" className="mb-3">
+                  <Input placeholder="Nhập mã cuộn TBDX" />
                 </Form.Item>
-                <Form.Item label="Số Lot" className="mb-3">
-                  <Input placeholder="Nhập số lot" />
+                <Form.Item label="Tên NCC" className="mb-3">
+                  <Input placeholder="Nhập tên NCC" />
                 </Form.Item>
-                <Form.Item label="Tên khách hàng" className="mb-3">
-                  <Input placeholder="Nhập tên kh" />
+                <Form.Item label="Mã cuộn NCC" className="mb-3">
+                  <Input placeholder="Nhập mã cuộn NCC" />
                 </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
-                  <Input placeholder="Nhập đơn hàng" />
+                <Form.Item label="Loại giấy" className="mb-3">
+                  <Input placeholder="Nhập loại giấy" />
                 </Form.Item>
               </Form>
             </div>
@@ -475,4 +496,4 @@ const ThanhPhamGiay = (props) => {
   );
 };
 
-export default ThanhPhamGiay;
+export default KhoNvl;

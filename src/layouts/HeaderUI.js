@@ -55,6 +55,10 @@ const items = [
         label: "Thông số thiết bị",
         key: "equipment/thong-so-may",
       },
+      {
+        label: "Quản lý khuôn/film",
+        key: "equipment/quan-ly-khuon-film",
+      },
     ],
     permission: "ui-tb",
   },
@@ -63,8 +67,12 @@ const items = [
     key: "warehouse",
     children: [
       {
-        label: "Quản lý kho",
+        label: "Quản lý kho TP",
         key: "warehouse/quan-ly-kho",
+      },
+      {
+        label: "Quản lý kho NVL",
+        key: "warehouse/quan-ly-kho-nvl",
       },
       {
         label: "Quản lý giấy cuộn",

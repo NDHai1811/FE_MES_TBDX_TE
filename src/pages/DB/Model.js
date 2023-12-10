@@ -3,7 +3,7 @@ import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { Box3, Vector3 } from "three";
 
-const Model = ({ objPath, mtlPath, position, scale = 1 }) => {
+const Model = ({ objPath, mtlPath, position, scale = 1, onClick }) => {
   const [object, setObject] = useState(null);
 
   useEffect(() => {
@@ -22,7 +22,9 @@ const Model = ({ objPath, mtlPath, position, scale = 1 }) => {
   }, [objPath, mtlPath]);
 
   return object ? (
-    <primitive object={object} position={position} scale={scale} />
+    <mesh onClick={onClick || null}>
+      <primitive object={object} position={position} scale={scale} />
+    </mesh>
   ) : null;
 };
 
