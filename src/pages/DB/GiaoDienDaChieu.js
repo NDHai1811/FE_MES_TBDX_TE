@@ -196,42 +196,49 @@ const GiaoDienDaChieu = () => {
                     <Model
                       objPath="/assets/machine1.obj"
                       mtlPath="/assets/machine1.mtl"
-                      position={[2, 0, -5]}
+                      position={[35, 0, -5]}
                       scale={0.1}
-                      onClick={() => setSelectedModel("Máy 1")}
+                      onClick={() =>
+                        setSelectedModel("Máy in-chạp-bế 5 màu (P6)")
+                      }
                     />
-                    <WarningPin position={[2, 5, -5]} warningImage={warning1} />
+                    <WarningPin
+                      position={[35, 5, -10]}
+                      warningImage={warning1}
+                    />
                     <Model
                       objPath="/assets/machine2.obj"
                       mtlPath="/assets/machine2.mtl"
-                      position={[2, 0, -35]}
+                      position={[35, 0, -35]}
                       scale={0.1}
-                      onClick={() => setSelectedModel("Máy 2")}
+                      onClick={() =>
+                        setSelectedModel("Máy in-chạp-bế 5 màu (P15)")
+                      }
+                    />
+                    <WarningPin
+                      position={[35, 5, -55]}
+                      warningImage={warning2}
+                    />
+                    <Model
+                      objPath="/assets/machine3.obj"
+                      mtlPath="/assets/machine3.mtl"
+                      position={[10, 0, -35]}
+                      scale={0.1}
+                      onClick={() => setSelectedModel("Máy dán tự động (D05)")}
                     />
                     <WarningPin
                       position={[2, 5, -55]}
                       warningImage={warning2}
                     />
                     <Model
-                      objPath="/assets/machine3.obj"
-                      mtlPath="/assets/machine3.mtl"
-                      position={[50, 0, -50]}
-                      scale={0.1}
-                      onClick={() => setSelectedModel("Máy 3")}
-                    />
-                    <WarningPin
-                      position={[50, 5, -45]}
-                      warningImage={warning2}
-                    />
-                    <Model
                       objPath="/assets/machine4.obj"
                       mtlPath="/assets/machine4.mtl"
-                      position={[30, 0, -95]}
+                      position={[10, 0, -80]}
                       scale={0.1}
-                      onClick={() => setSelectedModel("Máy 4")}
+                      onClick={() => setSelectedModel("Máy dán tự động (D06)")}
                     />
                     <WarningPin
-                      position={[25, 5, -90]}
+                      position={[5, 5, -95]}
                       warningImage={warning1}
                     />
                     <Model
@@ -239,10 +246,12 @@ const GiaoDienDaChieu = () => {
                       mtlPath="/assets/may-song.mtl"
                       position={[75, 0, -5]}
                       scale={1.1}
-                      onClick={() => setSelectedModel("Máy sóng")}
+                      onClick={() =>
+                        setSelectedModel("Dây chuyền máy dợn sóng 7 lớp")
+                      }
                     />
                     <WarningPin
-                      position={[75, 5, -5]}
+                      position={[75, 5, -2]}
                       warningImage={warning1}
                     />
                     <Model
