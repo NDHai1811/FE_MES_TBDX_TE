@@ -29,7 +29,7 @@ const PrintTemplate = ({ info }) => {
                 <div className="d-flex justify-content-between">
                   <QRCode
                     style={{ marginRight: "5px" }}
-                    value={info[0].pallet_id}
+                    value={info[0]?.pallet_id}
                     bordered={false}
                     size={80}
                     type="svg"
@@ -44,7 +44,7 @@ const PrintTemplate = ({ info }) => {
               </td>
             </tr>
             <tr>
-              <td colSpan={2}>Khách hàng: {info[0].khach_hang}</td>
+              <td colSpan={2}>Khách hàng: {info[0]?.khach_hang}</td>
             </tr>
             <tr>
               <td className="text-center">Mã quản lý</td>
