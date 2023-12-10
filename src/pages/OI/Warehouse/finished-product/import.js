@@ -11,6 +11,7 @@ import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho"
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { getWarehouseOverall, importData } from "../../../../api/oi/warehouse";
 import TemPallet from "../TemPallet";
+import { useReactToPrint } from "react-to-print";
 
 const columnDetail = [
   {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { QrcodeOutlined } from "@ant-design/icons";
 import { Row, Col, Button, Input, Form, InputNumber, Select } from "antd";
-import TemThung from "./Warehouse/TemThung";
+
 import { useReactToPrint } from "react-to-print";
 import { listProduct, taoTem } from "../../api";
 
@@ -75,7 +75,7 @@ const InTem = (props) => {
         </Row>
       </Form>
       <div className="report-history-invoice">
-        <TemThung listCheck={listTem} ref={componentRef1} />
+       
       </div>
     </React.Fragment>
   );
