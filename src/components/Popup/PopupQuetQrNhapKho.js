@@ -11,12 +11,13 @@ import {
 } from "../../api/oi/warehouse";
 
 function PopupQuetQrNhapKho(props) {
-  const { visible, setVisible, setResData } = props;
+  const { visible, setVisible, setResData, setSelectedItem, setInfo } = props;
 
   const [columns, setColumns] = useState([]);
   const [currentResult, setCurrentResult] = useState("");
   const [data, setData] = useState([]);
   const [palletId, setPalletId] = useState("");
+  const [item, setItem] = useState({});
 
   const totalQuantity = data?.reduce((sum, val) => sum + val?.so_luong, 0);
 
@@ -55,7 +56,7 @@ function PopupQuetQrNhapKho(props) {
               dataIndex: "so_luong",
               key: "so_luong",
               align: "center",
-              render: (value) => value || "-",
+              render: (value) => value,
             },
           ],
         },
@@ -87,6 +88,7 @@ function PopupQuetQrNhapKho(props) {
   const getSuggestList = () => {
     getSuggestPallet()
       .then((res) => {
+        setItem(res.data);
         setPalletId(res.data.pallet_id);
         setResData?.({
           locator_id: res.data.locator_id,
@@ -142,7 +144,16 @@ function PopupQuetQrNhapKho(props) {
     };
 
     sendStorePallet(resData)
-      .then((res) => console.log(res.data))
+      .then((res) => {
+        setSelectedItem([
+          {
+            pallet_id: item.pallet_id,
+            locator_id: item.locator_id,
+            so_luong: totalQuantity,
+          },
+        ]);
+        setInfo(res.data);
+      })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };
 

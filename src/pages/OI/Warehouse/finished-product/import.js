@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Row, Col, Table, Button, Modal, Select, message } from "antd";
 import "../../style.scss";
 import {
@@ -10,12 +10,14 @@ import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { getWarehouseOverall, importData } from "../../../../api/oi/warehouse";
+import TemPallet from "../TemPallet";
+import { useReactToPrint } from "react-to-print";
 
 const columnDetail = [
   {
     title: "Mã tem",
-    dataIndex: "tem_id",
-    key: "tem_id",
+    dataIndex: "pallet_id",
+    key: "pallet_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -28,8 +30,8 @@ const columnDetail = [
   },
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -102,13 +104,13 @@ const Import = (props) => {
   document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
-
+  const componentRef1 = useRef();
   const [logs, setLogs] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
-      so_pallet: "T300/3",
-      so_mql: "10",
-      vi_tri: "A01",
+      pallet_id: "",
+      so_luong: "",
+      locator_id: "",
     },
   ]);
 
@@ -186,11 +188,20 @@ const Import = (props) => {
 
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [info, setInfo] = useState([]);
   const [resData, setResData] = useState({
     locator_id: "",
-    pallet_id: "",
   });
   const [result, setResult] = useState("");
+
+  useEffect(() => {
+    if (result.length > 0) {
+      print();
+    }
+  }, [result]);
+  const print = useReactToPrint({
+    content: () => componentRef1.current,
+  });
 
   useEffect(() => {
     if (result && resData.locator_id) {
@@ -198,7 +209,7 @@ const Import = (props) => {
         importWarehouse();
       }
     }
-  }, [result]);
+  }, [info]);
 
   const importWarehouse = () => {
     importData(resData)
@@ -301,11 +312,16 @@ const Import = (props) => {
           />
         </Col>
       </Row>
+      <div className="report-history-invoice">
+        <TemPallet info={info} ref={componentRef1} />
+      </div>
       {visible && (
         <PopupQuetQrNhapKho
           visible={visible}
           setVisible={setVisible}
           setResData={setResData}
+          setInfo={setInfo}
+          setSelectedItem={setSelectedItem}
         />
       )}
       {isScan && (
@@ -320,6 +336,9 @@ const Import = (props) => {
             onResult={(res) => {
               setResult(res);
               setIsScan(false);
+              setSelectedItem([
+                { so_luong: "", pallet_id: "", locator_id: "" },
+              ]);
             }}
           />
         </Modal>
