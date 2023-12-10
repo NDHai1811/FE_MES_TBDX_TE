@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Row, Col, Table, Button, Modal, Select, message } from "antd";
 import "../../style.scss";
 import {
@@ -10,6 +10,7 @@ import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { getWarehouseOverall, importData } from "../../../../api/oi/warehouse";
+import TemPallet from "../TemPallet";
 
 const columnDetail = [
   {
@@ -102,7 +103,7 @@ const Import = (props) => {
   document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
-
+  const componentRef1 = useRef();
   const [logs, setLogs] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
@@ -186,6 +187,7 @@ const Import = (props) => {
 
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [info, setInfo] = useState([]);
   const [resData, setResData] = useState({
     locator_id: "",
     pallet_id: "",
@@ -193,12 +195,20 @@ const Import = (props) => {
   const [result, setResult] = useState("");
 
   useEffect(() => {
+    if (result.length > 0) {
+      print();
+    }
+  }, [result]);
+  const print = useReactToPrint({
+    content: () => componentRef1.current,
+  });
+  useEffect(() => {
     if (result && resData.locator_id) {
       if (result === resData.locator_id) {
         importWarehouse();
       }
     }
-  }, [result]);
+  }, [info]);
 
   const importWarehouse = () => {
     importData(resData)
@@ -285,22 +295,25 @@ const Import = (props) => {
               record.status === 1
                 ? "table-row-yellow"
                 : record.status === 2
-                ? "table-row-grey"
-                : ""
+                  ? "table-row-grey"
+                  : ""
             }
             pagination={false}
             bordered
             className="mb-4"
             columns={importColumns}
             dataSource={warehousTPData}
-            // onRow={(record) => {
-            //   return {
-            //     onClick: () => onSelectItem(record),
-            //   };
-            // }}
+          // onRow={(record) => {
+          //   return {
+          //     onClick: () => onSelectItem(record),
+          //   };
+          // }}
           />
         </Col>
       </Row>
+      <div className="report-history-invoice">
+        <TemPallet info={info} ref={componentRef1} />
+      </div>
       {visible && (
         <PopupQuetQrNhapKho
           visible={visible}
