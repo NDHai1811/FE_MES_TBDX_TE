@@ -304,7 +304,7 @@ const Manufacture1 = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lot_id: result })
+    scanQrCode({ lot_id: result, machine_id: machine_id })
       .then(reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
@@ -460,7 +460,7 @@ const Manufacture1 = (props) => {
       })()
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [machine_id]);
 
   return (
     <React.Fragment>
