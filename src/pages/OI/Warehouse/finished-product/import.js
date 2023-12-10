@@ -16,8 +16,8 @@ import { useReactToPrint } from "react-to-print";
 const columnDetail = [
   {
     title: "Mã tem",
-    dataIndex: "tem_id",
-    key: "tem_id",
+    dataIndex: "pallet_id",
+    key: "pallet_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -30,8 +30,8 @@ const columnDetail = [
   },
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -108,9 +108,9 @@ const Import = (props) => {
   const [logs, setLogs] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
-      so_pallet: "T300/3",
-      so_mql: "10",
-      vi_tri: "A01",
+      pallet_id: "",
+      so_luong: "",
+      locator_id: "",
     },
   ]);
 
@@ -191,7 +191,6 @@ const Import = (props) => {
   const [info, setInfo] = useState([]);
   const [resData, setResData] = useState({
     locator_id: "",
-    pallet_id: "",
   });
   const [result, setResult] = useState("");
 
@@ -203,6 +202,7 @@ const Import = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
+
   useEffect(() => {
     if (result && resData.locator_id) {
       if (result === resData.locator_id) {
@@ -296,19 +296,19 @@ const Import = (props) => {
               record.status === 1
                 ? "table-row-yellow"
                 : record.status === 2
-                  ? "table-row-grey"
-                  : ""
+                ? "table-row-grey"
+                : ""
             }
             pagination={false}
             bordered
             className="mb-4"
             columns={importColumns}
             dataSource={warehousTPData}
-          // onRow={(record) => {
-          //   return {
-          //     onClick: () => onSelectItem(record),
-          //   };
-          // }}
+            // onRow={(record) => {
+            //   return {
+            //     onClick: () => onSelectItem(record),
+            //   };
+            // }}
           />
         </Col>
       </Row>
@@ -320,6 +320,8 @@ const Import = (props) => {
           visible={visible}
           setVisible={setVisible}
           setResData={setResData}
+          setInfo={setInfo}
+          setSelectedItem={setSelectedItem}
         />
       )}
       {isScan && (
@@ -334,6 +336,9 @@ const Import = (props) => {
             onResult={(res) => {
               setResult(res);
               setIsScan(false);
+              setSelectedItem([
+                { so_luong: "", pallet_id: "", locator_id: "" },
+              ]);
             }}
           />
         </Modal>

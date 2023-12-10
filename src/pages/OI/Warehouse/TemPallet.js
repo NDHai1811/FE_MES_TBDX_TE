@@ -1,9 +1,7 @@
 import React from "react";
-import Barcode from "react-barcode";
 import styled from "styled-components";
 import "./style.css";
-import dayjs from "dayjs";
-import { QRCode, Space } from "antd";
+import { QRCode } from "antd";
 import logolight from "../../../assets/images/logo.jpg";
 
 const PageBreakWrapper = styled.div`
@@ -35,10 +33,26 @@ const PrintTemplate = ({ info }) => {
                     type="svg"
                   />
                   <div className="flex-column">
-                    <h3 style={{ marginLeft: "8px", fontSize: '28px', marginTop: '18px' }}>TEM GỘP NHẬP KHO</h3>
+                    <h3
+                      style={{
+                        marginLeft: "8px",
+                        fontSize: "28px",
+                        marginTop: "18px",
+                      }}
+                    >
+                      TEM GỘP NHẬP KHO
+                    </h3>
                   </div>
                   <div className="flex-column">
-                    <img src={logolight} width={70} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
+                    <img
+                      src={logolight}
+                      width={70}
+                      style={{
+                        marginRight: "10px",
+                        marginLeft: "10px",
+                        marginTop: "10px",
+                      }}
+                    />
                   </div>
                 </div>
               </td>
@@ -51,10 +65,12 @@ const PrintTemplate = ({ info }) => {
               <td className="text-center">Số lượng</td>
             </tr>
             {info.map(function (detail) {
-              <tr>
-                <td>{detail.mql}</td>
-                <td>{detail.so_luong}</td>
-              </tr>
+              return (
+                <tr>
+                  <td>{detail.mql}</td>
+                  <td>{detail.so_luong}</td>
+                </tr>
+              );
             })}
           </tbody>
         </table>
@@ -68,7 +84,7 @@ export default class TemPallet extends React.Component {
     let printingPages = [];
     const { info } = this.props;
     // for (const detail of listCheck) {
-    const tempTemplate = <PrintTemplate info={info}/>;
+    const tempTemplate = <PrintTemplate info={info} />;
     printingPages.push(tempTemplate);
     // }
     return <div>{printingPages}</div>;
