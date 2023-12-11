@@ -90,21 +90,9 @@ const col_detailTable = [
     align: "center",
   },
   {
-    title: "Máy",
-    dataIndex: "machine_id",
-    key: "machine_id",
-    align: "center",
-  },
-  {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-  },
-  {
-    title: "Đơn hàng",
-    dataIndex: "ma_don_hang",
-    key: "ma_don_hang",
+    title: "Ngày sản xuất",
+    dataIndex: "ngay_sx",
+    key: "ngay_sx",
     align: "center",
   },
   {
@@ -114,125 +102,375 @@ const col_detailTable = [
     align: "center",
   },
   {
-    title: "Thời gian",
-    dataIndex: "created_at",
-    key: "created_at",
+    title: "Lot sản xuất",
+    dataIndex: "lot_id",
+    key: "lot_id",
     align: "center",
+    render:(value, record, index)=>record.lo_sx + "00" + Math.floor(Math.random() * 10),
   },
   {
-    title: "Độ nhớt hồ",
-    dataIndex: "do_nhot_ho",
-    key: "do_nhot_ho",
+    title: "Sóng",
+    dataIndex: "S01",
+    key: "S01",
     align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
+    children: [
+      {
+        title: "Mã máy",
+        dataIndex: "machine_id",
+        key: "machine_id",
+        align: "center",
+      },
+      {
+        title: "Số m đã chạy lô cuốn 1",
+        dataIndex: "Roll1_Counter",
+        key: "Roll1_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Số m đã chạy lô cuốn 2",
+        dataIndex: "Roll2_Counter",
+        key: "Roll2_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Số m đã chạy lô cuốn 3",
+        dataIndex: "Roll3_Counter",
+        key: "Roll3_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Số m đã chạy lô cuốn 4",
+        dataIndex: "Roll4_Counter",
+        key: "Roll4_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Số m đã chạy lô cuốn 5",
+        dataIndex: "Roll5_Counter",
+        key: "Roll5_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Số m đã chạy lô cuốn 6",
+        dataIndex: "Roll6_Counter",
+        key: "Roll6_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Số m đã chạy lô cuốn 7",
+        dataIndex: "Roll7_Counter",
+        key: "Roll7_Counter",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 1",
+        dataIndex: "Roll1_Alarm",
+        key: "Roll1_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 2",
+        dataIndex: "Roll2_Alarm",
+        key: "Roll2_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 3",
+        dataIndex: "Roll3_Alarm",
+        key: "Roll3_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 4",
+        dataIndex: "Roll4_Alarm",
+        key: "Roll4_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 5",
+        dataIndex: "Roll5_Alarm",
+        key: "Roll5_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 6",
+        dataIndex: "Roll6_Alarm",
+        key: "Roll6_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Cảnh báo hết nguyên liệu lô cuốn 7",
+        dataIndex: "Roll7_Alarm",
+        key: "Roll7_Alarm",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 1",
+        dataIndex: "Roll1_Speed",
+        key: "Roll1_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 2",
+        dataIndex: "Roll2_Speed",
+        key: "Roll2_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 3",
+        dataIndex: "Roll3_Speed",
+        key: "Roll3_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 4",
+        dataIndex: "Roll4_Speed",
+        key: "Roll4_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 5",
+        dataIndex: "Roll5_Speed",
+        key: "Roll5_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 6",
+        dataIndex: "Roll6_Speed",
+        key: "Roll6_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Tốc độ lô cuốn 7",
+        dataIndex: "Roll7_Speed",
+        key: "Roll7_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Khe hở lô hồ",
+        dataIndex: "Roll7_Speed",
+        key: "Roll7_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt hồ đầu C",
+        dataIndex: "do_nhot_ho_c",
+        key: "Roll7_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt hồ đầu B",
+        dataIndex: "do_nhot_ho_b",
+        key: "Roll7_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt hồ đầu E",
+        dataIndex: "do_nhot_ho_e",
+        key: "Roll7_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt hồ đầu F",
+        dataIndex: "do_nhot_ho_f",
+        key: "Roll7_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+    ]
   },
   {
-    title: "Độ nhớt mực",
-    dataIndex: "nhiet_do",
-    key: "nhiet_do",
+    title: "In",
+    dataIndex: "IN",
+    key: "IN",
     align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
+    children: [
+      {
+        title: "Mã máy",
+        dataIndex: "machine_id",
+        key: "machine_id",
+        align: "center",
+      },
+      {
+        title: "Tốc độ máy",
+        dataIndex: "Machine_Speed",
+        key: "Machine_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Góc chỉnh film",
+        dataIndex: "Film_Angle",
+        key: "Film_Angle",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt mực lô 1",
+        dataIndex: "do_nhot_muc_lo_1",
+        key: "do_nhot_muc_lo_1",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt mực lô 2",
+        dataIndex: "do_nhot_muc_lo_2",
+        key: "do_nhot_muc_lo_2",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt mực lô 3",
+        dataIndex: "do_nhot_muc_lo_3",
+        key: "do_nhot_muc_lo_3",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt mực lô 4",
+        dataIndex: "do_nhot_muc_lo_4",
+        key: "do_nhot_muc_lo_4",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Độ nhớt mực lô 5",
+        dataIndex: "do_nhot_muc_lo_5",
+        key: "do_nhot_muc_lo_5",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô film 1",
+        dataIndex: "ap_luc_ep_lo_film_1",
+        key: "ap_luc_ep_lo_film_1",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô film 2",
+        dataIndex: "ap_luc_ep_lo_film_2",
+        key: "ap_luc_ep_lo_film_2",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô film 3",
+        dataIndex: "ap_luc_ep_lo_film_3",
+        key: "ap_luc_ep_lo_film_3",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô film 4",
+        dataIndex: "ap_luc_ep_lo_film_4",
+        key: "ap_luc_ep_lo_film_4",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô film 5",
+        dataIndex: "ap_luc_ep_lo_film_5",
+        key: "ap_luc_ep_lo_film_5",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô mực 1",
+        dataIndex: "ap_luc_ep_lo_muc_1",
+        key: "ap_luc_ep_lo_muc_1",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô mực 2",
+        dataIndex: "ap_luc_ep_lo_muc_2",
+        key: "ap_luc_ep_lo_muc_2",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô mực 3",
+        dataIndex: "ap_luc_ep_lo_muc_3",
+        key: "ap_luc_ep_lo_muc_3",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô mực 4",
+        dataIndex: "ap_luc_ep_lo_muc_4",
+        key: "ap_luc_ep_lo_muc_4",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+      {
+        title: "Áp lực ép lô mực 5",
+        dataIndex: "ap_luc_ep_lo_muc_5",
+        key: "ap_luc_ep_lo_muc_5",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+    ]
   },
   {
-    title: "Áp lực ép lô film",
-    dataIndex: "lo_lang_c",
-    key: "lo_lang_c",
+    title: "Dán",
+    dataIndex: "Dan",
+    key: "Dan",
     align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-  {
-    title: "Áp lực ép lô mực",
-    dataIndex: "lo_song_c",
-    key: "lo_song_c",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-  {
-    title: "Tốc độ cụm lô cuốn C",
-    dataIndex: "khe_ho",
-    key: "khe_ho",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-  {
-    title: "Tốc độ cụm lô cuốn B",
-    dataIndex: "thong_so",
-    key: "thong_so",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-
-  {
-    title: "Tốc độ cụm lô cuốn E",
-    dataIndex: "thong_so",
-    key: "thong_so",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-  {
-    title: "Tốc độ cụm lô cuốn F",
-    dataIndex: "thong_so",
-    key: "thong_so",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-  {
-    title: "Khe hở lô hồ",
-    dataIndex: "thong_so",
-    key: "thong_so",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
-  },
-  {
-    title: "Nhiệt độ",
-    dataIndex: "thong_so",
-    key: "thong_so",
-    align: "center",
-    render:(value)=>value??Math.floor(Math.random() * 16) + 5
+    children: [
+      {
+        title: "Mã máy",
+        dataIndex: "machine_id",
+        key: "machine_id",
+        align: "center",
+      },
+      {
+        title: "Tốc độ máy",
+        dataIndex: "Machine_Speed",
+        key: "Machine_Speed",
+        align: "center",
+        render: (value)=>Math.floor(Math.random() * 100)
+      },
+    ]
   },
 ];
-
-const dataTable = [
-  {
-    may: "S01",
+Array.prototype.random = function () {
+  return this[Math.floor((Math.random()*this.length))];
+}
+const dataTable = Array.from({length: 32}, (_, i) =>{
+  return {
+    machine_id: ["S01", "P15", "P06", "D05", "D06"].random(),
     khach_hang: "VICTORY",
-    don_hang: "",
-    lo_sx: "",
-    thoi_gian: "15/10/2023 08:00:00",
-    do_nhot_ho: "",
-    nhiet_do: "",
-    lo_lang_c: "",
-    lo_song_c: "",
-    khe_ho: "",
-    thong_so: "",
-  },
-  {
-    may: "S01",
-    khach_hang: "VICTORY",
-    don_hang: "",
-    lo_sx: "",
-    thoi_gian: "15/10/2023 08:05:00",
-    do_nhot_ho: "",
-    nhiet_do: "",
-    lo_lang_c: "",
-    lo_song_c: "",
-    khe_ho: "",
-    thong_so: "",
-  },
-  {
-    may: "S01",
-    khach_hang: "VICTORY",
-    don_hang: "",
-    lo_sx: "",
-    thoi_gian: "15/10/2023 08:10:00",
-    do_nhot_ho: "",
-    nhiet_do: "",
-    lo_lang_c: "",
-    lo_song_c: "",
-    khe_ho: "",
-    thong_so: "",
-  },
-];
+    don_hang: "A21"+Math.floor((Math.random()*30)),
+    lo_sx: ["231209043", "231209044", "231209001", "231209002", "231209003"].random(),
+    ngay_sx: dayjs(new Date(+(new Date()) - Math.floor(Math.random()*10000000000))).format('DD/MM/YYYY HH:mm:ss'),
+  }
+});
 
 const Equipment2 = (props) => {
   document.title = "UI - Thông số máy";
@@ -810,8 +1048,8 @@ const Equipment2 = (props) => {
                 bordered
                 pagination={false}
                 scroll={{
-                  x: "150vw",
-                  y: "80vh",
+                  x: "1000%",
+                  y: "1000vh",
                 }}
                 // style={{height:'100%'}}
                 onRow={(record, rowIndex) => {
@@ -822,7 +1060,7 @@ const Equipment2 = (props) => {
                   };
                 }}
                 columns={col_detailTable}
-                dataSource={data}
+                dataSource={dataTable}
               />
             </Spin>
           </Card>

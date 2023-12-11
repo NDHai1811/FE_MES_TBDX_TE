@@ -62,25 +62,25 @@ const items = [
     ],
     permission: "ui-tb",
   },
-  {
-    label: "Kho",
-    key: "warehouse",
-    children: [
-      {
-        label: "Quản lý kho TP",
-        key: "warehouse/quan-ly-kho",
-      },
-      {
-        label: "Quản lý kho NVL",
-        key: "warehouse/quan-ly-kho-nvl",
-      },
-      {
-        label: "Quản lý giấy cuộn",
-        key: "warehouse/quan-ly-giay-cuon",
-      },
-    ],
-    permission: "ui-kho",
-  },
+  // {
+  //   label: "Kho",
+  //   key: "warehouse",
+  //   children: [
+  //     {
+  //       label: "Quản lý kho TP",
+  //       key: "warehouse/quan-ly-kho",
+  //     },
+  //     {
+  //       label: "Quản lý kho NVL",
+  //       key: "warehouse/quan-ly-kho-nvl",
+  //     },
+  //     {
+  //       label: "Quản lý giấy cuộn",
+  //       key: "warehouse/quan-ly-giay-cuon",
+  //     },
+  //   ],
+  //   permission: "ui-kho",
+  // },
   // {
   //   label: "KPI",
   //   key: "kpi",
