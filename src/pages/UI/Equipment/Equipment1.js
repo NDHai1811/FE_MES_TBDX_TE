@@ -134,13 +134,13 @@ const columnTable = [
 
 const logs = [
   {
-    may: "P06",
+    may: "S01",
     khach_hang: "VICTORY",
-    don_hang: "",
-    lo_sx: "",
-    thoi_gian_dung: "15/10/2023 08:19:20",
-    thoi_gian_chay: "15/10/2023 08:35:20",
-    ma_su_co: "",
+    don_hang: "344/12",
+    lo_sx: "231210001",
+    thoi_gian_dung: "12/12/2023 08:19:20",
+    thoi_gian_chay: "12/12/2023 08:35:20",
+    ma_su_co: "ERR01",
     ten_su_co: "Đổi mã hàng",
     nguyen_nhan: "",
     cach_xu_ly: "",
@@ -149,13 +149,13 @@ const logs = [
     tinh_trang: "",
   },
   {
-    may: "P06",
+    may: "S01",
     khach_hang: "VICTORY",
-    don_hang: "",
-    lo_sx: "",
-    thoi_gian_dung: "15/10/2023 08:19:20",
-    thoi_gian_chay: "15/10/2023 08:35:20",
-    ma_su_co: "",
+    don_hang: "344/12",
+    lo_sx: "231210004",
+    thoi_gian_dung: "12/10/2023 08:19:20",
+    thoi_gian_chay: "12/10/2023 08:35:20",
+    ma_su_co: "ERR02",
     ten_su_co: "Đổi mã hàng",
     nguyen_nhan: "",
     cach_xu_ly: "",
@@ -164,15 +164,15 @@ const logs = [
     tinh_trang: "",
   },
   {
-    may: "P06",
+    may: "S01",
     khach_hang: "VICTORY",
-    don_hang: "",
-    lo_sx: "",
-    thoi_gian_dung: "15/10/2023 08:19:20",
-    thoi_gian_chay: "15/10/2023 08:35:20",
-    ma_su_co: "",
+    don_hang: "344/12",
+    lo_sx: "231210004",
+    thoi_gian_dung: "12/12/2023 08:19:20",
+    thoi_gian_chay: "12/12/2023 08:35:20",
+    ma_su_co: "ERR03",
     ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "",
+    nguyen_nhan: "Mất điện",
     cach_xu_ly: "",
     thoi_gian_xu_ly: "",
     nguoi_xu_ly: "",
@@ -306,6 +306,10 @@ const column = [
     height: 30,
   },
 ];
+
+const dataTable = [
+
+]
 
 const errorTable = [
   {
@@ -443,7 +447,7 @@ const Equipment1 = (props) => {
     //     );
     //     setLoading(false);
     //   })();
-    btn_click();
+    // btn_click();
   }, []);
 
   function btn_click() {
@@ -806,7 +810,7 @@ const Equipment1 = (props) => {
                       y: "50vh",
                     }}
                     columns={columnTable}
-                    dataSource={data}
+                    dataSource={logs}
                   />
                 </Spin>
               </Card>
