@@ -60,17 +60,17 @@ const KPI = (props) => {
     []
   );
 
-  const [dataChartTiLeNgOQC, setDataChartTiLeNgOQC] = useState([5, 5, 5, 5, 5, 5].map((_, i)=>{
+  const [dataChartTiLeNgOQC, setDataChartTiLeNgOQC] = useState([5, 5, 5, 5, 5, 5, 5].map((_, i)=>{
     return {
-      date: dayjs().subtract(i).format("D/M"),
-      value: Math.floor(Math.random() * 10),
+      date: dayjs('2023-12-05').add(i, 'days').format("D/M"),
+      value: Math.floor(Math.random() * 6),
       type: "TL NG OQC",
     }
   }));
-  const [dataChartTiLeVanHanhThietBi, setDataChartTiLeVanHanhThietBi] = useState([5, 5, 5, 5, 5, 5].map((_, i)=>{
+  const [dataChartTiLeVanHanhThietBi, setDataChartTiLeVanHanhThietBi] = useState([5, 5, 5, 5, 5, 5, 5].map((_, i)=>{
     return {
-      date: dayjs().subtract(i).format("D/M"),
-      value: Math.floor(Math.random() * 10),
+      date: dayjs('2023-12-05').add(i, 'days').format("D/M"),
+      value: Math.floor(Math.random() * (80 - 50)) + 50,
       type: "TL NG OQC",
     }
   }));
@@ -157,9 +157,13 @@ const KPI = (props) => {
     yField: "value",
     seriesField: "type",
     xAxis: {
-      tickCount: 5,
+      label: {
+        autoHide: false,
+        rotate: 0.7
+      },
     },
     yAxis: {
+      max: 100,
       label: {
         formatter: (v) => v + "%",
       },
@@ -173,9 +177,13 @@ const KPI = (props) => {
     yField: "value",
     seriesField: "type",
     xAxis: {
-      tickCount: 5,
+      label: {
+        autoHide: false,
+        rotate: 0.8
+      },
     },
     yAxis: {
+      max: 100,
       label: {
         formatter: (v) => v + "%",
       },
@@ -189,9 +197,13 @@ const KPI = (props) => {
     yField: "value",
     seriesField: "type",
     xAxis: {
-      tickCount: 5,
+      label: {
+        autoHide: false,
+        rotate: 0.7
+      },
     },
     yAxis: {
+      max: 100,
       label: {
         formatter: (v) => v + "%",
       },
