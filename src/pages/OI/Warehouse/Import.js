@@ -205,7 +205,8 @@ const Import = (props) => {
           <Table
             pagination={false}
             bordered
-            className="mb-1"
+            size="small"
+            className="mb-1 custom-table"
             columns={column2}
             dataSource={[overall]}
           />
@@ -214,7 +215,8 @@ const Import = (props) => {
           <Table
             pagination={false}
             bordered
-            className="mb-1"
+            size="small"
+            className="mb-1 custom-table"
             columns={columnDetail}
             dataSource={currentScan}
           />
