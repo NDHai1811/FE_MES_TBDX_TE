@@ -79,14 +79,14 @@ const columns = [
     children: [
       {
         title: "Khuôn",
-        dataIndex: "khuon",
-        key: "khuon",
+        dataIndex: "khuon_chay",
+        key: "khuon_chay",
         align: "center",
       },
       {
         title: "Film",
-        dataIndex: "film",
-        key: "film",
+        dataIndex: "film_chay",
+        key: "film_chay",
         align: "center",
       },
     ],
@@ -96,14 +96,14 @@ const columns = [
     children: [
       {
         title: "Khuôn",
-        dataIndex: "khuon",
-        key: "khuon",
+        dataIndex: "khuon_luu",
+        key: "khuon_luu",
         align: "center",
       },
       {
         title: "Film",
-        dataIndex: "film",
-        key: "film",
+        dataIndex: "film_luu",
+        key: "film_luu",
         align: "center",
       },
     ],
@@ -113,14 +113,14 @@ const columns = [
     children: [
       {
         title: "Khuôn",
-        dataIndex: "khuon",
-        key: "khuon",
+        dataIndex: "khuon_pm",
+        key: "khuon_pm",
         align: "center",
       },
       {
         title: "Film",
-        dataIndex: "film",
-        key: "film",
+        dataIndex: "film_pm",
+        key: "film_pm",
         align: "center",
       },
     ],
@@ -209,7 +209,7 @@ const columnsTable = [
     dataIndex: "tinh_trang_khuon",
     key: "tinh_trang_khuon",
     align: "center",
-    render: (value) => value || "-",
+    render: (value) => value || "Bình thường",
   },
   {
     title: "Hành động cuối",
@@ -241,9 +241,166 @@ const QuanLyKhuonFilm = () => {
   });
   const [listLoSX, setListLoSX] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
-  const [data, setData] = useState([]);
-  const [dataTable, setDataTable] = useState([]);
+  const data = [
+    {
+      khuon: '66',
+      film: '134',
+      khuon_chay: '2',
+      film_chay: '2',
+      khuon_luu: '120',
+      film_luu: '170',
+      khuon_pm: '17',
+      film_pm: '15',
+      ty_le: '100%'
+    }
+  ]
+  const dataTable = [
+    {
+      stt: '1',
+      ma_khuon: 'KBL-129',
+      ten_khuon: 'KBL-129',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '2',
+      ma_khuon: 'KBL-019',
+      ten_khuon: 'KBL-019',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '3',
+      ma_khuon: 'KBL-129',
+      ten_khuon: 'KBL-129',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '4',
+      ma_khuon: 'KBL-076',
+      ten_khuon: 'KBL-076',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '5',
+      ma_khuon: 'KBL-129',
+      ten_khuon: 'KBL-129',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '6',
+      ma_khuon: 'KBL-018',
+      ten_khuon: 'KBL-018',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '7',
+      ma_khuon: 'KBL-035',
+      ten_khuon: 'KBL-035',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '8',
+      ma_khuon: 'KBL-017',
+      ten_khuon: 'KBL-017',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
+    {
+      stt: '9',
+      ma_khuon: 'KBL-018',
+      ten_khuon: 'KBL-018',
+      khach_hang: 'TAICERA',
+      ngay_tao: '10/12/2023',
+      ngay_pm: '10/12/2023',
+      so_shot: '1',
+      nguoi_pm: 'Trần Văn Thái',
+      chu_ky_pm: '1',
+      ngay_bao_tri_tiep_theo: '20/12/2023',
+      tinh_trang: '1',
+      hanh_dong_cuoi: '',
+      vị_tri_khuon: 'P16',
+      ngay_len_khuon_gan_nhat: '10/12/2023',
+    },
 
+  ]
   return (
     <>
       <Row style={{ padding: "8px" }} gutter={[8, 8]}>
@@ -374,7 +531,7 @@ const QuanLyKhuonFilm = () => {
             }
           >
             <Table columns={columns} dataSource={data} bordered />
-            <Table columns={columnsTable} dataSource={dataTable} bordered className="mt-5"/>
+            <Table columns={columnsTable} dataSource={dataTable} bordered className="mt-5" />
           </Card>
         </Col>
       </Row>
