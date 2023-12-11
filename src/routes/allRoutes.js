@@ -16,9 +16,11 @@ import UIQualityPQC from "../pages/UI/Quality/PQC";
 import UIQualityOQC from "../pages/UI/Quality/OQC";
 import UIEquipment1 from "../pages/UI/Equipment/Equipment1";
 import UIEquipment2 from "../pages/UI/Equipment/Equipment2";
+import QuanLyKhuonFilm from "../pages/UI/Equipment/QuanLyKhuonFilm";
 import UIKPI from "../pages/UI/KPI";
 import WarehouseExportPlan from "../pages/UI/Warehouse/WarehouseExportPlan";
 import ThanhPhamGiay from "../pages/UI/Warehouse/ThanhPhamGiay";
+import KhoNVL from "../pages/UI/Warehouse/KhoNvl";
 import DBTinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 import DBHieuSuatThietBi from "../pages/DB/HieuSuatThietBi";
 import DBCanhBaoBatThuong from "../pages/DB/CanhBaoBatThuong";
@@ -65,18 +67,23 @@ const authProtectedRoutes = [
   { path: ["/ui/quality/OQC"], component: UIQualityOQC },
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
   { path: ["/ui/equipment/thong-so-may"], component: UIEquipment2 },
+  { path: ["/ui/equipment/quan-ly-khuon-film"], component: QuanLyKhuonFilm },
   {
     path: ["/ui", "/ui/warehouse/quan-ly-giay-cuon"],
     component: WarehouseExportPlan,
   },
   { path: ["/ui/warehouse/quan-ly-kho"], component: ThanhPhamGiay },
+  { path: ["/ui/warehouse/quan-ly-kho-nvl"], component: KhoNVL },
   { path: ["/ui/kpi"], component: UIKPI },
   { path: ["/ui/abnormal/kich-ban-bat-thuong"], component: Kichban },
   { path: ["/ui/abnormal/lich-su-bat-thuong"], component: Giamsat },
 
   //OI
   { path: ["/tao-tem"], component: InTem },
-  { path: ["/manufacture", "/manufacture/:machine_id"], component: Manufacture, },
+  {
+    path: ["/manufacture", "/manufacture/:machine_id"],
+    component: Manufacture,
+  },
   { path: ["/quality"], component: Quality },
   { path: ["/quality/sx", "/quality/sx/:machine_id"], component: QCByMachine },
   { path: ["/quality/qc", "/quality/qc/:line_id"], component: QCByLine },

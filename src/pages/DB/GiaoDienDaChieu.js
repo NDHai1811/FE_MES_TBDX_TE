@@ -11,6 +11,22 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { GridHelper } from "three";
+import ModalDetail from "./ModalDetail";
+import { Sprite, TextureLoader, SpriteMaterial } from "three";
+
+import warning1 from "../../assets/images/sxtt.png";
+import warning2 from "../../assets/images/cllt.png";
+
+const WarningPin = ({ position, warningImage }) => {
+  const { scene } = useThree();
+  const texture = new TextureLoader().load(warningImage);
+  const spriteMaterial = new SpriteMaterial({ map: texture });
+  const sprite = new Sprite(spriteMaterial);
+  sprite.position.set(...position);
+  sprite.scale.set(10, 10, 1);
+  scene.add(sprite);
+  return null;
+};
 
 function Grid({ position }) {
   const { scene } = useThree();
@@ -90,6 +106,7 @@ const data = [
 const GiaoDienDaChieu = () => {
   const [clock, setClock] = useState(new Date());
   const [isFullCreen, setIsFullScreen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => tick(), 1000);
@@ -179,32 +196,63 @@ const GiaoDienDaChieu = () => {
                     <Model
                       objPath="/assets/machine1.obj"
                       mtlPath="/assets/machine1.mtl"
-                      position={[2, 0, -5]}
+                      position={[35, 0, -5]}
                       scale={0.1}
+                      onClick={() =>
+                        setSelectedModel("Máy in-chạp-bế 5 màu (P6)")
+                      }
+                    />
+                    <WarningPin
+                      position={[35, 5, -10]}
+                      warningImage={warning1}
                     />
                     <Model
                       objPath="/assets/machine2.obj"
                       mtlPath="/assets/machine2.mtl"
-                      position={[2, 0, -35]}
+                      position={[35, 0, -35]}
                       scale={0.1}
+                      onClick={() =>
+                        setSelectedModel("Máy in-chạp-bế 5 màu (P15)")
+                      }
+                    />
+                    <WarningPin
+                      position={[35, 5, -55]}
+                      warningImage={warning2}
                     />
                     <Model
                       objPath="/assets/machine3.obj"
                       mtlPath="/assets/machine3.mtl"
-                      position={[50, 0, -50]}
+                      position={[10, 0, -35]}
                       scale={0.1}
+                      onClick={() => setSelectedModel("Máy dán tự động (D05)")}
+                    />
+                    <WarningPin
+                      position={[2, 5, -55]}
+                      warningImage={warning2}
                     />
                     <Model
                       objPath="/assets/machine4.obj"
                       mtlPath="/assets/machine4.mtl"
-                      position={[30, 0, -95]}
+                      position={[10, 0, -80]}
                       scale={0.1}
+                      onClick={() => setSelectedModel("Máy dán tự động (D06)")}
+                    />
+                    <WarningPin
+                      position={[5, 5, -95]}
+                      warningImage={warning1}
                     />
                     <Model
                       objPath="/assets/may-song.obj"
                       mtlPath="/assets/may-song.mtl"
                       position={[75, 0, -5]}
                       scale={1.1}
+                      onClick={() =>
+                        setSelectedModel("Dây chuyền máy dợn sóng 7 lớp")
+                      }
+                    />
+                    <WarningPin
+                      position={[75, 5, -2]}
+                      warningImage={warning1}
                     />
                     <Model
                       objPath="/Layout.obj"
@@ -236,6 +284,10 @@ const GiaoDienDaChieu = () => {
           </Layout>
         )}
       </ReactFullscreen>
+      <ModalDetail
+        selectedModel={selectedModel}
+        setSelectedModel={setSelectedModel}
+      />
     </React.Fragment>
   );
 };

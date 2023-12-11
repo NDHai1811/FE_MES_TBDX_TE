@@ -16,14 +16,15 @@ import {
 import { Column } from "@ant-design/plots";
 import React, { useState, useEffect } from "react";
 import { Pie } from "@ant-design/charts";
-import {
-  getMachineError,
-} from "../../../api/ui/main";
 import { exportMachineError } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import "../style.scss";
-import { getErrorMachineFrenquency, getMachineErrorList, getMachinePerformance } from "../../../api/ui/machine";
+import {
+  getErrorMachineFrenquency,
+  getMachineErrorList,
+  getMachinePerformance,
+} from "../../../api/ui/machine";
 
 const columnTable = [
   {
@@ -341,65 +342,54 @@ const errorTable = [
 
 const Equipment1 = (props) => {
   document.title = "UI - Thống kê lỗi";
-  const [listLines, setListLines] = useState([]);
-  const [listMachines, setListMachines] = useState([]);
-  const [listIdProducts, setListIdProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
-  const [listStaffs, setListStaffs] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
-  const [listErrorsMachine, setListErrorsMachine] = useState([]);
-  // const [selectedLine, setSelectedLine] = useState();
-  // const [selectedIdProduct, setSelectedIdProduct] = useState();
-  // const [selectedCustomer, setSelectedCustomer] = useState();
-  // const [selectedStaff, setSelectedStaff] = useState();
-  // const [selectedError, setSelectedError] = useState();
   const [data, setData] = useState();
-  const [dataTable, setDataTable] = useState();
   const [dataPieChart, setDataPieChart] = useState([
     {
-      name:'P01',
-      value: 18
+      name: "P01",
+      value: 18,
     },
     {
-      name:'P02',
-      value: 5
+      name: "P02",
+      value: 5,
     },
     {
-      name:'D01',
-      value: 9
+      name: "D01",
+      value: 9,
     },
     {
-      name:'D02',
-      value: 20
+      name: "D02",
+      value: 20,
     },
     {
-      name:'S01',
-      value: 11
+      name: "S01",
+      value: 11,
     },
   ]);
   const [dataColChart, setDataColChart] = useState([
     {
-      name: 'Máy in P.06',
+      name: "Máy in P.06",
       percent: 50,
     },
     {
-      name: 'Máy in P.05',
+      name: "Máy in P.05",
       percent: 60,
     },
     {
-      name: 'Máy dán P.06',
+      name: "Máy dán P.06",
       percent: 70,
     },
     {
-      name: 'Máy in P.15',
+      name: "Máy in P.15",
       percent: 30,
     },
     {
-      name: 'Chuyền máy dợn sóng',
+      name: "Chuyền máy dợn sóng",
       percent: 25,
     },
   ]);
-  const [activeTab, setActiveTab] = useState("Time");
+
   const [params, setParams] = useState({
     machine_code: "",
     date: [dayjs(), dayjs()],
@@ -459,36 +449,9 @@ const Equipment1 = (props) => {
       setDataPieChart(res2.data);
       const res3 = await getMachinePerformance(params);
       setDataColChart(res3.data);
-      // const res4 = await getMachineError(params);
-      // setData(res4.data);
       setLoading(false);
     })();
   }
-  // useEffect(() => {
-  //   if (!data) return;
-  //   setDataTable(data.table);
-
-  //   setDataPieChart(
-  //     Object.keys(data.chart_err).map((item, i) => {
-  //       return {
-  //         id: data.chart_err[item]["id"],
-  //         error:
-  //           data.chart_err[item]["id"] + " " + data.chart_err[item]["name"],
-  //         value: parseInt(data.chart_err[item]["value"]),
-  //       };
-  //     })
-  //   );
-
-  //   setDataColChart(
-  //     Object.keys(data.perfomance).map((item, i) => {
-  //       console.log(data.perfomance[item]);
-  //       return {
-  //         type: data.perfomance[item]["machine_name"],
-  //         value: data.perfomance[item]["percent"],
-  //       };
-  //     })
-  //   );
-  // }, [data]);
 
   useEffect(() => {
     console.log(dataColChart);
@@ -501,16 +464,12 @@ const Equipment1 = (props) => {
     label: {
       position: "top",
       offsetY: 10,
-      // formatter: (value) => {
-      //   console.log(value);
-      //   return value.value ? `${value.value}%` : "";
-      // },
     },
     xAxis: {
       label: {
         autoHide: false,
         autoRotate: false,
-        rotate: -270
+        rotate: -270,
       },
     },
     yAxis: {
@@ -580,13 +539,14 @@ const Equipment1 = (props) => {
   const configPieChart = {
     appendPadding: 10,
     // height:200,
-    data:dataPieChart,
-    angleField: 'value',
-    colorField: 'name',
+    data: dataPieChart,
+    angleField: "value",
+    colorField: "name",
     radius: 0.8,
     label: {
-      type: 'outer',
-      content: ({name, percent }) => `${name}`+' '+`${(percent * 100).toFixed(0)}%`,
+      type: "outer",
+      content: ({ name, percent }) =>
+        `${name}` + " " + `${(percent * 100).toFixed(0)}%`,
     },
   };
 
@@ -610,7 +570,7 @@ const Equipment1 = (props) => {
                     // onSelect={onSelect}
                     // onCheck={onCheck}
                     treeData={itemsMenu}
-                    style={{ maxHeight: '80px', overflowY: 'auto' }}
+                    style={{ maxHeight: "80px", overflowY: "auto" }}
                   />
                 </Form.Item>
               </Form>
@@ -746,14 +706,14 @@ const Equipment1 = (props) => {
         <Col span={20}>
           <Row gutter={[8, 8]}>
             <Col span={12}>
-              <Card title="Tần suất phát sinh lỗi"
-                bodyStyle={{ height: '90%' }}
-                style={
-                  {
-                    height: 300,
-                    padding: '0px'
-                  }
-                }>
+              <Card
+                title="Tần suất phát sinh lỗi"
+                bodyStyle={{ height: "90%" }}
+                style={{
+                  height: 300,
+                  padding: "0px",
+                }}
+              >
                 {!loading && <Pie {...configPieChart} />}
               </Card>
             </Col>
@@ -775,14 +735,14 @@ const Equipment1 = (props) => {
                   bordered
                 />
               </Card> */}
-              <Card title="Hiệu suất máy"
-                bodyStyle={{ height: '90%' }}
-                style={
-                  {
-                    height: 300,
-                    padding: '0px'
-                  }
-                }>
+              <Card
+                title="Hiệu suất máy"
+                bodyStyle={{ height: "90%" }}
+                style={{
+                  height: 300,
+                  padding: "0px",
+                }}
+              >
                 <Column {...configColChart} />
               </Card>
             </Col>
