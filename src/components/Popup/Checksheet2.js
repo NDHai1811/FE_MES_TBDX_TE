@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { getChecksheetList, scanError } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import ScanButton from "../Button/ScanButton";
+import { CloseOutlined } from "@ant-design/icons";
 
 const Checksheet2 = (props) => {
   const { line } = useParams();
@@ -80,6 +81,10 @@ const Checksheet2 = (props) => {
     // console.log(values, errorFields, outOfDate);
     messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
   };
+
+  const deleteError = (id) => {
+    setErrorsList(prev=>prev.filter(e=>e.id !== id))
+  }
   return (
     <React.Fragment>
       {contextHolder}
@@ -177,7 +182,7 @@ const Checksheet2 = (props) => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col span={5}>
                       <Form.Item
                         noStyle
                         shouldUpdate={(prevVal, curVal) => true}
@@ -220,6 +225,15 @@ const Checksheet2 = (props) => {
                             )}
                           </Form.Item>
                         )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={1} className="d-flex justify-content-center">
+                      <Form.Item
+                        noStyle
+                        name={[e.id, "value"]}
+                        rules={[{ required: true }]}
+                      >
+                        <CloseOutlined className="h-100" onClick={()=>deleteError(e.id)}/>
                       </Form.Item>
                     </Col>
                   </Row>
