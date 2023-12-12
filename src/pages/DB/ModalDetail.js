@@ -5,7 +5,7 @@ const ModalDetail = ({ selectedModel, setSelectedModel }) => {
   return (
     <Modal
       title={selectedModel}
-      visible={selectedModel !== null}
+      open={selectedModel !== null}
       onCancel={() => setSelectedModel(null)}
       footer={null}
       centered

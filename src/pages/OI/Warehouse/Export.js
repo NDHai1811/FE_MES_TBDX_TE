@@ -263,7 +263,8 @@ const Export = (props) => {
           <Table
             pagination={false}
             bordered
-            className="mb-1"
+            className="mb-1 custom-table"
+            size="small"
             columns={column2}
             dataSource={overall}
           />
@@ -272,7 +273,8 @@ const Export = (props) => {
           <Table
             pagination={false}
             bordered
-            className="mb-1"
+            className="mb-1 custom-table"
+            size="small"
             columns={columnDetail}
             dataSource={selectedItem}
           />
@@ -322,7 +324,8 @@ const Export = (props) => {
             }}
             pagination={false}
             bordered
-            className="mb-4"
+            className="mb-4 custom-table"
+            size="small"
             columns={exportColumns}
             dataSource={logs}
             onRow={(record) => {

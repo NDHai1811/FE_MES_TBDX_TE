@@ -73,7 +73,7 @@ const Screen = (props) => {
     },
     {
       title: "Kho",
-      link: "/ui/warehouse/thanh-pham-giay",
+      link: "/ui/warehouse/quan-ly-kho",
       permission: "ui-kho",
     },
     {

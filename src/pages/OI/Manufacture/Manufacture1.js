@@ -441,26 +441,26 @@ const Manufacture1 = (props) => {
     setParams({ ...params, end_date: value });
   };
 
-  let interval;
-  useEffect(() => {
-    interval = setInterval(() => {
-      (async ()=>{
-        const resData = {
-          machine_id,
-          start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
-          end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
-        };
-        const list = await getLotByMachine(resData);
-        setData(list.data)
-        if(list.data?.[0]?.status === 1){
-          setSelectedLot(list.data?.[0]);
-        }
-        const overall = await getOverAll(resData);
-        setOverall(overall.data)
-      })()
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [machine_id]);
+  // let interval;
+  // useEffect(() => {
+  //   interval = setInterval(() => {
+  //     (async ()=>{
+  //       const resData = {
+  //         machine_id,
+  //         start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
+  //         end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+  //       };
+  //       const list = await getLotByMachine(resData);
+  //       setData(list.data)
+  //       if(list.data?.[0]?.status === 1){
+  //         setSelectedLot(list.data?.[0]);
+  //       }
+  //       const overall = await getOverAll(resData);
+  //       setOverall(overall.data)
+  //     })()
+  //   }, 3000);
+  //   return () => clearInterval(interval);
+  // }, [machine_id]);
 
   return (
     <React.Fragment>
