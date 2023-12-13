@@ -44,7 +44,7 @@ const colTable = [
     dataIndex: "ti_le",
     key: "ti_le",
     align: "center",
-    render: (text) => <div style={{ fontSize: "70px" }}>{`${text || 0}%`}</div>,
+    render: (text) => <div style={{ fontSize: "70px" }}>{text}%</div>,
   },
   {
     title: "Đánh giá",
