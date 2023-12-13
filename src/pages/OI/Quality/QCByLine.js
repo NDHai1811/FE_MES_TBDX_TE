@@ -435,6 +435,7 @@ const QCByLine = (props) => {
                     }
                   : false
               }
+              className="custom-table"
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"

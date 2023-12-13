@@ -114,13 +114,13 @@ const Export = (props) => {
   const { line } = useParams();
   const history = useHistory();
   const [listTem, setListTem] = useState([]);
-  const [selectedItem, setSelectedItem] = useState([
+  const [selectedItem, setSelectedItem] = useState(
     {
       material_id: "",
       dau_may: "",
       locator_id: "",
     },
-  ]);
+  );
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
@@ -209,7 +209,7 @@ const Export = (props) => {
   ];
 
   const onSelectItem = (val) => {
-    setSelectedItem([val]);
+    setSelectedItem(val);
   };
 
   const onChangeLine = (value) => {
@@ -230,7 +230,9 @@ const Export = (props) => {
   });
 
   const onScanLocation = (result) => {
-    if (result === selectedItem[0].locator_id) {
+    console.log(result, selectedItem)
+    if (result === selectedItem?.locator_id) {
+      console.log('location scanned')
       setLocaion(result);
     } else {
       messageAlert("Vị trí chưa đúng, vui lòng quét lại vị trí!");
@@ -238,8 +240,8 @@ const Export = (props) => {
   };
 
   const onScanMaterial = (result) => {
-    if (result === selectedItem[0].material_id) {
-      exportNvlData({ id: selectedItem[0].id })
+    if (result === selectedItem?.material_id) {
+      exportNvlData({ id: selectedItem?.id })
         .then((res) => {
           messageAlert("Xuất kho thành công!", "success");
           console.log(res.data);
@@ -276,7 +278,7 @@ const Export = (props) => {
             className="mb-1 custom-table"
             size="small"
             columns={columnDetail}
-            dataSource={selectedItem}
+            dataSource={selectedItem ? [selectedItem] : []}
           />
         </Col>
         <Col span={12}>
@@ -285,7 +287,7 @@ const Export = (props) => {
             className="h-100 w-100"
             icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
             type="primary"
-            onClick={() => (selectedItem[0].material_id ? onShowPopup() : null)}
+            onClick={() => (selectedItem?.material_id ? onShowPopup() : null)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -318,13 +320,13 @@ const Export = (props) => {
               y: 300,
             }}
             rowClassName={(record, index) => {
-              return record.id === selectedItem[0]?.id
+              return record.id === selectedItem?.id
                 ? "no-hover " + "table-row-green"
                 : "table-row-light";
             }}
             pagination={false}
             bordered
-            className="mb-4 custom-table"
+            className="mb-4"
             size="small"
             columns={exportColumns}
             dataSource={logs}

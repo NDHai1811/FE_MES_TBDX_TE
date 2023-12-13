@@ -310,7 +310,7 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record.status === 1 && index === 0) {
+    if (record.status === 1) {
       return "table-row-green";
     }
     if (record.status === 2) {

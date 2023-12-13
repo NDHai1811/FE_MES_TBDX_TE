@@ -21,15 +21,9 @@ import {
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
 import { baseURL } from "../../../config";
-import {
-  createWareHouseExport,
-  deleteWareHouseExport,
-  getListWarehouseMLTImport,
-  updateWareHouseExport,
-} from "../../../api";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
-import { getListPlanMaterialExport } from "../../../api/ui/warehouse";
+import { createWarehouseImport, deleteWarehouseImport, getListPlanMaterialExport, getListPlanMaterialImport, updateWarehouseImport } from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
 
 const { TabPane } = Tabs;
@@ -93,14 +87,14 @@ const columns1 = [
   },
   {
     title: "Máy",
-    dataIndex: "may",
-    key: "may",
+    dataIndex: "machine",
+    key: "machine",
     align: "center",
   },
   {
     title: "Đầu sóng",
-    dataIndex: "dau_song",
-    key: "dau_song",
+    dataIndex: "dau_may",
+    key: "dau_may",
     align: "center",
   },
   {
@@ -111,14 +105,14 @@ const columns1 = [
   },
   {
     title: "Mã cuộn",
-    dataIndex: "ma_cuon",
-    key: "ma_cuon",
+    dataIndex: "material_id",
+    key: "material_id",
     align: "center",
   },
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
   },
   {
@@ -129,8 +123,8 @@ const columns1 = [
   },
   {
     title: "Khổ",
-    dataIndex: "kho",
-    key: "kho",
+    dataIndex: "kho_giay",
+    key: "kho_giay",
     align: "center",
   },
   {
@@ -147,14 +141,14 @@ const columns1 = [
   },
   {
     title: "Số m",
-    dataIndex: "so_m",
-    key: "so_m",
+    dataIndex: "so_m_toi",
+    key: "so_m_toi",
     align: "center",
   },
   {
     title: "Thời gian cần dự kiếm",
-    dataIndex: "tg_du_kien",
-    key: "tg_du_kien",
+    dataIndex: "time_need",
+    key: "time_need",
     align: "center",
   },
 ];
@@ -162,13 +156,14 @@ const columns1 = [
 const { Sider } = Layout;
 const WarehouseExportPlan = (props) => {
   document.title = "UI - Kế hoạch xuất kho";
-  const [data, setData] = useState([]);
+  
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
-  const [logs, setLogs] = useState([]);
+  const [importList, setImportList] = useState([]);
+  const [exportList, setExportList] = useState([]);
   const onChangeChecbox = (e) => {
     if (e.target.checked) {
       if (!listCheck.includes(e.target.value)) {
@@ -183,46 +178,26 @@ const WarehouseExportPlan = (props) => {
     }
   };
   useEffect(() => {
-    const new_data = logs.filter((datainput) =>
+    const new_data = importList.filter((datainput) =>
       listCheck.includes(datainput.material_id)
     );
     console.log(new_data);
     setListMaterialCheck(new_data);
   }, [listCheck]);
 
-  useEffect(() => {
-    getLogs();
-  }, []);
-
-  const getLogs = () => {
+  const getExportList = () => {
     getListPlanMaterialExport()
-      .then((res) => setLogs(res.data))
+      .then((res) => setExportList(res.data))
       .catch((err) =>
         console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
       );
   };
 
-  // useEffect(() => {
-  //   (async () => {
-  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-  //     if (res.success) {
-  //       setListNameProducts(
-  //         res.data.product.map((e) => {
-  //           return { ...e, label: e.name, value: e.id };
-  //         })
-  //       );
-  //       // setListLoSX(Object.values(res.data.lo_sx).map(e => {
-  //       //         return { label: e, value: e }
-  //       // }));
-  //     }
-  //   })();
-  // }, [params.khach_hang]);
-
   const deleteRecord = async () => {
     if (listCheck.length > 0) {
-      const res = await deleteWareHouseExport(listCheck);
+      const res = await deleteWarehouseImport(listCheck);
       setListCheck([]);
-      loadListTable();
+      getImportList();
     } else {
       message.info("Chưa chọn bản ghi cần xóa");
     }
@@ -257,8 +232,8 @@ const WarehouseExportPlan = (props) => {
     },
     {
       title: "Tên nhà cung cấp",
-      dataIndex: "ten_ncc",
-      key: "ten_ncc",
+      dataIndex: "supplier",
+      key: "supplier",
       align: "center",
     },
     {
@@ -343,7 +318,7 @@ const WarehouseExportPlan = (props) => {
       return { rowSpan: 0, ...props };
     }
 
-    const rowCount = data.filter(
+    const rowCount = importList.filter(
       (data) => data[mergedKey] === record[mergedKey]
     ).length;
     set?.add(record[mergedKey]);
@@ -356,19 +331,23 @@ const WarehouseExportPlan = (props) => {
   }));
 
   const handleSave = async (row) => {
-    setData((prev) => prev.map((e) => (e.id === row.id ? row : e)));
+    setImportList((prev) => prev.map((e) => (e.id === row.id ? row : e)));
   };
 
-  const loadListTable = async () => {
-    const res = await getListWarehouseMLTImport(params);
-    setData(res.data);
+  const getImportList = async () => {
+    const res = await getListPlanMaterialImport(params);
+    setImportList(res.data);
   };
 
   useEffect(() => {
     (async () => {
-      loadListTable();
+      if(currentTab === "1"){
+        getImportList()
+      }else{
+        getExportList()
+      }
     })();
-  }, []);
+  }, [currentTab]);
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
@@ -386,7 +365,11 @@ const WarehouseExportPlan = (props) => {
   };
 
   const btn_click = () => {
-    loadListTable();
+    if(currentTab === "1"){
+      getImportList();
+    }else{
+      getExportList();
+    }
   };
 
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
@@ -396,7 +379,7 @@ const WarehouseExportPlan = (props) => {
     } else if (listCheck.length == 0) {
       message.info("Chưa chọn bản ghi cần chỉnh sửa");
     } else {
-      const result = data.find((record) => record.id === listCheck[0]);
+      const result = importList.find((record) => record.id === listCheck[0]);
       form.setFieldsValue(result);
       setOpenMdlEdit(true);
       setTitleMdlEdit("Cập nhật");
@@ -416,12 +399,12 @@ const WarehouseExportPlan = (props) => {
   const [form] = Form.useForm();
   const onFinish = async (values) => {
     if (values.id) {
-      const res = await updateWareHouseExport(values);
+      const res = await updateWarehouseImport(values);
     } else {
-      const res = await createWareHouseExport(values);
+      const res = await createWarehouseImport(values);
     }
     setOpenMdlEdit(false);
-    loadListTable();
+    getImportList();
   };
 
   const onSelect = (selectedKeys, info) => {
@@ -438,6 +421,46 @@ const WarehouseExportPlan = (props) => {
       disabled: !record.material_id,
     }),
   };
+
+  const tabsMenu = [
+    {
+      key: "1",
+      label: "Nhập dữ liệu nhập kho",
+      children: [
+        <Table
+        bordered
+        columns={columns}
+        dataSource={importList.map(e=>{return {...e, key:e.material_id}})}
+        scroll={{
+          x: "100vw",
+          y: "80vh",
+        }}
+        className="h-100"
+        rowSelection={rowSelection}
+        pagination={false}
+        size="small"
+        />
+      ]
+    },
+    {
+      key: "2",
+      label: "Theo dõi xuất hàng",
+      children: [
+        <Table
+        bordered
+        columns={columns1}
+        dataSource={exportList}
+        scroll={{
+          x: "100vw",
+          y: "80vh",
+        }}
+        className="h-100"
+        pagination={false}
+        size="small"
+        />
+      ]
+    }
+  ]
   return (
     <>
       {contextHolder}
@@ -550,99 +573,70 @@ const WarehouseExportPlan = (props) => {
         </Col>
         <Col span={20}>
           <Row
-            style={{ paddingLeft: "4px", paddingRight: "4px", height: "100vh" }}
+            style={{ paddingLeft: "4px", paddingRight: "4px", height: "100vh", display: 'contents' }}
             gutter={[8, 8]}
           >
             <Card
-              title={
-                <Tabs
+              bodyStyle={{ width: "100%", height:'100%', paddingTop: 0 }}
+            ><Tabs
                   defaultActiveKey="1"
                   onChange={(activeKey) => setCurrentTab(activeKey)}
+                  items={tabsMenu}
+                  tabBarExtraContent={
+                    currentTab === "1" ? (
+                      <Space>
+                        <Upload
+                          showUploadList={false}
+                          name="file"
+                          action={baseURL + "/api/upload-nhap-kho-nvl"}
+                          headers={{
+                            authorization: "authorization-text",
+                          }}
+                          onChange={(info) => {
+                            setLoading(true);
+                            if (info.file.status === "error") {
+                              error();
+                              setLoading(false);
+                            } else if (info.file.status === "done") {
+                              if (info.file.response.success === true) {
+                                getImportList();
+                                success();
+                                setLoading(false);
+                              } else {
+                                getImportList();
+                                message.error(info.file.response.message);
+                                setLoading(false);
+                              }
+                            }
+                          }}
+                        >
+                          <Button type="primary" loading={loading}>
+                            Upload excel
+                          </Button>
+                        </Upload>
+                        <Button type="primary" onClick={deleteRecord}>
+                          Xóa
+                        </Button>
+                        <Button type="primary" onClick={onEdit}>
+                          Sửa
+                        </Button>
+                        <Button type="primary" onClick={onInsert}>
+                          Thêm
+                        </Button>
+                        <Button type="primary" onClick={handlePrint}>
+                          In tem NVL
+                        </Button>
+                        <div className="report-history-invoice">
+                          <TemNVL
+                            listCheck={listMaterialCheck}
+                            ref={componentRef1}
+                          />
+                        </div>
+                      </Space>
+                    ) : null
+                  }
                 >
-                  <TabPane tab="Nhập dữ liệu nhập kho" key="1"></TabPane>
-                  <TabPane tab="Theo dõi xuất hàng" key="2"></TabPane>
                 </Tabs>
-              }
-              extra={
-                currentTab === "1" ? (
-                  <Space>
-                    <Upload
-                      showUploadList={false}
-                      name="file"
-                      action={baseURL + "/api/upload-nhap-kho-nvl"}
-                      headers={{
-                        authorization: "authorization-text",
-                      }}
-                      onChange={(info) => {
-                        setLoading(true);
-                        if (info.file.status === "error") {
-                          error();
-                          setLoading(false);
-                        } else if (info.file.status === "done") {
-                          if (info.file.response.success === true) {
-                            getLogs();
-                            success();
-                            setLoading(false);
-                          } else {
-                            getLogs();
-                            message.error(info.file.response.message);
-                            setLoading(false);
-                          }
-                        }
-                      }}
-                    >
-                      <Button type="primary" loading={loading}>
-                        Upload excel
-                      </Button>
-                    </Upload>
-                    <Button type="primary" onClick={deleteRecord}>
-                      Xóa
-                    </Button>
-                    <Button type="primary" onClick={onEdit}>
-                      Sửa
-                    </Button>
-                    <Button type="primary" onClick={onInsert}>
-                      Thêm
-                    </Button>
-                    <Button type="primary" onClick={handlePrint}>
-                      In tem NVL
-                    </Button>
-                    <div className="report-history-invoice">
-                      <TemNVL
-                        listCheck={listMaterialCheck}
-                        ref={componentRef1}
-                      />
-                    </div>
-                  </Space>
-                ) : null
-              }
-              style={{ width: "100%" }}
-            >
-              {/* <EditableTable
-                bordered
-                columns={currentTab === "1" ? columns : columns1}
-                dataSource={currentTab === "1" ? logs : data}
-                scroll={{
-                  x: "100vw",
-                  y: "55vh",
-                }}
-                pagination={false}
-                size="small"
-                setDataSource={data}
-                onEditEnd={() => null}
-              /> */}
-              <Table
-              bordered
-              columns={currentTab === "1" ? columns : columns1}
-              dataSource={currentTab === "1" ? logs.map(e=>{return {...e, key:e.material_id}}) : data}
-              scroll={{
-                x: "100vw",
-                y: "55vh",
-              }}
-              rowSelection={rowSelection}
-              pagination={false}
-              size="small"
-              />
             </Card>
           </Row>
         </Col>
@@ -666,7 +660,7 @@ const WarehouseExportPlan = (props) => {
                 <Input></Input>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            {/* <Col span={12}>
               <Form.Item
                 label="Mã cuộn"
                 name="material_id"
@@ -674,6 +668,15 @@ const WarehouseExportPlan = (props) => {
                 rules={[{ required: true }]}
               >
                 <Input placeholder="Nhập mã cuộn"></Input>
+              </Form.Item>
+            </Col> */}
+            <Col span={12}>
+              <Form.Item
+                label="Mã cuộn NCC"
+                name="ma_cuon_ncc"
+                className="mb-3"
+              >
+                <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -724,15 +727,6 @@ const WarehouseExportPlan = (props) => {
                 rules={[{ required: true }]}
               >
                 <Input placeholder="Nhập số kg"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã cuộn NCC"
-                name="ma_cuon_ncc"
-                className="mb-3"
-              >
-                <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
               </Form.Item>
             </Col>
           </Row>
