@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Table, Col, Row } from "antd";
-import ReactFullscreen from "react-easyfullscreen";
+// import ReactFullscreen from "react-easyfullscreen";
 import {
   FullscreenOutlined,
   FullscreenExitOutlined,
@@ -135,7 +135,7 @@ const TinhHinhSanXuat = () => {
 
   return (
     <React.Fragment>
-      <ReactFullscreen>
+      {/* <ReactFullscreen> */}
         {({ ref, onRequest, onExit }) => (
           <Layout
             ref={ref}
@@ -208,7 +208,7 @@ const TinhHinhSanXuat = () => {
             </Row>
           </Layout>
         )}
-      </ReactFullscreen>
+      {/* </ReactFullscreen> */}
     </React.Fragment>
   );
 };

@@ -65,7 +65,7 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td className="text-center">fsc</td>
-                            <td ></td>
+                            <td>{detail['fsc'] ? "X" : ""}</td>
                         </tr>
                         <tr>
                             <td className="text-center">KHỔ GIẤY</td>
@@ -81,7 +81,7 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td className="text-center">NGÀY NHẬP KHO</td>
-                            <td >{detail['created_at']}</td>
+                            <td >{detail['updated_at'] ? dayjs(detail['updated_at']).format('DD/MM/YYYY HH:mm:ss') : ''}</td>
                         </tr>
                     </tbody>
                 </table>

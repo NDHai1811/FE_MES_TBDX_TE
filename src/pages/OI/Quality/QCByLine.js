@@ -227,6 +227,8 @@ const QCByLine = (props) => {
       key: "sl_loi",
       align: "center",
       width: "18%",
+      render: (value, record, index) =>
+        value ? value : record.checked_tinh_nang ? value : "-",
     },
     {
       title: "SL lỗi ngoại quan",
@@ -235,7 +237,7 @@ const QCByLine = (props) => {
       align: "center",
       width: "16%",
       render: (value, record, index) =>
-        value ? value : record.phan_dinh !== 0 ? value : "-",
+        value ? value : record.checked_ngoai_quan ? value : "-",
     },
     {
       title: "Tổng phế",
@@ -244,7 +246,7 @@ const QCByLine = (props) => {
       align: "center",
       width: "16%",
       render: (value, record, index) =>
-        value ? value : record.phan_dinh !== 0 ? value : "-",
+        value ? value : record.checked_sl_ng ? value : "-",
     },
     {
       title: "Phán định",
@@ -327,7 +329,7 @@ const QCByLine = (props) => {
     setData(res.data);
     if(res.data.length > 0){
       var current = res.data.find(e=>e.id===selectedRow?.id);
-      if(current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh){
+      if(current?.log?.phan_dinh && current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh){
         setSelectedRow();
       }
     }

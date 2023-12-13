@@ -229,68 +229,61 @@ const WarehouseExportPlan = (props) => {
   };
 
   const columns = [
-    {
-      title: "Chọn",
-      dataIndex: "name1",
-      key: "name1",
-      align: "center",
-      width: "4%",
-      render: (value, item, index) => (
-        <Checkbox
-          value={item.material_id}
-          onChange={onChangeChecbox}
-          checked={listCheck.includes(item.material_id) ? true : false}
-        ></Checkbox>
-      ),
-    },
+    // {
+    //   title: "Chọn",
+    //   dataIndex: "name1",
+    //   key: "name1",
+    //   align: "center",
+    //   width: "4%",
+    //   render: (value, item, index) => (
+    //     <Checkbox
+    //       value={item.material_id}
+    //       onChange={onChangeChecbox}
+    //       checked={listCheck.includes(item.material_id) ? true : false}
+    //     ></Checkbox>
+    //   ),
+    // },
     {
       title: "Mã cuộn TBDX",
       dataIndex: "material_id",
       key: "material_id",
       align: "center",
-      width: "10%",
     },
     {
       title: "Mã vật tư",
       dataIndex: "ma_vat_tu",
       key: "ma_vat_tu",
       align: "center",
-      width: "8%",
     },
     {
       title: "Tên nhà cung cấp",
       dataIndex: "ten_ncc",
       key: "ten_ncc",
       align: "center",
-      width: "16%",
     },
     {
       title: "Mã cuộn nhà cung cấp",
       dataIndex: "ma_cuon_ncc",
       key: "ma_cuon_ncc",
       align: "center",
-      width: "14%",
     },
     {
       title: "Số kg",
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
-      width: "5%",
     },
     {
       title: "Loại giấy",
       dataIndex: "loai_giay",
       key: "loai_giay",
       align: "center",
-      width: "5%",
     },
     {
       title: "FSC",
       dataIndex: "fsc",
       key: "fsc",
       align: "center",
-      width: "5%",
       render: (value, item, index) => (value === 1 ? "X" : ""),
     },
     {
@@ -298,21 +291,18 @@ const WarehouseExportPlan = (props) => {
       dataIndex: "kho_giay",
       key: "kho_giay",
       align: "center",
-      width: "5%",
     },
     {
       title: "Định lượng",
       dataIndex: "dinh_luong",
       key: "dinh_luong",
       align: "center",
-      width: "5%",
     },
     {
       title: "IQC OK/NG",
       dataIndex: "iqc",
       key: "iqc",
       align: "center",
-      width: "10%",
       render: (value, item, index) =>
         value === 0 ? "Chưa kiểm tra" : value === 1 ? "OK" : "NG",
     },
@@ -440,7 +430,14 @@ const WarehouseExportPlan = (props) => {
   const onCheck = (checkedKeys, info) => {
     console.log("onCheck", checkedKeys, info);
   };
-
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys);
+    },
+    getCheckboxProps: (record) => ({
+      disabled: !record.material_id,
+    }),
+  };
   return (
     <>
       {contextHolder}
@@ -583,11 +580,11 @@ const WarehouseExportPlan = (props) => {
                           setLoading(false);
                         } else if (info.file.status === "done") {
                           if (info.file.response.success === true) {
-                            loadListTable();
+                            getLogs();
                             success();
                             setLoading(false);
                           } else {
-                            loadListTable();
+                            getLogs();
                             message.error(info.file.response.message);
                             setLoading(false);
                           }
@@ -621,7 +618,7 @@ const WarehouseExportPlan = (props) => {
               }
               style={{ width: "100%" }}
             >
-              <EditableTable
+              {/* <EditableTable
                 bordered
                 columns={currentTab === "1" ? columns : columns1}
                 dataSource={currentTab === "1" ? logs : data}
@@ -633,6 +630,18 @@ const WarehouseExportPlan = (props) => {
                 size="small"
                 setDataSource={data}
                 onEditEnd={() => null}
+              /> */}
+              <Table
+              bordered
+              columns={currentTab === "1" ? columns : columns1}
+              dataSource={currentTab === "1" ? logs.map(e=>{return {...e, key:e.material_id}}) : data}
+              scroll={{
+                x: "100vw",
+                y: "55vh",
+              }}
+              rowSelection={rowSelection}
+              pagination={false}
+              size="small"
               />
             </Card>
           </Row>
