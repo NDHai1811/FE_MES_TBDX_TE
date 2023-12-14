@@ -250,7 +250,7 @@ const Import = (props) => {
             }}
             onClick={onShowPopup}
           >
-            In tem
+            Nhập lại
           </Button>
         </Col>
         <Col span={24}>
@@ -278,7 +278,7 @@ const Import = (props) => {
         <PopupInTemKhoNvl
           visible={visible}
           setVisible={setVisible}
-          data={currentScan}
+          data={logs}
           setCurrentScan={setCurrentScan}
         />
       )}

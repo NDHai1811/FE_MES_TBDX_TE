@@ -195,7 +195,7 @@ const WarehouseExportPlan = (props) => {
 
   const deleteRecord = async () => {
     if (listCheck.length > 0) {
-      const res = await deleteWarehouseImport(listCheck);
+      const res = await deleteWarehouseImport({id: listCheck});
       setListCheck([]);
       getImportList();
     } else {
@@ -232,8 +232,8 @@ const WarehouseExportPlan = (props) => {
     },
     {
       title: "Tên nhà cung cấp",
-      dataIndex: "supplier",
-      key: "supplier",
+      dataIndex: "ten_ncc",
+      key: "ten_ncc",
       align: "center",
     },
     {
@@ -417,9 +417,6 @@ const WarehouseExportPlan = (props) => {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
-    getCheckboxProps: (record) => ({
-      disabled: !record.material_id,
-    }),
   };
 
   const tabsMenu = [
@@ -430,7 +427,7 @@ const WarehouseExportPlan = (props) => {
         <Table
         bordered
         columns={columns}
-        dataSource={importList.map(e=>{return {...e, key:e.material_id}})}
+        dataSource={importList.map(e=>{return {...e, key:e.id}})}
         scroll={{
           x: "100vw",
           y: "80vh",
@@ -660,7 +657,7 @@ const WarehouseExportPlan = (props) => {
                 <Input></Input>
               </Form.Item>
             </Col>
-            {/* <Col span={12}>
+            <Col span={12}>
               <Form.Item
                 label="Mã cuộn"
                 name="material_id"
@@ -669,7 +666,7 @@ const WarehouseExportPlan = (props) => {
               >
                 <Input placeholder="Nhập mã cuộn"></Input>
               </Form.Item>
-            </Col> */}
+            </Col>
             <Col span={12}>
               <Form.Item
                 label="Mã cuộn NCC"
