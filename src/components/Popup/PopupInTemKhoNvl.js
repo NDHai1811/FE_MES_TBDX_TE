@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Row, Col, Table, Input, Button, Space } from "antd";
 import "./PopupQuetQr.css";
-import { sendResultPrint } from "../../api/oi/warehouse";
+import { handleNGMaterial, sendResultPrint } from "../../api/oi/warehouse";
 import ScanButton from "../Button/ScanButton";
 
 function PopupInTemKhoNvl(props) {
@@ -25,7 +25,6 @@ function PopupInTemKhoNvl(props) {
         <Input
           type="number"
           value={value}
-          defaultValue={material?.so_kg}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Nhập kg..."
           style={{ width: 100 }}
@@ -70,8 +69,16 @@ function PopupInTemKhoNvl(props) {
   const [material, setMaterial] = useState()
 
   const onScan = (result) => {
-    console.log(data.find(e=>e.material_id === result));
-    setMaterial(data.find(e=>e.material_id === result));
+    const target = data.find(e=>e.material_id === result);
+    setMaterial(target);
+    setValue(target?.so_kg)
+  }
+
+  const moveToKho13 = async () => {
+    var res = await handleNGMaterial({
+      material_id: material.material_id,
+      so_kg: parseInt(value, 10),
+    })
   }
   return (
     <div>
@@ -82,10 +89,10 @@ function PopupInTemKhoNvl(props) {
         // okText="Lưu"
         footer={[
             <Button onClick={handleCancel}>Huỷ</Button>,
-            <Button type="primary" danger>Khu 13</Button>,
+            <Button type="primary" danger onClick={moveToKho13}>Khu 13</Button>,
             <Button type="primary" onClick={handleOk}>Lưu</Button>
         ]}
-        // onCancel={handleCancel}
+        onCancel={handleCancel}
         // cancelButtonProps={{ style: { display: "none" } }}
       >
         <Row className="mt-2">
@@ -100,7 +107,7 @@ function PopupInTemKhoNvl(props) {
               className="mt-3"
               locale={{emptyText: 'Trống'}}
               columns={columns}
-              dataSource={[material]}
+              dataSource={material ? [material] : []}
             />
           </Col>
         </Row>
