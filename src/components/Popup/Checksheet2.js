@@ -52,6 +52,8 @@ const Checksheet2 = (props) => {
         if (isNullish) {
           delete values["ngoai_quan"][key];
         }
+        const error = errorsList.find(e=>e.id === key);
+        values["ngoai_quan"][key]['name'] = error?.name;
       });
       if (!values.ngoai_quan) {
         messageApi.error("Không có dữ liệu lỗi ngoại quan");
@@ -83,6 +85,12 @@ const Checksheet2 = (props) => {
   };
 
   const deleteError = (id) => {
+    const ngoai_quan = form.getFieldValue('ngoai_quan');
+    if(ngoai_quan){
+      delete ngoai_quan[id]
+    }
+    console.log(ngoai_quan);
+    form.setFieldValue('ngoai_quan', ngoai_quan)
     setErrorsList(prev=>prev.filter(e=>e.id !== id))
   }
   return (
@@ -157,6 +165,7 @@ const Checksheet2 = (props) => {
                       >
                         {e.name}
                       </div>
+                      <Form.Item noStyle name={[e.id, "name"]} hidden><Input/></Form.Item>
                     </Col>
                     <Col span={6}>
                       <Form.Item

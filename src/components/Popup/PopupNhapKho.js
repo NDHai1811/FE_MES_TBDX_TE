@@ -95,7 +95,8 @@ function PopupNhapKhoNvl(props) {
           );
           handleCancel();
         }
-        setCurrentScan([res.data[0]]);
+        console.log(data, currentData);
+        setCurrentScan(data.find(e=>e.material_id === currentData));
       })
       .catch((err) => {
         console.log("Lấy danh sách scan thất bại: ", err);
@@ -114,7 +115,7 @@ function PopupNhapKhoNvl(props) {
     sendResultScan(resData)
       .then((res) => {
         console.log(res);
-        window.localStorage.removeItem("ScanNhapNvl");
+        if(res.success) window.localStorage.removeItem("ScanNhapNvl");
         handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
