@@ -57,7 +57,7 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td className="text-center">NHÀ CUNG CẤP</td>
-                            <td className="text-center">{detail['so_luong']}</td>
+                            <td className="text-center">{detail['ten_ncc']}</td>
                         </tr>
                         <tr>
                             <td className="text-center">MÃ CUỘN NCC:</td>

@@ -264,7 +264,22 @@ const Manufacture1 = (props) => {
     //   var res = await getTem();
     //   setListCheck(res) 
     // })()
+    loadDataRescursive()
   }, []);
+
+  const loadDataRescursive = async () => {
+    if(!machine_id) return;
+    const resData = {
+      machine_id,
+      start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
+      end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+    };
+    const res = await getLotByMachine(resData);
+    if(res.success){
+      if(window.location.href.indexOf("manufacture") > -1)
+      setTimeout(function() { loadDataRescursive() }, 5000);
+    }
+  }
 
   const getListMachine = () => {
     getMachines()
