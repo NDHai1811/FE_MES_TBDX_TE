@@ -118,17 +118,6 @@ const QCByMachine = (props) => {
           },
         };
       },
-      // render: () => (
-      //   <div onClick={() => setOpenModal(true)}>
-      //     <Checksheet1
-      //       text="Kiểm"
-      //       selectedLot={selectedRow}
-      //       onSubmit={onSubmitResult}
-      //       onClose={() => setOpenModal(false)}
-      //       machine_id={machine_id}
-      //     />
-      //   </div>
-      // ),
     },
     {
       title: "Kiểm tra ngoại quan",
@@ -145,17 +134,6 @@ const QCByMachine = (props) => {
           },
         };
       },
-      // render: () => (
-      //   <div onClick={() => setOpenModal(true)}>
-      //     <Checksheet2
-      //       text="Kiểm"
-      //       selectedLot={selectedRow}
-      //       onSubmit={onSubmitResult}
-      //       onClose={() => setOpenModal(false)}
-      //       machine_id={machine_id}
-      //     />
-      //   </div>
-      // ),
     },
     {
       title: "Số phế",
@@ -170,16 +148,6 @@ const QCByMachine = (props) => {
           },
         };
       },
-      // render: (text, record) => (
-      //   <InputNumber
-      //     value={text}
-      //     onChange={(value) => handleInputChange(record, value)}
-      //     onPressEnter={(event) =>
-      //       onSubmitSLP({ sl_ng_qc: event.target.value })
-      //     }
-      //     placeholder="Nhập số lượng"
-      //   />
-      // ),
     },
     {
       title: "Phán định",
@@ -321,14 +289,8 @@ const QCByMachine = (props) => {
 
   useEffect(() => {
     getListOption();
-    // getMachineList();
   }, []);
 
-  const getMachineList = () => {
-    getMachines()
-      .then((res) => setMachines(res.data))
-      .catch((err) => console.log("Get machines error: ", err));
-  };
 
   const getListOption = async () => {
     setLoading(true);
