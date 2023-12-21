@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { Row, Col, Button, Table, Spin, DatePicker, Modal, Select } from "antd";
-
 import "../style.scss";
 import {
   useHistory,
@@ -14,7 +13,6 @@ import {
   scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import TemTest from "./TemTest";
 import Tem from "./Tem";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
@@ -26,7 +24,6 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
-import { getTem } from "../../../api";
 
 const token =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
@@ -176,17 +173,7 @@ const Manufacture1 = (props) => {
     if(resData?.[0]?.status === 1){
       setSelectedLot(resData?.[0]);
     }
-    
     getOverAllDetail();
-    // const device_id = machineOptions.find((obj) => {
-    //   return obj.value === machine_id;
-    // })?.device_id;
-    // if (ws.current) {
-    //   ws.current.close();
-    // }
-    // if (device_id) {
-    //   connectWebsocket(device_id, resData);
-    // }
   }
   const overallColumns = [
     {
@@ -260,10 +247,6 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     getListMachine();
-    // (async ()=>{
-    //   var res = await getTem();
-    //   setListCheck(res) 
-    // })()
   }, []);
 
   const getListMachine = () => {
@@ -398,7 +381,6 @@ const Manufacture1 = (props) => {
       let san_luong = parseInt(resData[0]?.san_luong);
       let sl_ok = parseInt(resData[0]?.sl_ok);
       let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
-      console.log(Pre_Counter, Error_Counter, resData[0]);
       if (Pre_Counter > 0) {
         san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
         if (Error_Counter) {
@@ -423,14 +405,6 @@ const Manufacture1 = (props) => {
         }
       }
     };
-
-    // webSocket.onclose = function (event) {
-    //   console.log("Connection is closed");
-    // };
-
-    // webSocket.onerror = function (error) {
-    //   console.log("WebSocket Error: ", error);
-    // };
   };
 
   const onChangeStartDate = (value) => {
@@ -440,27 +414,6 @@ const Manufacture1 = (props) => {
   const onChangeEndDate = (value) => {
     setParams({ ...params, end_date: value });
   };
-
-  // let interval;
-  // useEffect(() => {
-  //   interval = setInterval(() => {
-  //     (async ()=>{
-  //       const resData = {
-  //         machine_id,
-  //         start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
-  //         end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
-  //       };
-  //       const list = await getLotByMachine(resData);
-  //       setData(list.data)
-  //       if(list.data?.[0]?.status === 1){
-  //         setSelectedLot(list.data?.[0]);
-  //       }
-  //       const overall = await getOverAll(resData);
-  //       setOverall(overall.data)
-  //     })()
-  //   }, 3000);
-  //   return () => clearInterval(interval);
-  // }, [machine_id]);
 
   return (
     <React.Fragment>
@@ -475,13 +428,6 @@ const Manufacture1 = (props) => {
               className="custom-table"
               columns={overallColumns}
               dataSource={overall}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
             />
           </Col>
           <Col span={24}>

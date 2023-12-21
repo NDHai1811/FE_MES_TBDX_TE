@@ -1,5 +1,9 @@
 import axios from "axios";
 
+export async function getMachineList(params) {
+    const res = await axios.get('ui/machine/list', {params});
+    return res;
+}
 export async function getMachineErrorList(params) {
     const res = await axios.get('ui/equipment/error-machine-list', {params});
     return res;

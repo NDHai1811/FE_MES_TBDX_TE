@@ -27,21 +27,19 @@ import {
   storeProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
+import {
+  useHistory,
+  useParams,
+} from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
 
 const KeHoachSanXuat = () => {
+  const history = useHistory();
   const [listLines, setListLines] = useState([]);
-  // const [listMachines, setListMachines] = useState([]);
-  // const [listIdProducts, setListIdProducts] = useState([]);
   const [listNameProducts, setListNameProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
-  // const [listStaffs, setListStaffs] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
-  // const [selectedNameProduct, setSelectedNameProduct] = useState();
-  // const [selectedIdProduct, setSelectedIdProduct] = useState();
-  // const [selectedCustomer, setSelectedCustomer] = useState();
-  // const [selectedStaff, setSelectedStaff] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
@@ -369,9 +367,7 @@ const KeHoachSanXuat = () => {
     }
   };
   const insertRecord = () => {
-    setTitleMdlEdit("Thêm mới");
-    form.resetFields();
-    setOpenMdlEdit(true);
+    history.push("/ui/manufacture/tao-ke-hoach-san-xuat");
   };
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -441,18 +437,6 @@ const KeHoachSanXuat = () => {
                   />
                 </Form.Item>
               </Form>
-              {/* <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Checkbox.Group
-                    options={listLines}
-                    value={selectedLine}
-                    onChange={(checkedValues) => {
-                      setParams({ ...params, line_id: checkedValues });
-                    }}
-                  />
-                </Form.Item>
-              </Form> */}
             </div>
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">

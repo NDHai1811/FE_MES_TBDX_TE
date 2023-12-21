@@ -10,6 +10,7 @@ import Equipment from "../pages/OI/Equipment";
 import Warehouse from "../pages/OI/Warehouse";
 import WarehouseTP from "../pages/OI/Warehouse/finished-product";
 
+import UITaoKeHoachSanXuat from "../pages/UI/Manufacture/TaoKeHoachSanXuat";
 import UIManufactureKHSX from "../pages/UI/Manufacture/KeHoachSanXuat";
 import UIManufactureLSSX from "../pages/UI/Manufacture/LichSuSanXuat";
 import UIQualityPQC from "../pages/UI/Quality/PQC";
@@ -50,6 +51,7 @@ import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import ChangePassword from "../pages/Authentication/ChangePassword";
 import QCByMachine from "../pages/OI/Quality/QCByMachine";
 import QCByLine from "../pages/OI/Quality/QCByLine";
+import Orders from "../pages/UI/MasterData/Orders";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -62,6 +64,7 @@ const authProtectedRoutes = [
   // UI
   { path: ["/ui", "/ui/home"], component: UI },
   { path: ["/ui/manufacture/ke-hoach-san-xuat"], component: UIManufactureKHSX },
+  { path: ["/ui/manufacture/tao-ke-hoach-san-xuat"], component: UITaoKeHoachSanXuat },
   { path: ["/ui/manufacture/lich-su-san-xuat"], component: UIManufactureLSSX },
   { path: ["/ui/quality/PQC"], component: UIQualityPQC },
   { path: ["/ui/quality/OQC"], component: UIQualityOQC },
@@ -107,6 +110,7 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/khuon"], component: Khuon },
   { path: ["/ui/master-data/jig"], component: Jig },
   { path: ["/ui/master-data/maintenance"], component: Maintenance },
+  { path: ["/ui/manufacture/don-hang"], component: Orders },
   {
     path: ["/ui/master-data/maintenance/create"],
     component: CreateMaintenance,
