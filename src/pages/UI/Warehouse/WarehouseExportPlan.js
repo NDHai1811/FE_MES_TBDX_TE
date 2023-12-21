@@ -178,8 +178,9 @@ const WarehouseExportPlan = (props) => {
     }
   };
   useEffect(() => {
+    console.log(importList, listCheck);
     const new_data = importList.filter((datainput) =>
-      listCheck.includes(datainput.material_id)
+      listCheck.includes(datainput.id)
     );
     console.log(new_data);
     setListMaterialCheck(new_data);
@@ -662,7 +663,7 @@ const WarehouseExportPlan = (props) => {
                 label="Mã cuộn"
                 name="material_id"
                 className="mb-3"
-                rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input placeholder="Nhập mã cuộn"></Input>
               </Form.Item>
@@ -672,6 +673,7 @@ const WarehouseExportPlan = (props) => {
                 label="Mã cuộn NCC"
                 name="ma_cuon_ncc"
                 className="mb-3"
+                rules={[{ required: true }]}
               >
                 <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
               </Form.Item>

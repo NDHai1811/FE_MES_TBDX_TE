@@ -31,12 +31,6 @@ function PopupInTemKhoNvl(props) {
         />
       ),
     },
-    {
-      title: "Vị trí",
-      dataIndex: "vi_tri",
-      key: "vi_tri",
-      align: "center",
-    },
   ];
 
   const sendResult = () => {

@@ -73,6 +73,7 @@ const Checksheet2 = (props) => {
       error_id: result,
       lo_sx: selectedLot.lo_sx,
       machine_id: selectedLot.machine_id,
+      ma_vat_tu: selectedLot?.ma_vat_tu
     });
     if (res.success) {
       setErrorsList([...errorsList, res.data]);
@@ -112,7 +113,7 @@ const Checksheet2 = (props) => {
         {text}
       </Button> */}
       <Modal
-        title={"Kiểm tra"}
+        title={"Kiểm tra "+text}
         open={open}
         onCancel={closeModal}
         footer={
@@ -182,8 +183,16 @@ const Checksheet2 = (props) => {
                           onChange={(value) =>
                             form.setFieldValue(
                               ["ngoai_quan", e.id, "result"],
-                              parseFloat(value) >= parseFloat(e.min) &&
-                                value <= parseFloat(e.max)
+                              !e?.max ?
+                                value >=
+                                parseFloat(e.min)
+                                ? 1
+                                : 2
+                              :
+                                parseFloat(value) >=
+                                parseFloat(e.min) &&
+                                value <=
+                                parseFloat(e.max)
                                 ? 1
                                 : 2
                             )

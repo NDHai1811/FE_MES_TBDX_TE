@@ -117,13 +117,13 @@ const Import = (props) => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
-  const [currentScan, setCurrentScan] = useState([
+  const [currentScan, setCurrentScan] = useState(
     {
       material_id: "",
       so_kg: "",
       locator_id: "",
     },
-  ]);
+  );
 
   const onShowPopup = () => {
     setVisible(true);
@@ -198,6 +198,9 @@ const Import = (props) => {
       );
   };
 
+  useEffect(()=>{
+    !visible && getLogs();
+  }, [visible]);
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 12]}>
@@ -218,7 +221,7 @@ const Import = (props) => {
             size="small"
             className="mb-1 custom-table"
             columns={columnDetail}
-            dataSource={currentScan}
+            dataSource={currentScan ? [currentScan] : []}
           />
         </Col>
         <Col span={12}>

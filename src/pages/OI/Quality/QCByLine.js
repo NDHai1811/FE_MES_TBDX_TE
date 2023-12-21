@@ -382,6 +382,13 @@ const QCByLine = (props) => {
   const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
+    if (values?.tinh_nang) {
+      setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
+    } else if (values?.ngoai_quan) {
+      setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
+    } else if (values?.sl_ng_sx) {
+      setSelectedRow({ ...selectedRow, checked_sl_ng: true });
+    }
     if(line_id === 'iqc'){
       var res = await sendIQCResult({
         line_id: line_id,
@@ -570,6 +577,7 @@ const QCByLine = (props) => {
         </Modal>
       </Spin>
       <Checksheet1
+        text="tính năng"
         open={openModalCK1}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
@@ -577,6 +585,7 @@ const QCByLine = (props) => {
         line_id={line_id}
       />
       <Checksheet2
+        text="ngoại quan"
         open={openModalCK2}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}

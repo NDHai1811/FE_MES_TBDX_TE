@@ -86,7 +86,7 @@ const Checksheet1 = (props) => {
                 {text}
             </Button> */}
       <Modal
-        title={"Kiểm tra"}
+        title={"Kiểm tra "+text}
         open={open}
         onCancel={closeModal}
         footer={
@@ -136,7 +136,13 @@ const Checksheet1 = (props) => {
                             onChange={(value) =>
                               form.setFieldValue(
                                 ["tinh_nang", e.id, "result"],
-                                parseFloat(value) >=
+                                !e?.max ?
+                                value >=
+                                  parseFloat(e.min)
+                                  ? 1
+                                  : 2
+                                :
+                                  parseFloat(value) >=
                                   parseFloat(e.min) &&
                                   value <=
                                   parseFloat(e.max)
