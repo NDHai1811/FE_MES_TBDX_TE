@@ -28,3 +28,7 @@ export async function storeProductPlan(params) {
     const res = await axios.post("/product_plan/store", params);
     return res.data;
 }
+export async function getListLayout(params) {
+    const res = await axios.get('ui/manufacture/layout/list', {params});
+    return res.data;
+}

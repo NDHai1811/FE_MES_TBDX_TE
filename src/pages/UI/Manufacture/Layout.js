@@ -4,7 +4,6 @@ import {
     Row,
     Card,
     Table,
-    Layout,
     Divider,
     Button,
     Form,
@@ -23,6 +22,7 @@ import React, { useState, useEffect } from "react";
 import { getLines } from "../../../api/ui/main";
 import {
     deleteRecordProductPlan,
+    getListLayout,
     getListProductPlan,
     storeProductPlan,
     updateProductPlan,
@@ -318,6 +318,32 @@ const Layout = () => {
                 },
             ]
         },
+        {
+            title: "Khối bế",
+            dataIndex: "",
+            key: "lo_in_5",
+            align: "center",
+            children: [
+                {
+                    title: "Mã khuôn",
+                    dataIndex: "ma_khuon",
+                    key: "ma_khuon",
+                    align: "center",
+                },
+                {
+                    title: "Vị trí lô bắt khuôn",
+                    dataIndex: "vt_khuon",
+                    key: "vt_khuon",
+                    align: "center",
+                },
+                {
+                    title: "Khối bế",
+                    dataIndex: "al_khuon",
+                    key: "al_khuon",
+                    align: "center",
+                },
+            ]
+        },
     ];
     useEffect(() => {
         (async () => {
@@ -337,7 +363,7 @@ const Layout = () => {
     const [data, setData] = useState([]);
     const loadListTable = async (params) => {
         setLoading(true);
-        const res = await getListProductPlan(params);
+        const res = await getListLayout(params);
         setData(res);
         setLoading(false);
     };

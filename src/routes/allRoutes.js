@@ -52,6 +52,7 @@ import ChangePassword from "../pages/Authentication/ChangePassword";
 import QCByMachine from "../pages/OI/Quality/QCByMachine";
 import QCByLine from "../pages/OI/Quality/QCByLine";
 import Orders from "../pages/UI/MasterData/Orders";
+import Layout from "../pages/UI/Manufacture/Layout";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -66,6 +67,7 @@ const authProtectedRoutes = [
   { path: ["/ui/manufacture/ke-hoach-san-xuat"], component: UIManufactureKHSX },
   { path: ["/ui/manufacture/tao-ke-hoach-san-xuat"], component: UITaoKeHoachSanXuat },
   { path: ["/ui/manufacture/lich-su-san-xuat"], component: UIManufactureLSSX },
+  { path: ["/ui/manufacture/layout"], component: Layout },
   { path: ["/ui/quality/PQC"], component: UIQualityPQC },
   { path: ["/ui/quality/OQC"], component: UIQualityOQC },
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
