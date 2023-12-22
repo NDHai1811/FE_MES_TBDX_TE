@@ -17,6 +17,18 @@ const items = [
     key: "manufacture",
     children: [
       {
+        label: "Đơn hàng",
+        key: "manufacture/don-hang",
+      },
+      {
+        label: "Thông tin buyer",
+        key: "manufacture/danh-sach-buyer",
+      },
+      {
+        label: "Thông tin layout",
+        key: "manufacture/layout",
+      },
+      {
         label: "Kế hoạch sản xuất",
         key: "manufacture/ke-hoach-san-xuat",
       },

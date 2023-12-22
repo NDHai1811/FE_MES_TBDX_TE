@@ -13,8 +13,8 @@ const Orders = () => {
     const col_detailTable = [
         {
             title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dh',
-            key: 'ngay_dh',
+            dataIndex: 'ngay_dat_hang',
+            key: 'ngay_dat_hang',
             align: 'center',
             fixed: 'left'
         },
@@ -26,8 +26,8 @@ const Orders = () => {
         },
         {
             title: 'Người đặt hàng',
-            dataIndex: 'nguoi_dh',
-            key: 'nguoi_dh',
+            dataIndex: 'nguoi_dat_hang',
+            key: 'nguoi_dat_hang',
             align: 'center',
         },
         {
@@ -50,20 +50,20 @@ const Orders = () => {
         },
         {
             title: 'Dài',
-            dataIndex: 'l',
-            key: 'l',
+            dataIndex: 'dai',
+            key: 'dai',
             align: 'center',
         },
         {
             title: 'Rộng',
-            dataIndex: 'w',
-            key: 'w',
+            dataIndex: 'rong',
+            key: 'rong',
             align: 'center',
         },
         {
             title: 'Cao',
-            dataIndex: 'h',
-            key: 'h',
+            dataIndex: 'cao',
+            key: 'cao',
             align: 'center',
         },
         {
@@ -139,21 +139,9 @@ const Orders = () => {
             align: 'center',
         },
         {
-            title: 'Dot',
-            dataIndex: 'dot',
-            key: 'dot',
-            align: 'center',
-        },
-        {
-            title: 'Fac',
-            dataIndex: 'fac',
-            key: 'fac',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú',
-            dataIndex: 'ghi_chu',
-            key: 'ghi_chu',
+            title: 'Ghi chú 1',
+            dataIndex: 'note_1',
+            key: 'note_1',
             align: 'center',
         },
         {
@@ -163,29 +151,11 @@ const Orders = () => {
             align: 'center',
         },
         {
-            title: 'Ngày giao',
-            dataIndex: 'ngay_giao',
-            key: 'ngay_giao',
-            align: 'center',
-        },
-        {
             title: 'Ghi chú 2',
-            dataIndex: 'ghi_chu_2',
-            key: 'ghi_chu_2',
+            dataIndex: 'note_2',
+            key: 'note_2',
             align: 'center',
-        },
-        {
-            title: 'Xe giao',
-            dataIndex: 'xe_giao',
-            key: 'xe_giao',
-            align: 'center',
-        },
-        {
-            title: 'Xuất hàng',
-            dataIndex: 'xuat_hang',
-            key: 'xuat_hang',
-            align: 'center',
-        },
+        }
     ]
     const formFields = [
         {
@@ -486,7 +456,7 @@ const Orders = () => {
                     </Card>
                 </Col>
                 <Col span={21}>
-                    <Card style={{ height: '100%' }} title="Quản lý nguyên vật liệu" extra={
+                    <Card style={{ height: '100%' }} title="Quản lý đơn hàng" extra={
                         <Space>
                             <Upload
                                 showUploadList={false}
@@ -535,7 +505,7 @@ const Orders = () => {
                     }>
                         <Spin spinning={loading}>
                         <Table size='small' bordered
-                            pagination={{position: ['topRight', 'bottomRight']}}
+                            pagination={{position: ['bottomRight']}}
                             scroll={
                                 {
                                     x: '130vw',

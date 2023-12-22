@@ -100,12 +100,12 @@ thead th[class*="red"] {
 .no-hover .ant-table-cell-row-hover {
   background-color: transparent !important;
 }
-.ant-picker-dropdown {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%);
-}
+// .ant-picker-dropdown {
+//   position: fixed !important;
+//   top: 50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -50%);
+// }
 .table-row-selected {
   background-color: limegreen;
 }
