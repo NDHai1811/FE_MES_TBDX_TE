@@ -18,19 +18,16 @@ import {
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import {
-  createOrder,
-  deleteOrders,
-  exportOrders,
-  updateOrder,
-} from "../../../api";
+import { createOrder, exportOrders, updateOrder } from "../../../api";
 import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 const EditableCell = ({
   editing,
   dataIndex,
   title,
+  inputType,
   record,
   index,
   children,
@@ -267,50 +264,23 @@ const Buyer = () => {
           </span>
         ) : (
           <span>
-            <Typography.Link
-              onClick={() => {
-                form.resetFields();
-                setData([
-                  ...data,
-                  {
-                    key: data.length + 1,
-                    id: "",
-                    customer_id: "",
-                    buyer_vt: "",
-                    type: "",
-                    ket_cau_giay: "",
-                    note: "",
-                    ma_cuon_f: "",
-                    ma_cuon_se: "",
-                    ma_cuon_le: "",
-                    ma_cuon_sb: "",
-                    ma_cuon_lb: "",
-                    ma_cuon_sc: "",
-                    ma_cuon_lc: "",
-                  },
-                ]);
-                setEditingKey(data.length + 1);
-              }}
-              style={{ marginLeft: 8 }}
-            >
-              Thêm
-            </Typography.Link>
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 20 }}
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            />
             <Popconfirm
               title="Bạn có chắc chắn muốn xóa?"
               onConfirm={() => deleteItem(record.key)}
             >
-              <Typography.Link
-                style={{ color: "red", marginLeft: 8, marginRight: 8 }}
-              >
-                Xóa
-              </Typography.Link>
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 20,
+                }}
+              />
             </Popconfirm>
-            <Typography.Link
-              disabled={editingKey !== ""}
-              onClick={() => edit(record)}
-            >
-              Sửa
-            </Typography.Link>
           </span>
         );
       },
@@ -326,6 +296,31 @@ const Buyer = () => {
     }
   };
 
+  const onAdd = () => {
+    form.resetFields();
+    const newData = [
+      {
+        key: data.length + 1,
+        id: "",
+        customer_id: "",
+        buyer_vt: "",
+        type: "",
+        ket_cau_giay: "",
+        note: "",
+        ma_cuon_f: "",
+        ma_cuon_se: "",
+        ma_cuon_le: "",
+        ma_cuon_sb: "",
+        ma_cuon_lb: "",
+        ma_cuon_sc: "",
+        ma_cuon_lc: "",
+      },
+      ...data,
+    ];
+    setData(newData);
+    setEditingKey(data.length + 1);
+  };
+
   const edit = (record) => {
     form.setFieldsValue({
       ...record,
@@ -335,7 +330,7 @@ const Buyer = () => {
   const cancel = () => {
     if (typeof editingKey === "number") {
       const newData = [...data];
-      newData.pop();
+      newData.shift();
       setData(newData);
     }
     setEditingKey("");
@@ -433,33 +428,6 @@ const Buyer = () => {
         loadListTable(params);
       }
     }
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteOrders(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
-  };
-
-  const editRecord = () => {
-    setIsEdit(true);
-    if (listCheck.length !== 1) {
-      message.info("Chọn 1 bản ghi để chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({ ...result });
-      setOpenMdl(true);
-    }
-  };
-
-  const insertRecord = () => {
-    setIsEdit(false);
-    form.resetFields();
-    setOpenMdl(true);
   };
 
   const exportFile = async () => {
@@ -567,30 +535,9 @@ const Buyer = () => {
                 >
                   Export Excel
                 </Button>
-                <Button
-                  type="primary"
-                  onClick={editRecord}
-                  disabled={listCheck.length <= 0}
-                >
-                  Edit
-                </Button>
-                <Button type="primary" onClick={insertRecord}>
+                <Button type="primary" onClick={onAdd}>
                   Insert
                 </Button>
-                <Popconfirm
-                  title="Xoá bản ghi"
-                  description={
-                    "Bạn có chắc xoá " + listCheck.length + " bản ghi đã chọn?"
-                  }
-                  onConfirm={deleteRecord}
-                  okText="Có"
-                  cancelText="Không"
-                  placement="bottomRight"
-                >
-                  <Button type="primary" disabled={listCheck.length <= 0}>
-                    Delete
-                  </Button>
-                </Popconfirm>
               </Space>
             }
           >
