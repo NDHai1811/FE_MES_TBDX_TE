@@ -264,7 +264,7 @@ const Manufacture1 = (props) => {
     //   var res = await getTem();
     //   setListCheck(res) 
     // })()
-    loadDataRescursive()
+    // loadDataRescursive()
   }, []);
 
   const loadDataRescursive = async () => {
