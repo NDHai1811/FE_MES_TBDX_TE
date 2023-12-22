@@ -10,10 +10,12 @@ import {
     Select,
     Checkbox,
     Space,
+    message,
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
 import {
+    handleOrder,
     storeProductPlan,
 } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
@@ -57,12 +59,19 @@ const TaoKeHoachSanXuat = () => {
         loadListTable(params);
     };
 
-    const insertOrder = () => {
+    const insertOrder = async() => {
+        if(!machineID){
+            message.info('Cần chọn máy');
+        }
+        if(!startTime){
+            message.info('Cần chọn thời gian bắt đầu');
+        }
         const inp = {
             order_id: listCheck,
             machine_id: machineID,
             start_time: dayjs(startTime).format('YYYY-MM-DD HH:mm:ss'),
         }
+        const res = await handleOrder(inp);
         
     };
 
