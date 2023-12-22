@@ -15,16 +15,18 @@ import {
   Tree,
 } from "antd";
 import "../style.scss";
-import {
-  getLines,
-} from "../../../api/ui/main";
+import { getLines } from "../../../api/ui/main";
 import {
   exportProduceHistory,
   exportReportProduceHistory,
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
-import { getProduceOverall, getProducePercent, getProduceTable } from "../../../api/ui/manufacture";
+import {
+  getProduceOverall,
+  getProducePercent,
+  getProduceTable,
+} from "../../../api/ui/manufacture";
 
 const columns1 = [
   {
@@ -61,40 +63,40 @@ const columns1 = [
 ];
 const columns2 = [
   {
-    title: 'Lô SX',
-    dataIndex: 'lo_sx',
-    key: 'lo_sx',
-    align: 'center',
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
   },
   {
-    title: 'Sóng',
-    dataIndex: '30',
-    key: '30',
-    align: 'center',
-    render: (value)=>value ?? 0
+    title: "Sóng",
+    dataIndex: "30",
+    key: "30",
+    align: "center",
+    render: (value) => value ?? 0,
   },
   {
-    title: 'In',
-    dataIndex: '31',
-    key: '31',
-    align: 'center',
-    render: (value)=>value ?? 0
+    title: "In",
+    dataIndex: "31",
+    key: "31",
+    align: "center",
+    render: (value) => value ?? 0,
   },
   {
-    title: 'Bế',
-    dataIndex: '505',
-    key: '505',
-    align: 'center',
-    render: (value)=>value ?? 0
+    title: "Bế",
+    dataIndex: "505",
+    key: "505",
+    align: "center",
+    render: (value) => value ?? 0,
   },
   {
-    title: 'Dán',
-    dataIndex: '31',
-    key: '31',
-    align: 'center',
-    render: (value)=>value ?? 0
+    title: "Dán",
+    dataIndex: "31",
+    key: "31",
+    align: "center",
+    render: (value) => value ?? 0,
   },
-]
+];
 const columns3 = [
   {
     title: "STT",
@@ -102,7 +104,7 @@ const columns3 = [
     key: "index",
     align: "center",
     fixed: "left",
-    width: '3%',
+    width: "3%",
     render: (value, record, index) => index + 1,
   },
   {
@@ -111,7 +113,7 @@ const columns3 = [
     key: "ngay_sx",
     align: "center",
     fixed: "left",
-    width: '4%',
+    width: "4%",
   },
   {
     title: "Công đoạn",
@@ -119,8 +121,8 @@ const columns3 = [
     key: "line",
     align: "center",
     fixed: "left",
-    width: '4%',
-    render: (value)=>value?.name
+    width: "4%",
+    render: (value) => value?.name,
   },
   {
     title: "Máy",
@@ -128,7 +130,7 @@ const columns3 = [
     key: "machine_id",
     align: "center",
     fixed: "left",
-    width: '4%',
+    width: "4%",
   },
   {
     title: "Khách hàng",
@@ -304,13 +306,13 @@ const LichSuSanXuat = (props) => {
     {
       label: "Kế hoạch",
       value: 1000,
-      type: "1"
+      type: "1",
     },
     {
       label: "Thực tế",
       value: 900,
-      type: "2"
-    }
+      type: "2",
+    },
   ];
   const config = {
     showTitle: true,
@@ -336,24 +338,24 @@ const LichSuSanXuat = (props) => {
     },
     colorField: "type", // or seriesField in some cases
     color: ({ type }) => {
-      if (type === '1') {
+      if (type === "1") {
         return "#ccae70";
       }
 
-      return '#5B8FF9';
+      return "#5B8FF9";
     },
   };
   const dataChart1 = [
     {
       label: "Mục tiêu",
       value: 105,
-      type: "1"
+      type: "1",
     },
     {
       label: "Thực tế",
       value: 108,
-      type: "2"
-    }
+      type: "2",
+    },
   ];
   const config1 = {
     showTitle: true,
@@ -379,10 +381,10 @@ const LichSuSanXuat = (props) => {
     },
     colorField: "type", // or seriesField in some cases
     color: ({ type }) => {
-      if (type === '1') {
+      if (type === "1") {
         return "#ccae70";
       }
-      return '#5B8FF9';
+      return "#5B8FF9";
     },
   };
   useEffect(() => {
@@ -428,99 +430,100 @@ const LichSuSanXuat = (props) => {
       sl_dau_ra_thuc_te_ok: 800,
       sl_ng: 200,
       sl_tem_vang: 0,
-      ty_le: '80%',
+      ty_le: "80%",
     },
   ]);
   const [dataTable2, setDataTable2] = useState([
     {
-      machine_id: 'S01',
-      khach_hang: 'SHG',
-      don_hang: 'SBF',
-      lo_sx: 'S2023112',
-      lot_id: 'S20231120001',
+      machine_id: "S01",
+      khach_hang: "SHG",
+      don_hang: "SBF",
+      lo_sx: "S2023112",
+      lot_id: "S20231120001",
       quy_cach: "50x40x60",
-      sl_dau_vao_kh: '100',
-      sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau: '20/11/2023',
-      thoi_gian_ket_thuc: '20/11/2023',
-      sl_dau_ra_hang_loat: '100',
-      sl_ok: '100',
-      sl_ng: '0',
+      sl_dau_vao_kh: "100",
+      sl_dau_ra_kh: "100",
+      thoi_gian_bat_dau: "20/11/2023",
+      thoi_gian_ket_thuc: "20/11/2023",
+      sl_dau_ra_hang_loat: "100",
+      sl_ok: "100",
+      sl_ng: "0",
     },
     {
-      machine_id: 'S01',
-      khach_hang: 'BKF',
-      don_hang: 'SBF',
-      lo_sx: 'S2023112',
-      lot_id: 'S20231120001',
+      machine_id: "S01",
+      khach_hang: "BKF",
+      don_hang: "SBF",
+      lo_sx: "S2023112",
+      lot_id: "S20231120001",
       quy_cach: "50x40x60",
-      sl_dau_vao_kh: '100',
-      sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau: '20/11/2023',
-      thoi_gian_ket_thuc: '20/11/2023',
-      sl_dau_ra_hang_loat: '100',
-      sl_ok: '100',
-      sl_ng: '0',
-    }, {
-      machine_id: 'S01',
-      khach_hang: 'SHB',
-      don_hang: 'SBF',
-      lo_sx: 'S2023112',
-      lot_id: 'S20231120006',
-      quy_cach: "50x40x60",
-      sl_dau_vao_kh: '100',
-      sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau: '20/11/2023',
-      thoi_gian_ket_thuc: '20/11/2023',
-      sl_dau_ra_hang_loat: '100',
-      sl_ok: '100',
-      sl_ng: '0',
+      sl_dau_vao_kh: "100",
+      sl_dau_ra_kh: "100",
+      thoi_gian_bat_dau: "20/11/2023",
+      thoi_gian_ket_thuc: "20/11/2023",
+      sl_dau_ra_hang_loat: "100",
+      sl_ok: "100",
+      sl_ng: "0",
     },
     {
-      machine_id: 'S01',
-      khach_hang: 'NKM',
-      don_hang: 'SBF',
-      lo_sx: 'S2023112',
-      lot_id: 'S20231120007',
+      machine_id: "S01",
+      khach_hang: "SHB",
+      don_hang: "SBF",
+      lo_sx: "S2023112",
+      lot_id: "S20231120006",
       quy_cach: "50x40x60",
-      sl_dau_vao_kh: '100',
-      sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau: '20/11/2023',
-      thoi_gian_ket_thuc: '20/11/2023',
-      sl_dau_ra_hang_loat: '100',
-      sl_ok: '100',
-      sl_ng: '0',
+      sl_dau_vao_kh: "100",
+      sl_dau_ra_kh: "100",
+      thoi_gian_bat_dau: "20/11/2023",
+      thoi_gian_ket_thuc: "20/11/2023",
+      sl_dau_ra_hang_loat: "100",
+      sl_ok: "100",
+      sl_ng: "0",
     },
     {
-      machine_id: 'S01',
-      khach_hang: 'SSC',
-      don_hang: 'SBF',
-      lo_sx: 'S2023112',
-      lot_id: 'S20231120008',
+      machine_id: "S01",
+      khach_hang: "NKM",
+      don_hang: "SBF",
+      lo_sx: "S2023112",
+      lot_id: "S20231120007",
       quy_cach: "50x40x60",
-      sl_dau_vao_kh: '100',
-      sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau: '20/11/2023',
-      thoi_gian_ket_thuc: '20/11/2023',
-      sl_dau_ra_hang_loat: '100',
-      sl_ok: '100',
-      sl_ng: '0',
+      sl_dau_vao_kh: "100",
+      sl_dau_ra_kh: "100",
+      thoi_gian_bat_dau: "20/11/2023",
+      thoi_gian_ket_thuc: "20/11/2023",
+      sl_dau_ra_hang_loat: "100",
+      sl_ok: "100",
+      sl_ng: "0",
     },
     {
-      machine_id: 'S01',
-      khach_hang: 'NHH',
-      don_hang: 'SBF',
-      lo_sx: 'S2023112',
-      lot_id: 'S20231120010',
+      machine_id: "S01",
+      khach_hang: "SSC",
+      don_hang: "SBF",
+      lo_sx: "S2023112",
+      lot_id: "S20231120008",
+      quy_cach: "50x40x60",
+      sl_dau_vao_kh: "100",
+      sl_dau_ra_kh: "100",
+      thoi_gian_bat_dau: "20/11/2023",
+      thoi_gian_ket_thuc: "20/11/2023",
+      sl_dau_ra_hang_loat: "100",
+      sl_ok: "100",
+      sl_ng: "0",
+    },
+    {
+      machine_id: "S01",
+      khach_hang: "NHH",
+      don_hang: "SBF",
+      lo_sx: "S2023112",
+      lot_id: "S20231120010",
       quy_cach: "50x70x80",
-      sl_dau_vao_kh: '100',
-      sl_dau_ra_kh: '100',
-      thoi_gian_bat_dau: '20/11/2023',
-      thoi_gian_ket_thuc: '20/11/2023',
-      sl_dau_ra_hang_loat: '100',
-      sl_ok: '100',
-      sl_ng: '0',
-    }
+      sl_dau_vao_kh: "100",
+      sl_dau_ra_kh: "100",
+      thoi_gian_bat_dau: "20/11/2023",
+      thoi_gian_ket_thuc: "20/11/2023",
+      sl_dau_ra_hang_loat: "100",
+      sl_ok: "100",
+      sl_ng: "0",
+    },
   ]);
   const [dataTable3, setDataTable3] = useState([]);
 
@@ -531,12 +534,14 @@ const LichSuSanXuat = (props) => {
       const res2 = await getProducePercent(params);
       const res3 = await getProduceTable(params);
       setDataTable1(res1.data);
-      setDataTable2(Object.keys(res2.data ?? {}).map(key=>{
-        return {...res2.data[key], lo_sx: key};
-      }));
+      setDataTable2(
+        Object.keys(res2.data ?? {}).map((key) => {
+          return { ...res2.data[key], lo_sx: key };
+        })
+      );
       setDataTable3(res3.data);
       setLoading(false);
-    })()
+    })();
   }
   const [exportLoading1, setExportLoading1] = useState(false);
   const [exportLoading2, setExportLoading2] = useState(false);
@@ -602,7 +607,10 @@ const LichSuSanXuat = (props) => {
     <React.Fragment>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0, paddingTop: 0 }}>
+          <Card
+            style={{ height: "100%" }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+          >
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Divider>Công đoạn</Divider>
@@ -615,7 +623,7 @@ const LichSuSanXuat = (props) => {
                     // onSelect={onSelect}
                     // onCheck={onCheck}
                     treeData={itemsMenu}
-                    style={{ maxHeight: '80px', overflowY: 'auto' }}
+                    style={{ maxHeight: "80px", overflowY: "auto" }}
                   />
                 </Form.Item>
               </Form>
@@ -648,7 +656,6 @@ const LichSuSanXuat = (props) => {
             </div>
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
-
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Form.Item label="Máy" className="mb-3">
                   <Select
@@ -780,10 +787,17 @@ const LichSuSanXuat = (props) => {
                 columns={columns1}
                 dataSource={dataTable1}
               />
-              <Table className='mb-3' size='small' bordered
+              <Table
+                className="mb-3"
+                size="small"
+                bordered
                 pagination={false}
                 columns={columns2}
-                dataSource={dataTable2} />
+                scroll={{
+                  y: "50vh",
+                }}
+                dataSource={dataTable2}
+              />
               <Table
                 size="small"
                 bordered

@@ -14,6 +14,7 @@ import {
   Modal,
   Spin,
   Popconfirm,
+  Typography,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -24,88 +25,42 @@ import {
   updateOrder,
 } from "../../../api";
 import { getBuyers } from "../../../api/ui/manufacture";
+import "../style.scss";
 
-const col_detailTable = [
-  {
-    title: "Mã buyer",
-    dataIndex: "id",
-    key: "id",
-    align: "center",
-    fixed: "left",
-  },
-  {
-    title: "Mã khách hàng",
-    dataIndex: "customer_id",
-    key: "customer_id",
-    align: "center",
-  },
-  {
-    title: "Buyer viết tắt",
-    dataIndex: "buyer_vt",
-    key: "buyer_vt",
-    align: "center",
-  },
-  {
-    title: "Phân loại",
-    dataIndex: "type",
-    key: "type",
-    align: "center",
-  },
-  {
-    title: "Kết cấu giấy",
-    dataIndex: "ket_cau_giay",
-    key: "ket_cau_giay",
-    align: "center",
-  },
-  {
-    title: "Ghi chú",
-    dataIndex: "note",
-    key: "note",
-    align: "center",
-  },
-  {
-    title: "Mặt F",
-    dataIndex: "ma_cuon_f",
-    key: "ma_cuon_f",
-    align: "center",
-  },
-  {
-    title: "Sóng E",
-    dataIndex: "ma_cuon_se",
-    key: "ma_cuon_se",
-    align: "center",
-  },
-  {
-    title: "Láng E",
-    dataIndex: "ma_cuon_le",
-    key: "ma_cuon_le",
-    align: "center",
-  },
-  {
-    title: "Sóng B",
-    dataIndex: "ma_cuon_sb",
-    key: "ma_cuon_sb",
-    align: "center",
-  },
-  {
-    title: "Láng B",
-    dataIndex: "ma_cuon_lb",
-    key: "sl",
-    align: "center",
-  },
-  {
-    title: "Sóng C",
-    dataIndex: "ma_cuon_sc",
-    key: "ma_cuon_sc",
-    align: "center",
-  },
-  {
-    title: "Láng C",
-    dataIndex: "ma_cuon_lc",
-    key: "ma_cuon_lc",
-    align: "center",
-  },
-];
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  record,
+  index,
+  children,
+  ...restProps
+}) => {
+  return (
+    <td {...restProps}>
+      {editing ? (
+        <Form.Item
+          name={dataIndex}
+          style={{
+            margin: 0,
+          }}
+          rules={[
+            {
+              required: true,
+              message: `Vui lòng nhập ${title}!`,
+            },
+          ]}
+          initialValue={record?.[dataIndex]}
+        >
+          <Input />
+        </Form.Item>
+      ) : (
+        children
+      )}
+    </td>
+  );
+};
+
 const formFields = [
   {
     title: "Mã buyer",
@@ -199,6 +154,181 @@ const Buyer = () => {
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
+  const [editingKey, setEditingKey] = useState("");
+  const isEditing = (record) => record.key === editingKey;
+
+  const col_detailTable = [
+    {
+      title: "Mã buyer",
+      dataIndex: "id",
+      key: "id",
+      align: "center",
+      fixed: "left",
+      editable: true,
+    },
+    {
+      title: "Mã khách hàng",
+      dataIndex: "customer_id",
+      key: "customer_id",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Buyer viết tắt",
+      dataIndex: "buyer_vt",
+      key: "buyer_vt",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Phân loại",
+      dataIndex: "type",
+      key: "type",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Kết cấu giấy",
+      dataIndex: "ket_cau_giay",
+      key: "ket_cau_giay",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "note",
+      key: "note",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Mặt F",
+      dataIndex: "ma_cuon_f",
+      key: "ma_cuon_f",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Sóng E",
+      dataIndex: "ma_cuon_se",
+      key: "ma_cuon_se",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Láng E",
+      dataIndex: "ma_cuon_le",
+      key: "ma_cuon_le",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Sóng B",
+      dataIndex: "ma_cuon_sb",
+      key: "ma_cuon_sb",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Láng B",
+      dataIndex: "ma_cuon_lb",
+      key: "sl",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Sóng C",
+      dataIndex: "ma_cuon_sc",
+      key: "ma_cuon_sc",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Láng C",
+      dataIndex: "ma_cuon_lc",
+      key: "ma_cuon_lc",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      align: "center",
+      fixed: "right",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Lưu
+            </Typography.Link>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+              <a>Hủy</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <Typography.Link
+            disabled={editingKey !== ""}
+            onClick={() => edit(record)}
+          >
+            Sửa
+          </Typography.Link>
+        );
+      },
+    },
+  ];
+
+  const edit = (record) => {
+    form.setFieldsValue({
+      ...record,
+    });
+    setEditingKey(record.key);
+  };
+  const cancel = () => {
+    setEditingKey("");
+  };
+  const save = async (key) => {
+    try {
+      const row = await form.validateFields();
+      const newData = [...data];
+      const index = newData.findIndex((item) => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        setData(newData);
+        setEditingKey("");
+      } else {
+        newData.push(row);
+        setData(newData);
+        setEditingKey("");
+      }
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
+
+  const mergedColumns = col_detailTable.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -415,18 +545,26 @@ const Buyer = () => {
             }
           >
             <Spin spinning={loading}>
-              <Table
-                size="small"
-                bordered
-                pagination={{ position: ["bottomRight"] }}
-                scroll={{
-                  x: "130vw",
-                  y: "80vh",
-                }}
-                columns={col_detailTable}
-                dataSource={data}
-                rowSelection={rowSelection}
-              />
+              <Form form={form} component={false}>
+                <Table
+                  size="small"
+                  bordered
+                  pagination={{ position: ["bottomRight"] }}
+                  scroll={{
+                    x: "130vw",
+                    y: "80vh",
+                  }}
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  rowClassName="editable-row"
+                  columns={mergedColumns}
+                  dataSource={data}
+                  rowSelection={rowSelection}
+                />
+              </Form>
             </Spin>
           </Card>
         </Col>
