@@ -53,6 +53,7 @@ import QCByMachine from "../pages/OI/Quality/QCByMachine";
 import QCByLine from "../pages/OI/Quality/QCByLine";
 import Orders from "../pages/UI/MasterData/Orders";
 import Layout from "../pages/UI/Manufacture/Layout";
+import Buyer from "../pages/UI/Manufacture/Buyer";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -65,7 +66,10 @@ const authProtectedRoutes = [
   // UI
   { path: ["/ui", "/ui/home"], component: UI },
   { path: ["/ui/manufacture/ke-hoach-san-xuat"], component: UIManufactureKHSX },
-  { path: ["/ui/manufacture/tao-ke-hoach-san-xuat"], component: UITaoKeHoachSanXuat },
+  {
+    path: ["/ui/manufacture/tao-ke-hoach-san-xuat"],
+    component: UITaoKeHoachSanXuat,
+  },
   { path: ["/ui/manufacture/lich-su-san-xuat"], component: UIManufactureLSSX },
   { path: ["/ui/manufacture/layout"], component: Layout },
   { path: ["/ui/quality/PQC"], component: UIQualityPQC },
@@ -113,6 +117,7 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/jig"], component: Jig },
   { path: ["/ui/master-data/maintenance"], component: Maintenance },
   { path: ["/ui/manufacture/don-hang"], component: Orders },
+  { path: ["/ui/manufacture/danh-sach-buyer"], component: Buyer },
   {
     path: ["/ui/master-data/maintenance/create"],
     component: CreateMaintenance,
