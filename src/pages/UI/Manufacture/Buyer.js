@@ -44,12 +44,6 @@ const EditableCell = ({
           style={{
             margin: 0,
           }}
-          rules={[
-            {
-              required: true,
-              message: `Vui lòng nhập ${title}!`,
-            },
-          ]}
           initialValue={record?.[dataIndex]}
         >
           <Input />
@@ -272,16 +266,65 @@ const Buyer = () => {
             </Popconfirm>
           </span>
         ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-          >
-            Sửa
-          </Typography.Link>
+          <span>
+            <Typography.Link
+              onClick={() => {
+                form.resetFields();
+                setData([
+                  ...data,
+                  {
+                    key: data.length + 1,
+                    id: "",
+                    customer_id: "",
+                    buyer_vt: "",
+                    type: "",
+                    ket_cau_giay: "",
+                    note: "",
+                    ma_cuon_f: "",
+                    ma_cuon_se: "",
+                    ma_cuon_le: "",
+                    ma_cuon_sb: "",
+                    ma_cuon_lb: "",
+                    ma_cuon_sc: "",
+                    ma_cuon_lc: "",
+                  },
+                ]);
+                setEditingKey(data.length + 1);
+              }}
+              style={{ marginLeft: 8 }}
+            >
+              Thêm
+            </Typography.Link>
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa?"
+              onConfirm={() => deleteItem(record.key)}
+            >
+              <Typography.Link
+                style={{ color: "red", marginLeft: 8, marginRight: 8 }}
+              >
+                Xóa
+              </Typography.Link>
+            </Popconfirm>
+            <Typography.Link
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            >
+              Sửa
+            </Typography.Link>
+          </span>
         );
       },
     },
   ];
+
+  const deleteItem = async (key) => {
+    const newData = [...data];
+    const index = newData.findIndex((item) => key === item.key);
+    if (index > -1) {
+      newData.splice(index, 1);
+      setData(newData);
+    }
+  };
 
   const edit = (record) => {
     form.setFieldsValue({
@@ -290,6 +333,11 @@ const Buyer = () => {
     setEditingKey(record.key);
   };
   const cancel = () => {
+    if (typeof editingKey === "number") {
+      const newData = [...data];
+      newData.pop();
+      setData(newData);
+    }
     setEditingKey("");
   };
   const save = async (key) => {
@@ -302,6 +350,7 @@ const Buyer = () => {
         newData.splice(index, 1, {
           ...item,
           ...row,
+          key: row.id,
         });
         setData(newData);
         setEditingKey("");
@@ -310,6 +359,7 @@ const Buyer = () => {
         setData(newData);
         setEditingKey("");
       }
+      form.resetFields();
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
@@ -474,7 +524,7 @@ const Buyer = () => {
         <Col span={21}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý đơn hàng"
+            title="Quản lý Buyer"
             extra={
               <Space>
                 <Upload
