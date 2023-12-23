@@ -543,12 +543,30 @@ export async function updateOrder(params){
     return res.data;
 }
 export async function deleteOrders(params){
-    const res = await axios.post('/orders/delete', params);
+    const res = await axios.delete('/orders/delete', {params});
     return res.data;
 }
 export async function exportOrders(params){
     const res = await axios.get('/orders/export', {params});
     return res;
+}
+
+//Buyers
+export async function getBuyers(params){
+  const res = await axios.get('/buyers/list', {params});
+  return res.data;
+}
+export async function createBuyers(params){
+  const res = await axios.post('/buyers/create', params);
+  return res.data;
+}
+export async function updateBuyers(params){
+  const res = await axios.patch('/buyers/update', params);
+  return res.data;
+}
+export async function deleteBuyers(params){
+  const res = await axios.delete('/buyers/delete', {params});
+  return res.data;
 }
 
 export async function getTem(params){

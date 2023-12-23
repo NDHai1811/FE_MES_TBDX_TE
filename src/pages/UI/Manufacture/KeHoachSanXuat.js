@@ -605,14 +605,8 @@ const KeHoachSanXuat = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button type="primary" onClick={deleteRecord}>
-                  Delete
-                </Button>
-                <Button type="primary" onClick={editRecord}>
-                  Edit
-                </Button>
                 <Button type="primary" onClick={insertRecord}>
-                  Insert
+                  Tạo kế hoạch
                 </Button>
               </Space>
             }

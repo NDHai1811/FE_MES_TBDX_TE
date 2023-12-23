@@ -7,18 +7,16 @@ import {
   Button,
   Form,
   Input,
-  Select,
   Upload,
   message,
   Space,
-  Modal,
   Spin,
   Popconfirm,
   Typography,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import { createOrder, exportOrders, updateOrder } from "../../../api";
+import { createBuyers, createOrder, deleteBuyers, exportOrders, updateBuyers, updateOrder } from "../../../api";
 import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -291,6 +289,7 @@ const Buyer = () => {
     const newData = [...data];
     const index = newData.findIndex((item) => key === item.key);
     if (index > -1) {
+      const res = await deleteBuyers({id:key});
       newData.splice(index, 1);
       setData(newData);
     }
@@ -340,6 +339,7 @@ const Buyer = () => {
       const row = await form.validateFields();
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
+      console.log(index);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
@@ -347,9 +347,11 @@ const Buyer = () => {
           ...row,
           key: row.id,
         });
+        const res = await updateBuyers(row);
         setData(newData);
         setEditingKey("");
       } else {
+        const res = await createBuyers(row);
         newData.push(row);
         setData(newData);
         setEditingKey("");
@@ -566,83 +568,6 @@ const Buyer = () => {
           </Card>
         </Col>
       </Row>
-      <Modal
-        title={isEdit ? "Cập nhật" : "Thêm mới"}
-        open={openMdl}
-        onCancel={() => setOpenMdl(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt") {
-                if (e?.children?.length > 0) {
-                  return e.children.map((c, index) => {
-                    return (
-                      <Col span={!c.hidden ? 12 / e.children.length : 0}>
-                        <Form.Item
-                          name={[e.key, c.key]}
-                          className="mb-3"
-                          label={e.title + " - " + c.title}
-                          hidden={c.hidden}
-                          rules={[{ required: c.required }]}
-                        >
-                          {!c.isTrueFalse ? (
-                            <Input
-                              disabled={
-                                c.disabled || (isEdit && c.key === "id")
-                              }
-                            ></Input>
-                          ) : (
-                            <Select>
-                              <Select.Option value={1}>Có</Select.Option>
-                              <Select.Option value={0}>Không</Select.Option>
-                            </Select>
-                          )}
-                        </Form.Item>
-                      </Col>
-                    );
-                  });
-                } else {
-                  return (
-                    <Col span={!e.hidden ? 12 : 0}>
-                      <Form.Item
-                        name={e.key}
-                        className="mb-3"
-                        label={e.title}
-                        hidden={e.hidden}
-                        rules={[{ required: e.required }]}
-                      >
-                        {!e.isTrueFalse ? (
-                          <Input
-                            disabled={e.disabled || (isEdit && e.key === "id")}
-                          ></Input>
-                        ) : (
-                          <Select>
-                            <Select.Option value={1}>Có</Select.Option>
-                            <Select.Option value={0}>Không</Select.Option>
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                  );
-                }
-              }
-            })}
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };

@@ -568,6 +568,7 @@ const Orders = () => {
 
   const onFinish = async (values) => {
     if (isEdit) {
+      values.id = editingKey;
       const res = await updateOrder(values);
       if (res) {
         form.resetFields();
@@ -594,6 +595,7 @@ const Orders = () => {
         setEditingKey("");
       }
     } else {
+      row.id = editingKey;
       const res = await updateOrder(row);
       if (res) {
         form.resetFields();
@@ -604,7 +606,7 @@ const Orders = () => {
   };
 
   const onDetele = async (record) => {
-    await deleteOrders(record);
+    await deleteOrders({id:record.id});
     loadListTable(params);
   };
 
@@ -745,83 +747,6 @@ const Orders = () => {
           </Card>
         </Col>
       </Row>
-      <Modal
-        title={isEdit ? "Cập nhật" : "Thêm mới"}
-        open={openMdl}
-        onCancel={() => setOpenMdl(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt") {
-                if (e?.children?.length > 0) {
-                  return e.children.map((c, index) => {
-                    return (
-                      <Col span={!c.hidden ? 12 / e.children.length : 0}>
-                        <Form.Item
-                          name={[e.key, c.key]}
-                          className="mb-3"
-                          label={e.title + " - " + c.title}
-                          hidden={c.hidden}
-                          rules={[{ required: c.required }]}
-                        >
-                          {!c.isTrueFalse ? (
-                            <Input
-                              disabled={
-                                c.disabled || (isEdit && c.key === "id")
-                              }
-                            ></Input>
-                          ) : (
-                            <Select>
-                              <Select.Option value={1}>Có</Select.Option>
-                              <Select.Option value={0}>Không</Select.Option>
-                            </Select>
-                          )}
-                        </Form.Item>
-                      </Col>
-                    );
-                  });
-                } else {
-                  return (
-                    <Col span={!e.hidden ? 12 : 0}>
-                      <Form.Item
-                        name={e.key}
-                        className="mb-3"
-                        label={e.title}
-                        hidden={e.hidden}
-                        rules={[{ required: e.required }]}
-                      >
-                        {!e.isTrueFalse ? (
-                          <Input
-                            disabled={e.disabled || (isEdit && e.key === "id")}
-                          ></Input>
-                        ) : (
-                          <Select>
-                            <Select.Option value={1}>Có</Select.Option>
-                            <Select.Option value={0}>Không</Select.Option>
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                  );
-                }
-              }
-            })}
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };
