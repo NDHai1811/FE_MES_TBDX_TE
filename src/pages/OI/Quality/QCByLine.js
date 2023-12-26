@@ -100,8 +100,8 @@ const QCByLine = (props) => {
   const checkingTable = [
     {
       title: line_id === "iqc" ? "Mã cuộn" : "Mã Lot",
-      dataIndex: line_id === "iqc" ? "material_id" : "lot_id",
-      key: line_id === "iqc" ? "material_id" : "lot_id",
+      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
+      key: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
       align: "center",
       width: "30%",
     },
@@ -114,8 +114,7 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow &&
-              !selectedRow?.checked_tinh_nang &&
+              selectedRow?.checked_tinh_nang === false &&
               setOpenModalCK1(true);
           },
         };
@@ -141,23 +140,22 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow &&
-              !selectedRow?.checked_ngoai_quan &&
+              selectedRow?.checked_ngoai_quan === false &&
               setOpenModalCK2(true);
           },
         };
       },
-      // render: () => (
-      //   <div onClick={() => setOpenModal(true)}>
-      //     <Checksheet2
-      //       text="Kiểm"
-      //       selectedLot={selectedRow}
-      //       onSubmit={onSubmitResult}
-      //       onClose={() => setOpenModal(false)}
-      //       line_id={line_id}
-      //     />
-      //   </div>
-      // ),
+      render: (text, record) => {
+        if(record.phan_dinh !== 0){
+          if(line_id === 'iqc'){
+            return record.phan_dinh === 1 ? 0 : 1
+          }else{
+            return record.sl_ng
+          }
+        }else{
+          return "-"
+        }
+      }
     },
     {
       title: "Số phế",
@@ -168,20 +166,21 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_sl_ng && setOpenModal1(true);
+            (selectedRow?.checked_sl_ng ===false && line_id !== 'iqc') && setOpenModal1(true);
           },
         };
       },
-      // render: (text, record) => (
-      //   <InputNumber
-      //     value={text}
-      //     onChange={(value) => handleInputChange(record, value)}
-      //     onPressEnter={(event) =>
-      //       onSubmitSLP({ sl_ng: event.target.value })
-      //     }
-      //     placeholder="Nhập số lượng"
-      //   />
-      // ),
+      render: (text, record) => {
+        if(record.phan_dinh !== 0){
+          if(line_id === 'iqc'){
+            return record.phan_dinh === 1 ? 0 : 1
+          }else{
+            return record.sl_ng
+          }
+        }else{
+          return "-"
+        }
+      }
     },
     {
       title: "Phán định",
@@ -206,8 +205,8 @@ const QCByLine = (props) => {
   const columns = [
     {
       title: line_id === "iqc" ? "Mã cuộn" : "Mã lot",
-      dataIndex: line_id === "iqc" ? "material_id" : "lot_id",
-      key: line_id === "iqc" ? "material_id" : "lot_id",
+      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
+      key: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
       align: "center",
     },
     {
@@ -249,8 +248,17 @@ const QCByLine = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      render: (value, record, index) =>
-        value ? value : record.checked_sl_ng ? value : "-",
+      render: (text, record) => {
+        if(record.phan_dinh !== 0){
+          if(line_id === 'iqc'){
+            return record.phan_dinh === 1 ? 0 : 1
+          }else{
+            return record.sl_ng
+          }
+        }else{
+          return "-"
+        }
+      }
     },
     {
       title: "Phán định",
@@ -281,7 +289,7 @@ const QCByLine = (props) => {
 
   const rowClassName = (record, index) => {
     if (line_id === "iqc") {
-      if (record.material_id === selectedRow?.material_id) {
+      if (record.ma_cuon_ncc === selectedRow?.ma_cuon_ncc) {
         return "table-row-green";
       }
     } else {
@@ -321,6 +329,7 @@ const QCByLine = (props) => {
     setLoading(true);
     var res = await getQCLine();
     const items = res.data.filter?.((val) => val.value !== "iqc");
+    console.log(items);
     line_id !== "iqc" && setMachines(items[0]?.machine);
     setLineOptions(
       res.data.filter?.((val) =>
