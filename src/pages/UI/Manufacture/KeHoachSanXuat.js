@@ -32,6 +32,7 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
+import { getMachineList } from "../../../api/ui/machine";
 
 const KeHoachSanXuat = () => {
   const history = useHistory();
@@ -45,6 +46,11 @@ const KeHoachSanXuat = () => {
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [machines, setMachines] = useState([]);
+  const [customer, setCustomer] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loSX, setLoSX] = useState([]);
+  const [quyCach, setQuyCach] = useState([]);
   const onChangeChecbox = (e) => {
     if (e.target.checked) {
       if (!listCheck.includes(e.target.value)) {
@@ -60,19 +66,19 @@ const KeHoachSanXuat = () => {
   };
   const col_detailTable = [
     {
-      title: "Chọn",
-      dataIndex: "name1",
-      key: "name1",
-      render: (value, item, index) => (
-        <Checkbox value={item.id} onChange={onChangeChecbox}></Checkbox>
-      ),
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (value, item, index) => index+1,
       align: "center",
+      width:'2%'
     },
     {
       title: "Thứ tự ưu tiên",
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
+      width:'2%'
     },
     {
       title: "Lô sx",
@@ -91,12 +97,14 @@ const KeHoachSanXuat = () => {
       dataIndex: "ngay_dat_hang",
       key: "ngay_dat_hang",
       align: "center",
+      width:'5%'
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
+      width:'10%'
     },
     {
       title: "Mã đơn hàng",
@@ -139,12 +147,14 @@ const KeHoachSanXuat = () => {
       dataIndex: "ngay_sx",
       key: "ngay_sx",
       align: "center",
+      width:'5%'
     },
     {
       title: "Ngày giao hàng",
       dataIndex: "ngay_giao_hang",
       key: "ngay_giao_hang",
       align: "center",
+      width:'5%'
     },
     {
       title: "Ghi chú",
@@ -273,23 +283,22 @@ const KeHoachSanXuat = () => {
     loadListTable(params);
   }
 
-  // useEffect(() => {
-  //   (async () => {
-  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-  //     if (res.success) {
-  //       setListNameProducts(
-  //         res.data.product.map((e) => {
-  //           return { ...e, label: e.name, value: e.id };
-  //         })
-  //       );
-  //       setListLoSX(
-  //         Object.values(res.data.lo_sx).map((e) => {
-  //           return { label: e, value: e };
-  //         })
-  //       );
-  //     }
-  //   })();
-  // }, [params.khach_hang]);
+  useEffect(() => {
+    (async () => {
+      const res1 = await getMachineList();
+      setMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+      const res2 = await getMachineList();
+      setMachines(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+      const res3 = await getMachineList();
+      setMachines(res3.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+      const res4 = await getMachineList();
+      setMachines(res4.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+      const res5 = await getMachineList();
+      setMachines(res5.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+      const res6 = await getMachineList();
+      setMachines(res6.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+    })();
+  }, []);
 
   const [data, setData] = useState([]);
   const loadListTable = async (params) => {
@@ -478,8 +487,8 @@ const KeHoachSanXuat = () => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
+                    onChange={(value) => setParams({ ...params, machine_id: value })}
+                    options={machines}
                   />
                 </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
@@ -617,7 +626,7 @@ const KeHoachSanXuat = () => {
                 bordered
                 pagination={false}
                 scroll={{
-                  x: "180vw",
+                  x: "200vw",
                   y: "80vh",
                 }}
                 columns={col_detailTable}
