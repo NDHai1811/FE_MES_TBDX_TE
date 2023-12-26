@@ -20,14 +20,15 @@ import {
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
   getIQCOverall,
+  getQCOverall,
   getLotIQCList,
+  getLotQCList,
   getQCLine,
   sendIQCResult,
   sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
-import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
@@ -316,15 +317,11 @@ const QCByLine = (props) => {
     getListOption();
   }, []);
 
-  const getMachineList = () => {
-    getMachines()
-      .then((res) => setMachines(res.data))
-      .catch((err) => console.log("Get machines error: ", err));
-  };
-
   const getListOption = async () => {
     setLoading(true);
     var res = await getQCLine();
+    const items = res.data.filter?.((val) => val.value !== "iqc");
+    line_id !== "iqc" && setMachines(items[0]?.machine);
     setLineOptions(
       res.data.filter?.((val) =>
         isIqc ? val.value === "iqc" : val.value !== "iqc"
@@ -332,29 +329,50 @@ const QCByLine = (props) => {
     );
     setLoading(false);
   };
-  console.log({data});
+
   async function getData() {
     setLoading(true);
-    var overall = await getIQCOverall({ ...params, line_id: line_id });
-    setOverall(overall.data);
-    var res = await getLotIQCList({ ...params, line_id: line_id });
-    setData(res.data);
-    if (res.data.length > 0) {
-      var current = res.data.find((e) => e.id === selectedRow?.id);
-      if (
-        current?.log?.phan_dinh &&
-        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
-      ) {
-        setSelectedRow();
+    if (isIqc) {
+      var overall = await getIQCOverall({ ...params, line_id: line_id });
+      setOverall(overall.data);
+      var res = await getLotIQCList({ ...params, line_id: line_id });
+      setData(res.data);
+      if (res.data.length > 0) {
+        var current = res.data.find((e) => e.id === selectedRow?.id);
+        if (
+          current?.log?.phan_dinh &&
+          current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+        ) {
+          setSelectedRow();
+        }
+      }
+    } else {
+      var overall = await getQCOverall({ ...params, machine: machines });
+      setOverall(overall.data);
+      var res = await getLotQCList({ ...params, machine: machines });
+      setData(res.data);
+      if (res.data.length > 0) {
+        var current = res.data.find((e) => e.id === selectedRow?.id);
+        if (
+          current?.log?.phan_dinh &&
+          current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+        ) {
+          setSelectedRow();
+        }
       }
     }
     setLoading(false);
   }
   useEffect(() => {
-    if (line_id) {
+    if (line_id === "iqc") {
       getData();
     }
   }, [line_id]);
+
+  useEffect(() => {
+    machines.length > 0 && getData();
+  }, [machines]);
+
   useEffect(() => {
     if (lineOptions.length > 0) {
       var target = lineOptions.find((e) => e.value === line_id);
@@ -369,6 +387,8 @@ const QCByLine = (props) => {
     }
   }, [lineOptions]);
   const onChangeLine = (value) => {
+    const item = lineOptions?.find((val) => val.value === value);
+    setMachines(item?.machine);
     if (qcPermission.length > 0) {
       history.push("/quality/qc/" + value);
     } else {
