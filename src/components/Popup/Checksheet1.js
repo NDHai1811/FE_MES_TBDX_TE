@@ -4,7 +4,6 @@ import {
   Row,
   Col,
   Button,
-  Divider,
   Radio,
   Space,
   InputNumber,
@@ -15,9 +14,16 @@ import React, { useState } from "react";
 import "./popupStyle.scss";
 import { useEffect } from "react";
 import { getChecksheetList, getIQCChecksheetList } from "../../api/oi/quality";
-import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 const Checksheet1 = (props) => {
-  const { text, selectedLot, onSubmit, machine_id = null, line_id = null, open, setOpen } = props;
+  const {
+    text,
+    selectedLot,
+    onSubmit,
+    machine_id = null,
+    line_id = null,
+    open,
+    setOpen,
+  } = props;
   const closeModal = () => {
     setOpen(false);
     form.resetFields();
@@ -30,17 +36,19 @@ const Checksheet1 = (props) => {
     console.log(values);
     if (selectedLot?.lot_id) {
       Object.keys(values["tinh_nang"]).forEach((key) => {
-        const isNullish = Object.values(values["tinh_nang"][key]).every((value) => {
-          if (!value) {
-            return true;
+        const isNullish = Object.values(values["tinh_nang"][key]).every(
+          (value) => {
+            if (!value) {
+              return true;
+            }
+            return false;
           }
-          return false;
-        });
+        );
         if (isNullish) {
           delete values["tinh_nang"][key];
         }
-        const error = checksheet.find(e=>e.id === key);
-        values["tinh_nang"][key]['name'] = error?.name;
+        const error = checksheet.find((e) => e.id === key);
+        values["tinh_nang"][key]["name"] = error?.name;
       });
       closeModal();
       onSubmit(values);
@@ -50,10 +58,17 @@ const Checksheet1 = (props) => {
     if (selectedLot) {
       (async () => {
         if (machine_id) {
-          var res = await getChecksheetList({ machine_id: machine_id, lo_sx: selectedLot?.lo_sx });
+          var res = await getChecksheetList({
+            machine: [machine_id],
+            lo_sx: selectedLot?.lo_sx,
+          });
           setChecksheet(res.data);
         } else {
-          var res = await getIQCChecksheetList({ line_id: line_id, lo_sx: selectedLot?.lo_sx, ma_vat_tu: selectedLot?.ma_vat_tu });
+          var res = await getIQCChecksheetList({
+            line_id: line_id,
+            lo_sx: selectedLot?.lo_sx,
+            ma_vat_tu: selectedLot?.ma_vat_tu,
+          });
           setChecksheet(res.data);
         }
       })();
@@ -65,8 +80,8 @@ const Checksheet1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const onSubmitFail = ({ values, errorFields, outOfDate }) => {
     // console.log(values, errorFields, outOfDate);
-    messageApi.error('Chưa hoàn thành chỉ tiêu kiểm tra')
-  }
+    messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
+  };
   return (
     <React.Fragment>
       {contextHolder}
@@ -86,21 +101,34 @@ const Checksheet1 = (props) => {
                 {text}
             </Button> */}
       <Modal
-        title={"Kiểm tra "+text}
+        title={"Kiểm tra " + text}
         open={open}
         onCancel={closeModal}
         footer={
-          (
-            <Space>
-              <Button onClick={() => { onSubmit({ tinh_nang: [] }); closeModal() }} type="primary">Duyệt</Button>
-              <Button onClick={() => form.submit()} type="primary">Lưu</Button>
-              <Button onClick={() => setOpen(false)}>Huỷ</Button>
-            </Space>
-          )
+          <Space>
+            <Button
+              onClick={() => {
+                onSubmit({ tinh_nang: [] });
+                closeModal();
+              }}
+              type="primary"
+            >
+              Duyệt
+            </Button>
+            <Button onClick={() => form.submit()} type="primary">
+              Lưu
+            </Button>
+            <Button onClick={() => setOpen(false)}>Huỷ</Button>
+          </Space>
         }
         width={500}
       >
-        <Form form={form} onFinish={onFinish} colon={false} onFinishFailed={onSubmitFail}>
+        <Form
+          form={form}
+          onFinish={onFinish}
+          colon={false}
+          onFinishFailed={onSubmitFail}
+        >
           <Form.List name={"tinh_nang"}>
             {(fields, { add, remove }, { errors }) =>
               (checksheet ?? []).map((e, index) => {
@@ -123,10 +151,20 @@ const Checksheet1 = (props) => {
                           {e.name}
                           {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
                         </div>
-                        <Form.Item noStyle name={[e.id, "name"]} hidden initialValue={e.name} shouldUpdate={true}></Form.Item>
+                        <Form.Item
+                          noStyle
+                          name={[e.id, "name"]}
+                          hidden
+                          initialValue={e.name}
+                          shouldUpdate={true}
+                        ></Form.Item>
                       </Col>
                       <Col span={6}>
-                        <Form.Item noStyle name={[e.id, "value"]} rules={[{ required: true }]}>
+                        <Form.Item
+                          noStyle
+                          name={[e.id, "value"]}
+                          rules={[{ required: true }]}
+                        >
                           <InputNumber
                             className=" text-center h-100 d-flex align-items-center justify-content-center"
                             inputMode="numeric"
@@ -136,16 +174,12 @@ const Checksheet1 = (props) => {
                             onChange={(value) =>
                               form.setFieldValue(
                                 ["tinh_nang", e.id, "result"],
-                                !e?.max ?
-                                value >=
-                                  parseFloat(e.min)
-                                  ? 1
-                                  : 2
-                                :
-                                  parseFloat(value) >=
-                                  parseFloat(e.min) &&
-                                  value <=
-                                  parseFloat(e.max)
+                                !e?.max
+                                  ? value >= parseFloat(e.min)
+                                    ? 1
+                                    : 2
+                                  : parseFloat(value) >= parseFloat(e.min) &&
+                                    value <= parseFloat(e.max)
                                   ? 1
                                   : 2
                               )
@@ -169,7 +203,11 @@ const Checksheet1 = (props) => {
                                 <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
                                   OK/NG
                                 </Button>
-                              ) : getFieldValue(["tinh_nang", e.id, "result"]) === 1 ? (
+                              ) : getFieldValue([
+                                  "tinh_nang",
+                                  e.id,
+                                  "result",
+                                ]) === 1 ? (
                                 <Button
                                   className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
                                   style={{
@@ -215,7 +253,9 @@ const Checksheet1 = (props) => {
                           {e?.name}
                           {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
                         </div>
-                        <Form.Item noStyle name={[e.id, "name"]} hidden><Input value={e.name}/></Form.Item>
+                        <Form.Item noStyle name={[e.id, "name"]} hidden>
+                          <Input value={e.name} />
+                        </Form.Item>
                       </Col>
                       <Col span={12}>
                         <Form.Item name={[e.id, "result"]} noStyle>

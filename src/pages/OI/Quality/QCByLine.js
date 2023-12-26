@@ -7,7 +7,6 @@ import {
   Spin,
   Form,
   InputNumber,
-  message,
   Radio,
   DatePicker,
   Select,
@@ -19,13 +18,10 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { getListMachine } from "../../../api";
 import {
   getIQCOverall,
   getLotIQCList,
-  getLotQCList,
   getQCLine,
-  getQCOverall,
   sendIQCResult,
   sendQCResult,
 } from "../../../api/oi/quality";
@@ -33,7 +29,6 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
-import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
 const QCByLine = (props) => {
@@ -43,10 +38,8 @@ const QCByLine = (props) => {
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
-  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
   const [lineOptions, setLineOptions] = useState([]);
-  const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
   const [overall, setOverall] = useState([]);
   const { userProfile } = useProfile();
@@ -55,6 +48,12 @@ const QCByLine = (props) => {
   const qcPermission = ["pqc", "oqc", "iqc"].filter((value) =>
     (userProfile?.permission ?? []).includes(value)
   );
+  const userPermissions = JSON.parse(
+    window.localStorage.getItem("authUser")
+  ).permission;
+
+  const isIqc = userPermissions?.some((val) => val === "iqc");
+
   const overallColumns = [
     {
       title: qcPermission.length > 0 ? "IQC/PQC/OQC" : "Công đoạn",
@@ -99,9 +98,9 @@ const QCByLine = (props) => {
 
   const checkingTable = [
     {
-      title: "Mã Lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      title: line_id === "iqc" ? "Mã cuộn" : "Mã Lot",
+      dataIndex: line_id === "iqc" ? "material_id" : "lot_id",
+      key: line_id === "iqc" ? "material_id" : "lot_id",
       align: "center",
       width: "30%",
     },
@@ -114,8 +113,10 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
-          }
+            selectedRow &&
+              !selectedRow?.checked_tinh_nang &&
+              setOpenModalCK1(true);
+          },
         };
       },
       // render: () => (
@@ -139,8 +140,10 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
-          }
+            selectedRow &&
+              !selectedRow?.checked_ngoai_quan &&
+              setOpenModalCK2(true);
+          },
         };
       },
       // render: () => (
@@ -165,7 +168,7 @@ const QCByLine = (props) => {
         return {
           onClick: () => {
             selectedRow && !selectedRow?.checked_sl_ng && setOpenModal1(true);
-          }
+          },
         };
       },
       // render: (text, record) => (
@@ -201,32 +204,34 @@ const QCByLine = (props) => {
 
   const columns = [
     {
-      title: "Mã cuộn",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      title: line_id === "iqc" ? "Mã cuộn" : "Mã lot",
+      dataIndex: line_id === "iqc" ? "material_id" : "lot_id",
+      key: line_id === "iqc" ? "material_id" : "lot_id",
       align: "center",
-      width: "32%",
     },
     {
-      title: line_id === 'iqc' ? "Nhà cung cấp" : "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      title: line_id === "iqc" ? "Nhà cung cấp" : "Khách hàng",
+      dataIndex: line_id === "iqc" ? "ten_ncc" : "khach_hang",
+      key: line_id === "iqc" ? "ten_ncc" : "khach_hang",
       align: "center",
-      width: "16%",
     },
     {
       title: "Sản lượng đầu ra",
       dataIndex: "sl_dau_ra_hang_loat",
       key: "sl_dau_ra_hang_loat",
       align: "center",
-      width: "18%",
+    },
+    {
+      title: "Số lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
     },
     {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      width: "18%",
       render: (value, record, index) =>
         value ? value : record.checked_tinh_nang ? value : "-",
     },
@@ -235,7 +240,6 @@ const QCByLine = (props) => {
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
         value ? value : record.checked_ngoai_quan ? value : "-",
     },
@@ -244,7 +248,6 @@ const QCByLine = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
         value ? value : record.checked_sl_ng ? value : "-",
     },
@@ -253,7 +256,6 @@ const QCByLine = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      width: "16%",
       render: (value) => {
         switch (value) {
           case 0:
@@ -277,8 +279,14 @@ const QCByLine = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record.lot_id === selectedRow?.lot_id) {
-      return "table-row-green";
+    if (line_id === "iqc") {
+      if (record.material_id === selectedRow?.material_id) {
+        return "table-row-green";
+      }
+    } else {
+      if (record.lot_id === selectedRow?.lot_id) {
+        return "table-row-green";
+      }
     }
     switch (record.phan_dinh) {
       case 0:
@@ -317,19 +325,26 @@ const QCByLine = (props) => {
   const getListOption = async () => {
     setLoading(true);
     var res = await getQCLine();
-    console.log(res);
-    setLineOptions(res.data);
+    setLineOptions(
+      res.data.filter?.((val) =>
+        isIqc ? val.value === "iqc" : val.value !== "iqc"
+      )
+    );
     setLoading(false);
   };
+  console.log({data});
   async function getData() {
     setLoading(true);
     var overall = await getIQCOverall({ ...params, line_id: line_id });
     setOverall(overall.data);
     var res = await getLotIQCList({ ...params, line_id: line_id });
     setData(res.data);
-    if(res.data.length > 0){
-      var current = res.data.find(e=>e.id===selectedRow?.id);
-      if(current?.log?.phan_dinh && current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh){
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.log?.phan_dinh &&
+        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+      ) {
         setSelectedRow();
       }
     }
@@ -342,23 +357,22 @@ const QCByLine = (props) => {
   }, [line_id]);
   useEffect(() => {
     if (lineOptions.length > 0) {
-      var target = lineOptions.find(e=>e.value === line_id);
-      if(!target){
+      var target = lineOptions.find((e) => e.value === line_id);
+      if (!target) {
         target = lineOptions[0];
       }
-      console.log(target);
-      if(qcPermission.length > 0){
-        history.push('/quality/qc/'+target.value);
-      }else{
-        history.push('/quality/sx/'+target.value);
+      if (qcPermission.length > 0) {
+        history.push("/quality/qc/" + target.value);
+      } else {
+        history.push("/quality/sx/" + target.value);
       }
     }
   }, [lineOptions]);
   const onChangeLine = (value) => {
-    if(qcPermission.length > 0){
-      history.push('/quality/qc/'+value);
-    }else{
-      history.push('/quality/sx/'+value);
+    if (qcPermission.length > 0) {
+      history.push("/quality/qc/" + value);
+    } else {
+      history.push("/quality/sx/" + value);
     }
   };
   const [form1] = Form.useForm();
@@ -377,7 +391,7 @@ const QCByLine = (props) => {
     setOpenModal2(false);
     form2.resetFields();
   };
-  
+
   const [openModal1, setOpenModal1] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
 
@@ -389,13 +403,13 @@ const QCByLine = (props) => {
     } else if (values?.sl_ng_sx) {
       setSelectedRow({ ...selectedRow, checked_sl_ng: true });
     }
-    if(line_id === 'iqc'){
+    if (line_id === "iqc") {
       var res = await sendIQCResult({
         line_id: line_id,
         lot_id: selectedRow?.lot_id,
         data: values,
       });
-    }else{
+    } else {
       var res = await sendQCResult({
         machine_id: selectedRow?.machine_id,
         lot_id: selectedRow?.lot_id,
@@ -484,7 +498,8 @@ const QCByLine = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
-            x: window.screen.width,
+            x: "calc(700px + 50%)",
+            y: 350,
           }}
           pagination={false}
           bordered={true}
@@ -496,10 +511,7 @@ const QCByLine = (props) => {
             return {
               onClick: (event) => {
                 onClickRow(event, record);
-              }, // click row
-              // onDoubleClick: (event) => {
-              //   onDBClickRow(event, record, index);
-              // }, // double click row
+              },
             };
           }}
           components={{

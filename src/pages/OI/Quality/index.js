@@ -7,7 +7,6 @@ import {
   Spin,
   Form,
   InputNumber,
-  message,
   Radio,
   DatePicker,
   Select,
@@ -19,7 +18,6 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { getListMachine } from "../../../api";
 import {
   getLotQCList,
   getQCLine,
@@ -30,7 +28,6 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
-import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
 const Quality = (props) => {

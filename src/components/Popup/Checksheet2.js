@@ -14,7 +14,7 @@ import {
 import React, { useState } from "react";
 import "./popupStyle.scss";
 import { useEffect } from "react";
-import { getChecksheetList, scanError } from "../../api/oi/quality";
+import { scanError } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import ScanButton from "../Button/ScanButton";
 import { CloseOutlined } from "@ant-design/icons";

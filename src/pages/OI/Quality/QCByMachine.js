@@ -7,7 +7,6 @@ import {
   Spin,
   Form,
   InputNumber,
-  message,
   Radio,
   DatePicker,
   Select,
@@ -19,7 +18,6 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { getListMachine } from "../../../api";
 import {
   getLotQCList,
   getQCLine,
@@ -28,21 +26,16 @@ import {
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
-import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
-import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 
 const QCByMachine = (props) => {
   document.title = "Kiểm tra chất lượng";
   const { machine_id } = useParams();
   const history = useHistory();
-  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
-  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
-  const [lineOptions, setLineOptions] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
   const [overall, setOverall] = useState([]);
@@ -291,19 +284,17 @@ const QCByMachine = (props) => {
     getListOption();
   }, []);
 
-
   const getListOption = async () => {
     setLoading(true);
     var machine = await getQCLine();
-    console.log(machine);
     setMachineOptions(machine.data);
     setLoading(false);
   };
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({ ...params, machine_id: machine_id });
+    var overall = await getQCOverall({ ...params, machine: [machine_id] });
     setOverall(overall.data);
-    var res = await getLotQCList({ ...params, machine_id: machine_id });
+    var res = await getLotQCList({ ...params, machine: [machine_id] });
     setData(res.data);
     if (res.data.length > 0) {
       var current = res.data.find((e) => e?.id === selectedRow?.id);
@@ -319,7 +310,6 @@ const QCByMachine = (props) => {
     }
   }, [machine_id]);
   useEffect(() => {
-    console.log(machineOptions);
     if (machineOptions.length > 0) {
       var target = machineOptions.find((e) => e.value === machine_id);
       if (!target) {
