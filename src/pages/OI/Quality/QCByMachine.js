@@ -293,7 +293,6 @@ const QCByMachine = (props) => {
   async function getData() {
     setLoading(true);
     var overall = await getQCOverall({ ...params, machine: [machine_id] });
-    console.log('ccc');
     setOverall(overall.data);
     var res = await getLotQCList({ ...params, machine: [machine_id] });
     setData(res.data);
