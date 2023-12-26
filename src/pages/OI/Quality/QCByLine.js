@@ -31,6 +31,7 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
+import { useRef } from "react";
 
 const QCByLine = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -52,6 +53,7 @@ const QCByLine = (props) => {
   const userPermissions = JSON.parse(
     window.localStorage.getItem("authUser")
   ).permission;
+  const isGetOption = useRef(false);
 
   const isIqc = userPermissions?.some((val) => val === "iqc");
 
@@ -114,8 +116,7 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-              selectedRow?.checked_tinh_nang === false &&
-              setOpenModalCK1(true);
+            selectedRow?.checked_tinh_nang === false && setOpenModalCK1(true);
           },
         };
       },
@@ -140,22 +141,21 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-              selectedRow?.checked_ngoai_quan === false &&
-              setOpenModalCK2(true);
+            selectedRow?.checked_ngoai_quan === false && setOpenModalCK2(true);
           },
         };
       },
       render: (text, record) => {
-        if(record.phan_dinh !== 0){
-          if(line_id === 'iqc'){
-            return record.phan_dinh === 1 ? 0 : 1
-          }else{
-            return record.sl_ng
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ng;
           }
-        }else{
-          return "-"
+        } else {
+          return "-";
         }
-      }
+      },
     },
     {
       title: "Số phế",
@@ -166,21 +166,23 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            (selectedRow?.checked_sl_ng ===false && line_id !== 'iqc') && setOpenModal1(true);
+            selectedRow?.checked_sl_ng === false &&
+              line_id !== "iqc" &&
+              setOpenModal1(true);
           },
         };
       },
       render: (text, record) => {
-        if(record.phan_dinh !== 0){
-          if(line_id === 'iqc'){
-            return record.phan_dinh === 1 ? 0 : 1
-          }else{
-            return record.sl_ng
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ng;
           }
-        }else{
-          return "-"
+        } else {
+          return "-";
         }
-      }
+      },
     },
     {
       title: "Phán định",
@@ -249,16 +251,16 @@ const QCByLine = (props) => {
       key: "sl_ng",
       align: "center",
       render: (text, record) => {
-        if(record.phan_dinh !== 0){
-          if(line_id === 'iqc'){
-            return record.phan_dinh === 1 ? 0 : 1
-          }else{
-            return record.sl_ng
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ng;
           }
-        }else{
-          return "-"
+        } else {
+          return "-";
         }
-      }
+      },
     },
     {
       title: "Phán định",
@@ -321,65 +323,71 @@ const QCByLine = (props) => {
     }
   };
 
-  useEffect(() => {
-    getListOption();
-  }, []);
-
   const getListOption = async () => {
-    setLoading(true);
-    var res = await getQCLine();
-    const items = res.data.filter?.((val) => val.value !== "iqc");
-    console.log(items);
-    line_id !== "iqc" && setMachines(items[0]?.machine);
-    setLineOptions(
-      res.data.filter?.((val) =>
-        isIqc ? val.value === "iqc" : val.value !== "iqc"
-      )
-    );
-    setLoading(false);
+    if (!isGetOption.current) {
+      isGetOption.current = true;
+      setLoading(true);
+      var res = await getQCLine();
+      const items = res.data.filter?.((val) => val.value !== "iqc");
+      line_id !== "iqc" && setMachines(items[0]?.machine);
+      setLineOptions(
+        res.data.filter?.((val) =>
+          isIqc ? val.value === "iqc" : val.value !== "iqc"
+        )
+      );
+      if(line_id==='iqc'){
+        isGetOption.current = false;
+      }
+      setLoading(false);
+    }
   };
 
   async function getData() {
     setLoading(true);
-    if (isIqc) {
-      var overall = await getIQCOverall({ ...params, line_id: line_id });
-      setOverall(overall.data);
-      var res = await getLotIQCList({ ...params, line_id: line_id });
-      setData(res.data);
-      if (res.data.length > 0) {
-        var current = res.data.find((e) => e.id === selectedRow?.id);
-        if (
-          current?.log?.phan_dinh &&
-          current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
-        ) {
-          setSelectedRow();
-        }
-      }
-    } else {
-      var overall = await getQCOverall({ ...params, machine: machines });
-      setOverall(overall.data);
-      var res = await getLotQCList({ ...params, machine: machines });
-      setData(res.data);
-      if (res.data.length > 0) {
-        var current = res.data.find((e) => e.id === selectedRow?.id);
-        if (
-          current?.log?.phan_dinh &&
-          current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
-        ) {
-          setSelectedRow();
-        }
+    var overall = await getIQCOverall({ ...params, line_id: line_id });
+    setOverall(overall.data);
+    var res = await getLotIQCList({ ...params, line_id: line_id });
+    setData(res.data);
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.log?.phan_dinh &&
+        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+      ) {
+        setSelectedRow();
       }
     }
     setLoading(false);
   }
+
+  const getQcData = async () => {
+    setLoading(true);
+    var overall = await getQCOverall({ ...params, machine: machines });
+    setOverall(overall.data);
+    var res = await getLotQCList({ ...params, machine: machines });
+    setData(res.data);
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.log?.phan_dinh &&
+        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+      ) {
+        setSelectedRow();
+      }
+    }
+    setLoading(false);
+  };
   useEffect(() => {
-    if (line_id === "iqc") {
+    if (line_id === "iqc" && isIqc) {
       getData();
+      getListOption();
+    } else {
+      getListOption();
     }
   }, [line_id]);
 
   useEffect(() => {
-    machines.length > 0 && getData();
+    machines.length > 0 && getQcData();
   }, [machines]);
 
   useEffect(() => {

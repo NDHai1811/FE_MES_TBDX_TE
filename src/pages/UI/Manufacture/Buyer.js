@@ -16,7 +16,14 @@ import {
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import { createBuyers, createOrder, deleteBuyers, exportOrders, updateBuyers, updateOrder } from "../../../api";
+import {
+  createBuyers,
+  createOrder,
+  deleteBuyers,
+  exportOrders,
+  updateBuyers,
+  updateOrder,
+} from "../../../api";
 import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -50,87 +57,87 @@ const EditableCell = ({
   );
 };
 
-const formFields = [
-  {
-    title: "Mã buyer",
-    dataIndex: "id",
-    key: "id",
-    align: "center",
-    fixed: "left",
-  },
-  {
-    title: "Mã khách hàng",
-    dataIndex: "customer_id",
-    key: "customer_id",
-    align: "center",
-  },
-  {
-    title: "Buyer viết tắt",
-    dataIndex: "buyer_vt",
-    key: "buyer_vt",
-    align: "center",
-  },
-  {
-    title: "Phân loại",
-    dataIndex: "type",
-    key: "type",
-    align: "center",
-  },
-  {
-    title: "Kết cấu giấy",
-    dataIndex: "ket_cau_giay",
-    key: "ket_cau_giay",
-    align: "center",
-  },
-  {
-    title: "Ghi chú",
-    dataIndex: "note",
-    key: "note",
-    align: "center",
-  },
-  {
-    title: "Mặt F",
-    dataIndex: "ma_cuon_f",
-    key: "ma_cuon_f",
-    align: "center",
-  },
-  {
-    title: "Sóng E",
-    dataIndex: "ma_cuon_se",
-    key: "ma_cuon_se",
-    align: "center",
-  },
-  {
-    title: "Láng E",
-    dataIndex: "ma_cuon_le",
-    key: "ma_cuon_le",
-    align: "center",
-  },
-  {
-    title: "Sóng B",
-    dataIndex: "ma_cuon_sb",
-    key: "ma_cuon_sb",
-    align: "center",
-  },
-  {
-    title: "Láng B",
-    dataIndex: "ma_cuon_lb",
-    key: "sl",
-    align: "center",
-  },
-  {
-    title: "Sóng C",
-    dataIndex: "ma_cuon_sc",
-    key: "ma_cuon_sc",
-    align: "center",
-  },
-  {
-    title: "Láng C",
-    dataIndex: "ma_cuon_lc",
-    key: "ma_cuon_lc",
-    align: "center",
-  },
-];
+// const formFields = [
+//   {
+//     title: "Mã buyer",
+//     dataIndex: "id",
+//     key: "id",
+//     align: "center",
+//     fixed: "left",
+//   },
+//   {
+//     title: "Mã khách hàng",
+//     dataIndex: "customer_id",
+//     key: "customer_id",
+//     align: "center",
+//   },
+//   {
+//     title: "Buyer viết tắt",
+//     dataIndex: "buyer_vt",
+//     key: "buyer_vt",
+//     align: "center",
+//   },
+//   {
+//     title: "Phân loại",
+//     dataIndex: "type",
+//     key: "type",
+//     align: "center",
+//   },
+//   {
+//     title: "Kết cấu giấy",
+//     dataIndex: "ket_cau_giay",
+//     key: "ket_cau_giay",
+//     align: "center",
+//   },
+//   {
+//     title: "Ghi chú",
+//     dataIndex: "note",
+//     key: "note",
+//     align: "center",
+//   },
+//   {
+//     title: "Mặt F",
+//     dataIndex: "ma_cuon_f",
+//     key: "ma_cuon_f",
+//     align: "center",
+//   },
+//   {
+//     title: "Sóng E",
+//     dataIndex: "ma_cuon_se",
+//     key: "ma_cuon_se",
+//     align: "center",
+//   },
+//   {
+//     title: "Láng E",
+//     dataIndex: "ma_cuon_le",
+//     key: "ma_cuon_le",
+//     align: "center",
+//   },
+//   {
+//     title: "Sóng B",
+//     dataIndex: "ma_cuon_sb",
+//     key: "ma_cuon_sb",
+//     align: "center",
+//   },
+//   {
+//     title: "Láng B",
+//     dataIndex: "ma_cuon_lb",
+//     key: "sl",
+//     align: "center",
+//   },
+//   {
+//     title: "Sóng C",
+//     dataIndex: "ma_cuon_sc",
+//     key: "ma_cuon_sc",
+//     align: "center",
+//   },
+//   {
+//     title: "Láng C",
+//     dataIndex: "ma_cuon_lc",
+//     key: "ma_cuon_lc",
+//     align: "center",
+//   },
+// ];
 
 const Buyer = () => {
   document.title = "Quản lý Buyer";
@@ -144,7 +151,26 @@ const Buyer = () => {
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [editingKey, setEditingKey] = useState("");
+  const [keys, setKeys] = useState([
+    "id",
+    "customer_id",
+    "buyer_vt",
+    "type",
+    "ket_cau_giay",
+    "note",
+    "ma_cuon_f",
+    "ma_cuon_se",
+    "ma_cuon_le",
+    "ma_cuon_sb",
+    "ma_cuon_lb",
+    "ma_cuon_sc",
+    "ma_cuon_lc",
+  ]);
   const isEditing = (record) => record.key === editingKey;
+
+  const hasEditColumn = (value) => {
+    return keys.some((val) => val === value);
+  };
 
   const col_detailTable = [
     {
@@ -153,91 +179,91 @@ const Buyer = () => {
       key: "id",
       align: "center",
       fixed: "left",
-      editable: true,
+      editable: hasEditColumn("id"),
     },
     {
       title: "Mã khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("customer_id"),
     },
     {
       title: "Buyer viết tắt",
       dataIndex: "buyer_vt",
       key: "buyer_vt",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("buyer_vt"),
     },
     {
       title: "Phân loại",
       dataIndex: "type",
       key: "type",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("type"),
     },
     {
       title: "Kết cấu giấy",
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ket_cau_giay"),
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
       key: "note",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("note"),
     },
     {
       title: "Mặt F",
       dataIndex: "ma_cuon_f",
       key: "ma_cuon_f",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_f"),
     },
     {
       title: "Sóng E",
       dataIndex: "ma_cuon_se",
       key: "ma_cuon_se",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_se"),
     },
     {
       title: "Láng E",
       dataIndex: "ma_cuon_le",
       key: "ma_cuon_le",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_le"),
     },
     {
       title: "Sóng B",
       dataIndex: "ma_cuon_sb",
       key: "ma_cuon_sb",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_sb"),
     },
     {
       title: "Láng B",
       dataIndex: "ma_cuon_lb",
       key: "sl",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_lb"),
     },
     {
       title: "Sóng C",
       dataIndex: "ma_cuon_sc",
       key: "ma_cuon_sc",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_sc"),
     },
     {
       title: "Láng C",
       dataIndex: "ma_cuon_lc",
       key: "ma_cuon_lc",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("ma_cuon_lc"),
     },
     {
       title: "Hành động",
@@ -289,7 +315,7 @@ const Buyer = () => {
     const newData = [...data];
     const index = newData.findIndex((item) => key === item.key);
     if (index > -1) {
-      const res = await deleteBuyers({id:key});
+      const res = await deleteBuyers({ id: key });
       newData.splice(index, 1);
       setData(newData);
     }
@@ -362,7 +388,7 @@ const Buyer = () => {
     }
   };
 
-  const mergedColumns = col_detailTable.map((col) => {
+  const mergedColumns = col_detailTable?.map((col) => {
     if (!col.editable) {
       return col;
     }

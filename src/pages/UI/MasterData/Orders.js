@@ -7,11 +7,10 @@ import {
   Button,
   Form,
   Input,
-  Select,
   Upload,
   message,
   Space,
-  Modal,
+  DatePicker,
   Spin,
   Popconfirm,
   Typography,
@@ -28,6 +27,9 @@ import {
 } from "../../../api";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "../style.scss";
+import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
+import dayjs from "dayjs";
+import { formatDateTime } from "../../../commons/utils";
 
 const EditableCell = ({
   editing,
@@ -37,21 +39,39 @@ const EditableCell = ({
   record,
   index,
   children,
+  onChange,
   ...restProps
 }) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
+  let inputNode;
+  switch (inputType) {
+    case "number":
+      inputNode = <InputNumber />;
+      break;
+    default:
+      inputNode = <Input />;
+  }
+  const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
     <td {...restProps}>
       {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          initialValue={record?.[dataIndex]}
-        >
-          {inputNode}
-        </Form.Item>
+        inputType === "dateTime" ? (
+          <DatePicker
+            format={COMMON_DATE_TABLE_FORMAT_REQUEST}
+            placeholder="Chọn ngày"
+            value={dateValue}
+            onChange={(value) => value.isValid() && onChange(value, dataIndex)}
+          />
+        ) : (
+          <Form.Item
+            name={dataIndex}
+            style={{
+              margin: 0,
+            }}
+            initialValue={record?.[dataIndex]}
+          >
+            {inputNode}
+          </Form.Item>
+        )
       ) : (
         children
       )}
@@ -77,6 +97,7 @@ const Orders = () => {
       key: "ngay_dat_hang",
       align: "center",
       fixed: "left",
+      editable: true,
     },
     {
       title: "Khách hàng",
@@ -230,6 +251,7 @@ const Orders = () => {
       dataIndex: "han_giao",
       key: "han_giao",
       align: "center",
+      editable: true,
     },
     {
       title: "Ghi chú 2",
@@ -478,13 +500,26 @@ const Orders = () => {
           col.dataIndex === "price" ||
           col.dataIndex === "rong"
             ? "number"
+            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
+            ? "dateTime"
             : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        onChange,
       }),
     };
   });
+
+  const onChange = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    value.isValid() && setData(items);
+  };
 
   function btn_click() {
     loadListTable(params);
@@ -587,6 +622,21 @@ const Orders = () => {
 
   const onUpdate = async () => {
     const row = await form.validateFields();
+    const item = data.find((val) => val.key === editingKey);
+
+    if (item) {
+      row.ngay_dat_hang = formatDateTime(
+        item?.ngay_dat_hang,
+        COMMON_DATE_TABLE_FORMAT_REQUEST
+      );
+      row.han_giao = formatDateTime(
+        item?.han_giao,
+        COMMON_DATE_TABLE_FORMAT_REQUEST
+      );
+      !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
+      !item?.han_giao && delete row?.han_giao;
+    }
+
     if (typeof editingKey === "number") {
       const res = await createOrder(row);
       if (res) {
@@ -606,7 +656,7 @@ const Orders = () => {
   };
 
   const onDetele = async (record) => {
-    await deleteOrders({id:record.id});
+    await deleteOrders({ id: record.id });
     loadListTable(params);
   };
 
