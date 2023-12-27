@@ -30,6 +30,10 @@ export async function storeProductPlan(params) {
     const res = await axios.post("/product_plan/store", params);
     return res.data;
 }
+export async function createProductPlan(params) {
+    const res = await axios.post("ui/manufacture/create-plan", params);
+    return res.data;
+}
 
 export async function getBuyers(params) {
     const res = await axios.get("/ui/manufacture/buyer/list", { params });

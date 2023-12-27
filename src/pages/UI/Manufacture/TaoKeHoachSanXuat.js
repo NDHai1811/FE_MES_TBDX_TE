@@ -15,6 +15,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
 import {
+    createProductPlan,
     handleOrder,
     storeProductPlan,
 } from "../../../api/ui/manufacture";
@@ -34,7 +35,8 @@ const TaoKeHoachSanXuat = () => {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(false);
-    const [previewPlan, setPreviewPlan] = useState()
+    const [loadingPlans, setLoadingPlans] = useState(false);
+    const [previewPlan, setPreviewPlan] = useState([])
 
     const loadListOrders = async () => {
         setLoadingOrders(true);
@@ -44,7 +46,10 @@ const TaoKeHoachSanXuat = () => {
     };
 
     const onFinish = async (values) => {
-        const res = await storeProductPlan({...previewPlan, ...values});
+        const res = await createProductPlan({data: previewPlan});
+        if(res){
+            window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
+        }
     };
 
     const insertOrder = async () => {
@@ -65,8 +70,10 @@ const TaoKeHoachSanXuat = () => {
             machine_id: planParams.machine_id,
             start_time: dayjs(planParams.start_date).format('YYYY-MM-DD HH:mm:ss'),
         }
+        setLoadingPlans(true)
         const res = await handleOrder(inp);
-        setPreviewPlan(res.data)
+        setPreviewPlan(res.data);
+        setLoadingPlans(false)
 
     };
 
@@ -75,7 +82,7 @@ const TaoKeHoachSanXuat = () => {
             const res1 = await getMachineList();
             setListMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.name_input })))
         })();
     }, []);
 
@@ -103,8 +110,8 @@ const TaoKeHoachSanXuat = () => {
         },
         {
             title: 'Số lượng',
-            dataIndex: 'so_luong',
-            key: 'so_luong',
+            dataIndex: 'sl_kh',
+            key: 'sl_kh',
             align: 'center',
             width: '20%',
         },
@@ -129,6 +136,7 @@ const TaoKeHoachSanXuat = () => {
             dataIndex: 'nguoi_dat_hang',
             key: 'nguoi_dat_hang',
             align: 'center',
+            width:'10%'
         },
         {
             title: 'Mã đơn hàng',
@@ -263,7 +271,12 @@ const TaoKeHoachSanXuat = () => {
                                     <Table size='small' bordered
                                         pagination={false}
                                         columns={columnKHSX}
-                                        dataSource={previewPlan ? [previewPlan] : []} />
+                                        scroll={
+                                            {
+                                                y: '80vh'
+                                            }
+                                        }
+                                        dataSource={previewPlan} />
                                 </Card>
                             </Col>
                             <Col span={12}>
