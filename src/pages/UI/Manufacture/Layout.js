@@ -18,9 +18,7 @@ import {
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import {
-  getListLayout,
-} from "../../../api/ui/manufacture";
+import { getListLayout } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { createLayouts, deleteLayouts, updateLayouts } from "../../../api";
@@ -60,6 +58,7 @@ const Layout = () => {
   const [form] = Form.useForm();
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const [editingKey, setEditingKey] = useState("");
+  const [type, setType] = useState("");
   const [keys, setKeys] = useState([
     "machine_layout_id",
     "customer_id",
@@ -125,7 +124,7 @@ const Layout = () => {
       const row = await form.validateFields();
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
+      if (type === "update") {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
@@ -138,8 +137,8 @@ const Layout = () => {
         setEditingKey("");
       } else {
         await createLayouts(row);
-        newData.push(row);
-        setData(newData);
+        const items = [row, ...data.filter((val) => val.key !== key)];
+        setData(items);
         setEditingKey("");
       }
       form.resetFields();
@@ -178,7 +177,7 @@ const Layout = () => {
       dataIndex: "machine_layout_id",
       key: "machine_layout_id",
       align: "center",
-      width: '6%',
+      width: "6%",
       editable: hasEditColumn("machine_layout_id"),
     },
     {
@@ -193,7 +192,7 @@ const Layout = () => {
       dataIndex: "layout_id",
       key: "layout_id",
       align: "center",
-      width: '4%',
+      width: "4%",
       editable: hasEditColumn("layout_id"),
     },
     {
@@ -208,7 +207,7 @@ const Layout = () => {
       dataIndex: "tg_doi_model",
       key: "tg_doi_model",
       align: "center",
-      width: '4%',
+      width: "4%",
       editable: hasEditColumn("tg_doi_model"),
     },
     {
@@ -222,7 +221,7 @@ const Layout = () => {
           dataIndex: "ma_film_1",
           key: "ma_film_1",
           align: "center",
-          width: '6%',
+          width: "6%",
           editable: hasEditColumn("ma_film_1"),
         },
         {
@@ -273,7 +272,7 @@ const Layout = () => {
           dataIndex: "ma_film_2",
           key: "ma_film_2",
           align: "center",
-          width: '6%',
+          width: "6%",
           editable: hasEditColumn("ma_film_2"),
         },
         {
@@ -324,7 +323,7 @@ const Layout = () => {
           dataIndex: "ma_film_3",
           key: "ma_film_3",
           align: "center",
-          width: '6%',
+          width: "6%",
           editable: hasEditColumn("ma_film_3"),
         },
         {
@@ -375,7 +374,7 @@ const Layout = () => {
           dataIndex: "ma_film_4",
           key: "ma_film_4",
           align: "center",
-          width: '6%',
+          width: "6%",
           editable: hasEditColumn("ma_film_4"),
         },
         {
@@ -426,7 +425,7 @@ const Layout = () => {
           dataIndex: "ma_film_5",
           key: "ma_film_5",
           align: "center",
-          width: '6%',
+          width: "6%",
           editable: hasEditColumn("ma_film_5"),
         },
         {
@@ -596,6 +595,7 @@ const Layout = () => {
     ];
     setData(newData);
     setEditingKey(data.length + 1);
+    setType("add");
   };
 
   const cancel = (record) => {
@@ -648,6 +648,7 @@ const Layout = () => {
       ...record,
     });
     setEditingKey(record.key);
+    setType("update");
   };
 
   const onClose = () => {
@@ -689,7 +690,6 @@ const Layout = () => {
 
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
-
 
   return (
     <>
@@ -807,7 +807,6 @@ const Layout = () => {
                   pagination={true}
                   scroll={{
                     x: "280vw",
-
                   }}
                   components={{
                     body: {
