@@ -95,6 +95,17 @@ const EditableCell = ({
   );
 };
 
+const layoutTypes = [
+  {
+    label: "M",
+    value: "M",
+  },
+  {
+    label: "P8",
+    value: "P8",
+  },
+];
+
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
   const [openMdl, setOpenMdl] = useState(false);
@@ -195,6 +206,14 @@ const Orders = () => {
       title: "MQL",
       dataIndex: "mql",
       key: "mql",
+      align: "center",
+      editable: true,
+      width: "2%",
+    },
+    {
+      title: "Chia máy + p8",
+      dataIndex: "layout_type",
+      key: "layout_type",
       align: "center",
       editable: true,
       width: "2%",
@@ -481,7 +500,9 @@ const Orders = () => {
             ? "number"
             : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
             ? "dateTime"
-            : col.dataIndex === "buyer_id" || col.dataIndex === "layout_id"
+            : col.dataIndex === "buyer_id" ||
+              col.dataIndex === "layout_id" ||
+              col.dataIndex === "layout_type"
             ? "select"
             : "text",
         dataIndex: col.dataIndex,
@@ -489,7 +510,12 @@ const Orders = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: col.dataIndex === "buyer_id" ? buyers : layouts,
+        options:
+          col.dataIndex === "buyer_id"
+            ? buyers
+            : col.dataIndex === "layout_type"
+            ? layoutTypes
+            : layouts,
       }),
     };
   });
