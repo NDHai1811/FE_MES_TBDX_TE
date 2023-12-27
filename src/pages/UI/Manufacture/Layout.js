@@ -1,5 +1,4 @@
 import {
-  DatePicker,
   Col,
   Row,
   Card,
@@ -13,24 +12,18 @@ import {
   message,
   Checkbox,
   Space,
-  Modal,
   Spin,
-  Tree,
   Typography,
   Popconfirm,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import { getLines } from "../../../api/ui/main";
 import {
-  deleteRecordProductPlan,
   getListLayout,
-  storeProductPlan,
-  updateProductPlan,
 } from "../../../api/ui/manufacture";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { createLayouts, deleteLayouts, updateLayouts } from "../../../api";
 
 const EditableCell = ({
   editing,
@@ -62,22 +55,17 @@ const EditableCell = ({
 };
 
 const Layout = () => {
-  const history = useHistory();
-  const [listLines, setListLines] = useState([]);
-  const [listNameProducts, setListNameProducts] = useState([]);
-  const [listLoSX, setListLoSX] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
   const [listCheck, setListCheck] = useState([]);
-  const [openMdlEdit, setOpenMdlEdit] = useState(false);
-  const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
   const [editingKey, setEditingKey] = useState("");
   const [keys, setKeys] = useState([
     "machine_layout_id",
     "customer_id",
-    "khach_hang",
-    "machine_name",
+    "toc_do",
+    "tg_doi_model",
+    "machine_id",
     "layout_id",
     "ma_film_1",
     "ma_muc_1",
@@ -132,6 +120,42 @@ const Layout = () => {
       }
     }
   };
+  const save = async (key) => {
+    try {
+      const row = await form.validateFields();
+      const newData = [...data];
+      const index = newData.findIndex((item) => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+          key: row.id,
+        });
+        row.id = item.id;
+        await updateLayouts(row);
+        setData(newData);
+        setEditingKey("");
+      } else {
+        await createLayouts(row);
+        newData.push(row);
+        setData(newData);
+        setEditingKey("");
+      }
+      form.resetFields();
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
+  const deleteItem = async (key) => {
+    const newData = [...data];
+    const index = newData.findIndex((item) => key === item.key);
+    if (index > -1) {
+      await deleteLayouts({ id: newData[index].id });
+      newData.splice(index, 1);
+      setData(newData);
+    }
+  };
   const col_detailTable = [
     {
       title: "Chọn",
@@ -154,19 +178,13 @@ const Layout = () => {
       dataIndex: "machine_layout_id",
       key: "machine_layout_id",
       align: "center",
+      width: '6%',
       editable: hasEditColumn("machine_layout_id"),
     },
     {
-      title: "Tên khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-      editable: hasEditColumn("khach_hang"),
-    },
-    {
       title: "Tên máy",
-      dataIndex: "machine_name",
-      key: "machine_name",
+      dataIndex: "machine_id",
+      key: "machine_id",
       align: "center",
       editable: hasEditColumn("machine_name"),
     },
@@ -175,7 +193,23 @@ const Layout = () => {
       dataIndex: "layout_id",
       key: "layout_id",
       align: "center",
+      width: '4%',
       editable: hasEditColumn("layout_id"),
+    },
+    {
+      title: "Tốc độ",
+      dataIndex: "toc_do",
+      key: "toc_do",
+      align: "center",
+      editable: hasEditColumn("toc_do"),
+    },
+    {
+      title: "Thời gian đổi model(phút)",
+      dataIndex: "tg_doi_model",
+      key: "tg_doi_model",
+      align: "center",
+      width: '4%',
+      editable: hasEditColumn("tg_doi_model"),
     },
     {
       title: "Lô in 1",
@@ -188,6 +222,7 @@ const Layout = () => {
           dataIndex: "ma_film_1",
           key: "ma_film_1",
           align: "center",
+          width: '6%',
           editable: hasEditColumn("ma_film_1"),
         },
         {
@@ -238,6 +273,7 @@ const Layout = () => {
           dataIndex: "ma_film_2",
           key: "ma_film_2",
           align: "center",
+          width: '6%',
           editable: hasEditColumn("ma_film_2"),
         },
         {
@@ -288,6 +324,7 @@ const Layout = () => {
           dataIndex: "ma_film_3",
           key: "ma_film_3",
           align: "center",
+          width: '6%',
           editable: hasEditColumn("ma_film_3"),
         },
         {
@@ -338,6 +375,7 @@ const Layout = () => {
           dataIndex: "ma_film_4",
           key: "ma_film_4",
           align: "center",
+          width: '6%',
           editable: hasEditColumn("ma_film_4"),
         },
         {
@@ -388,6 +426,7 @@ const Layout = () => {
           dataIndex: "ma_film_5",
           key: "ma_film_5",
           align: "center",
+          width: '6%',
           editable: hasEditColumn("ma_film_5"),
         },
         {
@@ -442,10 +481,10 @@ const Layout = () => {
         },
         {
           title: "Vị trí lô bắt khuôn",
-          dataIndex: "vt_khuon",
-          key: "vt_khuon",
+          dataIndex: "vt_lo_bat_khuon",
+          key: "vt_lo_bat_khuon",
           align: "center",
-          editable: hasEditColumn("vt_khuon"),
+          editable: hasEditColumn("vt_lo_bat_khuon"),
         },
         {
           title: "Khối bế",
@@ -466,7 +505,7 @@ const Layout = () => {
         return editable ? (
           <span>
             <Typography.Link
-              onClick={onClose}
+              onClick={() => save(record.key)}
               style={{
                 marginRight: 8,
               }}
@@ -489,7 +528,7 @@ const Layout = () => {
             />
             <Popconfirm
               title="Bạn có chắc chắn muốn xóa?"
-              // onConfirm={onClose}
+              onConfirm={() => deleteItem(record.key)}
             >
               <DeleteOutlined
                 style={{
@@ -512,6 +551,8 @@ const Layout = () => {
         key: data.length + 1,
         id: "",
         customer_id: "",
+        toc_do: "",
+        tg_doi_model: "",
         layout_id: "",
         ma_film_1: "",
         ma_film_2: "",
@@ -524,6 +565,29 @@ const Layout = () => {
         ma_muc_3: "",
         ma_muc_4: "",
         ma_muc_5: "",
+        do_nhot_1: "",
+        do_nhot_2: "",
+        do_nhot_3: "",
+        do_nhot_4: "",
+        do_nhot_5: "",
+        vi_tri_film_1: "",
+        vi_tri_film_2: "",
+        vi_tri_film_3: "",
+        vi_tri_film_4: "",
+        vi_tri_film_5: "",
+        al_film_1: "",
+        al_film_2: "",
+        al_film_3: "",
+        al_film_4: "",
+        al_film_5: "",
+        al_muc_1: "",
+        al_muc_2: "",
+        al_muc_3: "",
+        al_muc_4: "",
+        al_muc_5: "",
+        vt_lo_bat_khuon: "",
+        vt_khuon: "",
+        al_khuon: "",
         machine_id: "",
         machine_layout_id: "",
         isAdd: true,
@@ -579,7 +643,7 @@ const Layout = () => {
     };
   });
 
-  const edit = (record) => {
+  const edit = async (record) => {
     form.setFieldsValue({
       ...record,
     });
@@ -589,17 +653,6 @@ const Layout = () => {
   const onClose = () => {
     setEditingKey("");
   };
-
-  useEffect(() => {
-    (async () => {
-      const res1 = await getLines();
-      setListLines(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-    })();
-  }, []);
 
   function btn_click() {
     loadListTable(params);
@@ -634,98 +687,10 @@ const Layout = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    if (values.id) {
-      const res = await updateProductPlan(values);
-    } else {
-      const res = await storeProductPlan(values);
-    }
-    setOpenMdlEdit(false);
-    loadListTable(params);
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteRecordProductPlan(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
-  };
-  const editRecord = () => {
-    setTitleMdlEdit("Cập nhật");
-    if (listCheck.length > 1) {
-      message.info("Chỉ chọn 1 bản ghi để chỉnh sửa");
-    } else if (listCheck.length == 0) {
-      message.info("Chưa chọn bản ghi cần chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({
-        id: listCheck[0],
-        thu_tu_uu_tien: result.thu_tu_uu_tien,
-        thoi_gian_bat_dau: result.thoi_gian_bat_dau,
-        thoi_gian_ket_thuc: result.thoi_gian_ket_thuc,
-        cong_doan_sx: result.cong_doan_sx,
-        product_id: result.product_id,
-        khach_hang: result.khach_hang,
-        ca_sx: result.ca_sx,
-        lo_sx: result.lo_sx,
-        so_bat: result.so_bat,
-        sl_nvl: result.sl_nvl,
-        sl_thanh_pham: result.sl_thanh_pham,
-        UPH: result.UPH,
-        nhan_luc: result.nhan_luc,
-      });
-      setOpenMdlEdit(true);
-    }
-  };
-  const insertRecord = () => {
-    history.push("/ui/manufacture/tao-ke-hoach-san-xuat");
-  };
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-  ];
+
   return (
     <>
       {contextHolder}
@@ -735,49 +700,6 @@ const Layout = () => {
             style={{ height: "100%" }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
           >
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Tree
-                    checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
-                    treeData={itemsMenu}
-                    style={{ maxHeight: "80px", overflowY: "auto" }}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
-                    }
-                    value={params.date[0]}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
-                    }
-                    value={params.date[1]}
-                  />
-                </Space>
-              </Form>
-            </div>
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -793,7 +715,6 @@ const Layout = () => {
                         .includes(input.toLowerCase())
                     }
                     onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
                   />
                 </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
@@ -811,53 +732,6 @@ const Layout = () => {
                         .includes(input.toLowerCase())
                     }
                     options={listCustomers}
-                  />
-                </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
-                    }}
-                    placeholder="Nhập đơn hàng"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listNameProducts}
-                  />
-                </Form.Item>
-                <Form.Item label="Lô Sản xuất" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập lô sản xuất"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Quy cách" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập quy cách"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
                   />
                 </Form.Item>
               </Form>
@@ -883,13 +757,13 @@ const Layout = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Kế hoạch sản xuất"
+            title="Quản lý thông tin layout"
             extra={
               <Space>
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/upload-ke-hoach-san-xuat"}
+                  action={baseURL + "/api/upload-layout"}
                   headers={{
                     authorization: "authorization-text",
                   }}
@@ -919,14 +793,8 @@ const Layout = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button type="primary" onClick={deleteRecord}>
-                  Delete
-                </Button>
-                <Button type="primary" onClick={editRecord}>
-                  Edit
-                </Button>
                 <Button type="primary" onClick={onAdd}>
-                  Insert
+                  Thêm layout
                 </Button>
               </Space>
             }
@@ -936,10 +804,10 @@ const Layout = () => {
                 <Table
                   size="small"
                   bordered
-                  pagination={false}
+                  pagination={true}
                   scroll={{
-                    x: "250vw",
-                    y: "80vh",
+                    x: "280vw",
+
                   }}
                   components={{
                     body: {
@@ -954,203 +822,6 @@ const Layout = () => {
           </Card>
         </Col>
       </Row>
-      <Modal
-        title={titleMdlEdit}
-        open={openMdlEdit}
-        onCancel={() => setOpenMdlEdit(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            <Col span={12} className="d-none">
-              <Form.Item name="id" className="mb-3 d-none">
-                <Input></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thứ tự ưu tiên"
-                name="thu_tu_uu_tien"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập thứ tự ưu tiên"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày sản xuất (YYYY-MM-DD)"
-                name="ngay_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ngày sản xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày đặt hàng (YYYY-MM-DD)"
-                name="ngay_dat_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ngày đặt hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày giao hàng (YYYY-MM-DD)"
-                name="ngay_giao_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ngày giao hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thời gian bắt đầu (YYYY-MM-DD HH:mm:ss)"
-                name="thoi_gian_bat_dau"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thời gian kết thúc (YYYY-MM-DD HH:mm:ss)"
-                name="thoi_gian_ket_thuc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Máy"
-                name="machine_id"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập tên máy"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Công đoạn"
-                name="cong_doan_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập công đoạn"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã sản phẩm"
-                name="product_id"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã sản phẩm"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Khách hàng"
-                name="khach_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập khách hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ca sản xuất"
-                name="ca_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ca sản xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Lô sản xuất"
-                name="lo_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập lô sản xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số bát"
-                name="so_bat"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số bát"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số lượng nguyên liệu đầu vào (tờ)"
-                name="sl_nvl"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số lượng nguyên liệu đầu vào (tờ)"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Kế hoạch SL thành phẩm (tờ)"
-                name="sl_thanh_pham"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập kế hoạch SL thành phẩm (tờ)"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="UPH"
-                name="UPH"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="UPH"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Nhân lực"
-                name="nhan_luc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhân lực"></Input>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };

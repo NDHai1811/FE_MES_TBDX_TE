@@ -569,6 +569,24 @@ export async function deleteBuyers(params){
   return res.data;
 }
 
+//Layouts
+export async function getLayouts(params){
+  const res = await axios.get('/layouts/list', {params});
+  return res.data;
+}
+export async function createLayouts(params){
+  const res = await axios.post('/layouts/create', params);
+  return res.data;
+}
+export async function updateLayouts(params){
+  const res = await axios.patch('/layouts/update', params);
+  return res.data;
+}
+export async function deleteLayouts(params){
+  const res = await axios.delete('/layouts/delete', {params});
+  return res.data;
+}
+
 export async function getTem(params){
   const res = await axios.get('/intem', {params});
   return res.data;
