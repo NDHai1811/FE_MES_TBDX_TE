@@ -20,7 +20,7 @@ import {
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import { getLines } from "../../../api/ui/main";
+import { getCustomers, getLines, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
   getListProductPlan,
@@ -39,15 +39,14 @@ const KeHoachSanXuat = () => {
   const [listLines, setListLines] = useState([]);
   const [listNameProducts, setListNameProducts] = useState([]);
   const [listLoSX, setListLoSX] = useState([]);
-  const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
   const [machines, setMachines] = useState([]);
-  const [customer, setCustomer] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loSX, setLoSX] = useState([]);
   const [quyCach, setQuyCach] = useState([]);
@@ -247,37 +246,6 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
   ];
-  useEffect(() => {
-    (async () => {
-      const res1 = await getLines();
-      setListLines(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      // const res2 = await getProducts();
-      // setListIdProducts(res2.data.map(e => {
-      //       return { ...e, label: e.id, value: e.id }
-      // }));
-      // setListNameProducts(res2.data.map(e => {
-      //       return { ...e, label: e.name, value: e.id }
-      // }));
-      // const res3 = await getLoSanXuat();
-      // setListLoSX(res3.data.map(e => {
-      //       return { ...e, label: e, value: e }
-      // }));
-      // const res4 = await getStaffs();
-      // setListStaffs(res4.data.map(e => {
-      //       return { ...e, label: e.name, value: e.id }
-      // }))
-      // const res5 = await getCustomers();
-      // setListCustomers(
-      //   res5.data.map((e) => {
-      //     return { ...e, label: e.name, value: e.id };
-      //   })
-      // );
-    })();
-  }, []);
 
   function btn_click() {
     loadListTable(params);
@@ -285,12 +253,16 @@ const KeHoachSanXuat = () => {
 
   useEffect(() => {
     (async () => {
-      const res1 = await getMachineList();
-      setMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
-      const res2 = await getMachineList();
-      setMachines(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
-      const res3 = await getMachineList();
-      setMachines(res3.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+      const res1 = await getCustomers();
+      setCustomers(
+        res1.data.map((e) => {
+          return { ...e, label: e.name, value: e.id };
+        })
+      );
+      const res2 = await getOrders();
+      setOrders(res2.data.map((e) => ({ ...e, label: e.id, value: e.id })))
+      const res3 = await getLoSanXuat();
+      setLoSX(res3.data.map((e) => ({ label: e, value: e })))
       const res4 = await getMachineList();
       setMachines(res4.data.map((e) => ({ ...e, label: e.name, value: e.id })))
       const res5 = await getMachineList();
@@ -421,6 +393,24 @@ const KeHoachSanXuat = () => {
       ],
     },
   ];
+  const onSelect = (selectedKeys, e) => {
+    const { selected, node } = e;
+
+    // Check if the node is a parent and if it is selected
+    if (node.props.isLeaf || !selected) {
+      // If it's a leaf node or the parent node is deselected, update selected keys directly
+      console.log(selectedKeys);
+    } else {
+      // If it's a parent node and is selected, exclude it from the selection
+      const filteredKeys = selectedKeys.filter(key => key !== node.key);
+      console.log(filteredKeys);
+    }
+  }
+  const onCheck = (selectedKeys, e) => {
+    console.log(selectedKeys);
+    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e=>e.key === key));
+    setParams({...params, machine: filteredKeys});
+  }
   return (
     <>
       {contextHolder}
@@ -436,13 +426,10 @@ const KeHoachSanXuat = () => {
                 <Form.Item className="mb-3">
                   <Tree
                     checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
+                    onSelect={onSelect}
+                    onCheck={onCheck}
                     treeData={itemsMenu}
-                    style={{ maxHeight: '80px', overflowY: 'auto' }}
+                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>
@@ -457,18 +444,18 @@ const KeHoachSanXuat = () => {
                     placeholder="Bắt đầu"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
+                      setParams({ ...params, start_date: value})
                     }
-                    value={params.date[0]}
+                    value={params.start_date}
                   />
                   <DatePicker
                     allowClear={false}
                     placeholder="Kết thúc"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
+                      setParams({ ...params, end_date: value })
                     }
-                    value={params.date[1]}
+                    value={params.end_date}
                   />
                 </Space>
               </Form>
@@ -476,28 +463,13 @@ const KeHoachSanXuat = () => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập máy"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, machine_id: value })}
-                    options={machines}
-                  />
-                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
                     placeholder="Nhập khách hàng"
                     onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
+                      setParams({ ...params, customer_id: value })
                     }
                     optionFilterProp="children"
                     filterOption={(input, option) =>
@@ -505,7 +477,8 @@ const KeHoachSanXuat = () => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listCustomers}
+                    popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
+                    options={customers}
                   />
                 </Form.Item>
                 <Form.Item label="Đơn hàng" className="mb-3">
@@ -513,7 +486,7 @@ const KeHoachSanXuat = () => {
                     allowClear
                     showSearch
                     onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
+                      setParams({ ...params, order_id: value });
                     }}
                     placeholder="Nhập đơn hàng"
                     optionFilterProp="children"
@@ -522,7 +495,7 @@ const KeHoachSanXuat = () => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listNameProducts}
+                    options={orders}
                   />
                 </Form.Item>
                 <Form.Item label="Lô Sản xuất" className="mb-3">
@@ -537,22 +510,7 @@ const KeHoachSanXuat = () => {
                         .includes(input.toLowerCase())
                     }
                     onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Quy cách" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập quy cách"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
+                    options={loSX}
                   />
                 </Form.Item>
               </Form>
