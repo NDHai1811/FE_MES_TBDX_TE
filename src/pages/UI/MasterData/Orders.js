@@ -314,6 +314,20 @@ const Orders = () => {
       editable: true,
     },
     {
+      title: "Mã buyer",
+      dataIndex: "buyer_id",
+      key: "buyer_id",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+      editable: true,
+    },
+    {
       title: "Tác vụ",
       dataIndex: "action",
       align: "center",

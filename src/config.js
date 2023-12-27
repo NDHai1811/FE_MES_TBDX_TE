@@ -7,8 +7,8 @@ module.exports = {
   facebook: {
     APP_ID: "",
   },
-  api: {
-    API_URL: "https://bemes.ouransoft.vn/api",
+ api: {
+    API_URL: "http://127.0.0.1:8000/api",
   },
-  baseURL: "https://bemes.ouransoft.vn",
+  baseURL: "http://127.0.0.1:8000",
 }
