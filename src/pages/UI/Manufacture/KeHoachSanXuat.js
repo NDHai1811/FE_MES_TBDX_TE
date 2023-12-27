@@ -35,11 +35,8 @@ import dayjs from "dayjs";
 import { getMachineList } from "../../../api/ui/machine";
 
 const KeHoachSanXuat = () => {
+  document.title = "Kế hoạch sản xuất";
   const history = useHistory();
-  const [listLines, setListLines] = useState([]);
-  const [listNameProducts, setListNameProducts] = useState([]);
-  const [listLoSX, setListLoSX] = useState([]);
-  const [selectedLine, setSelectedLine] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
@@ -49,20 +46,6 @@ const KeHoachSanXuat = () => {
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loSX, setLoSX] = useState([]);
-  const [quyCach, setQuyCach] = useState([]);
-  const onChangeChecbox = (e) => {
-    if (e.target.checked) {
-      if (!listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) => [...oldArray, e.target.value]);
-      }
-    } else {
-      if (listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) =>
-          oldArray.filter((datainput) => datainput !== e.target.value)
-        );
-      }
-    }
-  };
   const col_detailTable = [
     {
       title: "STT",
@@ -254,21 +237,11 @@ const KeHoachSanXuat = () => {
   useEffect(() => {
     (async () => {
       const res1 = await getCustomers();
-      setCustomers(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
+      setCustomers(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })));
       const res2 = await getOrders();
       setOrders(res2.data.map((e) => ({ ...e, label: e.id, value: e.id })))
       const res3 = await getLoSanXuat();
       setLoSX(res3.data.map((e) => ({ label: e, value: e })))
-      const res4 = await getMachineList();
-      setMachines(res4.data.map((e) => ({ ...e, label: e.name, value: e.id })))
-      const res5 = await getMachineList();
-      setMachines(res5.data.map((e) => ({ ...e, label: e.name, value: e.id })))
-      const res6 = await getMachineList();
-      setMachines(res6.data.map((e) => ({ ...e, label: e.name, value: e.id })))
     })();
   }, []);
 
@@ -309,43 +282,6 @@ const KeHoachSanXuat = () => {
     }
     setOpenMdlEdit(false);
     loadListTable(params);
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteRecordProductPlan(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
-  };
-  const editRecord = () => {
-    setTitleMdlEdit("Cập nhật");
-    if (listCheck.length > 1) {
-      message.info("Chỉ chọn 1 bản ghi để chỉnh sửa");
-    } else if (listCheck.length == 0) {
-      message.info("Chưa chọn bản ghi cần chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({
-        id: listCheck[0],
-        thu_tu_uu_tien: result.thu_tu_uu_tien,
-        thoi_gian_bat_dau: result.thoi_gian_bat_dau,
-        thoi_gian_ket_thuc: result.thoi_gian_ket_thuc,
-        cong_doan_sx: result.cong_doan_sx,
-        product_id: result.product_id,
-        khach_hang: result.khach_hang,
-        ca_sx: result.ca_sx,
-        lo_sx: result.lo_sx,
-        so_bat: result.so_bat,
-        sl_nvl: result.sl_nvl,
-        sl_thanh_pham: result.sl_thanh_pham,
-        UPH: result.UPH,
-        nhan_luc: result.nhan_luc,
-      });
-      setOpenMdlEdit(true);
-    }
   };
   const insertRecord = () => {
     history.push("/ui/manufacture/tao-ke-hoach-san-xuat");
