@@ -100,84 +100,108 @@ const Orders = () => {
       editable: true,
     },
     {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      title: "Mã khách hàng",
+      dataIndex: "customer_id",
+      key: "customer_id",
       align: "center",
       editable: true,
+      fixed: "left",
+      width: '3%'
     },
     {
       title: "Người đặt hàng",
       dataIndex: "nguoi_dat_hang",
       key: "nguoi_dat_hang",
+      fixed: "left",
       align: "center",
       editable: true,
     },
     {
-      title: "Mã đơn hàng",
+      title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
       editable: true,
+      fixed: "left",
+      width: '3%'
     },
     {
-      title: "Đơn hàng",
+      title: "Order",
       dataIndex: "order",
       key: "order",
       align: "center",
       editable: true,
+      width: '6%'
     },
     {
-      title: "Mã quản lý",
+      title: "MQL",
       dataIndex: "mql",
       key: "mql",
       align: "center",
       editable: true,
+      width: '2%'
     },
     {
-      title: "Dài",
-      dataIndex: "dai",
-      key: "dai",
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      editable: true,
+      width: '2%'
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      editable: true,
+      width: '2%'
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      editable: true,
+      width: '2%'
+    },
+    {
+      title: "Kích thước ĐH",
+      dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
       align: "center",
       editable: true,
     },
     {
-      title: "Rộng",
-      dataIndex: "rong",
-      key: "rong",
+      title: "Đơn vị tính",
+      dataIndex: "unit",
+      key: "unit",
       align: "center",
       editable: true,
     },
     {
-      title: "Cao",
-      dataIndex: "cao",
-      key: "cao",
+      title: "Kích thước chuẩn",
+      dataIndex: "kich_thuoc_chuan",
+      key: "kich_thuoc_chuan",
       align: "center",
       editable: true,
     },
     {
-      title: "Mã đơn hàng",
-      dataIndex: "mdh",
-      key: "mdh",
-      align: "center",
-      editable: true,
-    },
-    {
-      title: "Số lượng",
+      title: "SL",
       dataIndex: "sl",
       key: "sl",
       align: "center",
       editable: true,
     },
     {
-      title: "Số lượng giao",
+      title: "SLG",
       dataIndex: "slg",
       key: "slg",
       align: "center",
       editable: true,
     },
     {
-      title: "Số lượng thực",
+      title: "SLT",
       dataIndex: "slt",
       key: "slt",
       align: "center",
@@ -198,28 +222,29 @@ const Orders = () => {
       editable: true,
     },
     {
-      title: "Style",
+      title: "STYLE",
       dataIndex: "style",
       key: "style",
       align: "center",
       editable: true,
+      width: '10%'
     },
     {
-      title: "Style no",
+      title: "STYLE NO",
       dataIndex: "style_no",
       key: "style_no",
       align: "center",
       editable: true,
     },
     {
-      title: "Màu",
+      title: "COLOR",
       dataIndex: "color",
       key: "color",
       align: "center",
       editable: true,
     },
     {
-      title: "Item",
+      title: "ITEM",
       dataIndex: "item",
       key: "item",
       align: "center",
@@ -233,38 +258,67 @@ const Orders = () => {
       editable: true,
     },
     {
-      title: "Size",
+      title: "SIZE",
       dataIndex: "size",
       key: "size",
       align: "center",
       editable: true,
     },
     {
-      title: "Ghi chú 1",
+      title: "Đơn giá",
+      dataIndex: "price",
+      key: "price",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Thành tiền",
+      dataIndex: "into_money",
+      key: "into_money",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Đợt",
+      dataIndex: "dot",
+      key: "dot",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Xưởng giao",
+      dataIndex: "xuong_giao",
+      key: "xuong_giao",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Ghi chú khách hàng",
       dataIndex: "note_1",
       key: "note_1",
       align: "center",
       editable: true,
     },
     {
-      title: "Hạn giao",
+      title: "Ngày giao hàng trên đơn",
       dataIndex: "han_giao",
       key: "han_giao",
       align: "center",
       editable: true,
     },
     {
-      title: "Ghi chú 2",
+      title: "Ghi chú của TBDX",
       dataIndex: "note_2",
       key: "note_2",
       align: "center",
       editable: true,
     },
     {
-      title: "Hành động",
+      title: "Tác vụ",
       dataIndex: "action",
       align: "center",
       fixed: "right",
+      width: '2%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -492,17 +546,16 @@ const Orders = () => {
       onCell: (record) => ({
         record,
         inputType:
-          col.dataIndex === "cao" ||
-          col.dataIndex === "dai" ||
-          col.dataIndex === "mdh" ||
-          col.dataIndex === "mql" ||
-          col.dataIndex === "order" ||
-          col.dataIndex === "price" ||
-          col.dataIndex === "rong"
+            col.dataIndex === "cao" ||
+            col.dataIndex === "dai" ||
+            col.dataIndex === "mdh" ||
+            col.dataIndex === "mql" ||
+            col.dataIndex === "price" ||
+            col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
-            ? "dateTime"
-            : "text",
+              ? "dateTime"
+              : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -671,11 +724,7 @@ const Orders = () => {
     }
     setExportLoading(false);
   };
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
-    },
-  };
+
   return (
     <>
       {contextHolder}
@@ -689,22 +738,22 @@ const Orders = () => {
                 layout="vertical"
                 onFinish={btn_click}
               >
-                <Form.Item label="Mã lỗi" className="mb-3">
+                <Form.Item label="Khách hàng" className="mb-3">
                   <Input
                     allowClear
                     onChange={(e) =>
                       setParams({ ...params, id: e.target.value })
                     }
-                    placeholder="Nhập mã"
+                    placeholder="Nhập khách hàng"
                   />
                 </Form.Item>
-                <Form.Item label="Code" className="mb-3">
+                <Form.Item label="MDH" className="mb-3">
                   <Input
                     allowClear
                     onChange={(e) =>
                       setParams({ ...params, code: e.target.value })
                     }
-                    placeholder="Nhập tên"
+                    placeholder="Nhập MDH"
                   />
                 </Form.Item>
                 <Form.Item style={{ textAlign: "center" }}>
@@ -759,15 +808,15 @@ const Orders = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={exportFile}
                   loading={exportLoading}
                 >
                   Export Excel
-                </Button>
+                </Button> */}
                 <Button type="primary" onClick={onAdd}>
-                  Insert
+                  Thêm đơn hàng
                 </Button>
               </Space>
             }
@@ -790,7 +839,7 @@ const Orders = () => {
                   }}
                   columns={mergedColumns}
                   dataSource={data}
-                  rowSelection={rowSelection}
+
                 />
               </Form>
             </Spin>
