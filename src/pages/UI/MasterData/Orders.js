@@ -15,6 +15,8 @@ import {
   Popconfirm,
   Typography,
   InputNumber,
+  Select,
+  Modal,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -23,13 +25,15 @@ import {
   deleteOrders,
   exportOrders,
   getOrders,
+  splitOrders,
   updateOrder,
 } from "../../../api";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
 import { formatDateTime } from "../../../commons/utils";
+import { getBuyers, getListLayout } from "../../../api/ui/manufacture";
 
 const EditableCell = ({
   editing,
@@ -40,12 +44,25 @@ const EditableCell = ({
   index,
   children,
   onChange,
+  onSelect,
+  options,
   ...restProps
 }) => {
   let inputNode;
   switch (inputType) {
     case "number":
       inputNode = <InputNumber />;
+      break;
+    case "select":
+      inputNode = (
+        <Select
+          value={record?.[dataIndex]}
+          options={options}
+          onChange={onSelect}
+          bordered
+          showSearch
+        />
+      );
       break;
     default:
       inputNode = <Input />;
@@ -79,18 +96,92 @@ const EditableCell = ({
   );
 };
 
+const layoutTypes = [
+  {
+    label: "M",
+    value: "M",
+  },
+  {
+    label: "P8",
+    value: "P8",
+  },
+];
+
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
-  const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
   const [editingKey, setEditingKey] = useState("");
+  const [splitKey, setSplitKey] = useState("");
   const [data, setData] = useState([]);
   const isEditing = (record) => record.key === editingKey;
+  const [buyers, setBuyers] = useState([]);
+  const [layouts, setLayouts] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [inputData, setInputData] = useState([
+    {
+      so_luong: 0,
+      ngay_giao: "",
+    },
+  ]);
+
+  const showInput = () => {
+    setInputData([
+      ...inputData,
+      {
+        so_luong: 0,
+        ngay_giao: "",
+      },
+    ]);
+  };
+
+  const showModal = (record) => {
+    setSplitKey(record.id);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    setIsModalVisible(false);
+    await splitOrders({ id: splitKey, inputData: inputData });
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+      },
+    ]);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+      },
+    ]);
+  };
 
   const col_detailTable = [
+    {
+      title: "Mã khách hàng",
+      dataIndex: "customer_id",
+      key: "customer_id",
+      align: "center",
+      editable: true,
+      fixed: "left",
+      width: "3%",
+    },
+    {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      editable: true,
+      fixed: "left",
+      width: "2.5%",
+    },
     {
       title: "Ngày đặt hàng",
       dataIndex: "ngay_dat_hang",
@@ -100,30 +191,55 @@ const Orders = () => {
       editable: true,
     },
     {
-      title: "Mã khách hàng",
-      dataIndex: "customer_id",
-      key: "customer_id",
+      title: "L",
+      dataIndex: "length",
+      key: "length",
       align: "center",
-      editable: true,
       fixed: "left",
-      width: '3%'
+      editable: true,
+      width: "1.5%",
     },
     {
-      title: "Người đặt hàng",
-      dataIndex: "nguoi_dat_hang",
-      key: "nguoi_dat_hang",
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
       fixed: "left",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      fixed: "left",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      fixed: "left",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "SL",
+      dataIndex: "sl",
+      key: "sl",
       align: "center",
       editable: true,
     },
     {
-      title: "MDH",
-      dataIndex: "mdh",
-      key: "mdh",
+      title: "Chia máy + p8",
+      dataIndex: "layout_type",
+      key: "layout_type",
       align: "center",
       editable: true,
-      fixed: "left",
-      width: '3%'
+      width: "2%",
     },
     {
       title: "Order",
@@ -131,40 +247,9 @@ const Orders = () => {
       key: "order",
       align: "center",
       editable: true,
-      width: '6%'
+      width: "6%",
     },
-    {
-      title: "MQL",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-      editable: true,
-      width: '2%'
-    },
-    {
-      title: "L",
-      dataIndex: "length",
-      key: "length",
-      align: "center",
-      editable: true,
-      width: '2%'
-    },
-    {
-      title: "W",
-      dataIndex: "width",
-      key: "width",
-      align: "center",
-      editable: true,
-      width: '2%'
-    },
-    {
-      title: "H",
-      dataIndex: "height",
-      key: "height",
-      align: "center",
-      editable: true,
-      width: '2%'
-    },
+
     {
       title: "Kích thước ĐH",
       dataIndex: "kich_thuoc",
@@ -183,13 +268,6 @@ const Orders = () => {
       title: "Kích thước chuẩn",
       dataIndex: "kich_thuoc_chuan",
       key: "kich_thuoc_chuan",
-      align: "center",
-      editable: true,
-    },
-    {
-      title: "SL",
-      dataIndex: "sl",
-      key: "sl",
       align: "center",
       editable: true,
     },
@@ -227,7 +305,7 @@ const Orders = () => {
       key: "style",
       align: "center",
       editable: true,
-      width: '10%'
+      width: "10%",
     },
     {
       title: "STYLE NO",
@@ -307,6 +385,13 @@ const Orders = () => {
       editable: true,
     },
     {
+      title: "Người đặt hàng",
+      dataIndex: "nguoi_dat_hang",
+      key: "nguoi_dat_hang",
+      align: "center",
+      editable: true,
+    },
+    {
       title: "Ghi chú của TBDX",
       dataIndex: "note_2",
       key: "note_2",
@@ -319,6 +404,7 @@ const Orders = () => {
       key: "buyer_id",
       align: "center",
       editable: true,
+      width: '5%'
     },
     {
       title: "Mã layout",
@@ -326,13 +412,14 @@ const Orders = () => {
       key: "layout_id",
       align: "center",
       editable: true,
+      width: '4%'
     },
     {
       title: "Tác vụ",
       dataIndex: "action",
       align: "center",
       fixed: "right",
-      width: '2%',
+      width: "3%",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -351,8 +438,12 @@ const Orders = () => {
           </span>
         ) : (
           <span>
-            <EditOutlined
+            <LinkOutlined
               style={{ color: "#1677ff", fontSize: 18 }}
+              onClick={() => showModal(record)}
+            />
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             />
@@ -373,183 +464,33 @@ const Orders = () => {
       },
     },
   ];
-  const formFields = [
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngay_dh",
-      key: "ngay_dh",
-      align: "center",
-      fixed: "left",
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-    },
-    {
-      title: "Người đặt hàng",
-      dataIndex: "nguoi_dh",
-      key: "nguoi_dh",
-      align: "center",
-    },
-    {
-      title: "Mã đơn hàng",
-      dataIndex: "mdh",
-      key: "mdh",
-      align: "center",
-    },
-    {
-      title: "Đơn hàng",
-      dataIndex: "order",
-      key: "order",
-      align: "center",
-    },
-    {
-      title: "Mã quản lý",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-    },
-    {
-      title: "Dài",
-      dataIndex: "l",
-      key: "l",
-      align: "center",
-    },
-    {
-      title: "Rộng",
-      dataIndex: "w",
-      key: "w",
-      align: "center",
-    },
-    {
-      title: "Cao",
-      dataIndex: "h",
-      key: "h",
-      align: "center",
-    },
-    {
-      title: "Mã đơn hàng",
-      dataIndex: "mdh",
-      key: "mdh",
-      align: "center",
-    },
-    {
-      title: "Số lượng",
-      dataIndex: "sl",
-      key: "sl",
-      align: "center",
-    },
-    {
-      title: "Số lượng giao",
-      dataIndex: "slg",
-      key: "slg",
-      align: "center",
-    },
-    {
-      title: "Số lượng thực",
-      dataIndex: "slt",
-      key: "slt",
-      align: "center",
-    },
-    {
-      title: "TMO",
-      dataIndex: "tmo",
-      key: "tmo",
-      align: "center",
-    },
-    {
-      title: "PO",
-      dataIndex: "po",
-      key: "po",
-      align: "center",
-    },
-    {
-      title: "Style",
-      dataIndex: "style",
-      key: "style",
-      align: "center",
-    },
-    {
-      title: "Style no",
-      dataIndex: "style_no",
-      key: "style_no",
-      align: "center",
-    },
-    {
-      title: "Màu",
-      dataIndex: "color",
-      key: "color",
-      align: "center",
-    },
-    {
-      title: "Item",
-      dataIndex: "item",
-      key: "item",
-      align: "center",
-    },
-    {
-      title: "RM",
-      dataIndex: "rm",
-      key: "rm",
-      align: "center",
-    },
-    {
-      title: "Size",
-      dataIndex: "size",
-      key: "size",
-      align: "center",
-    },
-    {
-      title: "Dot",
-      dataIndex: "dot",
-      key: "dot",
-      align: "center",
-    },
-    {
-      title: "Fac",
-      dataIndex: "fac",
-      key: "fac",
-      align: "center",
-    },
-    {
-      title: "Ghi chú",
-      dataIndex: "ghi_chu",
-      key: "ghi_chu",
-      align: "center",
-    },
-    {
-      title: "Hạn giao",
-      dataIndex: "han_giao",
-      key: "han_giao",
-      align: "center",
-    },
-    {
-      title: "Ngày giao",
-      dataIndex: "ngay_giao",
-      key: "ngay_giao",
-      align: "center",
-    },
-    {
-      title: "Ghi chú 2",
-      dataIndex: "ghi_chu_2",
-      key: "ghi_chu_2",
-      align: "center",
-    },
-    {
-      title: "Xe giao",
-      dataIndex: "xe_giao",
-      key: "xe_giao",
-      align: "center",
-    },
-    {
-      title: "Xuất hàng",
-      dataIndex: "xuat_hang",
-      key: "xuat_hang",
-      align: "center",
-    },
-  ];
+
+  useEffect(() => {
+    getBuyerList();
+    getLayouts();
+  }, []);
+
+  const getBuyerList = async () => {
+    const res = await getBuyers();
+    setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
+  };
+
+  const getLayouts = async () => {
+    const res = await getListLayout();
+    setLayouts(
+      res.map((val) => ({ label: val.machine_layout_id, value: val.machine_layout_id }))
+    );
+  };
+
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value.id;
+      }
+      return { ...val };
+    });
+    setData(items);
+  };
 
   const mergedColumns = col_detailTable.map((col) => {
     if (!col.editable) {
@@ -560,20 +501,30 @@ const Orders = () => {
       onCell: (record) => ({
         record,
         inputType:
-            col.dataIndex === "cao" ||
+          col.dataIndex === "cao" ||
             col.dataIndex === "dai" ||
             col.dataIndex === "mdh" ||
-            col.dataIndex === "mql" ||
             col.dataIndex === "price" ||
             col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
               ? "dateTime"
-              : "text",
+              : col.dataIndex === "buyer_id" ||
+                col.dataIndex === "layout_id" ||
+                col.dataIndex === "layout_type"
+                ? "select"
+                : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
         onChange,
+        onSelect,
+        options:
+          col.dataIndex === "buyer_id"
+            ? buyers
+            : col.dataIndex === "layout_type"
+              ? layoutTypes
+              : layouts,
       }),
     };
   });
@@ -739,6 +690,57 @@ const Orders = () => {
     setExportLoading(false);
   };
 
+  const renderInputData = (item, index) => {
+    return (
+      <Row key={index} style={{ flexDirection: "row", marginBottom: 8 }}>
+        <Col span={12}>
+          <div style={{ marginRight: 12 }}>
+            <p3 style={{ display: "block" }}>Số lượng</p3>
+            <InputNumber
+              min={1}
+              placeholder="Nhập số lượng"
+              onChange={(value) => onChangeQuantity(value, index)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={12}>
+          <div>
+            <p3 style={{ display: "block" }}>Ngày giao</p3>
+            <DatePicker
+              format={COMMON_DATE_TABLE_FORMAT_REQUEST}
+              value={item.ngay_giao}
+              onChange={(value) =>
+                value.isValid() && onChangeDate(value, index)
+              }
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+      </Row>
+    );
+  };
+
+  const onChangeDate = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.ngay_giao = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
+  const onChangeQuantity = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.so_luong = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
   return (
     <>
       {contextHolder}
@@ -848,18 +850,29 @@ const Orders = () => {
                   }}
                   rowClassName="editable-row"
                   scroll={{
-                    x: "250vw",
+                    x: "300vw",
                     y: "80vh",
                   }}
                   columns={mergedColumns}
                   dataSource={data}
-
                 />
               </Form>
             </Spin>
           </Card>
         </Col>
       </Row>
+      <Modal
+        title="Tách đơn hàng"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Lưu"
+      >
+        <Button type="primary" onClick={showInput} style={{ marginBottom: 12 }}>
+          Thêm dòng
+        </Button>
+        {inputData.map(renderInputData)}
+      </Modal>
     </>
   );
 };

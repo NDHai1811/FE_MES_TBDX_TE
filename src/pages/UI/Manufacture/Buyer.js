@@ -69,6 +69,7 @@ const Buyer = () => {
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [editingKey, setEditingKey] = useState("");
+  const [type, setType] = useState("");
   const [keys, setKeys] = useState([
     "id",
     "customer_id",
@@ -262,6 +263,7 @@ const Buyer = () => {
     ];
     setData(newData);
     setEditingKey(data.length + 1);
+    setType("add");
   };
 
   const edit = (record) => {
@@ -269,6 +271,7 @@ const Buyer = () => {
       ...record,
     });
     setEditingKey(record.key);
+    setType("update");
   };
   const cancel = () => {
     if (typeof editingKey === "number") {
@@ -283,21 +286,20 @@ const Buyer = () => {
       const row = await form.validateFields();
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
-      console.log(index);
-      if (index > -1) {
+      if (type === "update") {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
           ...row,
           key: row.id,
         });
-        const res = await updateBuyers(row);
+        await updateBuyers(row);
         setData(newData);
         setEditingKey("");
       } else {
-        const res = await createBuyers(row);
-        newData.push(row);
-        setData(newData);
+        await createBuyers(row);
+        const items = [row, ...data.filter((val) => val.key !== key)];
+        setData(items);
         setEditingKey("");
       }
       form.resetFields();
@@ -337,7 +339,7 @@ const Buyer = () => {
     setLoading(true);
     const res = await getBuyers(params);
     setData(
-      res.map((e) => {
+      res.reverse().map((e) => {
         return { ...e, key: e.id };
       })
     );

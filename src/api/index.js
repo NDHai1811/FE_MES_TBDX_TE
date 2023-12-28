@@ -550,6 +550,10 @@ export async function exportOrders(params){
     const res = await axios.get('/orders/export', {params});
     return res;
 }
+export async function splitOrders(params){
+  const res = await axios.post('/orders/split', params);
+  return res;
+}
 
 //Buyers
 export async function getBuyers(params){
@@ -586,6 +590,8 @@ export async function deleteLayouts(params){
   const res = await axios.delete('/layouts/delete', {params});
   return res.data;
 }
+
+
 
 export async function getTem(params){
   const res = await axios.get('/intem', {params});
