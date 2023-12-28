@@ -10,5 +10,5 @@ module.exports = {
   api: {
     API_URL: "http://127.0.0.1:8000/api",
   },
-  baseURL: "https://bemes.ouransoft.vn",
+  baseURL: "http://127.0.0.1:8000",
 }
