@@ -15,7 +15,7 @@ import {
   Tree,
 } from "antd";
 import "../style.scss";
-import { getLines } from "../../../api/ui/main";
+import { getCustomers, getLines, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
   exportProduceHistory,
   exportReportProduceHistory,
@@ -103,8 +103,7 @@ const columns3 = [
     dataIndex: "index",
     key: "index",
     align: "center",
-    fixed: "left",
-    width: "3%",
+    width: "2%",
     render: (value, record, index) => index + 1,
   },
   {
@@ -112,7 +111,6 @@ const columns3 = [
     dataIndex: "ngay_sx",
     key: "ngay_sx",
     align: "center",
-    fixed: "left",
     width: "4%",
   },
   {
@@ -120,7 +118,6 @@ const columns3 = [
     dataIndex: "line",
     key: "line",
     align: "center",
-    fixed: "left",
     width: "4%",
     render: (value) => value?.name,
   },
@@ -129,7 +126,6 @@ const columns3 = [
     dataIndex: "machine_id",
     key: "machine_id",
     align: "center",
-    fixed: "left",
     width: "4%",
   },
   {
@@ -137,42 +133,38 @@ const columns3 = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    fixed: "left",
+    width:'10%'
   },
   {
     title: "Đơn hàng",
     dataIndex: "ma_don_hang",
     key: "ma_don_hang",
     align: "center",
-    fixed: "left",
   },
   {
     title: "Lô sản xuất",
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-    fixed: "left",
   },
   {
     title: "Lot sản xuất",
     dataIndex: "lot_id",
     key: "lot_id",
     align: "center",
-    fixed: "left",
+    width:'5%'
   },
   {
     title: "Mã layout",
     dataIndex: "layout_id",
     key: "layout_id",
     align: "center",
-    fixed: "left",
   },
   {
     title: "Quy cách",
     dataIndex: "quy_cach",
     key: "quy_cach",
     align: "center",
-    fixed: "left",
   },
   {
     title: "Kế hoạch",
@@ -296,132 +288,21 @@ const columns3 = [
 
 const LichSuSanXuat = (props) => {
   document.title = "UI - Lịch sử sản xuất";
-  const [listLines, setListLines] = useState([]);
-  const [listNameProducts, setListNameProducts] = useState([]);
-  const [listLoSX, setListLoSX] = useState([]);
-  const [listCustomers, setListCustomers] = useState([]);
-  const [selectedLine, setSelectedLine] = useState();
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
-  const dataChart = [
-    {
-      label: "Kế hoạch",
-      value: 1000,
-      type: "1",
-    },
-    {
-      label: "Thực tế",
-      value: 900,
-      type: "2",
-    },
-  ];
-  const config = {
-    showTitle: true,
-    title: {
-      visible: false,
-      text: "Your Stats",
-    },
-    data: dataChart,
-    height: 200,
-    minColumnWidth: 40,
-    maxColumnWidth: 40,
-    isStack: true,
-    xField: "label",
-    yField: "value",
-    seriesField: "type",
-    legend: false,
-    label: {
-      style: {
-        color: "black",
-        fontWeight: "700",
-      },
-      position: "middle",
-    },
-    colorField: "type", // or seriesField in some cases
-    color: ({ type }) => {
-      if (type === "1") {
-        return "#ccae70";
-      }
-
-      return "#5B8FF9";
-    },
-  };
-  const dataChart1 = [
-    {
-      label: "Mục tiêu",
-      value: 105,
-      type: "1",
-    },
-    {
-      label: "Thực tế",
-      value: 108,
-      type: "2",
-    },
-  ];
-  const config1 = {
-    showTitle: true,
-    title: {
-      visible: false,
-      text: "Your Stats",
-    },
-    data: dataChart1,
-    height: 200,
-    minColumnWidth: 40,
-    maxColumnWidth: 40,
-    isStack: true,
-    xField: "label",
-    yField: "value",
-    seriesField: "type",
-    legend: false,
-    label: {
-      style: {
-        color: "black",
-        fontWeight: "700",
-      },
-      position: "middle",
-    },
-    colorField: "type", // or seriesField in some cases
-    color: ({ type }) => {
-      if (type === "1") {
-        return "#ccae70";
-      }
-      return "#5B8FF9";
-    },
-  };
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [customers, setCustomers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loSX, setLoSX] = useState([]);
   useEffect(() => {
     (async () => {
-      const res1 = await getLines();
-      setListLines(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      // const res5 = await getCustomers();
-      // setListCustomers(
-      //   res5.data.map((e) => {
-      //     return { ...e, label: e.name, value: e.id };
-      //   })
-      // );
+      const res1 = await getCustomers();
+      setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
+      const res2 = await getOrders();
+      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })))
+      const res3 = await getLoSanXuat();
+      setLoSX(res3.data.map((e) => ({ label: e, value: e })))
     })();
     btn_click();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      // var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-      // if (res.success) {
-      //   setListNameProducts(
-      //     res.data.product.map((e) => {
-      //       return { ...e, label: e.name, value: e.id };
-      //     })
-      //   );
-      //   setListLoSX(
-      //     Object.values(res.data.lo_sx).map((e) => {
-      //       return { label: e, value: e };
-      //     })
-      //   );
-      // }
-    })();
-  }, [params.khach_hang]);
 
   const [dataTable1, setDataTable1] = useState([
     {
@@ -603,6 +484,11 @@ const LichSuSanXuat = (props) => {
       ],
     },
   ];
+  const onCheck = (selectedKeys, e) => {
+    console.log(selectedKeys);
+    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e=>e.key === key));
+    setParams({...params, machine: filteredKeys});
+  }
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
@@ -617,13 +503,9 @@ const LichSuSanXuat = (props) => {
                 <Form.Item className="mb-3">
                   <Tree
                     checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
+                    onCheck={onCheck}
                     treeData={itemsMenu}
-                    style={{ maxHeight: "80px", overflowY: "auto" }}
+                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>
@@ -638,18 +520,18 @@ const LichSuSanXuat = (props) => {
                     placeholder="Bắt đầu"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
+                      setParams({ ...params, start_date: value})
                     }
-                    value={params.date[0]}
+                    value={params.start_date}
                   />
                   <DatePicker
                     allowClear={false}
                     placeholder="Kết thúc"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
+                      setParams({ ...params, end_date: value })
                     }
-                    value={params.date[1]}
+                    value={params.end_date}
                   />
                 </Space>
               </Form>
@@ -657,27 +539,13 @@ const LichSuSanXuat = (props) => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập máy"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listCustomers}
-                  />
-                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
                     placeholder="Nhập khách hàng"
                     onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
+                      setParams({ ...params, customer_id: value })
                     }
                     optionFilterProp="children"
                     filterOption={(input, option) =>
@@ -685,7 +553,8 @@ const LichSuSanXuat = (props) => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listCustomers}
+                    popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
+                    options={customers}
                   />
                 </Form.Item>
                 <Form.Item label="Đơn hàng" className="mb-3">
@@ -693,7 +562,7 @@ const LichSuSanXuat = (props) => {
                     allowClear
                     showSearch
                     onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
+                      setParams({ ...params, order_id: value });
                     }}
                     placeholder="Nhập đơn hàng"
                     optionFilterProp="children"
@@ -702,7 +571,7 @@ const LichSuSanXuat = (props) => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listNameProducts}
+                    options={orders}
                   />
                 </Form.Item>
                 <Form.Item label="Lô Sản xuất" className="mb-3">
@@ -717,22 +586,7 @@ const LichSuSanXuat = (props) => {
                         .includes(input.toLowerCase())
                     }
                     onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Quy cách" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập quy cách"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
+                    options={loSX}
                   />
                 </Form.Item>
               </Form>
@@ -794,7 +648,7 @@ const LichSuSanXuat = (props) => {
                 pagination={false}
                 columns={columns2}
                 scroll={{
-                  y: "50vh",
+                  y: "20vh",
                 }}
                 dataSource={dataTable2}
               />
@@ -803,7 +657,7 @@ const LichSuSanXuat = (props) => {
                 bordered
                 pagination={false}
                 scroll={{
-                  x: "130vw",
+                  x: "200vw",
                   y: "50vh",
                 }}
                 columns={columns3}
