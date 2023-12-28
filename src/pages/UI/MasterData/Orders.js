@@ -16,6 +16,7 @@ import {
   Typography,
   InputNumber,
   Select,
+  Modal,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -26,7 +27,7 @@ import {
   getOrders,
   updateOrder,
 } from "../../../api";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
@@ -58,6 +59,7 @@ const EditableCell = ({
           options={options}
           onChange={onSelect}
           bordered
+          showSearch
         />
       );
       break;
@@ -93,9 +95,19 @@ const EditableCell = ({
   );
 };
 
+const layoutTypes = [
+  {
+    label: "M",
+    value: "M",
+  },
+  {
+    label: "P8",
+    value: "P8",
+  },
+];
+
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
-  const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
@@ -105,6 +117,47 @@ const Orders = () => {
   const isEditing = (record) => record.key === editingKey;
   const [buyers, setBuyers] = useState([]);
   const [layouts, setLayouts] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [inputData, setInputData] = useState([
+    {
+      so_luong: 0,
+      ngay_giao: "",
+    },
+  ]);
+
+  const showInput = () => {
+    setInputData([
+      ...inputData,
+      {
+        so_luong: 0,
+        ngay_giao: "",
+      },
+    ]);
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+      },
+    ]);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+      },
+    ]);
+  };
 
   const col_detailTable = [
     {
@@ -153,6 +206,14 @@ const Orders = () => {
       title: "MQL",
       dataIndex: "mql",
       key: "mql",
+      align: "center",
+      editable: true,
+      width: "2%",
+    },
+    {
+      title: "Chia máy + p8",
+      dataIndex: "layout_type",
+      key: "layout_type",
       align: "center",
       editable: true,
       width: "2%",
@@ -367,8 +428,12 @@ const Orders = () => {
           </span>
         ) : (
           <span>
-            <EditOutlined
+            <LinkOutlined
               style={{ color: "#1677ff", fontSize: 18 }}
+              onClick={showModal}
+            />
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             />
@@ -435,7 +500,9 @@ const Orders = () => {
             ? "number"
             : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
             ? "dateTime"
-            : col.dataIndex === "buyer_id" || col.dataIndex === "layout_id"
+            : col.dataIndex === "buyer_id" ||
+              col.dataIndex === "layout_id" ||
+              col.dataIndex === "layout_type"
             ? "select"
             : "text",
         dataIndex: col.dataIndex,
@@ -443,7 +510,12 @@ const Orders = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: col.dataIndex === "buyer_id" ? buyers : layouts,
+        options:
+          col.dataIndex === "buyer_id"
+            ? buyers
+            : col.dataIndex === "layout_type"
+            ? layoutTypes
+            : layouts,
       }),
     };
   });
@@ -609,6 +681,57 @@ const Orders = () => {
     setExportLoading(false);
   };
 
+  const renderInputData = (item, index) => {
+    return (
+      <Row key={index} style={{ flexDirection: "row", marginBottom: 8 }}>
+        <Col span={12}>
+          <div style={{ marginRight: 12 }}>
+            <p3 style={{ display: "block" }}>Số lượng</p3>
+            <InputNumber
+              min={1}
+              placeholder="Nhập số lượng"
+              onChange={(value) => onChangeQuantity(value, index)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={12}>
+          <div>
+            <p3 style={{ display: "block" }}>Ngày giao</p3>
+            <DatePicker
+              format={COMMON_DATE_TABLE_FORMAT_REQUEST}
+              value={item.ngay_giao}
+              onChange={(value) =>
+                value.isValid() && onChangeDate(value, index)
+              }
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+      </Row>
+    );
+  };
+
+  const onChangeDate = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.ngay_giao = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
+  const onChangeQuantity = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.so_luong = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
   return (
     <>
       {contextHolder}
@@ -729,6 +852,18 @@ const Orders = () => {
           </Card>
         </Col>
       </Row>
+      <Modal
+        title="Tách đơn hàng"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Lưu"
+      >
+        <Button type="primary" onClick={showInput} style={{ marginBottom: 12 }}>
+          Thêm dòng
+        </Button>
+        {inputData.map(renderInputData)}
+      </Modal>
     </>
   );
 };
