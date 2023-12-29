@@ -10,6 +10,7 @@ import {
     Select,
     Checkbox,
     Space,
+    Modal,
     message,
 } from "antd";
 import React, { useState, useEffect } from "react";
@@ -37,6 +38,7 @@ const TaoKeHoachSanXuat = () => {
     const [loadingOrders, setLoadingOrders] = useState(false);
     const [loadingPlans, setLoadingPlans] = useState(false);
     const [previewPlan, setPreviewPlan] = useState([])
+    const [openMdlOrder, setOpenMdlOrder] = useState(false);
 
     const loadListOrders = async () => {
         setLoadingOrders(true);
@@ -46,8 +48,8 @@ const TaoKeHoachSanXuat = () => {
     };
 
     const onFinish = async (values) => {
-        const res = await createProductPlan({data: previewPlan});
-        if(res){
+        const res = await createProductPlan({ data: previewPlan });
+        if (res) {
             window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
         }
     };
@@ -73,7 +75,8 @@ const TaoKeHoachSanXuat = () => {
         setLoadingPlans(true)
         const res = await handleOrder(inp);
         setPreviewPlan(res.data);
-        setLoadingPlans(false)
+        setOpenMdlOrder(false);
+        setLoadingPlans(false);
 
     };
 
@@ -86,12 +89,17 @@ const TaoKeHoachSanXuat = () => {
         })();
     }, []);
 
-    useEffect(() => {
-        (async () => {
-            loadListOrders();
-        })();
-    }, []);
+    // useEffect(() => {
+    //     (async () => {
+    //         loadListOrders();
+    //     })();
+    // }, []);
 
+    const openModalOrder = async () => {
+        setData([]);
+        setOpenMdlOrder(true);
+        loadListOrders();
+    }
     const columnKHSX = [
         {
             title: 'Thứ tự ưu tiên',
@@ -99,12 +107,26 @@ const TaoKeHoachSanXuat = () => {
             key: 'thu_tu_uu_tien',
             align: 'center',
             fixed: 'left',
-            width: '40%',
+            width: '20%',
         },
         {
             title: 'Lô sản xuất',
             dataIndex: 'lo_sx',
             key: 'lo_sx',
+            align: 'center',
+            width: '20%',
+        },
+        {
+            title: 'MDH',
+            dataIndex: 'mdh',
+            key: 'mdh',
+            align: 'center',
+            width: '40%',
+        },
+        {
+            title: 'MQL',
+            dataIndex: 'mql',
+            key: 'mql',
             align: 'center',
             width: '40%',
         },
@@ -115,7 +137,20 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
             width: '20%',
         },
-
+        {
+            title: 'Thời gian bắt đầu',
+            dataIndex: 'thoi_gian_bat_dau',
+            key: 'thoi_gian_bat_dau',
+            align: 'center',
+            width: '25%',
+        },
+        {
+            title: 'Thời gian kết thúc',
+            dataIndex: 'thoi_gian_ket_thuc',
+            key: 'thoi_gian_ket_thuc',
+            align: 'center',
+            width: '25%',
+        },
     ]
     const col_detailTable = [
         {
@@ -136,7 +171,7 @@ const TaoKeHoachSanXuat = () => {
             dataIndex: 'nguoi_dat_hang',
             key: 'nguoi_dat_hang',
             align: 'center',
-            width:'10%'
+            width: '10%'
         },
         {
             title: 'Mã đơn hàng',
@@ -217,8 +252,8 @@ const TaoKeHoachSanXuat = () => {
         },
     };
 
-    useEffect(()=>{
-        (async ()=>{
+    useEffect(() => {
+        (async () => {
             loadListOrders();
         })()
     }, [orderParams])
@@ -229,135 +264,138 @@ const TaoKeHoachSanXuat = () => {
                     <Card
                         style={{ height: "100%" }}
                         title="Tạo kế hoạch sản xuất"
+                        extra={<Button type="primary" onClick={() => form.submit()}>Tạo KHSX</Button>}
                     >
-                        <Row gutter={[8, 8]}>
-                            <Col span={12}>
-                                <Card title="Thông tin kế hoạch" bodyStyle={{height:'100%'}} style={{height:'100%'}} extra={<Button type="primary" onClick={()=>form.submit()}>Tạo KHSX</Button>}>
-                                    <Form
-                                        layout="vertical"
-                                        form={form}
-                                        onFinish={onFinish}
+                        <Form
+                            layout="vertical"
+                            form={form}
+                            onFinish={onFinish}
+                        >
+                            <Row gutter={[16, 16]}>
+                                <Col span={7}>
+                                    <Form.Item
+                                        label="Chọn máy"
+                                        className="mb-3"
+                                        rules={[{ required: true }]}
                                     >
-                                        <Row gutter={[16, 16]}>
-                                            <Col span={12}>
-                                                <Form.Item
-                                                    label="Chọn máy"
-                                                    className="mb-3"
-                                                    rules={[{ required: true }]}
-                                                >
-                                                    <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => setPlanParams({...planParams, machine_id: value})} />
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={12}>
-                                                <Form.Item
-                                                    label="Chọn thời gian bắt đầu"
-                                                    className="mb-3"
-                                                    rules={[{ required: true }]}
-                                                >
-                                                    <DatePicker
-                                                        showTime
-                                                        allowClear={false}
-                                                        placeholder="Bắt đầu"
-                                                        style={{ width: "100%" }}
-                                                        onChange={(value) => {
-                                                            setPlanParams({...planParams, start_date: value});
-                                                        }}
-                                                        value={planParams.start_date}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                        </Row>
-                                    </Form>
-                                    <Table size='small' bordered
-                                        pagination={false}
-                                        columns={columnKHSX}
-                                        scroll={
-                                            {
-                                                y: '80vh'
-                                            }
-                                        }
-                                        dataSource={previewPlan} />
-                                </Card>
-                            </Col>
-                            <Col span={12}>
-                                <Card title="Danh sách đơn hàng" extra={<Button type="primary" onClick={insertOrder}>Thêm đơn hàng</Button>}>
-                                    <Form layout="vertical">
-                                        <Row gutter={[16, 16]}>
-                                            <Col span={8}>
-                                                <Form.Item
-                                                    label="Khách hàng"
-                                                    className="mb-3"
-                                                >
-                                                    <Select
-                                                        allowClear
-                                                        showSearch
-                                                        placeholder="Chọn khách hàng"
-                                                        style={{ width: "100%" }}
-                                                        onChange={(value) =>
-                                                            setOrderParams({ ...orderParams, customer_id: value })
-                                                        }
-                                                        filterOption={(input, option) =>
-                                                            (option?.label ?? "")
-                                                                .toLowerCase()
-                                                                .includes(input.toLowerCase())
-                                                        }
-                                                        popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
-                                                        options={listCustomers}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Form.Item
-                                                    label="Bắt đầu"
-                                                    className="mb-3"
-                                                >
-                                                    <DatePicker
-                                                        allowClear={false}
-                                                        placeholder="Bắt đầu"
-                                                        style={{ width: "100%" }}
-                                                        onChange={(value) =>
-                                                            setOrderParams({ ...orderParams, start_date: value })
-                                                        }
-                                                        value={orderParams.start_date}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={8}>
-                                                <Form.Item
-                                                    label="Kết thúc"
-                                                    className="mb-3"
-                                                >
-                                                    <DatePicker
-                                                        allowClear={false}
-                                                        placeholder="Kết thúc"
-                                                        style={{ width: "100%" }}
-                                                        onChange={(value) =>
-                                                            setOrderParams({ ...orderParams, end_date: value })
-                                                        }
-                                                        value={orderParams.end_date}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                        </Row>
-                                    </Form>
-                                    <Table size='small' bordered
-                                        loading={loadingOrders}
-                                        pagination={false}
-                                        scroll={
-                                            {
-                                                x: '130vw',
-                                                y: '80vh'
-                                            }
-                                        }
-                                        rowSelection={rowSelection}
-                                        columns={col_detailTable}
-                                        dataSource={data.map(e=>({...e, key: e.id}))} />
-                                </Card>
-                            </Col>
-                        </Row>
+                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => setPlanParams({ ...planParams, machine_id: value })} />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={7}>
+                                    <Form.Item
+                                        label="Chọn thời gian bắt đầu"
+                                        className="mb-3"
+                                        rules={[{ required: true }]}
+                                    >
+                                        <DatePicker
+                                            showTime
+                                            allowClear={false}
+                                            placeholder="Bắt đầu"
+                                            style={{ width: "100%" }}
+                                            onChange={(value) => {
+                                                setPlanParams({ ...planParams, start_date: value });
+                                            }}
+                                            value={planParams.start_date}
+                                        />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={4} style={{ marginTop: '30px' }}>
+                                    <Button type="primary" onClick={() => openModalOrder(true)}>Chọn danh sách</Button>
+                                </Col>
+                            </Row>
+                        </Form>
+                        <Table size='small' bordered
+                            pagination={false}
+                            columns={columnKHSX}
+                            scroll={
+                                {
+                                    y: '80vh'
+                                }
+                            }
+                            dataSource={previewPlan} />
                     </Card >
                 </Col >
             </Row >
+            <Modal
+                title={'Danh sách đơn hàng'}
+                open={openMdlOrder}
+                onCancel={() => setOpenMdlOrder(false)}
+                footer={null}
+                width={'80vw'}
+            >
+                <Form layout="vertical">
+                    <Row gutter={[16, 16]}>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Khách hàng"
+                                className="mb-3"
+                            >
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    placeholder="Chọn khách hàng"
+                                    style={{ width: "100%" }}
+                                    onChange={(value) =>
+                                        setOrderParams({ ...orderParams, customer_id: value })
+                                    }
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? "")
+                                            .toLowerCase()
+                                            .includes(input.toLowerCase())
+                                    }
+                                    popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
+                                    options={listCustomers}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Bắt đầu"
+                                className="mb-3"
+                            >
+                                <DatePicker
+                                    allowClear={false}
+                                    placeholder="Bắt đầu"
+                                    style={{ width: "100%" }}
+                                    onChange={(value) =>
+                                        setOrderParams({ ...orderParams, start_date: value })
+                                    }
+                                    value={orderParams.start_date}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Kết thúc"
+                                className="mb-3"
+                            >
+                                <DatePicker
+                                    allowClear={false}
+                                    placeholder="Kết thúc"
+                                    style={{ width: "100%" }}
+                                    onChange={(value) =>
+                                        setOrderParams({ ...orderParams, end_date: value })
+                                    }
+                                    value={orderParams.end_date}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+                <Button type="primary" className="mb-1" onClick={insertOrder}>Thêm đơn hàng</Button>
+                <Table size='small' bordered
+                    loading={loadingOrders}
+                    pagination={false}
+                    scroll={
+                        {
+                            x: '130vw',
+                            y: '60vh'
+                        }
+                    }
+                    rowSelection={rowSelection}
+                    columns={col_detailTable}
+                    dataSource={data.map(e => ({ ...e, key: e.id }))} />
+            </Modal>
         </>
     );
 };

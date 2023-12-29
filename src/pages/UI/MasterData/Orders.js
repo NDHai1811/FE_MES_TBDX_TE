@@ -106,7 +106,70 @@ const layoutTypes = [
     value: "P8",
   },
 ];
-
+const PL1s = [
+  {
+    label: "THÙNG",
+    value: "THÙNG",
+  },
+  {
+    label: "PAD",
+    value: "PAD",
+  },
+  {
+    label: "INNER",
+    value: "INNER",
+  }
+];
+const PL2s = [
+  {
+    label: "Thùng 1 mảnh",
+    value: "Thùng 1 mảnh",
+  },
+  {
+    label: "Thùng 2 mảnh",
+    value: "Thùng 2 mảnh",
+  },
+  {
+    label: "Thùng 4 mảnh",
+    value: "Thùng 4 mảnh",
+  },
+  {
+    label: "Thùng thường",
+    value: "Thùng thường",
+  },
+  {
+    label: "Thùng bế",
+    value: "Thùng bế",
+  },
+  {
+    label: "Thùng 1 nắp",
+    value: "Thùng 1 nắp",
+  },
+  {
+    label: "Pad U",
+    value: "Pad U",
+  },
+  {
+    label: "Pad Z, rãnh",
+    value: "Pad Z, rãnh",
+  },
+  {
+    label: "Giấy tấm không tề",
+    value: "Giấy tấm không tề",
+  },
+  {
+    label: "Giấy tấm có tề 1 mảnh (DxR)",
+    value: "Giấy tấm có tề 1 mảnh (DxR)",
+  },
+  {
+    label: "Giấy tấm có tề 1 mảnh (DxRxC)",
+    value: "Giấy tấm có tề 1 mảnh (DxRxC)",
+  },
+  {
+    label: "Giấy tấm có tề 2 mảnh (DxRxC)",
+    value: "Giấy tấm có tề 2 mảnh (DxRxC)",
+  },
+];
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
   const [openMdl, setOpenMdl] = useState(false);
@@ -124,6 +187,7 @@ const Orders = () => {
     {
       so_luong: 0,
       ngay_giao: "",
+      xuong_giao: "",
     },
   ]);
 
@@ -133,6 +197,7 @@ const Orders = () => {
       {
         so_luong: 0,
         ngay_giao: "",
+        xuong_giao: "",
       },
     ]);
   };
@@ -143,13 +208,15 @@ const Orders = () => {
   };
 
   const handleOk = async () => {
+    console.log(inputData);
     setIsModalVisible(false);
     await splitOrders({ id: splitKey, inputData: inputData });
     setInputData([
       {
         so_luong: 0,
         ngay_giao: "",
-      },
+        xuong_giao: "",
+      }
     ]);
   };
 
@@ -159,7 +226,8 @@ const Orders = () => {
       {
         so_luong: 0,
         ngay_giao: "",
-      },
+        xuong_giao: "",
+      }
     ]);
   };
 
@@ -399,6 +467,21 @@ const Orders = () => {
       editable: true,
     },
     {
+      title: "Phân loại 1",
+      dataIndex: "phan_loai_1",
+      key: "phan_loai_1",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Phân loại 2",
+      dataIndex: "phan_loai_2",
+      key: "phan_loai_2",
+      align: "center",
+      width: '5%',
+      editable: true,
+    },
+    {
       title: "Mã buyer",
       dataIndex: "buyer_id",
       key: "buyer_id",
@@ -511,7 +594,9 @@ const Orders = () => {
               ? "dateTime"
               : col.dataIndex === "buyer_id" ||
                 col.dataIndex === "layout_id" ||
-                col.dataIndex === "layout_type"
+                col.dataIndex === "layout_type" ||
+                col.dataIndex === "phan_loai_1" ||
+                col.dataIndex === "phan_loai_2"
                 ? "select"
                 : "text",
         dataIndex: col.dataIndex,
@@ -524,7 +609,10 @@ const Orders = () => {
             ? buyers
             : col.dataIndex === "layout_type"
               ? layoutTypes
-              : layouts,
+              : col.dataIndex === "layout_id"
+                ? layouts
+                : col.dataIndex === "phan_loai_1"
+                  ? PL1s : PL2s,
       }),
     };
   });
@@ -692,9 +780,9 @@ const Orders = () => {
 
   const renderInputData = (item, index) => {
     return (
-      <Row key={index} style={{ flexDirection: "row", marginBottom: 8 }}>
-        <Col span={12}>
-          <div style={{ marginRight: 12 }}>
+      <Row key={index} style={{ flexDirection: "row", marginBottom: 8 }} gutter={[8, 8]}>
+        <Col span={6}>
+          <div>
             <p3 style={{ display: "block" }}>Số lượng</p3>
             <InputNumber
               min={1}
@@ -704,7 +792,7 @@ const Orders = () => {
             />
           </div>
         </Col>
-        <Col span={12}>
+        <Col span={6}>
           <div>
             <p3 style={{ display: "block" }}>Ngày giao</p3>
             <DatePicker
@@ -713,6 +801,16 @@ const Orders = () => {
               onChange={(value) =>
                 value.isValid() && onChangeDate(value, index)
               }
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={12}>
+          <div>
+            <p3 style={{ display: "block" }}>Nơi giao</p3>
+            <Input
+              placeholder="Nhập xưởng giao"
+              onChange={(e) => onChangeAddress(e.target.value, index)}
               style={{ width: "100%" }}
             />
           </div>
@@ -741,6 +839,17 @@ const Orders = () => {
     setInputData(items);
   };
 
+
+  const onChangeAddress = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.xuong_giao = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
   return (
     <>
       {contextHolder}
@@ -750,28 +859,138 @@ const Orders = () => {
             <Divider>Tìm kiếm</Divider>
             <div className="mb-3">
               <Form
-                style={{ margin: "0 15px" }}
+                style={{ margin: "0 5px" }}
                 layout="vertical"
                 onFinish={btn_click}
               >
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                    placeholder="Nhập khách hàng"
-                  />
-                </Form.Item>
-                <Form.Item label="MDH" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, code: e.target.value })
-                    }
-                    placeholder="Nhập MDH"
-                  />
-                </Form.Item>
+                <div style={{overflow: 'auto scroll',maxHeight: '75vh',padding:'0 5px',marginBottom:'10px'}}>
+                  <Form.Item label="Mã khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_id: e.target.value })
+                      }
+                      placeholder="Nhập mã khách hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="MDH" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mdh: e.target.value })
+                      }
+                      placeholder="Nhập MDH"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Order" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, order: e.target.value })
+                      }
+                      placeholder="Nhập order"
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mql: e.target.value })
+                      }
+                      placeholder="Nhập MDH"
+                    />
+                  </Form.Item>
+                  <Form.Item label="L" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, length: e.target.value })
+                      }
+                      placeholder="Nhập L"
+                    />
+                  </Form.Item>
+                  <Form.Item label="W" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, width: e.target.value })
+                      }
+                      placeholder="Nhập W"
+                    />
+                  </Form.Item>
+                  <Form.Item label="H" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, height: e.target.value })
+                      }
+                      placeholder="Nhập H"
+                    />
+                  </Form.Item>
+                  <Form.Item label="PO" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, po: e.target.value })
+                      }
+                      placeholder="Nhập PO"
+                    />
+                  </Form.Item>
+                  <Form.Item label="STYLE" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, style: e.target.value })
+                      }
+                      placeholder="Nhập STYLE"
+                    />
+                  </Form.Item>
+                  <Form.Item label="STYLE NO" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, style_no: e.target.value })
+                      }
+                      placeholder="Nhập STYLE NO"
+                    />
+                  </Form.Item>
+                  <Form.Item label="COLOR" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, color: e.target.value })
+                      }
+                      placeholder="Nhập COLOR"
+                    />
+                  </Form.Item>
+                  <Form.Item label="ITEM" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, item: e.target.value })
+                      }
+                      placeholder="Nhập ITEM"
+                    />
+                  </Form.Item>
+                  <Form.Item label="RM" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, rm: e.target.value })
+                      }
+                      placeholder="Nhập RM"
+                    />
+                  </Form.Item>
+                  <Form.Item label="SIZE" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, size: e.target.value })
+                      }
+                      placeholder="Nhập SIZE"
+                    />
+                  </Form.Item>
+                </div>
                 <Form.Item style={{ textAlign: "center" }}>
                   <Button
                     type="primary"
@@ -824,13 +1043,6 @@ const Orders = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                {/* <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                >
-                  Export Excel
-                </Button> */}
                 <Button type="primary" onClick={onAdd}>
                   Thêm đơn hàng
                 </Button>
@@ -867,6 +1079,7 @@ const Orders = () => {
         onOk={handleOk}
         onCancel={handleCancel}
         okText="Lưu"
+        width={700}
       >
         <Button type="primary" onClick={showInput} style={{ marginBottom: 12 }}>
           Thêm dòng
