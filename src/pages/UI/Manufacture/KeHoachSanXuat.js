@@ -231,32 +231,27 @@ const KeHoachSanXuat = () => {
   ];
 
   function btn_click() {
-    loadListTable(params);
+    loadListTable();
   }
 
   useEffect(() => {
     (async () => {
       const res1 = await getCustomers();
-      setCustomers(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })));
+      setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
       const res2 = await getOrders();
-      setOrders(res2.data.map((e) => ({ ...e, label: e.id, value: e.id })))
+      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })))
       const res3 = await getLoSanXuat();
       setLoSX(res3.data.map((e) => ({ label: e, value: e })))
     })();
   }, []);
 
   const [data, setData] = useState([]);
-  const loadListTable = async (params) => {
+  const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
     setData(res);
     setLoading(false);
   };
-  useEffect(() => {
-    (async () => {
-      loadListTable(params);
-    })();
-  }, []);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -281,7 +276,7 @@ const KeHoachSanXuat = () => {
       const res = await storeProductPlan(values);
     }
     setOpenMdlEdit(false);
-    loadListTable(params);
+    loadListTable();
   };
   const insertRecord = () => {
     history.push("/ui/manufacture/tao-ke-hoach-san-xuat");
@@ -329,19 +324,6 @@ const KeHoachSanXuat = () => {
       ],
     },
   ];
-  const onSelect = (selectedKeys, e) => {
-    const { selected, node } = e;
-
-    // Check if the node is a parent and if it is selected
-    if (node.props.isLeaf || !selected) {
-      // If it's a leaf node or the parent node is deselected, update selected keys directly
-      console.log(selectedKeys);
-    } else {
-      // If it's a parent node and is selected, exclude it from the selection
-      const filteredKeys = selectedKeys.filter(key => key !== node.key);
-      console.log(filteredKeys);
-    }
-  }
   const onCheck = (selectedKeys, e) => {
     console.log(selectedKeys);
     const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e=>e.key === key));
@@ -362,7 +344,6 @@ const KeHoachSanXuat = () => {
                 <Form.Item className="mb-3">
                   <Tree
                     checkable
-                    onSelect={onSelect}
                     onCheck={onCheck}
                     treeData={itemsMenu}
                     // style={{ maxHeight: '80px', overflowY: 'auto' }}
@@ -493,7 +474,7 @@ const KeHoachSanXuat = () => {
                         success();
                         setLoadingExport(false);
                       } else {
-                        loadListTable(params);
+                        loadListTable();
                         message.error(info.file.response.message);
                         setLoadingExport(false);
                       }
