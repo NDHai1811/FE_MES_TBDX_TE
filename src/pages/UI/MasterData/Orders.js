@@ -109,41 +109,41 @@ const layoutTypes = [
 const PL1s = [
   {
     label: "THÙNG",
-    value: "THÙNG",
+    value: "Thung",
   },
   {
     label: "PAD",
-    value: "PAD",
+    value: "Pad",
   },
-  {
-    label: "INNER",
-    value: "INNER",
-  }
+  // {
+  //   label: "INNER",
+  //   value: "Inner",
+  // }
 ];
 const PL2s = [
   {
     label: "Thùng 1 mảnh",
-    value: "Thùng 1 mảnh",
+    value: "Thung 1 manh",
   },
   {
     label: "Thùng 2 mảnh",
-    value: "Thùng 2 mảnh",
+    value: "Thung 2 manh",
   },
   {
     label: "Thùng 4 mảnh",
-    value: "Thùng 4 mảnh",
+    value: "Thung 4 manh",
   },
   {
     label: "Thùng thường",
-    value: "Thùng thường",
+    value: "Thung thuong",
   },
   {
     label: "Thùng bế",
-    value: "Thùng bế",
+    value: "Thung be",
   },
   {
     label: "Thùng 1 nắp",
-    value: "Thùng 1 nắp",
+    value: "Thung 1 nap",
   },
   {
     label: "Pad U",
@@ -151,23 +151,23 @@ const PL2s = [
   },
   {
     label: "Pad Z, rãnh",
-    value: "Pad Z, rãnh",
+    value: "Pad Z, ranh",
   },
   {
     label: "Giấy tấm không tề",
-    value: "Giấy tấm không tề",
+    value: "Giay tam khong te",
   },
   {
     label: "Giấy tấm có tề 1 mảnh (DxR)",
-    value: "Giấy tấm có tề 1 mảnh (DxR)",
+    value: "Giay tam co te 1 manh (DxR)",
   },
   {
     label: "Giấy tấm có tề 1 mảnh (DxRxC)",
-    value: "Giấy tấm có tề 1 mảnh (DxRxC)",
+    value: "Giay tam co te 1 manh (DxRxC)",
   },
   {
     label: "Giấy tấm có tề 2 mảnh (DxRxC)",
-    value: "Giấy tấm có tề 2 mảnh (DxRxC)",
+    value: "Giay tam co te 2 manh (DxRxC)",
   },
 ];
 const Orders = () => {
