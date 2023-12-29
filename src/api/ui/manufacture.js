@@ -18,6 +18,12 @@ export async function getListProductPlan(params) {
     });
     return res.data;
 }
+
+export async function handlePlan(params) {
+    const res = await axios.post("ui/manufacture/handle-plan", params);
+    return res;
+}
+
 export async function deleteRecordProductPlan(params) {
     const res = await axios.delete("/product_plan/destroy", { params: params });
     return res.data;

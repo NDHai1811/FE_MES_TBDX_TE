@@ -51,16 +51,16 @@ const KeHoachSanXuat = () => {
       title: "STT",
       dataIndex: "stt",
       key: "stt",
-      render: (value, item, index) => index+1,
+      render: (value, item, index) => index + 1,
       align: "center",
-      width:'2%'
+      width: '2%'
     },
     {
       title: "Thứ tự ưu tiên",
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width:'2%'
+      width: '2%'
     },
     {
       title: "Lô sx",
@@ -79,14 +79,14 @@ const KeHoachSanXuat = () => {
       dataIndex: "ngay_dat_hang",
       key: "ngay_dat_hang",
       align: "center",
-      width:'5%'
+      width: '5%'
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
-      width:'10%'
+      width: '10%'
     },
     {
       title: "Mã đơn hàng",
@@ -129,14 +129,14 @@ const KeHoachSanXuat = () => {
       dataIndex: "ngay_sx",
       key: "ngay_sx",
       align: "center",
-      width:'5%'
+      width: '5%'
     },
     {
       title: "Ngày giao hàng",
       dataIndex: "ngay_giao_hang",
       key: "ngay_giao_hang",
       align: "center",
-      width:'5%'
+      width: '5%'
     },
     {
       title: "Ghi chú",
@@ -235,6 +235,10 @@ const KeHoachSanXuat = () => {
   }
 
   useEffect(() => {
+    btn_click();
+  }, [])
+
+  useEffect(() => {
     (async () => {
       const res1 = await getCustomers();
       setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
@@ -326,8 +330,8 @@ const KeHoachSanXuat = () => {
   ];
   const onCheck = (selectedKeys, e) => {
     console.log(selectedKeys);
-    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e=>e.key === key));
-    setParams({...params, machine: filteredKeys});
+    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
+    setParams({ ...params, machine: filteredKeys });
   }
   return (
     <>
@@ -346,7 +350,7 @@ const KeHoachSanXuat = () => {
                     checkable
                     onCheck={onCheck}
                     treeData={itemsMenu}
-                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
+                  // style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>
@@ -361,7 +365,7 @@ const KeHoachSanXuat = () => {
                     placeholder="Bắt đầu"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, start_date: value})
+                      setParams({ ...params, start_date: value })
                     }
                     value={params.start_date}
                   />
