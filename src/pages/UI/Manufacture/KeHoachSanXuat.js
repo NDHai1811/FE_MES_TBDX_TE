@@ -4,7 +4,6 @@ import {
   Row,
   Card,
   Table,
-  Layout,
   Divider,
   Button,
   Form,
@@ -12,7 +11,6 @@ import {
   Select,
   Upload,
   message,
-  Checkbox,
   Space,
   Modal,
   Spin,
@@ -20,24 +18,20 @@ import {
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import { getCustomers, getLines, getLoSanXuat, getOrders } from "../../../api/ui/main";
+import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
-  deleteRecordProductPlan,
   getListProductPlan,
   storeProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
 import {
   useHistory,
-  useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
-import { getMachineList } from "../../../api/ui/machine";
 
 const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
   const history = useHistory();
-  const [listCheck, setListCheck] = useState([]);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
@@ -89,25 +83,25 @@ const KeHoachSanXuat = () => {
       width: '10%'
     },
     {
-      title: "Mã đơn hàng",
+      title: "MDH",
       dataIndex: "ma_don_hang",
       key: "ma_don_hang",
       align: "center",
     },
     {
-      title: "Dài",
+      title: "L",
       dataIndex: "dai",
       key: "dai",
       align: "center",
     },
     {
-      title: "Rộng",
+      title: "W",
       dataIndex: "rong",
       key: "rong",
       align: "center",
     },
     {
-      title: "Cao",
+      title: "H",
       dataIndex: "cao",
       key: "cao",
       align: "center",
@@ -329,7 +323,6 @@ const KeHoachSanXuat = () => {
     },
   ];
   const onCheck = (selectedKeys, e) => {
-    console.log(selectedKeys);
     const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
     setParams({ ...params, machine: filteredKeys });
   }

@@ -6,10 +6,7 @@ import {
     Table,
     Button,
     Form,
-    Input,
     Select,
-    Checkbox,
-    Space,
     Modal,
     message,
 } from "antd";
@@ -20,7 +17,6 @@ import {
     getListProductPlan,
     handleOrder,
     handlePlan,
-    storeProductPlan,
 } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
 import { getOrders } from "../../../api";
@@ -34,9 +30,6 @@ const TaoKeHoachSanXuat = () => {
     const [orderParams, setOrderParams] = useState({ start_date: dayjs(), end_date: dayjs() });
     const [lsxParams, setLSXParams] = useState({ start_date: dayjs(), end_date: dayjs() });
     const [planParams, setPlanParams] = useState({ start_date: dayjs() });
-    const [machineID, setMachineID] = useState();
-    const [startTime, setStartTime] = useState();
-    const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(false);
     const [loadingPlans, setLoadingPlans] = useState(false);
@@ -533,7 +526,7 @@ const TaoKeHoachSanXuat = () => {
             <Modal
                 title={'Danh sách lô sản xuất'}
                 open={openMdlPlan}
-                onCancel={() => setOpenMdlOrder(false)}
+                onCancel={() => setOpenMdlPlan(false)}
                 footer={null}
                 width={'80vw'}
             >

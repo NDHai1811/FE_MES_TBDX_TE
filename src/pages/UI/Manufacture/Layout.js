@@ -10,18 +10,19 @@ import {
   Select,
   Upload,
   message,
-  Checkbox,
   Space,
   Spin,
   Typography,
   Popconfirm,
 } from "antd";
 import { baseURL } from "../../../config";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getListLayout } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
 import { createLayouts, deleteLayouts, updateLayouts } from "../../../api";
+import TemLayout from "./TemLayout";
+import { useReactToPrint } from "react-to-print";
 
 const EditableCell = ({
   editing,
@@ -53,10 +54,11 @@ const EditableCell = ({
 };
 
 const Layout = () => {
+  const componentRef1 = useRef();
   const [listCustomers, setListCustomers] = useState([]);
   const [listCheck, setListCheck] = useState([]);
   const [form] = Form.useForm();
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [params, setParams] = useState({});
   const [editingKey, setEditingKey] = useState("");
   const [type, setType] = useState("");
   const [keys, setKeys] = useState([
@@ -106,19 +108,6 @@ const Layout = () => {
     return keys.some((val) => val === value);
   };
 
-  const onChangeChecbox = (e) => {
-    if (e.target.checked) {
-      if (!listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) => [...oldArray, e.target.value]);
-      }
-    } else {
-      if (listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) =>
-          oldArray.filter((datainput) => datainput !== e.target.value)
-        );
-      }
-    }
-  };
   const save = async (key) => {
     try {
       const row = await form.validateFields();
@@ -155,21 +144,25 @@ const Layout = () => {
       setData(newData);
     }
   };
+  const qr_arr = ['ma_film_1', 'ma_film_2', 'ma_film_3', 'ma_film_4', 'ma_film_5',
+    'ma_muc_1', 'ma_muc_2', 'ma_muc_3', 'ma_muc_4', 'ma_muc_5', 'ma_khuon'];
+  const printQR = (record) => {
+    const arr = [];
+    for (const [key, value] of Object.entries(record)) {
+      if (qr_arr.includes(key) && value) {
+        arr.push(value);
+      }
+    }
+    setListCheck(arr);
+
+  }
   const col_detailTable = [
-    {
-      title: "Chọn",
-      dataIndex: "name1",
-      key: "name1",
-      render: (value, item, index) => (
-        <Checkbox value={item.id} onChange={onChangeChecbox}></Checkbox>
-      ),
-      align: "center",
-    },
     {
       title: "Mã khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
+      width: "3.5%",
       editable: hasEditColumn("customer_id"),
     },
     {
@@ -499,6 +492,7 @@ const Layout = () => {
       dataIndex: "action",
       align: "center",
       fixed: "right",
+      width: '2.5%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -520,8 +514,12 @@ const Layout = () => {
           </span>
         ) : (
           <span>
-            <EditOutlined
+            <PrinterOutlined
               style={{ color: "#1677ff", fontSize: 20 }}
+              onClick={() => printQR(record)}
+            />
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 20, marginLeft: 8 }}
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             />
@@ -607,6 +605,10 @@ const Layout = () => {
     setEditingKey("");
   };
 
+  const print = useReactToPrint({
+    content: () => componentRef1.current,
+  });
+
   const mergedColumns = col_detailTable.map((col) => {
     if (!col.editable && !col.children) {
       return col;
@@ -651,10 +653,6 @@ const Layout = () => {
     setType("update");
   };
 
-  const onClose = () => {
-    setEditingKey("");
-  };
-
   function btn_click() {
     loadListTable(params);
   }
@@ -671,6 +669,11 @@ const Layout = () => {
       loadListTable(params);
     })();
   }, []);
+  useEffect(() => {
+    if (listCheck.length > 0) {
+      print();
+    }
+  }, [listCheck]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -704,34 +707,30 @@ const Layout = () => {
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Form.Item label="Máy" className="mb-3">
-                  <Select
+                  <Input
                     allowClear
-                    showSearch
-                    placeholder="Nhập máy"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
+                    onChange={(e) =>
+                      setParams({ ...params, machine_id: e.target.value })
                     }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
+                    placeholder="Nhập máy"
                   />
                 </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
+                  <Input
                     allowClear
-                    showSearch
+                    onChange={(e) =>
+                      setParams({ ...params, customer_id: e.target.value })
+                    }
                     placeholder="Nhập khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
+                  />
+                </Form.Item>
+                <Form.Item label="Mã layout" className="mb-3">
+                  <Input
+                    allowClear
+                    onChange={(e) =>
+                      setParams({ ...params, layout_id: e.target.value })
                     }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listCustomers}
+                    placeholder="Nhập mã layout"
                   />
                 </Form.Item>
               </Form>
@@ -821,6 +820,9 @@ const Layout = () => {
           </Card>
         </Col>
       </Row>
+      <div className="report-history-invoice">
+        <TemLayout listCheck={listCheck} ref={componentRef1} />
+      </div>
     </>
   );
 };

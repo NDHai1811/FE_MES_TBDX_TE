@@ -485,7 +485,6 @@ const LichSuSanXuat = (props) => {
     },
   ];
   const onCheck = (selectedKeys, e) => {
-    console.log(selectedKeys);
     const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e=>e.key === key));
     setParams({...params, machine: filteredKeys});
   }
