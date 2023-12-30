@@ -115,10 +115,10 @@ const PL1s = [
     label: "PAD",
     value: "Pad",
   },
-  // {
-  //   label: "INNER",
-  //   value: "Inner",
-  // }
+  {
+    label: "INNER",
+    value: "Inner",
+  }
 ];
 const PL2s = [
   {
@@ -263,7 +263,6 @@ const Orders = () => {
       dataIndex: "length",
       key: "length",
       align: "center",
-      fixed: "left",
       editable: true,
       width: "1.5%",
     },
@@ -272,7 +271,6 @@ const Orders = () => {
       dataIndex: "width",
       key: "width",
       align: "center",
-      fixed: "left",
       editable: true,
       width: "1.5%",
     },
@@ -281,7 +279,6 @@ const Orders = () => {
       dataIndex: "height",
       key: "height",
       align: "center",
-      fixed: "left",
       editable: true,
       width: "1.5%",
     },
@@ -290,7 +287,6 @@ const Orders = () => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
-      fixed: "left",
       editable: true,
       width: "1.5%",
     },
@@ -298,6 +294,64 @@ const Orders = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Kích thước chuẩn",
+      dataIndex: "kich_thuoc_chuan",
+      key: "kich_thuoc_chuan",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Phân loại 1",
+      dataIndex: "phan_loai_1",
+      key: "phan_loai_1",
+      align: "center",
+      width: '4%',
+      editable: true,
+    },
+    {
+      title: "Phân loại 2",
+      dataIndex: "phan_loai_2",
+      key: "phan_loai_2",
+      align: "center",
+      width: '4%',
+      editable: true,
+    },
+    {
+      title: "Số ra",
+      dataIndex: "so_ra",
+      key: "so_ra",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Khổ",
+      dataIndex: "kho",
+      key: "kho",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Khổ tổng",
+      dataIndex: "kho_tong",
+      key: "kho_tong",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Số dao",
+      dataIndex: "so_dao",
+      key: "so_dao",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Dài tấm",
+      dataIndex: "dai_tam",
+      key: "dai_tam",
       align: "center",
       editable: true,
     },
@@ -329,13 +383,6 @@ const Orders = () => {
       title: "Đơn vị tính",
       dataIndex: "unit",
       key: "unit",
-      align: "center",
-      editable: true,
-    },
-    {
-      title: "Kích thước chuẩn",
-      dataIndex: "kich_thuoc_chuan",
-      key: "kich_thuoc_chuan",
       align: "center",
       editable: true,
     },
@@ -464,21 +511,6 @@ const Orders = () => {
       dataIndex: "note_2",
       key: "note_2",
       align: "center",
-      editable: true,
-    },
-    {
-      title: "Phân loại 1",
-      dataIndex: "phan_loai_1",
-      key: "phan_loai_1",
-      align: "center",
-      editable: true,
-    },
-    {
-      title: "Phân loại 2",
-      dataIndex: "phan_loai_2",
-      key: "phan_loai_2",
-      align: "center",
-      width: '5%',
       editable: true,
     },
     {
@@ -854,7 +886,7 @@ const Orders = () => {
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
+        <Col span={4}>
           <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
             <Divider>Tìm kiếm</Divider>
             <div className="mb-3">
@@ -1004,7 +1036,7 @@ const Orders = () => {
             </div>
           </Card>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Quản lý đơn hàng"
