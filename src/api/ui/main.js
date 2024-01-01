@@ -20,6 +20,11 @@ export async function getCustomers(params) {
   return res;
 }
 
+export async function getOrders(params) {
+  const res = await axios.get("ui/orders");
+  return res;
+}
+
 export async function getProducts(params) {
   const res = await axios.get("ui/products");
   return res;
@@ -29,7 +34,7 @@ export async function getStaffs(params) {
   return res;
 }
 export async function getLoSanXuat(params) {
-  const res = await axios.get("ui/lo-san-xuat");
+  const res = await axios.get("ui/lo_sx");
   return res;
 }
 export async function getWarehouses(params) {
@@ -101,3 +106,5 @@ export async function exportKPI(params) {
   const res = await axios.get("export/kpi", { params });
   return res;
 }
+
+

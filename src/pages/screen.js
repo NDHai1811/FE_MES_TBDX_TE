@@ -13,8 +13,8 @@ const Screen = (props) => {
   const { Title } = Typography;
 
   const userPermissions = JSON.parse(window.localStorage.getItem("authUser"));
-  const isRawMaterialWarehouse = userPermissions.permission.includes("kho-nvl");
-
+  const isRawMaterialWarehouse = userProfile.permission.includes("kho-nvl");
+  const is_warehouse = userProfile.permission.some(e=>e.includes("kho"));
   const dashboard = [
     // {
     //   title: "Dashboard",
@@ -73,7 +73,7 @@ const Screen = (props) => {
     },
     {
       title: "Kho",
-      link: "/ui/warehouse/thanh-pham-giay",
+      link: "/ui/warehouse/quan-ly-kho",
       permission: "ui-kho",
     },
     {
@@ -90,7 +90,7 @@ const Screen = (props) => {
   const permissionOI = (listOI ?? []).filter(
     (e) =>
       (userProfile?.permission ?? []).includes("*") ||
-      (userProfile?.permission ?? []).includes(e.permission)
+      (userProfile?.permission ?? []).includes(e.permission) || (e.permission === 'oi-kho' && is_warehouse)
   );
   const permissionUI = (listUI ?? []).filter(
     (e) =>

@@ -48,3 +48,9 @@
 .custom-height-table .ant-table-tbody > tr > td {
   height: 130px; /* Set your desired height here */
 }
+
+.editable-row .ant-form-item-explain {
+  position: absolute;
+  top: 100%;
+  font-size: 12px;
+}

@@ -117,13 +117,13 @@ const Import = (props) => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
-  const [currentScan, setCurrentScan] = useState([
+  const [currentScan, setCurrentScan] = useState(
     {
       material_id: "",
       so_kg: "",
       locator_id: "",
     },
-  ]);
+  );
 
   const onShowPopup = () => {
     setVisible(true);
@@ -198,6 +198,9 @@ const Import = (props) => {
       );
   };
 
+  useEffect(()=>{
+    !visible && getLogs();
+  }, [visible]);
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 12]}>
@@ -205,7 +208,8 @@ const Import = (props) => {
           <Table
             pagination={false}
             bordered
-            className="mb-1"
+            size="small"
+            className="mb-1 custom-table"
             columns={column2}
             dataSource={[overall]}
           />
@@ -214,9 +218,10 @@ const Import = (props) => {
           <Table
             pagination={false}
             bordered
-            className="mb-1"
+            size="small"
+            className="mb-1 custom-table"
             columns={columnDetail}
-            dataSource={currentScan}
+            dataSource={currentScan ? [currentScan] : []}
           />
         </Col>
         <Col span={12}>
@@ -248,7 +253,7 @@ const Import = (props) => {
             }}
             onClick={onShowPopup}
           >
-            In tem
+            Nhập lại
           </Button>
         </Col>
         <Col span={24}>
@@ -276,7 +281,7 @@ const Import = (props) => {
         <PopupInTemKhoNvl
           visible={visible}
           setVisible={setVisible}
-          data={currentScan}
+          data={logs}
           setCurrentScan={setCurrentScan}
         />
       )}

@@ -543,13 +543,55 @@ export async function updateOrder(params){
     return res.data;
 }
 export async function deleteOrders(params){
-    const res = await axios.post('/orders/delete', params);
+    const res = await axios.delete('/orders/delete', {params});
     return res.data;
 }
 export async function exportOrders(params){
     const res = await axios.get('/orders/export', {params});
     return res;
 }
+export async function splitOrders(params){
+  const res = await axios.post('/orders/split', params);
+  return res;
+}
+
+//Buyers
+export async function getBuyers(params){
+  const res = await axios.get('/buyers/list', {params});
+  return res.data;
+}
+export async function createBuyers(params){
+  const res = await axios.post('/buyers/create', params);
+  return res.data;
+}
+export async function updateBuyers(params){
+  const res = await axios.patch('/buyers/update', params);
+  return res.data;
+}
+export async function deleteBuyers(params){
+  const res = await axios.delete('/buyers/delete', {params});
+  return res.data;
+}
+
+//Layouts
+export async function getLayouts(params){
+  const res = await axios.get('/layouts/list', {params});
+  return res.data;
+}
+export async function createLayouts(params){
+  const res = await axios.post('/layouts/create', params);
+  return res.data;
+}
+export async function updateLayouts(params){
+  const res = await axios.patch('/layouts/update', params);
+  return res.data;
+}
+export async function deleteLayouts(params){
+  const res = await axios.delete('/layouts/delete', {params});
+  return res.data;
+}
+
+
 
 export async function getTem(params){
   const res = await axios.get('/intem', {params});

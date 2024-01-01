@@ -66,6 +66,7 @@ const ScanQR = (props) => {
   const { isHideButton } = props;
 
   const onNewScanResult = (decodedText, decodedResult) => {
+    console.log(decodedText);
     props.onResult(decodedText);
   };
 

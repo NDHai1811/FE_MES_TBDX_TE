@@ -4,7 +4,6 @@ import {
   Row,
   Card,
   Table,
-  Layout,
   Divider,
   Button,
   Form,
@@ -12,7 +11,6 @@ import {
   Select,
   Upload,
   message,
-  Checkbox,
   Space,
   Modal,
   Spin,
@@ -20,61 +18,43 @@ import {
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
-import { getLines } from "../../../api/ui/main";
+import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
-  deleteRecordProductPlan,
   getListProductPlan,
   storeProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
+import {
+  useHistory,
+} from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
 
 const KeHoachSanXuat = () => {
-  const [listLines, setListLines] = useState([]);
-  // const [listMachines, setListMachines] = useState([]);
-  // const [listIdProducts, setListIdProducts] = useState([]);
-  const [listNameProducts, setListNameProducts] = useState([]);
-  const [listLoSX, setListLoSX] = useState([]);
-  // const [listStaffs, setListStaffs] = useState([]);
-  const [listCustomers, setListCustomers] = useState([]);
-  const [selectedLine, setSelectedLine] = useState();
-  // const [selectedNameProduct, setSelectedNameProduct] = useState();
-  // const [selectedIdProduct, setSelectedIdProduct] = useState();
-  // const [selectedCustomer, setSelectedCustomer] = useState();
-  // const [selectedStaff, setSelectedStaff] = useState();
-  const [listCheck, setListCheck] = useState([]);
+  document.title = "Kế hoạch sản xuất";
+  const history = useHistory();
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
-  const onChangeChecbox = (e) => {
-    if (e.target.checked) {
-      if (!listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) => [...oldArray, e.target.value]);
-      }
-    } else {
-      if (listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) =>
-          oldArray.filter((datainput) => datainput !== e.target.value)
-        );
-      }
-    }
-  };
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [machines, setMachines] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loSX, setLoSX] = useState([]);
   const col_detailTable = [
     {
-      title: "Chọn",
-      dataIndex: "name1",
-      key: "name1",
-      render: (value, item, index) => (
-        <Checkbox value={item.id} onChange={onChangeChecbox}></Checkbox>
-      ),
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      render: (value, item, index) => index + 1,
       align: "center",
+      width: '2%'
     },
     {
       title: "Thứ tự ưu tiên",
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
+      width: '2%'
     },
     {
       title: "Lô sx",
@@ -93,33 +73,35 @@ const KeHoachSanXuat = () => {
       dataIndex: "ngay_dat_hang",
       key: "ngay_dat_hang",
       align: "center",
+      width: '5%'
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
+      width: '10%'
     },
     {
-      title: "Mã đơn hàng",
+      title: "MDH",
       dataIndex: "ma_don_hang",
       key: "ma_don_hang",
       align: "center",
     },
     {
-      title: "Dài",
+      title: "L",
       dataIndex: "dai",
       key: "dai",
       align: "center",
     },
     {
-      title: "Rộng",
+      title: "W",
       dataIndex: "rong",
       key: "rong",
       align: "center",
     },
     {
-      title: "Cao",
+      title: "H",
       dataIndex: "cao",
       key: "cao",
       align: "center",
@@ -141,12 +123,14 @@ const KeHoachSanXuat = () => {
       dataIndex: "ngay_sx",
       key: "ngay_sx",
       align: "center",
+      width: '5%'
     },
     {
       title: "Ngày giao hàng",
       dataIndex: "ngay_giao_hang",
       key: "ngay_giao_hang",
       align: "center",
+      width: '5%'
     },
     {
       title: "Ghi chú",
@@ -239,72 +223,33 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
   ];
+
+  function btn_click() {
+    loadListTable();
+  }
+
+  useEffect(() => {
+    btn_click();
+  }, [])
+
   useEffect(() => {
     (async () => {
-      const res1 = await getLines();
-      setListLines(
-        res1.data.map((e) => {
-          return { ...e, label: e.name, value: e.id };
-        })
-      );
-      // const res2 = await getProducts();
-      // setListIdProducts(res2.data.map(e => {
-      //       return { ...e, label: e.id, value: e.id }
-      // }));
-      // setListNameProducts(res2.data.map(e => {
-      //       return { ...e, label: e.name, value: e.id }
-      // }));
-      // const res3 = await getLoSanXuat();
-      // setListLoSX(res3.data.map(e => {
-      //       return { ...e, label: e, value: e }
-      // }));
-      // const res4 = await getStaffs();
-      // setListStaffs(res4.data.map(e => {
-      //       return { ...e, label: e.name, value: e.id }
-      // }))
-      // const res5 = await getCustomers();
-      // setListCustomers(
-      //   res5.data.map((e) => {
-      //     return { ...e, label: e.name, value: e.id };
-      //   })
-      // );
+      const res1 = await getCustomers();
+      setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
+      const res2 = await getOrders();
+      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })))
+      const res3 = await getLoSanXuat();
+      setLoSX(res3.data.map((e) => ({ label: e, value: e })))
     })();
   }, []);
 
-  function btn_click() {
-    loadListTable(params);
-  }
-
-  // useEffect(() => {
-  //   (async () => {
-  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-  //     if (res.success) {
-  //       setListNameProducts(
-  //         res.data.product.map((e) => {
-  //           return { ...e, label: e.name, value: e.id };
-  //         })
-  //       );
-  //       setListLoSX(
-  //         Object.values(res.data.lo_sx).map((e) => {
-  //           return { label: e, value: e };
-  //         })
-  //       );
-  //     }
-  //   })();
-  // }, [params.khach_hang]);
-
   const [data, setData] = useState([]);
-  const loadListTable = async (params) => {
+  const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
     setData(res);
     setLoading(false);
   };
-  useEffect(() => {
-    (async () => {
-      loadListTable(params);
-    })();
-  }, []);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -329,49 +274,10 @@ const KeHoachSanXuat = () => {
       const res = await storeProductPlan(values);
     }
     setOpenMdlEdit(false);
-    loadListTable(params);
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteRecordProductPlan(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
-  };
-  const editRecord = () => {
-    setTitleMdlEdit("Cập nhật");
-    if (listCheck.length > 1) {
-      message.info("Chỉ chọn 1 bản ghi để chỉnh sửa");
-    } else if (listCheck.length == 0) {
-      message.info("Chưa chọn bản ghi cần chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({
-        id: listCheck[0],
-        thu_tu_uu_tien: result.thu_tu_uu_tien,
-        thoi_gian_bat_dau: result.thoi_gian_bat_dau,
-        thoi_gian_ket_thuc: result.thoi_gian_ket_thuc,
-        cong_doan_sx: result.cong_doan_sx,
-        product_id: result.product_id,
-        khach_hang: result.khach_hang,
-        ca_sx: result.ca_sx,
-        lo_sx: result.lo_sx,
-        so_bat: result.so_bat,
-        sl_nvl: result.sl_nvl,
-        sl_thanh_pham: result.sl_thanh_pham,
-        UPH: result.UPH,
-        nhan_luc: result.nhan_luc,
-      });
-      setOpenMdlEdit(true);
-    }
+    loadListTable();
   };
   const insertRecord = () => {
-    setTitleMdlEdit("Thêm mới");
-    form.resetFields();
-    setOpenMdlEdit(true);
+    history.push("/ui/manufacture/tao-ke-hoach-san-xuat");
   };
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -416,6 +322,10 @@ const KeHoachSanXuat = () => {
       ],
     },
   ];
+  const onCheck = (selectedKeys, e) => {
+    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
+    setParams({ ...params, machine: filteredKeys });
+  }
   return (
     <>
       {contextHolder}
@@ -431,28 +341,12 @@ const KeHoachSanXuat = () => {
                 <Form.Item className="mb-3">
                   <Tree
                     checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
+                    onCheck={onCheck}
                     treeData={itemsMenu}
-                    style={{ maxHeight: '80px', overflowY: 'auto' }}
+                  // style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>
-              {/* <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Checkbox.Group
-                    options={listLines}
-                    value={selectedLine}
-                    onChange={(checkedValues) => {
-                      setParams({ ...params, line_id: checkedValues });
-                    }}
-                  />
-                </Form.Item>
-              </Form> */}
             </div>
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
@@ -464,18 +358,18 @@ const KeHoachSanXuat = () => {
                     placeholder="Bắt đầu"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
+                      setParams({ ...params, start_date: value })
                     }
-                    value={params.date[0]}
+                    value={params.start_date}
                   />
                   <DatePicker
                     allowClear={false}
                     placeholder="Kết thúc"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
+                      setParams({ ...params, end_date: value })
                     }
-                    value={params.date[1]}
+                    value={params.end_date}
                   />
                 </Space>
               </Form>
@@ -483,28 +377,13 @@ const KeHoachSanXuat = () => {
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập máy"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
                 <Form.Item label="Khách hàng" className="mb-3">
                   <Select
                     allowClear
                     showSearch
                     placeholder="Nhập khách hàng"
                     onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
+                      setParams({ ...params, customer_id: value })
                     }
                     optionFilterProp="children"
                     filterOption={(input, option) =>
@@ -512,7 +391,8 @@ const KeHoachSanXuat = () => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listCustomers}
+                    popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
+                    options={customers}
                   />
                 </Form.Item>
                 <Form.Item label="Đơn hàng" className="mb-3">
@@ -520,7 +400,7 @@ const KeHoachSanXuat = () => {
                     allowClear
                     showSearch
                     onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
+                      setParams({ ...params, order_id: value });
                     }}
                     placeholder="Nhập đơn hàng"
                     optionFilterProp="children"
@@ -529,7 +409,7 @@ const KeHoachSanXuat = () => {
                         .toLowerCase()
                         .includes(input.toLowerCase())
                     }
-                    options={listNameProducts}
+                    options={orders}
                   />
                 </Form.Item>
                 <Form.Item label="Lô Sản xuất" className="mb-3">
@@ -544,22 +424,7 @@ const KeHoachSanXuat = () => {
                         .includes(input.toLowerCase())
                     }
                     onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Quy cách" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập quy cách"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
+                    options={loSX}
                   />
                 </Form.Item>
               </Form>
@@ -606,7 +471,7 @@ const KeHoachSanXuat = () => {
                         success();
                         setLoadingExport(false);
                       } else {
-                        loadListTable(params);
+                        loadListTable();
                         message.error(info.file.response.message);
                         setLoadingExport(false);
                       }
@@ -621,14 +486,8 @@ const KeHoachSanXuat = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button type="primary" onClick={deleteRecord}>
-                  Delete
-                </Button>
-                <Button type="primary" onClick={editRecord}>
-                  Edit
-                </Button>
                 <Button type="primary" onClick={insertRecord}>
-                  Insert
+                  Tạo kế hoạch
                 </Button>
               </Space>
             }
@@ -639,7 +498,7 @@ const KeHoachSanXuat = () => {
                 bordered
                 pagination={false}
                 scroll={{
-                  x: "180vw",
+                  x: "200vw",
                   y: "80vh",
                 }}
                 columns={col_detailTable}

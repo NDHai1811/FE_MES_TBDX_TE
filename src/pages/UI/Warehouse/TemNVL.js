@@ -49,7 +49,7 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td className="text-center">MÃ CUỘN TBDX</td>
-                            <td>{detail['material_id']}</td>
+                            <td className="text-center">{detail['material_id']}</td>
                         </tr>
                         <tr>
                             <td className="text-center">MÃ VẬT TƯ</td>
@@ -57,31 +57,31 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td className="text-center">NHÀ CUNG CẤP</td>
-                            <td >{detail['so_luong']}</td>
+                            <td className="text-center">{detail['ten_ncc']}</td>
                         </tr>
                         <tr>
                             <td className="text-center">MÃ CUỘN NCC:</td>
-                            <td >{detail['ma_cuon_ncc']}</td>
+                            <td className="text-center">{detail['ma_cuon_ncc']}</td>
                         </tr>
                         <tr>
-                            <td className="text-center">fsc</td>
-                            <td ></td>
+                            <td className="text-center">FSC</td>
+                            <td className="text-center">{detail['fsc'] ? "X" : ""}</td>
                         </tr>
                         <tr>
                             <td className="text-center">KHỔ GIẤY</td>
-                            <td >{detail['kho_giay']}</td>
+                            <td className="text-center">{detail['kho_giay']}</td>
                         </tr>
                         <tr>
                             <td className="text-center">ĐỊNH LƯỢNG</td>
-                            <td >{detail['dinh_luong']}</td>
+                            <td className="text-center">{detail['dinh_luong']}</td>
                         </tr>
                         <tr>
                             <td className="text-center">SỐ KG</td>
-                            <td >{detail['so_kg']}</td>
+                            <td className="text-center">{detail['so_kg']}</td>
                         </tr>
                         <tr>
                             <td className="text-center">NGÀY NHẬP KHO</td>
-                            <td >{detail['created_at']}</td>
+                            <td className="text-center">{detail['updated_at'] ? dayjs(detail['updated_at']).format('DD/MM/YYYY HH:mm:ss') : ''}</td>
                         </tr>
                     </tbody>
                 </table>

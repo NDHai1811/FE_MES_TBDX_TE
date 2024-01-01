@@ -1,602 +1,1125 @@
-import { DatePicker, Col, Row, Card, Table, Tag, Layout, Divider, Button, Form, Input, theme, Select, AutoComplete, Upload, message, Checkbox, Space, Modal, Spin, Popconfirm } from 'antd';
-import { baseURL } from '../../../config';
-import React, { useState, useRef, useEffect } from 'react';
-import { createOrder, deleteOrders, exportOrders, getOrders, updateOrder } from '../../../api';
+import {
+  Col,
+  Row,
+  Card,
+  Table,
+  Divider,
+  Button,
+  Form,
+  Input,
+  Upload,
+  message,
+  Space,
+  DatePicker,
+  Spin,
+  Popconfirm,
+  Typography,
+  InputNumber,
+  Select,
+  Modal,
+} from "antd";
+import { baseURL } from "../../../config";
+import React, { useState, useEffect } from "react";
+import {
+  createOrder,
+  deleteOrders,
+  exportOrders,
+  getOrders,
+  splitOrders,
+  updateOrder,
+} from "../../../api";
+import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
+import "../style.scss";
+import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
+import dayjs from "dayjs";
+import { formatDateTime } from "../../../commons/utils";
+import { getBuyers, getListLayout } from "../../../api/ui/manufacture";
 
+const EditableCell = ({
+  editing,
+  dataIndex,
+  title,
+  inputType,
+  record,
+  index,
+  children,
+  onChange,
+  onSelect,
+  options,
+  ...restProps
+}) => {
+  let inputNode;
+  switch (inputType) {
+    case "number":
+      inputNode = <InputNumber />;
+      break;
+    case "select":
+      inputNode = (
+        <Select
+          value={record?.[dataIndex]}
+          options={options}
+          onChange={onSelect}
+          bordered
+          showSearch
+        />
+      );
+      break;
+    default:
+      inputNode = <Input />;
+  }
+  const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
+  return (
+    <td {...restProps}>
+      {editing ? (
+        inputType === "dateTime" ? (
+          <DatePicker
+            format={COMMON_DATE_TABLE_FORMAT_REQUEST}
+            placeholder="Chọn ngày"
+            value={dateValue}
+            onChange={(value) => value.isValid() && onChange(value, dataIndex)}
+          />
+        ) : (
+          <Form.Item
+            name={dataIndex}
+            style={{
+              margin: 0,
+            }}
+            initialValue={record?.[dataIndex]}
+          >
+            {inputNode}
+          </Form.Item>
+        )
+      ) : (
+        children
+      )}
+    </td>
+  );
+};
+
+const layoutTypes = [
+  {
+    label: "M",
+    value: "M",
+  },
+  {
+    label: "P8",
+    value: "P8",
+  },
+];
+const PL1s = [
+  {
+    label: "THÙNG",
+    value: "Thung",
+  },
+  {
+    label: "PAD",
+    value: "Pad",
+  },
+  {
+    label: "INNER",
+    value: "Inner",
+  }
+];
+const PL2s = [
+  {
+    label: "Thùng 1 mảnh",
+    value: "Thung 1 manh",
+  },
+  {
+    label: "Thùng 2 mảnh",
+    value: "Thung 2 manh",
+  },
+  {
+    label: "Thùng 4 mảnh",
+    value: "Thung 4 manh",
+  },
+  {
+    label: "Thùng thường",
+    value: "Thung thuong",
+  },
+  {
+    label: "Thùng bế",
+    value: "Thung be",
+  },
+  {
+    label: "Thùng 1 nắp",
+    value: "Thung 1 nap",
+  },
+  {
+    label: "Pad U",
+    value: "Pad U",
+  },
+  {
+    label: "Pad Z, rãnh",
+    value: "Pad Z, ranh",
+  },
+  {
+    label: "Giấy tấm không tề",
+    value: "Giay tam khong te",
+  },
+  {
+    label: "Giấy tấm có tề 1 mảnh (DxR)",
+    value: "Giay tam co te 1 manh (DxR)",
+  },
+  {
+    label: "Giấy tấm có tề 1 mảnh (DxRxC)",
+    value: "Giay tam co te 1 manh (DxRxC)",
+  },
+  {
+    label: "Giấy tấm có tề 2 mảnh (DxRxC)",
+    value: "Giay tam co te 2 manh (DxRxC)",
+  },
+];
 const Orders = () => {
-    document.title = "Quản lý đơn hàng"; 
-    const [listCheck, setListCheck] = useState([]);
-    const [openMdl, setOpenMdl] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [form] = Form.useForm();
-    const [params, setParams] = useState({});
-    const col_detailTable = [
-        {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dh',
-            key: 'ngay_dh',
-            align: 'center',
-            fixed: 'left'
-        },
-        {
-            title: 'Khách hàng',
-            dataIndex: 'khach_hang',
-            key: 'khach_hang',
-            align: 'center',
-        },
-        {
-            title: 'Người đặt hàng',
-            dataIndex: 'nguoi_dh',
-            key: 'nguoi_dh',
-            align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
-            title: 'Đơn hàng',
-            dataIndex: 'order',
-            key: 'order',
-            align: 'center',
-        },
-        {
-            title: 'Mã quản lý',
-            dataIndex: 'mql',
-            key: 'mql',
-            align: 'center',
-        },
-        {
-            title: 'Dài',
-            dataIndex: 'l',
-            key: 'l',
-            align: 'center',
-        },
-        {
-            title: 'Rộng',
-            dataIndex: 'w',
-            key: 'w',
-            align: 'center',
-        },
-        {
-            title: 'Cao',
-            dataIndex: 'h',
-            key: 'h',
-            align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng',
-            dataIndex: 'sl',
-            key: 'sl',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng giao',
-            dataIndex: 'slg',
-            key: 'slg',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng thực',
-            dataIndex: 'slt',
-            key: 'slt',
-            align: 'center',
-        },
-        {
-            title: 'TMO',
-            dataIndex: 'tmo',
-            key: 'tmo',
-            align: 'center',
-        },
-        {
-            title: 'PO',
-            dataIndex: 'po',
-            key: 'po',
-            align: 'center',
-        },
-        {
-            title: 'Style',
-            dataIndex: 'style',
-            key: 'style',
-            align: 'center',
-        },
-        {
-            title: 'Style no',
-            dataIndex: 'style_no',
-            key: 'style_no',
-            align: 'center',
-        },
-        {
-            title: 'Màu',
-            dataIndex: 'color',
-            key: 'color',
-            align: 'center',
-        },
-        {
-            title: 'Item',
-            dataIndex: 'item',
-            key: 'item',
-            align: 'center',
-        },
-        {
-            title: 'RM',
-            dataIndex: 'rm',
-            key: 'rm',
-            align: 'center',
-        },
-        {
-            title: 'Size',
-            dataIndex: 'size',
-            key: 'size',
-            align: 'center',
-        },
-        {
-            title: 'Dot',
-            dataIndex: 'dot',
-            key: 'dot',
-            align: 'center',
-        },
-        {
-            title: 'Fac',
-            dataIndex: 'fac',
-            key: 'fac',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú',
-            dataIndex: 'ghi_chu',
-            key: 'ghi_chu',
-            align: 'center',
-        },
-        {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
-            align: 'center',
-        },
-        {
-            title: 'Ngày giao',
-            dataIndex: 'ngay_giao',
-            key: 'ngay_giao',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú 2',
-            dataIndex: 'ghi_chu_2',
-            key: 'ghi_chu_2',
-            align: 'center',
-        },
-        {
-            title: 'Xe giao',
-            dataIndex: 'xe_giao',
-            key: 'xe_giao',
-            align: 'center',
-        },
-        {
-            title: 'Xuất hàng',
-            dataIndex: 'xuat_hang',
-            key: 'xuat_hang',
-            align: 'center',
-        },
-    ]
-    const formFields = [
-        {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dh',
-            key: 'ngay_dh',
-            align: 'center',
-            fixed: 'left'
-        },
-        {
-            title: 'Khách hàng',
-            dataIndex: 'khach_hang',
-            key: 'khach_hang',
-            align: 'center',
-        },
-        {
-            title: 'Người đặt hàng',
-            dataIndex: 'nguoi_dh',
-            key: 'nguoi_dh',
-            align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
-            title: 'Đơn hàng',
-            dataIndex: 'order',
-            key: 'order',
-            align: 'center',
-        },
-        {
-            title: 'Mã quản lý',
-            dataIndex: 'mql',
-            key: 'mql',
-            align: 'center',
-        },
-        {
-            title: 'Dài',
-            dataIndex: 'l',
-            key: 'l',
-            align: 'center',
-        },
-        {
-            title: 'Rộng',
-            dataIndex: 'w',
-            key: 'w',
-            align: 'center',
-        },
-        {
-            title: 'Cao',
-            dataIndex: 'h',
-            key: 'h',
-            align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng',
-            dataIndex: 'sl',
-            key: 'sl',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng giao',
-            dataIndex: 'slg',
-            key: 'slg',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng thực',
-            dataIndex: 'slt',
-            key: 'slt',
-            align: 'center',
-        },
-        {
-            title: 'TMO',
-            dataIndex: 'tmo',
-            key: 'tmo',
-            align: 'center',
-        },
-        {
-            title: 'PO',
-            dataIndex: 'po',
-            key: 'po',
-            align: 'center',
-        },
-        {
-            title: 'Style',
-            dataIndex: 'style',
-            key: 'style',
-            align: 'center',
-        },
-        {
-            title: 'Style no',
-            dataIndex: 'style_no',
-            key: 'style_no',
-            align: 'center',
-        },
-        {
-            title: 'Màu',
-            dataIndex: 'color',
-            key: 'color',
-            align: 'center',
-        },
-        {
-            title: 'Item',
-            dataIndex: 'item',
-            key: 'item',
-            align: 'center',
-        },
-        {
-            title: 'RM',
-            dataIndex: 'rm',
-            key: 'rm',
-            align: 'center',
-        },
-        {
-            title: 'Size',
-            dataIndex: 'size',
-            key: 'size',
-            align: 'center',
-        },
-        {
-            title: 'Dot',
-            dataIndex: 'dot',
-            key: 'dot',
-            align: 'center',
-        },
-        {
-            title: 'Fac',
-            dataIndex: 'fac',
-            key: 'fac',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú',
-            dataIndex: 'ghi_chu',
-            key: 'ghi_chu',
-            align: 'center',
-        },
-        {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
-            align: 'center',
-        },
-        {
-            title: 'Ngày giao',
-            dataIndex: 'ngay_giao',
-            key: 'ngay_giao',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú 2',
-            dataIndex: 'ghi_chu_2',
-            key: 'ghi_chu_2',
-            align: 'center',
-        },
-        {
-            title: 'Xe giao',
-            dataIndex: 'xe_giao',
-            key: 'xe_giao',
-            align: 'center',
-        },
-        {
-            title: 'Xuất hàng',
-            dataIndex: 'xuat_hang',
-            key: 'xuat_hang',
-            align: 'center',
-        },
-    ]
+  document.title = "Quản lý đơn hàng";
+  const [openMdl, setOpenMdl] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [form] = Form.useForm();
+  const [params, setParams] = useState({});
+  const [editingKey, setEditingKey] = useState("");
+  const [splitKey, setSplitKey] = useState("");
+  const [data, setData] = useState([]);
+  const isEditing = (record) => record.key === editingKey;
+  const [buyers, setBuyers] = useState([]);
+  const [layouts, setLayouts] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [inputData, setInputData] = useState([
+    {
+      so_luong: 0,
+      ngay_giao: "",
+      xuong_giao: "",
+    },
+  ]);
 
-    function btn_click() {
-        loadListTable(params)
+  const showInput = () => {
+    setInputData([
+      ...inputData,
+      {
+        so_luong: 0,
+        ngay_giao: "",
+        xuong_giao: "",
+      },
+    ]);
+  };
+
+  const showModal = (record) => {
+    setSplitKey(record.id);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    console.log(inputData);
+    setIsModalVisible(false);
+    await splitOrders({ id: splitKey, inputData: inputData });
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+        xuong_giao: "",
+      }
+    ]);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+        xuong_giao: "",
+      }
+    ]);
+  };
+
+  const col_detailTable = [
+    {
+      title: "Mã khách hàng",
+      dataIndex: "customer_id",
+      key: "customer_id",
+      align: "center",
+      editable: true,
+      fixed: "left",
+      width: "3%",
+    },
+    {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      editable: true,
+      fixed: "left",
+      width: "2.5%",
+    },
+    {
+      title: "Ngày đặt hàng",
+      dataIndex: "ngay_dat_hang",
+      key: "ngay_dat_hang",
+      align: "center",
+      fixed: "left",
+      editable: true,
+    },
+    {
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      editable: true,
+      width: "1.5%",
+    },
+    {
+      title: "SL",
+      dataIndex: "sl",
+      key: "sl",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Kích thước chuẩn",
+      dataIndex: "kich_thuoc_chuan",
+      key: "kich_thuoc_chuan",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Phân loại 1",
+      dataIndex: "phan_loai_1",
+      key: "phan_loai_1",
+      align: "center",
+      width: '4%',
+      editable: true,
+    },
+    {
+      title: "Phân loại 2",
+      dataIndex: "phan_loai_2",
+      key: "phan_loai_2",
+      align: "center",
+      width: '4%',
+      editable: true,
+    },
+    {
+      title: "Mã buyer",
+      dataIndex: "buyer_id",
+      key: "buyer_id",
+      align: "center",
+      editable: true,
+      width: '5%'
+    },
+    {
+      title: "Số ra",
+      dataIndex: "so_ra",
+      key: "so_ra",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Khổ",
+      dataIndex: "kho",
+      key: "kho",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Khổ tổng",
+      dataIndex: "kho_tong",
+      key: "kho_tong",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Số dao",
+      dataIndex: "so_dao",
+      key: "so_dao",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Dài tấm",
+      dataIndex: "dai_tam",
+      key: "dai_tam",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Chia máy + p8",
+      dataIndex: "layout_type",
+      key: "layout_type",
+      align: "center",
+      editable: true,
+      width: "2%",
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+      editable: true,
+      width: '4%'
+    },
+    {
+      title: "Order",
+      dataIndex: "order",
+      key: "order",
+      align: "center",
+      editable: true,
+      width: "6%",
+    },
+
+    {
+      title: "Kích thước ĐH",
+      dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Đơn vị tính",
+      dataIndex: "unit",
+      key: "unit",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "SLG",
+      dataIndex: "slg",
+      key: "slg",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "SLT",
+      dataIndex: "slt",
+      key: "slt",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "TMO",
+      dataIndex: "tmo",
+      key: "tmo",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "PO",
+      dataIndex: "po",
+      key: "po",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "STYLE",
+      dataIndex: "style",
+      key: "style",
+      align: "center",
+      editable: true,
+      width: "10%",
+    },
+    {
+      title: "STYLE NO",
+      dataIndex: "style_no",
+      key: "style_no",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "COLOR",
+      dataIndex: "color",
+      key: "color",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "ITEM",
+      dataIndex: "item",
+      key: "item",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "RM",
+      dataIndex: "rm",
+      key: "rm",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "SIZE",
+      dataIndex: "size",
+      key: "size",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Đơn giá",
+      dataIndex: "price",
+      key: "price",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Thành tiền",
+      dataIndex: "into_money",
+      key: "into_money",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Đợt",
+      dataIndex: "dot",
+      key: "dot",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Xưởng giao",
+      dataIndex: "xuong_giao",
+      key: "xuong_giao",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Ghi chú khách hàng",
+      dataIndex: "note_1",
+      key: "note_1",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Ngày giao hàng trên đơn",
+      dataIndex: "han_giao",
+      key: "han_giao",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Người đặt hàng",
+      dataIndex: "nguoi_dat_hang",
+      key: "nguoi_dat_hang",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Ghi chú của TBDX",
+      dataIndex: "note_2",
+      key: "note_2",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "action",
+      align: "center",
+      fixed: "right",
+      width: "3%",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => onUpdate(record)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Lưu
+            </Typography.Link>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+              <a>Hủy</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <span>
+            <LinkOutlined
+              style={{ color: "#1677ff", fontSize: 18 }}
+              onClick={() => showModal(record)}
+            />
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            />
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa?"
+              onConfirm={() => onDetele(record)}
+            >
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 18,
+                }}
+              />
+            </Popconfirm>
+          </span>
+        );
+      },
+    },
+  ];
+
+  useEffect(() => {
+    getBuyerList();
+    getLayouts();
+  }, []);
+
+  const getBuyerList = async () => {
+    const res = await getBuyers();
+    setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
+  };
+
+  const getLayouts = async () => {
+    const res = await getListLayout();
+    setLayouts(
+      res.map((val) => ({ label: val.machine_layout_id, value: val.machine_layout_id }))
+    );
+  };
+
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value.id;
+      }
+      return { ...val };
+    });
+    setData(items);
+  };
+
+  const mergedColumns = col_detailTable.map((col) => {
+    if (!col.editable) {
+      return col;
     }
-
-    const [data, setData] = useState([]);
-    const loadListTable = async (params) => {
-        setLoading(true)
-        const res = await getOrders(params);
-        setData(res.map(e=>{
-            return {...e, key: e.id}
-        }));
-        setLoading(false);
-    }
-    useEffect(() => {
-        (async () => {
-            loadListTable(params);
-        })()
-    }, [])
-
-    const [messageApi, contextHolder] = message.useMessage();
-
-    const success = () => {
-        messageApi.open({
-                type: 'success',
-                content: 'Upload file thành công',
-        });
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType:
+          col.dataIndex === "cao" ||
+            col.dataIndex === "dai" ||
+            col.dataIndex === "mdh" ||
+            col.dataIndex === "price" ||
+            col.dataIndex === "rong"
+            ? "number"
+            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
+              ? "dateTime"
+              : col.dataIndex === "buyer_id" ||
+                col.dataIndex === "layout_id" ||
+                col.dataIndex === "layout_type" ||
+                col.dataIndex === "phan_loai_1" ||
+                col.dataIndex === "phan_loai_2"
+                ? "select"
+                : "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+        onChange,
+        onSelect,
+        options:
+          col.dataIndex === "buyer_id"
+            ? buyers
+            : col.dataIndex === "layout_type"
+              ? layoutTypes
+              : col.dataIndex === "layout_id"
+                ? layouts
+                : col.dataIndex === "phan_loai_1"
+                  ? PL1s : PL2s,
+      }),
     };
+  });
 
-    const error = () => {
-        messageApi.open({
-                type: 'error',
-                content: 'Upload file lỗi',
-        });
-    };
+  const onChange = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    value.isValid() && setData(items);
+  };
 
-    const onFinish = async (values) => {
-        console.log(values);
-        if(isEdit){
-            const res = await updateOrder(values);
-            console.log(res);
-            if(res){
-                form.resetFields();
-                setOpenMdl(false);
-                loadListTable(params);
-            }
-        }else{
-            const res = await createOrder(values);
-            console.log(res);
-            if(res){
-                form.resetFields();
-                setOpenMdl(false);
-                loadListTable(params);
-            }
-        }
-    }
+  function btn_click() {
+    loadListTable(params);
+  }
 
-    const deleteRecord = async () => {
-        if (listCheck.length > 0) {
-            const res = await deleteOrders(listCheck);
-            setListCheck([]);
-            loadListTable(params);
-        } else {
-            message.info('Chưa chọn bản ghi cần xóa')
-        }
+  const onAdd = () => {
+    form.resetFields();
+    setData([
+      {
+        key: data.length + 1,
+        khach_hang: "",
+        nguoi_dat_hang: "",
+        mdh: "",
+        order: "",
+        sl: "",
+        slg: "",
+        slt: "",
+        tmo: "",
+        po: "",
+        style: "",
+        style_no: "",
+        color: "",
+        item: "",
+        rm: "",
+        size: "",
+        note_1: "",
+        note_2: "",
+      },
+      ...data,
+    ]);
+    setEditingKey(data.length + 1);
+  };
+
+  const edit = (record) => {
+    form.setFieldsValue({
+      ...record,
+    });
+    setEditingKey(record.key);
+  };
+
+  const cancel = () => {
+    if (typeof editingKey === "number") {
+      const newData = [...data];
+      newData.shift();
+      setData(newData);
     }
-    const editRecord = () => {
-        setIsEdit(true)
-        if (listCheck.length !== 1) {
-            message.info('Chọn 1 bản ghi để chỉnh sửa');
-        } else {
-            const result = data.find((record) => record.id === listCheck[0]);
-            form.setFieldsValue({...result});
-            setOpenMdl(true);
-        }
-    }
-    const insertRecord = () => {
-        setIsEdit(false)
+    setEditingKey("");
+  };
+
+  const loadListTable = async (params) => {
+    setLoading(true);
+    const res = await getOrders(params);
+    setData(
+      res.map((e) => {
+        return { ...e, key: e.id };
+      })
+    );
+    setLoading(false);
+  };
+  useEffect(() => {
+    (async () => {
+      loadListTable(params);
+    })();
+  }, []);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Upload file thành công",
+    });
+  };
+
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Upload file lỗi",
+    });
+  };
+
+  const onFinish = async (values) => {
+    if (isEdit) {
+      values.id = editingKey;
+      const res = await updateOrder(values);
+      if (res) {
         form.resetFields();
-        setOpenMdl(true);
+        setOpenMdl(false);
+        loadListTable(params);
+      }
+    } else {
+      const res = await createOrder(values);
+      if (res) {
+        form.resetFields();
+        setOpenMdl(false);
+        loadListTable(params);
+      }
     }
-    const [loadingExport, setLoadingExport] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [exportLoading, setExportLoading] = useState(false);
-    const exportFile = async () =>{
-        setExportLoading(true);
-        const res = await exportOrders(params);
-        if(res.success){
-            window.location.href = baseURL+res.data;
-        }
-        setExportLoading(false);
+  };
+
+  const onUpdate = async () => {
+    const row = await form.validateFields();
+    const item = data.find((val) => val.key === editingKey);
+
+    if (item) {
+      row.ngay_dat_hang = formatDateTime(
+        item?.ngay_dat_hang,
+        COMMON_DATE_TABLE_FORMAT_REQUEST
+      );
+      row.han_giao = formatDateTime(
+        item?.han_giao,
+        COMMON_DATE_TABLE_FORMAT_REQUEST
+      );
+      !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
+      !item?.han_giao && delete row?.han_giao;
     }
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            setListCheck(selectedRowKeys)
-        },
-    };
-    return <>
-        {contextHolder}
-        <Row style={{ padding: '8px', height: '90vh' }} gutter={[8, 8]}>
-                <Col span={3}>
-                    <Card style={{ height: '100%' }} bodyStyle={{padding:0}}>
-                    <Divider>Tìm kiếm</Divider>
-                    <div className='mb-3'>
-                        <Form style={{ margin: '0 15px' }} layout="vertical" onFinish={btn_click}>
-                            <Form.Item label="Mã lỗi" className='mb-3'>
-                                <Input allowClear onChange={(e)=>setParams({...params, id: e.target.value})} placeholder='Nhập mã'/>
-                            </Form.Item>
-                            <Form.Item label="Code" className='mb-3'>
-                                <Input allowClear onChange={(e)=>setParams({...params, code: e.target.value})} placeholder='Nhập tên'/>
-                            </Form.Item>
-                            <Form.Item style={{textAlign:'center'}}>
-                                <Button type='primary' htmlType='submit'
-                                    style={{ width: '80%' }}>
-                                    Tìm kiếm
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </div>
-                    </Card>
-                </Col>
-                <Col span={21}>
-                    <Card style={{ height: '100%' }} title="Quản lý nguyên vật liệu" extra={
-                        <Space>
-                            <Upload
-                                showUploadList={false}
-                                name='files'
-                                action={baseURL + "/api/orders/import"}
-                                headers={{
-                                    authorization: 'authorization-text',
-                                }}
-                                onChange={(info) => {
-                                    setLoadingExport(true);
-                                    if (info.file.status === 'error') {
-                                            setLoadingExport(false);
-                                            error()
-                                    } else if (info.file.status === 'done') {
-                                            if (info.file.response.success === true) {
-                                                loadListTable(params);
-                                                success();
-                                                setLoadingExport(false);
-                                            } else {
-                                                loadListTable(params);
-                                                message.error(info.file.response.message);
-                                                setLoadingExport(false);
-                                            }
-                                    }
-                                }}
-                            >
-                                <Button style={{ marginLeft: '15px' }} type="primary" loading={loadingExport}>
-                                    Upload Excel
-                                </Button>
-                            </Upload>
-                            <Button type="primary" onClick={exportFile} loading={exportLoading}>Export Excel</Button>
-                            <Button type="primary" onClick={editRecord} disabled={listCheck.length <= 0}>Edit</Button>
-                            <Button type="primary" onClick={insertRecord}>Insert</Button>
-                            <Popconfirm
-                                title="Xoá bản ghi"
-                                description={"Bạn có chắc xoá "+listCheck.length+" bản ghi đã chọn?"}
-                                onConfirm={deleteRecord}
-                                okText="Có"
-                                cancelText="Không"
-                                placement="bottomRight"
-                            >
-                                <Button type="primary" disabled={listCheck.length <= 0}>Delete</Button>
-                            </Popconfirm>
-                            
-                        </Space>
-                    }>
-                        <Spin spinning={loading}>
-                        <Table size='small' bordered
-                            pagination={{position: ['topRight', 'bottomRight']}}
-                            scroll={
-                                {
-                                    x: '130vw',
-                                    y: '80vh'
-                                }
-                            }
-                            columns={col_detailTable}
-                            dataSource={data} 
-                            rowSelection={rowSelection}/>
-                        </Spin>
-                    </Card>
-                </Col>
-        </Row>
-        <Modal title={isEdit ? 'Cập nhật' : 'Thêm mới'} open={openMdl} onCancel={() => setOpenMdl(false)} footer={null} width={800}>
-            <Form style={{ margin: '0 15px' }}
+
+    if (typeof editingKey === "number") {
+      const res = await createOrder(row);
+      if (res) {
+        form.resetFields();
+        loadListTable(params);
+        setEditingKey("");
+      }
+    } else {
+      row.id = editingKey;
+      const res = await updateOrder(row);
+      if (res) {
+        form.resetFields();
+        loadListTable(params);
+        setEditingKey("");
+      }
+    }
+  };
+
+  const onDetele = async (record) => {
+    await deleteOrders({ id: record.id });
+    loadListTable(params);
+  };
+
+  const [loadingExport, setLoadingExport] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const exportFile = async () => {
+    setExportLoading(true);
+    const res = await exportOrders(params);
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
+  };
+
+  const renderInputData = (item, index) => {
+    return (
+      <Row key={index} style={{ flexDirection: "row", marginBottom: 8 }} gutter={[8, 8]}>
+        <Col span={6}>
+          <div>
+            <p3 style={{ display: "block" }}>Số lượng</p3>
+            <InputNumber
+              min={1}
+              placeholder="Nhập số lượng"
+              onChange={(value) => onChangeQuantity(value, index)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={6}>
+          <div>
+            <p3 style={{ display: "block" }}>Ngày giao</p3>
+            <DatePicker
+              format={COMMON_DATE_TABLE_FORMAT_REQUEST}
+              value={item.ngay_giao}
+              onChange={(value) =>
+                value.isValid() && onChangeDate(value, index)
+              }
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={12}>
+          <div>
+            <p3 style={{ display: "block" }}>Nơi giao</p3>
+            <Input
+              placeholder="Nhập xưởng giao"
+              onChange={(e) => onChangeAddress(e.target.value, index)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+      </Row>
+    );
+  };
+
+  const onChangeDate = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.ngay_giao = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
+  const onChangeQuantity = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.so_luong = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
+
+  const onChangeAddress = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.xuong_giao = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
+  return (
+    <>
+      {contextHolder}
+      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+        <Col span={4}>
+          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+            <Divider>Tìm kiếm</Divider>
+            <div className="mb-3">
+              <Form
+                style={{ margin: "0 5px" }}
                 layout="vertical"
-                form={form}
-                onFinish={onFinish}>
-                <Row gutter={[16, 16]}>
-                    {formFields.map(e=>{
-                        if(e.key !== 'select' && e.key !== 'stt'){
-                            if(e?.children?.length > 0){
-                                return e.children.map((c, index)=>{
-                                    return <Col span={!c.hidden ? 12 / e.children.length : 0}>
-                                            <Form.Item name={[e.key, c.key]} className='mb-3' label={e.title + " - " + c.title} hidden={c.hidden} rules={[{required: c.required}]}>
-                                                {!c.isTrueFalse ?
-                                                    <Input disabled={c.disabled || (isEdit && c.key === 'id')}></Input>
-                                                    :
-                                                    <Select>
-                                                        <Select.Option value={1}>Có</Select.Option>
-                                                        <Select.Option value={0}>Không</Select.Option>
-                                                    </Select>
-                                                }
-                                            </Form.Item>
-                                        </Col>
-                                    }
-                                )
-                            }else{
-                                return <Col span={!e.hidden ? 12 : 0}>
-                                    <Form.Item name={e.key} className='mb-3' label={e.title} hidden={e.hidden} rules={[{required: e.required}]}>
-                                        {!e.isTrueFalse ?
-                                            <Input disabled={e.disabled || (isEdit && e.key === 'id')}></Input>
-                                            :
-                                            <Select>
-                                                <Select.Option value={1}>Có</Select.Option>
-                                                <Select.Option value={0}>Không</Select.Option>
-                                            </Select>
-                                        }
-                                    </Form.Item>
-                                </Col>
-                            }
-                        }
-                        
-                    })}
-                </Row>
-                <Form.Item className='mb-0'>
-                    <Button type="primary" htmlType='submit' >Lưu lại</Button>
+                onFinish={btn_click}
+              >
+                <div style={{overflow: 'auto scroll',maxHeight: '75vh',padding:'0 5px',marginBottom:'10px'}}>
+                  <Form.Item label="Mã khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_id: e.target.value })
+                      }
+                      placeholder="Nhập mã khách hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="MDH" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mdh: e.target.value })
+                      }
+                      placeholder="Nhập MDH"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Order" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, order: e.target.value })
+                      }
+                      placeholder="Nhập order"
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mql: e.target.value })
+                      }
+                      placeholder="Nhập MDH"
+                    />
+                  </Form.Item>
+                  <Form.Item label="L" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, length: e.target.value })
+                      }
+                      placeholder="Nhập L"
+                    />
+                  </Form.Item>
+                  <Form.Item label="W" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, width: e.target.value })
+                      }
+                      placeholder="Nhập W"
+                    />
+                  </Form.Item>
+                  <Form.Item label="H" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, height: e.target.value })
+                      }
+                      placeholder="Nhập H"
+                    />
+                  </Form.Item>
+                  <Form.Item label="PO" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, po: e.target.value })
+                      }
+                      placeholder="Nhập PO"
+                    />
+                  </Form.Item>
+                  <Form.Item label="STYLE" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, style: e.target.value })
+                      }
+                      placeholder="Nhập STYLE"
+                    />
+                  </Form.Item>
+                  <Form.Item label="STYLE NO" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, style_no: e.target.value })
+                      }
+                      placeholder="Nhập STYLE NO"
+                    />
+                  </Form.Item>
+                  <Form.Item label="COLOR" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, color: e.target.value })
+                      }
+                      placeholder="Nhập COLOR"
+                    />
+                  </Form.Item>
+                  <Form.Item label="ITEM" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, item: e.target.value })
+                      }
+                      placeholder="Nhập ITEM"
+                    />
+                  </Form.Item>
+                  <Form.Item label="RM" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, rm: e.target.value })
+                      }
+                      placeholder="Nhập RM"
+                    />
+                  </Form.Item>
+                  <Form.Item label="SIZE" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, size: e.target.value })
+                      }
+                      placeholder="Nhập SIZE"
+                    />
+                  </Form.Item>
+                </div>
+                <Form.Item style={{ textAlign: "center" }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: "80%" }}
+                  >
+                    Tìm kiếm
+                  </Button>
                 </Form.Item>
-            </Form>
-        </Modal>
+              </Form>
+            </div>
+          </Card>
+        </Col>
+        <Col span={20}>
+          <Card
+            style={{ height: "100%" }}
+            title="Quản lý đơn hàng"
+            extra={
+              <Space>
+                <Upload
+                  showUploadList={false}
+                  name="files"
+                  action={baseURL + "/api/orders/import"}
+                  headers={{
+                    authorization: "authorization-text",
+                  }}
+                  onChange={(info) => {
+                    setLoadingExport(true);
+                    if (info.file.status === "error") {
+                      setLoadingExport(false);
+                      error();
+                    } else if (info.file.status === "done") {
+                      if (info.file.response.success === true) {
+                        loadListTable(params);
+                        success();
+                        setLoadingExport(false);
+                      } else {
+                        loadListTable(params);
+                        message.error(info.file.response.message);
+                        setLoadingExport(false);
+                      }
+                    }
+                  }}
+                >
+                  <Button
+                    style={{ marginLeft: "15px" }}
+                    type="primary"
+                    loading={loadingExport}
+                  >
+                    Upload Excel
+                  </Button>
+                </Upload>
+                <Button type="primary" onClick={onAdd}>
+                  Thêm đơn hàng
+                </Button>
+              </Space>
+            }
+          >
+            <Spin spinning={loading}>
+              <Form form={form} component={false}>
+                <Table
+                  size="small"
+                  bordered
+                  pagination={{ position: ["bottomRight"] }}
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  rowClassName="editable-row"
+                  scroll={{
+                    x: "300vw",
+                    y: "80vh",
+                  }}
+                  columns={mergedColumns}
+                  dataSource={data}
+                />
+              </Form>
+            </Spin>
+          </Card>
+        </Col>
+      </Row>
+      <Modal
+        title="Tách đơn hàng"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Lưu"
+        width={700}
+      >
+        <Button type="primary" onClick={showInput} style={{ marginBottom: 12 }}>
+          Thêm dòng
+        </Button>
+        {inputData.map(renderInputData)}
+      </Modal>
     </>
-}
+  );
+};
 
 export default Orders;

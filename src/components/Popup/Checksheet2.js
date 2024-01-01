@@ -14,9 +14,10 @@ import {
 import React, { useState } from "react";
 import "./popupStyle.scss";
 import { useEffect } from "react";
-import { getChecksheetList, scanError } from "../../api/oi/quality";
+import { scanError } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import ScanButton from "../Button/ScanButton";
+import { CloseOutlined } from "@ant-design/icons";
 
 const Checksheet2 = (props) => {
   const { line } = useParams();
@@ -51,6 +52,8 @@ const Checksheet2 = (props) => {
         if (isNullish) {
           delete values["ngoai_quan"][key];
         }
+        const error = errorsList.find(e=>e.id === key);
+        values["ngoai_quan"][key]['name'] = error?.name;
       });
       if (!values.ngoai_quan) {
         messageApi.error("Không có dữ liệu lỗi ngoại quan");
@@ -70,6 +73,7 @@ const Checksheet2 = (props) => {
       error_id: result,
       lo_sx: selectedLot.lo_sx,
       machine_id: selectedLot.machine_id,
+      ma_vat_tu: selectedLot?.ma_vat_tu
     });
     if (res.success) {
       setErrorsList([...errorsList, res.data]);
@@ -80,6 +84,16 @@ const Checksheet2 = (props) => {
     // console.log(values, errorFields, outOfDate);
     messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
   };
+
+  const deleteError = (id) => {
+    const ngoai_quan = form.getFieldValue('ngoai_quan');
+    if(ngoai_quan){
+      delete ngoai_quan[id]
+    }
+    console.log(ngoai_quan);
+    form.setFieldValue('ngoai_quan', ngoai_quan)
+    setErrorsList(prev=>prev.filter(e=>e.id !== id))
+  }
   return (
     <React.Fragment>
       {contextHolder}
@@ -99,7 +113,7 @@ const Checksheet2 = (props) => {
         {text}
       </Button> */}
       <Modal
-        title={"Kiểm tra"}
+        title={"Kiểm tra "+text}
         open={open}
         onCancel={closeModal}
         footer={
@@ -152,6 +166,7 @@ const Checksheet2 = (props) => {
                       >
                         {e.name}
                       </div>
+                      <Form.Item noStyle name={[e.id, "name"]} hidden><Input/></Form.Item>
                     </Col>
                     <Col span={6}>
                       <Form.Item
@@ -168,8 +183,16 @@ const Checksheet2 = (props) => {
                           onChange={(value) =>
                             form.setFieldValue(
                               ["ngoai_quan", e.id, "result"],
-                              parseFloat(value) >= parseFloat(e.min) &&
-                                value <= parseFloat(e.max)
+                              !e?.max ?
+                                value >=
+                                parseFloat(e.min)
+                                ? 1
+                                : 2
+                              :
+                                parseFloat(value) >=
+                                parseFloat(e.min) &&
+                                value <=
+                                parseFloat(e.max)
                                 ? 1
                                 : 2
                             )
@@ -177,7 +200,7 @@ const Checksheet2 = (props) => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col span={5}>
                       <Form.Item
                         noStyle
                         shouldUpdate={(prevVal, curVal) => true}
@@ -220,6 +243,15 @@ const Checksheet2 = (props) => {
                             )}
                           </Form.Item>
                         )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={1} className="d-flex justify-content-center">
+                      <Form.Item
+                        noStyle
+                        name={[e.id, "value"]}
+                        rules={[{ required: true }]}
+                      >
+                        <CloseOutlined className="h-100" onClick={()=>deleteError(e.id)}/>
                       </Form.Item>
                     </Col>
                   </Row>

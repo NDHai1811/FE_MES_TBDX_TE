@@ -17,6 +17,18 @@ const items = [
     key: "manufacture",
     children: [
       {
+        label: "Đơn hàng",
+        key: "manufacture/don-hang",
+      },
+      {
+        label: "Thông tin buyer",
+        key: "manufacture/danh-sach-buyer",
+      },
+      {
+        label: "Thông tin layout",
+        key: "manufacture/layout",
+      },
+      {
         label: "Kế hoạch sản xuất",
         key: "manufacture/ke-hoach-san-xuat",
       },
@@ -55,6 +67,10 @@ const items = [
         label: "Thông số thiết bị",
         key: "equipment/thong-so-may",
       },
+      {
+        label: "Quản lý khuôn/film",
+        key: "equipment/quan-ly-khuon-film",
+      },
     ],
     permission: "ui-tb",
   },
@@ -63,8 +79,12 @@ const items = [
     key: "warehouse",
     children: [
       {
-        label: "Quản lý kho",
+        label: "Quản lý kho TP",
         key: "warehouse/quan-ly-kho",
+      },
+      {
+        label: "Quản lý kho NVL",
+        key: "warehouse/quan-ly-kho-nvl",
       },
       {
         label: "Quản lý giấy cuộn",
@@ -73,11 +93,11 @@ const items = [
     ],
     permission: "ui-kho",
   },
-  // {
-  //   label: "KPI",
-  //   key: "kpi",
-  //   permission: "ui-kpi",
-  // },
+  {
+    label: "KPI",
+    key: "kpi",
+    permission: "ui-kpi",
+  },
   // {
   //   label: "Giám sát bất thường",
   //   key: "abnormal",

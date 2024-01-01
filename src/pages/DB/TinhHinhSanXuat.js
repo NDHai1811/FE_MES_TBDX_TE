@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Table, Col, Row } from "antd";
-import ReactFullscreen from "react-easyfullscreen";
+// import ReactFullscreen from "react-easyfullscreen";
 import {
   FullscreenOutlined,
   FullscreenExitOutlined,
@@ -44,7 +44,7 @@ const colTable = [
     dataIndex: "ti_le",
     key: "ti_le",
     align: "center",
-    render: (text) => <div style={{ fontSize: "70px" }}>{`${text || 0}%`}</div>,
+    render: (text) => <div style={{ fontSize: "70px" }}>{text}%</div>,
   },
   {
     title: "Đánh giá",
@@ -135,7 +135,7 @@ const TinhHinhSanXuat = () => {
 
   return (
     <React.Fragment>
-      <ReactFullscreen>
+      {/* <ReactFullscreen> */}
         {({ ref, onRequest, onExit }) => (
           <Layout
             ref={ref}
@@ -208,7 +208,7 @@ const TinhHinhSanXuat = () => {
             </Row>
           </Layout>
         )}
-      </ReactFullscreen>
+      {/* </ReactFullscreen> */}
     </React.Fragment>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Modal, Row, Col, Table, Input } from "antd";
+import { Modal, Row, Col, Table, Input, Button, Space } from "antd";
 import "./PopupQuetQr.css";
-import { sendResultPrint } from "../../api/oi/warehouse";
+import { handleNGMaterial, sendResultPrint } from "../../api/oi/warehouse";
+import ScanButton from "../Button/ScanButton";
 
 function PopupInTemKhoNvl(props) {
   const { visible, setVisible, data, setCurrentScan } = props;
@@ -29,12 +30,6 @@ function PopupInTemKhoNvl(props) {
           style={{ width: 100 }}
         />
       ),
-    },
-    {
-      title: "Vị trí",
-      dataIndex: "locator_id",
-      key: "locator_id",
-      align: "center",
     },
   ];
 
@@ -65,24 +60,48 @@ function PopupInTemKhoNvl(props) {
     setVisible(false);
   };
 
+  const [material, setMaterial] = useState()
+
+  const onScan = (result) => {
+    const target = data.find(e=>e.material_id === result);
+    setMaterial(target);
+    setValue(target?.so_kg)
+  }
+
+  const moveToKho13 = async () => {
+    var res = await handleNGMaterial({
+      material_id: material.material_id,
+      so_kg: parseInt(value, 10),
+    })
+  }
   return (
     <div>
       <Modal
-        title="In Tem"
+        title="Nhập lại"
         open={visible}
-        onOk={handleOk}
-        okText="Lưu"
+        // onOk={handleOk}
+        // okText="Lưu"
+        footer={[
+            <Button onClick={handleCancel}>Huỷ</Button>,
+            <Button type="primary" danger onClick={moveToKho13}>Khu 13</Button>,
+            <Button type="primary" onClick={handleOk}>Lưu</Button>
+        ]}
         onCancel={handleCancel}
-        cancelButtonProps={{ style: { display: "none" } }}
+        // cancelButtonProps={{ style: { display: "none" } }}
       >
-        <Row className="mt-3">
+        <Row className="mt-2">
+          <Col span={24}>
+            <ScanButton onScan={onScan}></ScanButton>
+          </Col>
           <Col span={24}>
             <Table
               size="small"
               pagination={false}
               bordered
+              className="mt-3"
+              locale={{emptyText: 'Trống'}}
               columns={columns}
-              dataSource={data || []}
+              dataSource={material ? [material] : []}
             />
           </Col>
         </Row>

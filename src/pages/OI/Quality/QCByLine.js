@@ -7,7 +7,6 @@ import {
   Spin,
   Form,
   InputNumber,
-  message,
   Radio,
   DatePicker,
   Select,
@@ -19,22 +18,20 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { getListMachine } from "../../../api";
 import {
   getIQCOverall,
+  getQCOverall,
   getLotIQCList,
   getLotQCList,
   getQCLine,
-  getQCOverall,
   sendIQCResult,
   sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
-import { getMachines } from "../../../api/oi/equipment";
 import dayjs from "dayjs";
-import { getLine } from "../../../api/oi/manufacture";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
+import { useRef } from "react";
 
 const QCByLine = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -43,10 +40,8 @@ const QCByLine = (props) => {
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
-  const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
   const [lineOptions, setLineOptions] = useState([]);
-  const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState([]);
   const [overall, setOverall] = useState([]);
   const { userProfile } = useProfile();
@@ -55,6 +50,13 @@ const QCByLine = (props) => {
   const qcPermission = ["pqc", "oqc", "iqc"].filter((value) =>
     (userProfile?.permission ?? []).includes(value)
   );
+  const userPermissions = JSON.parse(
+    window.localStorage.getItem("authUser")
+  ).permission;
+  const isGetOption = useRef(false);
+
+  const isIqc = userPermissions?.some((val) => val === "iqc");
+
   const overallColumns = [
     {
       title: qcPermission.length > 0 ? "IQC/PQC/OQC" : "Công đoạn",
@@ -99,9 +101,9 @@ const QCByLine = (props) => {
 
   const checkingTable = [
     {
-      title: "Mã Lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      title: line_id === "iqc" ? "Mã cuộn" : "Mã Lot",
+      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
+      key: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
       align: "center",
       width: "30%",
     },
@@ -114,8 +116,8 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
-          }
+            selectedRow?.checked_tinh_nang === false && setOpenModalCK1(true);
+          },
         };
       },
       // render: () => (
@@ -139,21 +141,21 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
-          }
+            selectedRow?.checked_ngoai_quan === false && setOpenModalCK2(true);
+          },
         };
       },
-      // render: () => (
-      //   <div onClick={() => setOpenModal(true)}>
-      //     <Checksheet2
-      //       text="Kiểm"
-      //       selectedLot={selectedRow}
-      //       onSubmit={onSubmitResult}
-      //       onClose={() => setOpenModal(false)}
-      //       line_id={line_id}
-      //     />
-      //   </div>
-      // ),
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ng;
+          }
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Số phế",
@@ -164,20 +166,23 @@ const QCByLine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow && !selectedRow?.checked_sl_ng && setOpenModal1(true);
-          }
+            selectedRow?.checked_sl_ng === false &&
+              line_id !== "iqc" &&
+              setOpenModal1(true);
+          },
         };
       },
-      // render: (text, record) => (
-      //   <InputNumber
-      //     value={text}
-      //     onChange={(value) => handleInputChange(record, value)}
-      //     onPressEnter={(event) =>
-      //       onSubmitSLP({ sl_ng: event.target.value })
-      //     }
-      //     placeholder="Nhập số lượng"
-      //   />
-      // ),
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ng;
+          }
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Phán định",
@@ -201,57 +206,67 @@ const QCByLine = (props) => {
 
   const columns = [
     {
-      title: "Mã cuộn",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      title: line_id === "iqc" ? "Mã cuộn" : "Mã lot",
+      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
+      key: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
       align: "center",
-      width: "32%",
     },
     {
-      title: line_id === 'iqc' ? "Nhà cung cấp" : "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      title: line_id === "iqc" ? "Nhà cung cấp" : "Khách hàng",
+      dataIndex: line_id === "iqc" ? "ten_ncc" : "khach_hang",
+      key: line_id === "iqc" ? "ten_ncc" : "khach_hang",
       align: "center",
-      width: "16%",
     },
     {
       title: "Sản lượng đầu ra",
       dataIndex: "sl_dau_ra_hang_loat",
       key: "sl_dau_ra_hang_loat",
       align: "center",
-      width: "18%",
+    },
+    {
+      title: "Số lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
     },
     {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      width: "18%",
+      render: (value, record, index) =>
+        value ? value : record.checked_tinh_nang ? value : "-",
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      width: "16%",
       render: (value, record, index) =>
-        value ? value : record.phan_dinh !== 0 ? value : "-",
+        value ? value : record.checked_ngoai_quan ? value : "-",
     },
     {
       title: "Tổng phế",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      width: "16%",
-      render: (value, record, index) =>
-        value ? value : record.phan_dinh !== 0 ? value : "-",
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ng;
+          }
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Phán định",
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      width: "16%",
       render: (value) => {
         switch (value) {
           case 0:
@@ -275,8 +290,14 @@ const QCByLine = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record.lot_id === selectedRow?.lot_id) {
-      return "table-row-green";
+    if (line_id === "iqc") {
+      if (record.ma_cuon_ncc === selectedRow?.ma_cuon_ncc) {
+        return "table-row-green";
+      }
+    } else {
+      if (record.lot_id === selectedRow?.lot_id) {
+        return "table-row-green";
+      }
     }
     switch (record.phan_dinh) {
       case 0:
@@ -302,61 +323,93 @@ const QCByLine = (props) => {
     }
   };
 
-  useEffect(() => {
-    getListOption();
-  }, []);
-
-  const getMachineList = () => {
-    getMachines()
-      .then((res) => setMachines(res.data))
-      .catch((err) => console.log("Get machines error: ", err));
-  };
-
   const getListOption = async () => {
-    setLoading(true);
-    var res = await getQCLine();
-    console.log(res);
-    setLineOptions(res.data);
-    setLoading(false);
+    if (!isGetOption.current) {
+      isGetOption.current = true;
+      setLoading(true);
+      var res = await getQCLine();
+      const items = res.data.filter?.((val) => val.value !== "iqc");
+      line_id !== "iqc" && setMachines(items[0]?.machine);
+      setLineOptions(
+        res.data.filter?.((val) =>
+          isIqc ? val.value === "iqc" : val.value !== "iqc"
+        )
+      );
+      if(line_id==='iqc'){
+        isGetOption.current = false;
+      }
+      setLoading(false);
+    }
   };
+
   async function getData() {
     setLoading(true);
     var overall = await getIQCOverall({ ...params, line_id: line_id });
     setOverall(overall.data);
     var res = await getLotIQCList({ ...params, line_id: line_id });
     setData(res.data);
-    if(res.data.length > 0){
-      var current = res.data.find(e=>e.id===selectedRow?.id);
-      if(current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh){
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.log?.phan_dinh &&
+        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+      ) {
         setSelectedRow();
       }
     }
     setLoading(false);
   }
+
+  const getQcData = async () => {
+    setLoading(true);
+    var overall = await getQCOverall({ ...params, machine: machines });
+    setOverall(overall.data);
+    var res = await getLotQCList({ ...params, machine: machines });
+    setData(res.data);
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.log?.phan_dinh &&
+        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+      ) {
+        setSelectedRow();
+      }
+    }
+    setLoading(false);
+  };
   useEffect(() => {
-    if (line_id) {
+    if (line_id === "iqc" && isIqc) {
       getData();
+      getListOption();
+    } else {
+      getListOption();
     }
   }, [line_id]);
+
+  useEffect(() => {
+    machines.length > 0 && getQcData();
+  }, [machines]);
+
   useEffect(() => {
     if (lineOptions.length > 0) {
-      var target = lineOptions.find(e=>e.value === line_id);
-      if(!target){
+      var target = lineOptions.find((e) => e.value === line_id);
+      if (!target) {
         target = lineOptions[0];
       }
-      console.log(target);
-      if(qcPermission.length > 0){
-        history.push('/quality/qc/'+target.value);
-      }else{
-        history.push('/quality/sx/'+target.value);
+      if (qcPermission.length > 0) {
+        history.push("/quality/qc/" + target.value);
+      } else {
+        history.push("/quality/sx/" + target.value);
       }
     }
   }, [lineOptions]);
   const onChangeLine = (value) => {
-    if(qcPermission.length > 0){
-      history.push('/quality/qc/'+value);
-    }else{
-      history.push('/quality/sx/'+value);
+    const item = lineOptions?.find((val) => val.value === value);
+    setMachines(item?.machine);
+    if (qcPermission.length > 0) {
+      history.push("/quality/qc/" + value);
+    } else {
+      history.push("/quality/sx/" + value);
     }
   };
   const [form1] = Form.useForm();
@@ -375,18 +428,25 @@ const QCByLine = (props) => {
     setOpenModal2(false);
     form2.resetFields();
   };
-  
+
   const [openModal1, setOpenModal1] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
-    if(line_id === 'iqc'){
+    if (values?.tinh_nang) {
+      setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
+    } else if (values?.ngoai_quan) {
+      setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
+    } else if (values?.sl_ng_sx) {
+      setSelectedRow({ ...selectedRow, checked_sl_ng: true });
+    }
+    if (line_id === "iqc") {
       var res = await sendIQCResult({
         line_id: line_id,
         lot_id: selectedRow?.lot_id,
         data: values,
       });
-    }else{
+    } else {
       var res = await sendQCResult({
         machine_id: selectedRow?.machine_id,
         lot_id: selectedRow?.lot_id,
@@ -433,6 +493,7 @@ const QCByLine = (props) => {
                     }
                   : false
               }
+              className="custom-table"
               columns={checkingTable}
               dataSource={selectedRow ? [selectedRow] : []}
               size="small"
@@ -474,7 +535,8 @@ const QCByLine = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
-            x: window.screen.width,
+            x: "calc(700px + 50%)",
+            y: 350,
           }}
           pagination={false}
           bordered={true}
@@ -486,10 +548,7 @@ const QCByLine = (props) => {
             return {
               onClick: (event) => {
                 onClickRow(event, record);
-              }, // click row
-              // onDoubleClick: (event) => {
-              //   onDBClickRow(event, record, index);
-              // }, // double click row
+              },
             };
           }}
           components={{
@@ -567,6 +626,7 @@ const QCByLine = (props) => {
         </Modal>
       </Spin>
       <Checksheet1
+        text="tính năng"
         open={openModalCK1}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
@@ -574,6 +634,7 @@ const QCByLine = (props) => {
         line_id={line_id}
       />
       <Checksheet2
+        text="ngoại quan"
         open={openModalCK2}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
