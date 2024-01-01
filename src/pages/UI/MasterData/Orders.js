@@ -321,6 +321,14 @@ const Orders = () => {
       editable: true,
     },
     {
+      title: "Mã buyer",
+      dataIndex: "buyer_id",
+      key: "buyer_id",
+      align: "center",
+      editable: true,
+      width: '5%'
+    },
+    {
       title: "Số ra",
       dataIndex: "so_ra",
       key: "so_ra",
@@ -362,6 +370,14 @@ const Orders = () => {
       align: "center",
       editable: true,
       width: "2%",
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+      editable: true,
+      width: '4%'
     },
     {
       title: "Order",
@@ -512,22 +528,6 @@ const Orders = () => {
       key: "note_2",
       align: "center",
       editable: true,
-    },
-    {
-      title: "Mã buyer",
-      dataIndex: "buyer_id",
-      key: "buyer_id",
-      align: "center",
-      editable: true,
-      width: '5%'
-    },
-    {
-      title: "Mã layout",
-      dataIndex: "layout_id",
-      key: "layout_id",
-      align: "center",
-      editable: true,
-      width: '4%'
     },
     {
       title: "Tác vụ",
