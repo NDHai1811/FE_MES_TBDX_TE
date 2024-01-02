@@ -74,7 +74,8 @@ const Buyer = () => {
     "id",
     "customer_id",
     "buyer_vt",
-    "phan_loai",
+    "phan_loai_1",
+    "so_lop",
     "ket_cau_giay",
     "note",
     "ma_cuon_f",
@@ -120,6 +121,13 @@ const Buyer = () => {
       key: "phan_loai_1",
       align: "center",
       editable: hasEditColumn("phan_loai_1"),
+    },
+    {
+      title: "Số lớp",
+      dataIndex: "so_lop",
+      key: "so_lop",
+      align: "center",
+      editable: hasEditColumn("so_lop"),
     },
     {
       title: "Kết cấu giấy",

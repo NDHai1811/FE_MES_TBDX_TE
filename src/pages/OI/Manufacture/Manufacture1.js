@@ -84,7 +84,7 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Mã QL",
+    title: "MQL",
     dataIndex: "mql",
     key: "mql",
     align: "center",
