@@ -51,6 +51,11 @@ export async function getListLayout(params) {
     return res.data;
 }
 
+export async function getListDRC(params) {
+    const res = await axios.get('ui/manufacture/drc/list', { params });
+    return res.data;
+}
+
 export async function handleOrder(params) {
     const res = await axios.post("ui/manufacture/handle-order", params);
     return res;

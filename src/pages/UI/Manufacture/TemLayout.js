@@ -51,13 +51,10 @@ export default class TemTest extends React.Component {
   render() {
     let printingPages = [];
     const { listCheck } = this.props;
-    // for (const detail of listCheck) {
     listCheck.forEach((detail, index) => {
       const tempTemplate = <PrintTemplate detail={detail} key={index} />;
       printingPages.push(tempTemplate);
     });
-
-    // }
     return <div>{printingPages}</div>;
   }
 }
