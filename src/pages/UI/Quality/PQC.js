@@ -212,8 +212,8 @@ const QualityPQC = (props) => {
     },
     {
       title: "Đơn hàng",
-      dataIndex: "ma_don_hang",
-      key: "ma_don_hang",
+      dataIndex: "order_id",
+      key: "order_id",
       align: "center",
     },
     {
