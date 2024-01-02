@@ -27,7 +27,7 @@ const TaoKeHoachSanXuat = () => {
     const [listMachines, setListMachines] = useState([]);
     const [listCheck, setListCheck] = useState([]);
     const [form] = Form.useForm();
-    const [orderParams, setOrderParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+    const [orderParams, setOrderParams] = useState({ start_date: dayjs().add(1, 'day'), end_date: dayjs().add(3, 'day') });
     const [lsxParams, setLSXParams] = useState({ start_date: dayjs(), end_date: dayjs() });
     const [planParams, setPlanParams] = useState({ start_date: dayjs() });
     const [data, setData] = useState([]);
