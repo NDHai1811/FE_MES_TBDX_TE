@@ -29,44 +29,6 @@ const token =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
-const currentColumns = [
-  {
-    title: "Mã lot",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sản lượng kế hoạch",
-    dataIndex: "dinh_muc",
-    key: "dinh_muc",
-    align: "center",
-    render: (value) => value,
-  },
-  {
-    title: "Sản lượng đầu ra",
-    dataIndex: "san_luong",
-    key: "san_luong",
-    align: "center",
-    render: (value) => value,
-  },
-  {
-    title: "Sản lượng đạt",
-    dataIndex: "sl_ok",
-    key: "sl_ok",
-    align: "center",
-    render: (value) => value,
-  },
-  {
-    title: "Phán định",
-    dataIndex: "phan_dinh",
-    key: "phan_dinh",
-    align: "center",
-    render: (value) => value || "-",
-  },
-];
-
 const columns = [
   {
     title: "Mã Lot",
@@ -74,6 +36,13 @@ const columns = [
     key: "lot_id",
     align: "center",
     render: (value) => value || "-",
+  },
+  {
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+    render: (value, record, index) => value || "-",
   },
   {
     title: "Sản lượng kế hoạch",
@@ -122,13 +91,6 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
     title: "Quy cách",
     dataIndex: "quy_cach",
     key: "quy_cach",
@@ -140,7 +102,43 @@ const columns = [
 const Manufacture1 = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
-
+  const currentColumns = [
+    {
+      title: machine_id === 'S01' ? "Lô SX" : "Mã lot",
+      dataIndex: machine_id === 'S01' ? "lot_id" : "lo_sx",
+      key: machine_id === 'S01' ? "lot_id" : "lo_sx",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sản lượng kế hoạch",
+      dataIndex: "dinh_muc",
+      key: "dinh_muc",
+      align: "center",
+      render: (value) => value,
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+      render: (value) => value,
+    },
+    {
+      title: "Sản lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+      render: (value) => value,
+    },
+    {
+      title: "Phán định",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
+      align: "center",
+      render: (value) => value || "-",
+    },
+  ];
   const history = useHistory();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
@@ -522,7 +520,7 @@ const Manufacture1 = (props) => {
               }
               pagination={false}
               bordered
-              columns={columns}
+              columns={machine_id === 'S01' ? columns.filter((e, i)=>i!==0) : columns}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
