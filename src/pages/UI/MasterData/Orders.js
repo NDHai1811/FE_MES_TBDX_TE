@@ -257,6 +257,7 @@ const Orders = () => {
       key: "ngay_dat_hang",
       align: "center",
       fixed: "left",
+      width: "2.6%",
       editable: true,
     },
     {
@@ -266,7 +267,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
-      width: "1%",
+      width: "1.4%",
     },
     {
       title: "W",
@@ -275,7 +276,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
-      width: "1%",
+      width: "1.4%",
     },
     {
       title: "H",
@@ -284,7 +285,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
-      width: "1%",
+      width: "1.4%",
     },
     {
       title: "MQL",
@@ -300,7 +301,7 @@ const Orders = () => {
       dataIndex: "sl",
       key: "sl",
       align: "center",
-      width: "1%",
+      width: "1.2%",
       editable: true,
     },
     {
@@ -323,6 +324,7 @@ const Orders = () => {
       dataIndex: "kich_thuoc_chuan",
       key: "kich_thuoc_chuan",
       align: "center",
+      width: "2%",
       editable: true,
     },
     {
@@ -542,6 +544,7 @@ const Orders = () => {
       dataIndex: "han_giao",
       key: "han_giao",
       align: "center",
+      width: "2.6%",
       editable: true,
     },
     {
@@ -655,7 +658,6 @@ const Orders = () => {
         inputType:
           col.dataIndex === "cao" ||
             col.dataIndex === "dai" ||
-            col.dataIndex === "mdh" ||
             col.dataIndex === "price" ||
             col.dataIndex === "rong"
             ? "number"
