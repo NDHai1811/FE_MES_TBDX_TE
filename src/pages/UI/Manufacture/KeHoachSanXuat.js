@@ -84,8 +84,8 @@ const KeHoachSanXuat = () => {
     },
     {
       title: "MDH",
-      dataIndex: "order_id",
-      key: "order_id",
+      dataIndex: "mdh",
+      key: "mdh",
       align: "center",
     },
     {
