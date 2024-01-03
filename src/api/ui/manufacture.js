@@ -38,7 +38,7 @@ export async function storeProductPlan(params) {
 }
 export async function createProductPlan(params) {
     const res = await axios.post("ui/manufacture/create-plan", params);
-    return res.data;
+    return res;
 }
 
 export async function getBuyers(params) {

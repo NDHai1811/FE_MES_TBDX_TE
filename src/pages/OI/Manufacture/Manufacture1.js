@@ -22,7 +22,6 @@ import {
 } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { formatDateTime } from "../../../commons/utils";
 import { getMachines } from "../../../api/oi/equipment";
 
 const token =
@@ -256,8 +255,8 @@ const Manufacture1 = (props) => {
     if(!machine_id) return;
     const resData = {
       machine_id,
-      start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
-      end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+      start_date: params.start_date,
+      end_date: params.end_date,
     };
     const res = await getLotByMachine(resData);
     if(res.success){
@@ -276,8 +275,8 @@ const Manufacture1 = (props) => {
     setLoading(true);
     const resData = {
       machine_id,
-      start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
-      end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+      start_date: params.start_date,
+      end_date: params.end_date,
     };
 
     getOverAll(resData)
@@ -291,8 +290,8 @@ const Manufacture1 = (props) => {
   const getListLotDetail = async () => {
     const resData = {
       machine_id,
-      start_date: formatDateTime(params.start_date, COMMON_DATE_FORMAT_REQUEST),
-      end_date: formatDateTime(params.end_date, COMMON_DATE_FORMAT_REQUEST),
+      start_date: params.start_date,
+      end_date: params.end_date,
     };
     const res = await getLotByMachine(resData);
     setLoading(true);

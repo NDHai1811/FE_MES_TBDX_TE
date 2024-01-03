@@ -55,7 +55,7 @@ const TaoKeHoachSanXuat = () => {
 
     const onFinish = async (values) => {
         const res = await createProductPlan({ data: previewPlan });
-        if (res) {
+        if (res.success) {
             window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
         }
     };
@@ -123,16 +123,18 @@ const TaoKeHoachSanXuat = () => {
     const openModal = async () => {
         if (!planParams.machine_id) {
             message.info('Chưa chọn máy');
+        }else{
+            if (planParams.machine_id == 'S01') {
+                setData([]);
+                setOpenMdlOrder(true);
+                loadListOrders();
+            } else {
+                setListPlan([]);
+                setOpenMdlPlan(true);
+                loadListPlans();
+            }
         }
-        if (planParams.machine_id == 'S01') {
-            setData([]);
-            setOpenMdlOrder(true);
-            loadListOrders();
-        } else {
-            setListPlan([]);
-            setOpenMdlPlan(true);
-            loadListPlans();
-        }
+        
     }
     const columnKHSX = [
         {
