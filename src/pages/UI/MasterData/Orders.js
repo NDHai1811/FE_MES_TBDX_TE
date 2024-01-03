@@ -841,6 +841,7 @@ const Orders = () => {
   };
 
   const [loadingExport, setLoadingExport] = useState(false);
+  const [loadingExport1, setLoadingExport1] = useState(false);
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
@@ -1092,19 +1093,19 @@ const Orders = () => {
                     authorization: "authorization-text",
                   }}
                   onChange={(info) => {
-                    setLoadingExport(true);
+                    setLoadingExport1(true);
                     if (info.file.status === "error") {
-                      setLoadingExport(false);
+                      setLoadingExport1(false);
                       error();
                     } else if (info.file.status === "done") {
                       if (info.file.response.success === true) {
                         loadListTable(params);
                         success();
-                        setLoadingExport(false);
+                        setLoadingExport1(false);
                       } else {
                         loadListTable(params);
                         message.error(info.file.response.message);
-                        setLoadingExport(false);
+                        setLoadingExport1(false);
                       }
                     }
                   }}
@@ -1112,7 +1113,7 @@ const Orders = () => {
                   <Button
                     style={{ marginLeft: "15px" }}
                     type="primary"
-                    loading={loadingExport}
+                    loading={loadingExport1}
                   >
                     Upload từ KHSX
                   </Button>
