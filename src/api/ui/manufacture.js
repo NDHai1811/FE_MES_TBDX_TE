@@ -60,3 +60,8 @@ export async function handleOrder(params) {
     const res = await axios.post("ui/manufacture/handle-order", params);
     return res;
 }
+
+export async function getOrderList(params) {
+    const res = await axios.get("ui/manufacture/order/list", {params});
+    return res;
+}
