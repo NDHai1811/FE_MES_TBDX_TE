@@ -1087,7 +1087,7 @@ const Orders = () => {
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/orders/import"}
+                  action={baseURL + "/api/orders/import-from-plan"}
                   headers={{
                     authorization: "authorization-text",
                   }}
@@ -1111,6 +1111,38 @@ const Orders = () => {
                 >
                   <Button
                     style={{ marginLeft: "15px" }}
+                    type="primary"
+                    loading={loadingExport}
+                  >
+                    Upload từ KHSX
+                  </Button>
+                </Upload>
+                <Upload
+                  showUploadList={false}
+                  name="files"
+                  action={baseURL + "/api/orders/import"}
+                  headers={{
+                    authorization: "authorization-text",
+                  }}
+                  onChange={(info) => {
+                    setLoadingExport(true);
+                    if (info.file.status === "error") {
+                      setLoadingExport(false);
+                      error();
+                    } else if (info.file.status === "done") {
+                      if (info.file.response.success === true) {
+                        loadListTable(params);
+                        success();
+                        setLoadingExport(false);
+                      } else {
+                        loadListTable(params);
+                        message.error(info.file.response.message);
+                        setLoadingExport(false);
+                      }
+                    }
+                  }}
+                >
+                  <Button
                     type="primary"
                     loading={loadingExport}
                   >
