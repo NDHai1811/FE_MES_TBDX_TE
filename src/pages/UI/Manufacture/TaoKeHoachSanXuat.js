@@ -165,6 +165,13 @@ const TaoKeHoachSanXuat = () => {
             width: '40%',
         },
         {
+            title: 'Khổ tổng',
+            dataIndex: 'kho_tong',
+            key: 'kho_tong',
+            align: 'center',
+            width: '40%',
+        },
+        {
             title: 'MQL',
             dataIndex: 'mql',
             key: 'mql',
