@@ -20,6 +20,7 @@ import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
 import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
+  exportKHSX,
   getListProductPlan,
   storeProductPlan,
   updateProductPlan,
@@ -326,6 +327,16 @@ const KeHoachSanXuat = () => {
     const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
     setParams({ ...params, machine: filteredKeys });
   }
+
+  const [exportLoading, setExportLoading] = useState(false);
+  const exportFile = async () => {
+    setExportLoading(true);
+    const res = await exportKHSX(params);
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
+  };
   return (
     <>
       {contextHolder}
@@ -453,6 +464,13 @@ const KeHoachSanXuat = () => {
             title="Kế hoạch sản xuất"
             extra={
               <Space>
+                <Button
+                  type="primary"
+                  onClick={exportFile}
+                  loading={exportLoading}
+                >
+                  Xuất file KHSX
+                </Button>
                 <Upload
                   showUploadList={false}
                   name="files"
@@ -479,7 +497,6 @@ const KeHoachSanXuat = () => {
                   }}
                 >
                   <Button
-                    style={{ marginLeft: "15px" }}
                     type="primary"
                     loading={loadingExport}
                   >
