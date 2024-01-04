@@ -626,7 +626,7 @@ const Orders = () => {
   const getLayouts = async () => {
     const res = await getListLayout();
     setLayouts(
-      res.map((val) => ({ label: val.machine_layout_id, value: val.machine_layout_id }))
+      res.map((val) => ({ label: val.layout_id, value: val.layout_id }))
     );
   };
 
