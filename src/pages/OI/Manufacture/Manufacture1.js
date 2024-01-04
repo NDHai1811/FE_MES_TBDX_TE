@@ -259,7 +259,12 @@ const Manufacture1 = (props) => {
       end_date: params.end_date,
     };
     const res = await getLotByMachine(resData);
-    setData(res.data)
+    setData(res.data);
+    if(res.data[0].status === 1){
+      setSelectedLot(res.data[0]);
+    }else{
+      setSelectedLot(null);
+    }
     if(res.success){
       if(window.location.href.indexOf("manufacture") > -1)
       setTimeout(function() { loadDataRescursive() }, 5000);
