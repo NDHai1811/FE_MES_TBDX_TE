@@ -65,3 +65,8 @@ export async function getOrderList(params) {
     const res = await axios.get("ui/manufacture/order/list", {params});
     return res;
 }
+
+export async function exportKHSX(params) {
+    const res = await axios.get("ui/manufacture/production-plan/export", {params});
+    return res;
+}
