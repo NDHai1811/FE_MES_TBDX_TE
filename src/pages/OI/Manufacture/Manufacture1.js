@@ -248,7 +248,7 @@ const Manufacture1 = (props) => {
     //   var res = await getTem();
     //   setListCheck(res) 
     // })()
-    // loadDataRescursive()
+    loadDataRescursive()
   }, []);
 
   const loadDataRescursive = async () => {
@@ -259,6 +259,7 @@ const Manufacture1 = (props) => {
       end_date: params.end_date,
     };
     const res = await getLotByMachine(resData);
+    setData(res.data)
     if(res.success){
       if(window.location.href.indexOf("manufacture") > -1)
       setTimeout(function() { loadDataRescursive() }, 5000);
