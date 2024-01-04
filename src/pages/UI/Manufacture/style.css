@@ -12,9 +12,8 @@
     }
 
     .print-only {
-        display: block;
-        width: 100%;
-        align-items: center;
+        display: inline-block;
+        width: 48%;
     }
 
     td {
@@ -28,11 +27,11 @@
     table {
         margin-left: 5px;
         margin-right: 5px;
-        margin-top: 40px;
+        margin-top: 10px;
         margin-bottom: auto;
         background-color: #fff;
         width: 350px;
-        height: 283px;
+        height: 180px;
         border-collapse: collapse;
     }
 }
