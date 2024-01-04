@@ -34,7 +34,7 @@ const Checksheet1 = (props) => {
 
   const onFinish = async (values) => {
     console.log(values);
-    if (selectedLot?.lot_id) {
+    if (selectedLot) {
       Object.keys(values["tinh_nang"]).forEach((key) => {
         const isNullish = Object.values(values["tinh_nang"][key]).every(
           (value) => {

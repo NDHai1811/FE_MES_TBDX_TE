@@ -260,7 +260,7 @@ const Manufacture1 = (props) => {
     };
     const res = await getLotByMachine(resData);
     setData(res.data);
-    if(res.data[0].status === 1){
+    if(res.data[0]?.status === 1){
       setSelectedLot(res.data[0]);
     }else{
       setSelectedLot(null);

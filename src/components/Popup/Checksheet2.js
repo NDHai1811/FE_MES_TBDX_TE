@@ -39,7 +39,7 @@ const Checksheet2 = (props) => {
   const [checksheet, setChecksheet] = useState([]);
 
   const onFinish = async (values) => {
-    if (selectedLot?.lot_id) {
+    if (selectedLot) {
       Object.keys(values["ngoai_quan"] ?? {}).forEach((key) => {
         const isNullish = Object.values(values["ngoai_quan"][key]).every(
           (value) => {

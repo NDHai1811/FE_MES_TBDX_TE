@@ -379,7 +379,7 @@ const QCByLine = (props) => {
   };
   useEffect(() => {
     if (line_id === "iqc" && isIqc) {
-      getData();
+      getQcData();
       getListOption();
     } else {
       getListOption();
@@ -444,16 +444,18 @@ const QCByLine = (props) => {
       var res = await sendIQCResult({
         line_id: line_id,
         lot_id: selectedRow?.lot_id,
+        lo_sx: selectedRow?.lo_sx,
         data: values,
       });
     } else {
       var res = await sendQCResult({
         machine_id: selectedRow?.machine_id,
         lot_id: selectedRow?.lot_id,
+        lo_sx: selectedRow?.lo_sx,
         data: values,
       });
     }
-    getData();
+    getQcData();
   };
   return (
     <React.Fragment>
