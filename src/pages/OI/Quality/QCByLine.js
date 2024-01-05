@@ -101,9 +101,9 @@ const QCByLine = (props) => {
 
   const checkingTable = [
     {
-      title: line_id === "iqc" ? "Mã cuộn" : "Mã Lot",
-      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
-      key: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
+      title: line_id === "iqc" ? "Mã cuộn" : "Lô SX",
+      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lo_sx",
+      key: line_id === "iqc" ? "ma_cuon_ncc" : "lo_sx",
       align: "center",
       width: "30%",
     },
@@ -206,9 +206,9 @@ const QCByLine = (props) => {
 
   const columns = [
     {
-      title: line_id === "iqc" ? "Mã cuộn" : "Mã lot",
-      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
-      key: line_id === "iqc" ? "ma_cuon_ncc" : "lot_id",
+      title: line_id === "iqc" ? "Mã cuộn" : "Lô SX",
+      dataIndex: line_id === "iqc" ? "ma_cuon_ncc" : "lo_sx",
+      key: line_id === "iqc" ? "ma_cuon_ncc" : "lo_sx",
       align: "center",
     },
     {
@@ -295,7 +295,7 @@ const QCByLine = (props) => {
         return "table-row-green";
       }
     } else {
-      if (record.lot_id === selectedRow?.lot_id) {
+      if (record.id === selectedRow?.id) {
         return "table-row-green";
       }
     }
@@ -343,45 +343,52 @@ const QCByLine = (props) => {
   };
 
   async function getData() {
-    setLoading(true);
-    var overall = await getIQCOverall({ ...params, line_id: line_id });
-    setOverall(overall.data);
-    var res = await getLotIQCList({ ...params, line_id: line_id });
-    setData(res.data);
-    if (res.data.length > 0) {
-      var current = res.data.find((e) => e.id === selectedRow?.id);
-      if (
-        current?.log?.phan_dinh &&
-        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
-      ) {
-        setSelectedRow();
+    if(line_id){
+      setLoading(true);
+      var overall = await getIQCOverall({ ...params, line_id: line_id });
+      setOverall(overall.data);
+      var res = await getLotIQCList({ ...params, line_id: line_id });
+      setData(res.data);
+      if (res.data.length > 0) {
+        var current = res.data.find((e) => e.id === selectedRow?.id);
+        if (
+          current?.log?.phan_dinh &&
+          current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+        ) {
+          setSelectedRow();
+        }
       }
     }
+    
     setLoading(false);
   }
 
   const getQcData = async () => {
-    setLoading(true);
-    var overall = await getQCOverall({ ...params, machine: machines });
-    setOverall(overall.data);
-    var res = await getLotQCList({ ...params, machine: machines });
-    setData(res.data);
-    if (res.data.length > 0) {
-      var current = res.data.find((e) => e.id === selectedRow?.id);
-      if (
-        current?.log?.phan_dinh &&
-        current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
-      ) {
-        setSelectedRow();
+    
+    if(machines.length){
+      setLoading(true);
+      var overall = await getQCOverall({ ...params, machine: machines });
+      setOverall(overall.data);
+      var res = await getLotQCList({ ...params, machine: machines });
+      setData(res.data);
+      if (res.data.length > 0) {
+        var current = res.data.find((e) => e.id === selectedRow?.id);
+        if (
+          current?.log?.phan_dinh &&
+          current?.log?.phan_dinh !== selectedRow?.log?.phan_dinh
+        ) {
+          setSelectedRow();
+        }
       }
+      setLoading(false);
     }
-    setLoading(false);
   };
   useEffect(() => {
     if (line_id === "iqc" && isIqc) {
-      getQcData();
+      getData();
       getListOption();
     } else {
+      getQcData();
       getListOption();
     }
   }, [line_id]);

@@ -90,9 +90,9 @@ const QCByMachine = (props) => {
 
   const checkingTable = [
     {
-      title: "Mã Lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
       align: "center",
       width: "30%",
     },
@@ -164,9 +164,9 @@ const QCByMachine = (props) => {
 
   const columns = [
     {
-      title: "Mã Lot",
-      dataIndex: "lot_id",
-      key: "lot_id",
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
       align: "center",
     },
     {
@@ -253,7 +253,7 @@ const QCByMachine = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record.lot_id === selectedRow?.lot_id) {
+    if (record.id === selectedRow?.id) {
       return "table-row-green";
     }
     switch (record.phan_dinh) {
@@ -332,14 +332,14 @@ const QCByMachine = (props) => {
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
   const onSubmitSLP = async (values) => {
-    if (selectedRow?.lot_id) {
+    if (selectedRow?.lo_sx) {
       onSubmitResult(values);
     }
     setOpenModal1(false);
     form1.resetFields();
   };
   const onSubmitPhanDinh = async (values) => {
-    if (selectedRow?.lot_id) {
+    if (selectedRow?.lo_sx) {
       onSubmitResult(values);
     }
     setOpenModal2(false);
@@ -361,7 +361,7 @@ const QCByMachine = (props) => {
     }
     var res = await sendQCResult({
       machine_id: machine_id,
-      lot_id: selectedRow?.lot_id,
+      lo_sx: selectedRow?.lo_sx,
       data: values,
     });
     getData();
