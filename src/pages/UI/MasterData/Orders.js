@@ -62,7 +62,7 @@ const EditableCell = ({
         <Select
           value={record?.[dataIndex]}
           options={options}
-          onChange={onSelect}
+          onChange={(value) => onSelect(value, dataIndex)}
           bordered
           showSearch
         />
@@ -636,9 +636,34 @@ const Orders = () => {
     },
   };
 
+  const removeAccents = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
+
   const getBuyerList = async () => {
+    const item = data.find((value) => value.key === editingKey);
     const res = await getBuyers();
-    setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
+    const filteredBuyers = res.filter(
+      (val) =>
+        val.customer_id.startsWith(item?.customer_id) &&
+        removeAccents(val.phan_loai_1)
+          .toLowerCase()
+          .endsWith(removeAccents(item?.phan_loai_1).toLowerCase())
+    );
+    setBuyers(filteredBuyers.map((val) => ({ label: val.id, value: val.id })));
+  };
+
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    if (dataIndex === "phan_loai_1") {
+      getBuyerList();
+    }
+    setData(items);
   };
 
   const getLayouts = async () => {
@@ -653,16 +678,6 @@ const Orders = () => {
     setListDRC(res.map((val) => ({ label: val.id, value: val.id })));
   };
 
-  const onSelect = (value, dataIndex) => {
-    const items = data.map((val) => {
-      if (val.key === editingKey) {
-        val[dataIndex] = value.id;
-      }
-      return { ...val };
-    });
-    setData(items);
-  };
-
   const mergedColumns = col_detailTable.map((col) => {
     if (!col.editable) {
       return col;
@@ -673,20 +688,22 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-            col.dataIndex === "dai" ||
-            col.dataIndex === "price" ||
-            col.dataIndex === "rong"
+          col.dataIndex === "dai" ||
+          col.dataIndex === "price" ||
+          col.dataIndex === "rong"
             ? "number"
-            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao" || col.dataIndex === "han_giao_sx"
-              ? "dateTime"
-              : col.dataIndex === "buyer_id" ||
-                col.dataIndex === "layout_id" ||
-                col.dataIndex === "layout_type" ||
-                col.dataIndex === "phan_loai_1" ||
-                col.dataIndex === "phan_loai_2" ||
-                col.dataIndex === "quy_cach_drc"
-                ? "select"
-                : "text",
+            : col.dataIndex === "ngay_dat_hang" ||
+              col.dataIndex === "han_giao" ||
+              col.dataIndex === "han_giao_sx"
+            ? "dateTime"
+            : col.dataIndex === "buyer_id" ||
+              col.dataIndex === "layout_id" ||
+              col.dataIndex === "layout_type" ||
+              col.dataIndex === "phan_loai_1" ||
+              col.dataIndex === "phan_loai_2" ||
+              col.dataIndex === "quy_cach_drc"
+            ? "select"
+            : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -696,14 +713,14 @@ const Orders = () => {
           col.dataIndex === "buyer_id"
             ? buyers
             : col.dataIndex === "layout_type"
-              ? layoutTypes
-              : col.dataIndex === "layout_id"
-                ? layouts
-                : col.dataIndex === "phan_loai_1"
-                  ? PL1s
-                  : col.dataIndex === "phan_loai_2"
-                    ? PL2s
-                    : listDRC,
+            ? layoutTypes
+            : col.dataIndex === "layout_id"
+            ? layouts
+            : col.dataIndex === "phan_loai_1"
+            ? PL1s
+            : col.dataIndex === "phan_loai_2"
+            ? PL2s
+            : listDRC,
       }),
     };
   });

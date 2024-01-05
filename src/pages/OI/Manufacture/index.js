@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
 import {
-  useHistory,
+  // useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import Manufacture1 from "./Manufacture1";
@@ -13,9 +13,9 @@ const Manufacture = () => {
   const { machine_id } = useParams();
   // const history = useHistory();
 
-  const userPermissions = JSON.parse(
-    window.localStorage.getItem("authUser")
-  ).permission;
+  // const userPermissions = JSON.parse(
+  //   window.localStorage.getItem("authUser")
+  // ).permission;
 
   // const isWave = userPermissions?.some((val) => val === "oi-sx-song");
   // const isPrintStick = userPermissions?.some((val) => val === "oi-sx-in-dan");
