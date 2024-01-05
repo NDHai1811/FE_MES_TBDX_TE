@@ -33,7 +33,11 @@ import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
 import { formatDateTime } from "../../../commons/utils";
-import { getBuyers, getListDRC, getListLayout } from "../../../api/ui/manufacture";
+import {
+  getBuyers,
+  getListDRC,
+  getListLayout,
+} from "../../../api/ui/manufacture";
 
 const EditableCell = ({
   editing,
@@ -118,7 +122,7 @@ const PL1s = [
   {
     label: "INNER",
     value: "Inner",
-  }
+  },
 ];
 const PL2s = [
   {
@@ -172,8 +176,6 @@ const PL2s = [
 ];
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
-  const [openMdl, setOpenMdl] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
   const [editingKey, setEditingKey] = useState("");
@@ -183,6 +185,7 @@ const Orders = () => {
   const [buyers, setBuyers] = useState([]);
   const [layouts, setLayouts] = useState([]);
   const [listDRC, setListDRC] = useState([]);
+  const [listCheck, setListCheck] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [inputData, setInputData] = useState([
     {
@@ -217,7 +220,7 @@ const Orders = () => {
         so_luong: 0,
         ngay_giao: "",
         xuong_giao: "",
-      }
+      },
     ]);
   };
 
@@ -228,7 +231,7 @@ const Orders = () => {
         so_luong: 0,
         ngay_giao: "",
         xuong_giao: "",
-      }
+      },
     ]);
   };
 
@@ -339,7 +342,7 @@ const Orders = () => {
       dataIndex: "phan_loai_1",
       key: "phan_loai_1",
       align: "center",
-      width: '4%',
+      width: "4%",
       editable: true,
     },
     {
@@ -347,7 +350,7 @@ const Orders = () => {
       dataIndex: "phan_loai_2",
       key: "phan_loai_2",
       align: "center",
-      width: '4%',
+      width: "4%",
       editable: true,
     },
     {
@@ -356,7 +359,7 @@ const Orders = () => {
       key: "buyer_id",
       align: "center",
       editable: true,
-      width: '5%'
+      width: "5%",
     },
     {
       title: "Tốc độ",
@@ -364,7 +367,7 @@ const Orders = () => {
       key: "toc_do",
       align: "center",
       editable: true,
-      width: '2%'
+      width: "2%",
     },
     {
       title: "Thời gian thay model",
@@ -372,7 +375,7 @@ const Orders = () => {
       key: "tg_thay_model",
       align: "center",
       editable: true,
-      width: '2%'
+      width: "2%",
     },
     {
       title: "Số ra",
@@ -423,7 +426,7 @@ const Orders = () => {
       key: "layout_id",
       align: "center",
       editable: true,
-      width: '4%'
+      width: "4%",
     },
     {
       title: "Order",
@@ -548,6 +551,14 @@ const Orders = () => {
       editable: true,
     },
     {
+      title: "Ngày giao hàng SX",
+      dataIndex: "han_giao_sx",
+      key: "han_giao_sx",
+      align: "center",
+      width: "2.6%",
+      editable: true,
+    },
+    {
       title: "Người đặt hàng",
       dataIndex: "nguoi_dat_hang",
       key: "nguoi_dat_hang",
@@ -618,6 +629,12 @@ const Orders = () => {
     getDRCs();
   }, []);
 
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys);
+    },
+  };
+
   const getBuyerList = async () => {
     const res = await getBuyers();
     setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
@@ -632,9 +649,7 @@ const Orders = () => {
 
   const getDRCs = async () => {
     const res = await getListDRC();
-    setListDRC(
-      res.map((val) => ({ label: val.id, value: val.id }))
-    );
+    setListDRC(res.map((val) => ({ label: val.id, value: val.id })));
   };
 
   const onSelect = (value, dataIndex) => {
@@ -657,11 +672,11 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-            col.dataIndex === "dai" ||
-            col.dataIndex === "price" ||
-            col.dataIndex === "rong"
+          col.dataIndex === "dai" ||
+          col.dataIndex === "price" ||
+          col.dataIndex === "rong"
             ? "number"
-            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
+            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao" || col.dataIndex === "han_giao_sx"
               ? "dateTime"
               : col.dataIndex === "buyer_id" ||
                 col.dataIndex === "layout_id" ||
@@ -680,13 +695,14 @@ const Orders = () => {
           col.dataIndex === "buyer_id"
             ? buyers
             : col.dataIndex === "layout_type"
-              ? layoutTypes
-              : col.dataIndex === "layout_id"
-                ? layouts
-                : col.dataIndex === "phan_loai_1"
-                  ? PL1s
-                  : col.dataIndex === "phan_loai_2"
-                    ? PL2s : listDRC,
+            ? layoutTypes
+            : col.dataIndex === "layout_id"
+            ? layouts
+            : col.dataIndex === "phan_loai_1"
+            ? PL1s
+            : col.dataIndex === "phan_loai_2"
+            ? PL2s
+            : listDRC,
       }),
     };
   });
@@ -781,25 +797,6 @@ const Orders = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    if (isEdit) {
-      values.id = editingKey;
-      const res = await updateOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    } else {
-      const res = await createOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    }
-  };
-
   const onUpdate = async () => {
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
@@ -813,8 +810,13 @@ const Orders = () => {
         item?.han_giao,
         COMMON_DATE_TABLE_FORMAT_REQUEST
       );
+      row.han_giao_sx = formatDateTime(
+        item?.han_giao_sx,
+        COMMON_DATE_TABLE_FORMAT_REQUEST
+      );
       !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
       !item?.han_giao && delete row?.han_giao;
+      !item?.han_giao_sx && delete row?.han_giao_sx;
     }
 
     if (typeof editingKey === "number") {
@@ -826,11 +828,17 @@ const Orders = () => {
       }
     } else {
       row.id = editingKey;
+      if (listCheck.length > 0) {
+        row.ids = listCheck;
+      }
       const res = await updateOrder(row);
       if (res) {
         form.resetFields();
         loadListTable(params);
         setEditingKey("");
+        // if (listCheck.length > 0) {
+        //   setListCheck([]);
+        // }
       }
     }
   };
@@ -855,7 +863,11 @@ const Orders = () => {
 
   const renderInputData = (item, index) => {
     return (
-      <Row key={index} style={{ flexDirection: "row", marginBottom: 8 }} gutter={[8, 8]}>
+      <Row
+        key={index}
+        style={{ flexDirection: "row", marginBottom: 8 }}
+        gutter={[8, 8]}
+      >
         <Col span={6}>
           <div>
             <p3 style={{ display: "block" }}>Số lượng</p3>
@@ -914,7 +926,6 @@ const Orders = () => {
     setInputData(items);
   };
 
-
   const onChangeAddress = (value, index) => {
     const items = inputData.map((val, i) => {
       if (i === index) {
@@ -938,7 +949,14 @@ const Orders = () => {
                 layout="vertical"
                 onFinish={btn_click}
               >
-                <div style={{ overflow: 'auto scroll', maxHeight: '75vh', padding: '0 5px', marginBottom: '10px' }}>
+                <div
+                  style={{
+                    overflow: "auto scroll",
+                    maxHeight: "75vh",
+                    padding: "0 5px",
+                    marginBottom: "10px",
+                  }}
+                >
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
                       allowClear
@@ -1143,10 +1161,7 @@ const Orders = () => {
                     }
                   }}
                 >
-                  <Button
-                    type="primary"
-                    loading={loadingExport}
-                  >
+                  <Button type="primary" loading={loadingExport}>
                     Upload Excel
                   </Button>
                 </Upload>
@@ -1159,6 +1174,7 @@ const Orders = () => {
             <Spin spinning={loading}>
               <Form form={form} component={false}>
                 <Table
+                  rowSelection={rowSelection}
                   size="small"
                   bordered
                   pagination={{ position: ["bottomRight"] }}
