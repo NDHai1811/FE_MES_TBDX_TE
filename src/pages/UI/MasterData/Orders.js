@@ -371,8 +371,8 @@ const Orders = () => {
     },
     {
       title: "Thời gian thay model",
-      dataIndex: "tg_thay_model",
-      key: "tg_thay_model",
+      dataIndex: "tg_doi_model",
+      key: "tg_doi_model",
       align: "center",
       editable: true,
       width: "2%",
@@ -672,9 +672,9 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-          col.dataIndex === "dai" ||
-          col.dataIndex === "price" ||
-          col.dataIndex === "rong"
+            col.dataIndex === "dai" ||
+            col.dataIndex === "price" ||
+            col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao" || col.dataIndex === "han_giao_sx"
               ? "dateTime"
@@ -695,14 +695,14 @@ const Orders = () => {
           col.dataIndex === "buyer_id"
             ? buyers
             : col.dataIndex === "layout_type"
-            ? layoutTypes
-            : col.dataIndex === "layout_id"
-            ? layouts
-            : col.dataIndex === "phan_loai_1"
-            ? PL1s
-            : col.dataIndex === "phan_loai_2"
-            ? PL2s
-            : listDRC,
+              ? layoutTypes
+              : col.dataIndex === "layout_id"
+                ? layouts
+                : col.dataIndex === "phan_loai_1"
+                  ? PL1s
+                  : col.dataIndex === "phan_loai_2"
+                    ? PL2s
+                    : listDRC,
       }),
     };
   });
@@ -1018,6 +1018,15 @@ const Orders = () => {
                         setParams({ ...params, height: e.target.value })
                       }
                       placeholder="Nhập H"
+                    />
+                  </Form.Item>
+                  <Form.Item label="KÍCH THƯỚC" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, kich_thuoc: e.target.value })
+                      }
+                      placeholder="Nhập L"
                     />
                   </Form.Item>
                   <Form.Item label="PO" className="mb-3">
