@@ -172,8 +172,6 @@ const PL2s = [
 ];
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
-  const [openMdl, setOpenMdl] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
   const [editingKey, setEditingKey] = useState("");
@@ -548,6 +546,14 @@ const Orders = () => {
       editable: true,
     },
     {
+      title: "Ngày giao hàng SX",
+      dataIndex: "han_giao_sx",
+      key: "han_giao_sx",
+      align: "center",
+      width: "2.6%",
+      editable: true,
+    },
+    {
       title: "Người đặt hàng",
       dataIndex: "nguoi_dat_hang",
       key: "nguoi_dat_hang",
@@ -661,7 +667,7 @@ const Orders = () => {
             col.dataIndex === "price" ||
             col.dataIndex === "rong"
             ? "number"
-            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao"
+            : col.dataIndex === "ngay_dat_hang" || col.dataIndex === "han_giao" || col.dataIndex === "han_giao_sx"
               ? "dateTime"
               : col.dataIndex === "buyer_id" ||
                 col.dataIndex === "layout_id" ||
@@ -781,25 +787,6 @@ const Orders = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    if (isEdit) {
-      values.id = editingKey;
-      const res = await updateOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    } else {
-      const res = await createOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    }
-  };
-
   const onUpdate = async () => {
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
@@ -813,8 +800,13 @@ const Orders = () => {
         item?.han_giao,
         COMMON_DATE_TABLE_FORMAT_REQUEST
       );
+      row.han_giao_sx = formatDateTime(
+        item?.han_giao_sx,
+        COMMON_DATE_TABLE_FORMAT_REQUEST
+      );
       !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
       !item?.han_giao && delete row?.han_giao;
+      !item?.han_giao_sx && delete row?.han_giao_sx;
     }
 
     if (typeof editingKey === "number") {
