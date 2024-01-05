@@ -108,7 +108,7 @@ const columns = [
   },
 ];
 
-const Manufacture1 = (props) => {
+const InDan = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const currentColumns = [
@@ -285,7 +285,7 @@ const Manufacture1 = (props) => {
   const getListMachine = () => {
     getMachines()
       .then((res) =>
-        setMachineOptions(res.data?.filter((val) => val.value === "S01"))
+        setMachineOptions(res.data?.filter((val) => val.value !== "S01"))
       )
       .catch((err) => console.log("Get list machine error: ", err));
   };
@@ -571,4 +571,4 @@ const Manufacture1 = (props) => {
   );
 };
 
-export default Manufacture1;
+export default InDan;

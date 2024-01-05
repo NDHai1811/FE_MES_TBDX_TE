@@ -26,10 +26,7 @@ import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
-import {
-  COMMON_DATE_FORMAT,
-  COMMON_DATE_FORMAT_REQUEST,
-} from "../../../commons/constants";
+import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getMachines } from "../../../api/oi/equipment";
@@ -108,7 +105,7 @@ const columns = [
   },
 ];
 
-const Manufacture1 = (props) => {
+const NhapTay = (props) => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const currentColumns = [
@@ -132,6 +129,11 @@ const Manufacture1 = (props) => {
       key: "san_luong",
       align: "center",
       render: (value) => value,
+      onHeaderCell: () => {
+        return {
+          onClick: onShowPopup,
+        };
+      },
     },
     {
       title: "Sản lượng đạt",
@@ -162,7 +164,10 @@ const Manufacture1 = (props) => {
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
+  const [lotCurrent, setLotCurrent] = useState([]);
   const [listCheck, setListCheck] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [value, setValue] = useState("");
   const [deviceID, setDeviceID] = useState(
     "e9aba8d0-85da-11ee-8392-a51389126dc6"
   );
@@ -172,6 +177,14 @@ const Manufacture1 = (props) => {
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
   const ws = useRef(null);
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
+
+  const closePopup = () => {
+    setVisible(false);
+  };
 
   const reloadData = async () => {
     const resData = await getListLotDetail();
@@ -284,10 +297,24 @@ const Manufacture1 = (props) => {
 
   const getListMachine = () => {
     getMachines()
-      .then((res) =>
-        setMachineOptions(res.data?.filter((val) => val.value === "S01"))
-      )
+      .then((res) => setMachineOptions(res.data))
       .catch((err) => console.log("Get list machine error: ", err));
+  };
+
+  const onChangeValue = (val) => {
+    setValue(val);
+  };
+
+  const onConfirm = () => {
+    setLotCurrent((prevState) => {
+      let newState = [...prevState];
+      if (newState[0]) {
+        newState[0].san_luong = value;
+      }
+      return newState;
+    });
+    setValue("");
+    closePopup();
   };
 
   const getOverAllDetail = () => {
@@ -476,7 +503,7 @@ const Manufacture1 = (props) => {
               className="custom-table"
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
-              dataSource={selectedLot ? [selectedLot] : []}
+              dataSource={lotCurrent}
             />
           </Col>
           <Row
@@ -546,6 +573,11 @@ const Manufacture1 = (props) => {
                   ? columns.filter((e, i) => i !== 0)
                   : columns
               }
+              onRow={(record, index) => {
+                return {
+                  onClick: () => setLotCurrent([record]),
+                };
+              }}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
@@ -567,8 +599,23 @@ const Manufacture1 = (props) => {
           />
         </Modal>
       )}
+      {visible && (
+        <Modal
+          title="Sản lượng đầu ra"
+          open={visible}
+          onCancel={closePopup}
+          onOk={onConfirm}
+        >
+          <InputNumber
+            defaultValue={lotCurrent[0]?.san_luong}
+            placeholder="Nhập sản lượng đầu ra"
+            onChange={onChangeValue}
+            style={{ width: "100%" }}
+          />
+        </Modal>
+      )}
     </React.Fragment>
   );
 };
 
-export default Manufacture1;
+export default NhapTay;

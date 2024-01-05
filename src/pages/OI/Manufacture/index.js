@@ -6,10 +6,21 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import Manufacture1 from "./Manufacture1";
+import NhapTay from "./NhapTay";
+import InDan from "./NhapTay";
 const Manufacture = () => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
-  const history = useHistory();
+  // const history = useHistory();
+
+  const userPermissions = JSON.parse(
+    window.localStorage.getItem("authUser")
+  ).permission;
+
+  // const isWave = userPermissions?.some((val) => val === "oi-sx-song");
+  // const isPrintStick = userPermissions?.some((val) => val === "oi-sx-in-dan");
+  // const isHandInput = userPermissions?.some((val) => val === "oi-sx-nhap-tay");
+
   // useEffect(() => {
   //   const screen = JSON.parse(localStorage.getItem("screen"));
   //   localStorage.setItem(
@@ -20,9 +31,16 @@ const Manufacture = () => {
   //     history.push("/manufacture/S01");
   //   }
   // }, [machine_id]);
+
   return (
     <React.Fragment>
-      <Manufacture1 />
+      {machine_id === "S01" ? (
+        <Manufacture1 />
+      ) : machine_id === "D05" || machine_id === "D06" ? (
+        <NhapTay />
+      ) : (
+        <InDan />
+      )}
     </React.Fragment>
   );
 };
