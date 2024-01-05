@@ -200,8 +200,8 @@ const Export2 = (props) => {
   };
 
   useEffect(()=>{
-    !visible && getLogs();
-  }, [visible]);
+    (!visible || !isScan) && getLogs();
+  }, [visible, isScan]);
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 12]}>
