@@ -7,6 +7,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import Import from "./Import";
 import Export from "./Export";
+import Export2 from "./Export2";
 
 const Warehouse = (props) => {
   document.title = "Kho";
@@ -26,7 +27,7 @@ const Warehouse = (props) => {
   return (
     <React.Fragment>
       {line === "nhap" && <Import />}
-      {line === "xuat" && <Export />}
+      {line === "xuat" && <Export2 />}
     </React.Fragment>
   );
 };
