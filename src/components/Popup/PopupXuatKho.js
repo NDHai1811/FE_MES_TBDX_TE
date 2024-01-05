@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
@@ -38,24 +38,20 @@ function PopupXuatKhoNvl(props) {
 
   const getData = async (value) => {
     var res = await scanExportsNVL({ material_id: value });
-    setData([res.data]);
-    setCurrentScan(res.data);
+    if(res.success){
+      setData([res.data]);
+      setCurrentScan(res.data);
+    }
   };
 
-  const sendResult = (value) => {
-    const materialIds = data
-      ?.filter((item) => item.status === 1)
-      .map((val) => val.material_id);
-    const resData = {
-      material_id: materialIds,
-      locator_id: value,
-    };
-    saveExportsNVL(resData)
-      .then((res) => {
-        console.log(res);
-        if (res.success) handleCancel();
-      })
-      .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
+  // useEffect(()=>{
+  //   console.log(data);
+  // }, [data])
+
+  const sendResult = async () => {
+    var res = saveExportsNVL(data)
+    console.log(res);
+    if (res.success) handleCancel();
   };
 
   const handleOk = () => {
@@ -67,7 +63,7 @@ function PopupXuatKhoNvl(props) {
     setVisible(false);
     setData([]);
   };
-  const onScanResult = (value) => {
+  const onScanResult = useCallback((value, data) => {
     console.log(data);
     if(value){
       if (data.length > 0) {
@@ -76,7 +72,7 @@ function PopupXuatKhoNvl(props) {
         getData(value);
       }
     }
-  };
+  }, [data]);
 
   return (
     <div>
@@ -86,7 +82,7 @@ function PopupXuatKhoNvl(props) {
         onCancel={handleCancel}
         okButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
+        <ScanQR isHideButton={true} onResult={(res) => onScanResult(res, data)} />
         <Row className="mt-3">
           <Col span={24}>
             <Table
