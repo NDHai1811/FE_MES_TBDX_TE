@@ -1,6 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { Row, Col, Button, Table, Spin, DatePicker, Modal, Select } from "antd";
+import {
+  Row,
+  Col,
+  Button,
+  Table,
+  Spin,
+  DatePicker,
+  Modal,
+  Select,
+  InputNumber,
+} from "antd";
 import "../style.scss";
 import {
   useHistory,
@@ -103,9 +113,9 @@ const Manufacture1 = (props) => {
   const { machine_id } = useParams();
   const currentColumns = [
     {
-      title: machine_id === 'S01' ? "Lô SX" : "Mã lot",
-      dataIndex: machine_id === 'S01' ? "lot_id" : "lo_sx",
-      key: machine_id === 'S01' ? "lot_id" : "lo_sx",
+      title: machine_id === "S01" ? "Lô SX" : "Mã lot",
+      dataIndex: machine_id === "S01" ? "lot_id" : "lo_sx",
+      key: machine_id === "S01" ? "lot_id" : "lo_sx",
       align: "center",
       render: (value) => value || "-",
     },
@@ -122,6 +132,11 @@ const Manufacture1 = (props) => {
       key: "san_luong",
       align: "center",
       render: (value) => value,
+      onHeaderCell: () => {
+        return {
+          onClick: isHandInput && onShowPopup,
+        };
+      },
     },
     {
       title: "Sản lượng đạt",
@@ -152,8 +167,10 @@ const Manufacture1 = (props) => {
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
-  const [lotCurrent, setLotCurrent] = useState(["12", "12"]);
+  const [lotCurrent, setLotCurrent] = useState([]);
   const [listCheck, setListCheck] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [value, setValue] = useState("");
   const [deviceID, setDeviceID] = useState(
     "e9aba8d0-85da-11ee-8392-a51389126dc6"
   );
@@ -163,15 +180,30 @@ const Manufacture1 = (props) => {
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
   const ws = useRef(null);
+  const userPermissions = JSON.parse(
+    window.localStorage.getItem("authUser")
+  ).permission;
 
-  const reloadData = async () =>{
+  const isWave = userPermissions?.some((val) => val === "oi-sx-song");
+  const isPrintStick = userPermissions?.some((val) => val === "oi-sx-in-dan");
+  const isHandInput = userPermissions?.some((val) => val === "oi-sx-nhap-tay");
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
+
+  const closePopup = () => {
+    setVisible(false);
+  };
+
+  const reloadData = async () => {
     const resData = await getListLotDetail();
     setData(resData);
-    if(resData?.[0]?.status === 1){
+    if (resData?.[0]?.status === 1) {
       setSelectedLot(resData?.[0]);
     }
     getOverAllDetail();
-  }
+  };
   const overallColumns = [
     {
       title: "Công đoạn",
@@ -215,7 +247,7 @@ const Manufacture1 = (props) => {
   ];
 
   useEffect(() => {
-    if(machineOptions.length > 0){
+    if (machineOptions.length > 0) {
       (async () => {
         if (machine_id) {
           reloadData();
@@ -226,11 +258,11 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     if (machineOptions.length > 0) {
-      var target = machineOptions.find(e=>e.value === machine_id);
-      if(!target){
+      var target = machineOptions.find((e) => e.value === machine_id);
+      if (!target) {
         target = machineOptions[0];
       }
-      history.push('/manufacture/'+target.value);
+      history.push("/manufacture/" + target.value);
     }
   }, [machineOptions]);
 
@@ -246,13 +278,13 @@ const Manufacture1 = (props) => {
     getListMachine();
     // (async ()=>{
     //   var res = await getTem();
-    //   setListCheck(res) 
+    //   setListCheck(res)
     // })()
-    loadDataRescursive()
+    loadDataRescursive();
   }, []);
 
   const loadDataRescursive = async () => {
-    if(!machine_id) return;
+    if (!machine_id) return;
     const resData = {
       machine_id,
       start_date: params.start_date,
@@ -260,21 +292,47 @@ const Manufacture1 = (props) => {
     };
     const res = await getLotByMachine(resData);
     setData(res.data);
-    if(res.data[0]?.status === 1){
+    if (res.data[0]?.status === 1) {
       setSelectedLot(res.data[0]);
-    }else{
+    } else {
       setSelectedLot(null);
     }
-    if(res.success){
-      if(window.location.href.indexOf("manufacture") > -1)
-      setTimeout(function() { loadDataRescursive() }, 5000);
+    if (res.success) {
+      if (window.location.href.indexOf("manufacture") > -1)
+        setTimeout(function () {
+          loadDataRescursive();
+        }, 5000);
     }
-  }
+  };
 
   const getListMachine = () => {
     getMachines()
-      .then((res) => setMachineOptions(res.data))
+      .then((res) =>
+        setMachineOptions(
+          isWave
+            ? res.data?.filter((val) => val.value === "S01")
+            : isPrintStick
+            ? res.data?.filter((val) => val.value !== "S01")
+            : res.data
+        )
+      )
       .catch((err) => console.log("Get list machine error: ", err));
+  };
+
+  const onChangeValue = (val) => {
+    setValue(val);
+  };
+
+  const onConfirm = () => {
+    setLotCurrent((prevState) => {
+      let newState = [...prevState];
+      if (newState[0]) {
+        newState[0].san_luong = value;
+      }
+      return newState;
+    });
+    setValue("");
+    closePopup();
   };
 
   const getOverAllDetail = () => {
@@ -338,10 +396,10 @@ const Manufacture1 = (props) => {
       } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();
       }
-      (async ()=>{
+      (async () => {
         setData(await getListLotDetail());
         getOverAllDetail();
-      })()
+      })();
     }
     setListCheck([]);
   }, [listCheck.length]);
@@ -390,7 +448,7 @@ const Manufacture1 = (props) => {
     };
 
     ws.current.onmessage = async function (event) {
-      if(resData[0]?.status !== 1){
+      if (resData[0]?.status !== 1) {
         return 0;
       }
       const receivedMsg = JSON.parse(event.data);
@@ -409,7 +467,10 @@ const Manufacture1 = (props) => {
           sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
         }
         sl_ok = parseInt(san_luong - sl_ng);
-        if (sl_ok >= resData[0]?.dinh_muc || resData[0]?.sl_ok - Pre_Counter > 10) {
+        if (
+          sl_ok >= resData[0]?.dinh_muc ||
+          resData[0]?.sl_ok - Pre_Counter > 10
+        ) {
           reloadData();
         } else {
           const new_data = resData.map((value, index) => {
@@ -421,7 +482,7 @@ const Manufacture1 = (props) => {
               return value;
             }
           });
-          
+
           setData(new_data);
           setSelectedLot(new_data[0]);
         }
@@ -460,7 +521,9 @@ const Manufacture1 = (props) => {
               className="custom-table"
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
-              dataSource={selectedLot ? [selectedLot] : []}
+              dataSource={
+                isHandInput ? lotCurrent : selectedLot ? [selectedLot] : []
+              }
             />
           </Col>
           <Row
@@ -525,7 +588,18 @@ const Manufacture1 = (props) => {
               }
               pagination={false}
               bordered
-              columns={machine_id === 'S01' ? columns.filter((e, i)=>i!==0) : columns}
+              columns={
+                machine_id === "S01"
+                  ? columns.filter((e, i) => i !== 0)
+                  : columns
+              }
+              onRow={(record, index) => {
+                return {
+                  onClick: () => {
+                    isHandInput && setLotCurrent([record]);
+                  },
+                };
+              }}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
@@ -544,6 +618,21 @@ const Manufacture1 = (props) => {
               onScan(res);
               setIsOpenQRScanner(false);
             }}
+          />
+        </Modal>
+      )}
+      {visible && (
+        <Modal
+          title="Sản lượng đầu ra"
+          open={visible}
+          onCancel={closePopup}
+          onOk={onConfirm}
+        >
+          <InputNumber
+            defaultValue={lotCurrent[0]?.san_luong}
+            placeholder="Nhập sản lượng đầu ra"
+            onChange={onChangeValue}
+            style={{ width: "100%" }}
           />
         </Modal>
       )}
