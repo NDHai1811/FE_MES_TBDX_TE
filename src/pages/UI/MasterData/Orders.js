@@ -327,7 +327,7 @@ const Orders = () => {
       dataIndex: "kich_thuoc_chuan",
       key: "kich_thuoc_chuan",
       align: "center",
-      width: "2%",
+      width: "2.5%",
       editable: true,
     },
     {
@@ -335,6 +335,7 @@ const Orders = () => {
       dataIndex: "quy_cach_drc",
       key: "quy_cach_drc",
       align: "center",
+      width: "2%",
       editable: true,
     },
     {
@@ -399,16 +400,16 @@ const Orders = () => {
       editable: true,
     },
     {
-      title: "Số dao",
-      dataIndex: "so_dao",
-      key: "so_dao",
+      title: "Dài tấm",
+      dataIndex: "dai_tam",
+      key: "dai_tam",
       align: "center",
       editable: true,
     },
     {
-      title: "Dài tấm",
-      dataIndex: "dai_tam",
-      key: "dai_tam",
+      title: "Số dao",
+      dataIndex: "so_dao",
+      key: "so_dao",
       align: "center",
       editable: true,
     },
@@ -975,24 +976,6 @@ const Orders = () => {
                       placeholder="Nhập MDH"
                     />
                   </Form.Item>
-                  <Form.Item label="Order" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, order: e.target.value })
-                      }
-                      placeholder="Nhập order"
-                    />
-                  </Form.Item>
-                  <Form.Item label="MQL" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, mql: e.target.value })
-                      }
-                      placeholder="Nhập MDH"
-                    />
-                  </Form.Item>
                   <Form.Item label="L" className="mb-3">
                     <Input
                       allowClear
@@ -1018,6 +1001,24 @@ const Orders = () => {
                         setParams({ ...params, height: e.target.value })
                       }
                       placeholder="Nhập H"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Order" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, order: e.target.value })
+                      }
+                      placeholder="Nhập order"
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mql: e.target.value })
+                      }
+                      placeholder="Nhập MDH"
                     />
                   </Form.Item>
                   <Form.Item label="KÍCH THƯỚC" className="mb-3">
@@ -1194,7 +1195,7 @@ const Orders = () => {
                   }}
                   rowClassName="editable-row"
                   scroll={{
-                    x: "350vw",
+                    x: "380vw",
                     y: "80vh",
                   }}
                   columns={mergedColumns}
