@@ -47,3 +47,10 @@ export const getExportNvlLogs = async () => {
 export const exportNvlData = async (data) => {
   return await axios.post("/oi/warehouse/mlt/export/save", data);
 };
+
+export const getExportsNVL = async (data) => {
+  return await axios.get("/oi/warehouse/mlt/export/log-list", {data});
+};
+export const scanExportsNVL = async (data) => {
+  return await axios.get("/oi/warehouse/mlt/export/scan", {data});
+};
