@@ -25,7 +25,7 @@ const columns = [
     key: "locator_id",
     align: "center",
     render: (value, record) => (
-      <span style={{ color: record.isScanLocation ? "black" : "gray" }}>
+      <span style={{ color: "gray" }}>
         {value}
       </span>
     ),
@@ -41,15 +41,28 @@ function PopupXuatKhoNvl(props) {
     if(res.success){
       setData([res.data]);
       setCurrentScan(res.data);
+      window.localStorage.setItem("ScanXuatNvl", JSON.stringify(res.data));
     }
   };
 
-  // useEffect(()=>{
-  //   console.log(data);
-  // }, [data])
+  useEffect(()=>{
+    window.localStorage.removeItem("ScanXuatNvl");
+  }, [])
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const sendResult = async () => {
-    var res = saveExportsNVL(data)
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
+
+  const sendResult = async (data) => {
+    var res = await saveExportsNVL(data)
     console.log(res);
     if (res.success) handleCancel();
   };
@@ -60,14 +73,21 @@ function PopupXuatKhoNvl(props) {
   };
 
   const handleCancel = () => {
+    window.localStorage.removeItem("ScanXuatNvl")
     setVisible(false);
     setData([]);
   };
   const onScanResult = useCallback((value, data) => {
     console.log(data);
     if(value){
-      if (data.length > 0) {
-        sendResult(value);
+      const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
+      if (data) {
+        if(data.locator_id === value){
+          sendResult(data);
+        }
+        else{
+          messageAlert("Vị trí không đúng");
+        }
       } else {
         getData(value);
       }
@@ -76,6 +96,7 @@ function PopupXuatKhoNvl(props) {
 
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Quét mã"
         open={visible}
