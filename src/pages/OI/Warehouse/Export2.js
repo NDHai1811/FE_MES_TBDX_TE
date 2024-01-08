@@ -202,6 +202,7 @@ const Export2 = (props) => {
   useEffect(()=>{
     (!visible || !isScan) && getLogs();
   }, [visible, isScan]);
+  const [freeMaterialExport, setFreeMaterialExport] = useState();
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 12]}>
@@ -286,13 +287,13 @@ const Export2 = (props) => {
           setCurrentScan={setCurrentScan}
         />
       )}
-      {isScan && (
-        <PopupXuatKhoNvl
-          visible={isScan}
-          setVisible={setIsScan}
-          setCurrentScan={setCurrentScan}
-        />
-      )}
+      <PopupXuatKhoNvl
+        data={freeMaterialExport}
+        setData={setFreeMaterialExport}
+        visible={isScan}
+        setVisible={setIsScan}
+        setCurrentScan={setCurrentScan}
+      />
     </React.Fragment>
   );
 };

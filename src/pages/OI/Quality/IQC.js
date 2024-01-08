@@ -85,7 +85,7 @@ const IQC = (props) => {
       align: "center",
     },
     {
-      title: "Số phế",
+      title: "NG",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
@@ -191,12 +191,6 @@ const IQC = (props) => {
       title: "Sản lượng đầu ra",
       dataIndex: "sl_dau_ra_hang_loat",
       key: "sl_dau_ra_hang_loat",
-      align: "center",
-    },
-    {
-      title: "Số lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
       align: "center",
     },
     {

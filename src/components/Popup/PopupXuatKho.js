@@ -34,67 +34,36 @@ const columns = [
 ];
 
 function PopupXuatKhoNvl(props) {
-  const { visible, setVisible, setCurrentScan } = props;
-  const [data, setData] = useState([]);
+  const { visible, setVisible, setCurrentScan, data, setData } = props;
 
   const getData = async (value) => {
     var res = await scanExportsNVL({ material_id: value });
     if (res.success) {
-      setData([res.data]);
-      setCurrentScan(res.data);
       window.localStorage.setItem("ScanXuatNvl", JSON.stringify(res.data));
+      setData(res.data);
+      setCurrentScan(res.data);
     }
-  };
-
-  useEffect(() => {
-    window.localStorage.removeItem("ScanXuatNvl");
-  }, []);
+  }
   const [messageApi, contextHolder] = message.useMessage();
-
-  const messageAlert = (content, type = "error") => {
-    messageApi.open({
-      type,
-      content,
-      className: "custom-class",
-      style: {
-        marginTop: "50%",
-      },
-    });
-  };
 
   const sendResult = async (data) => {
     var res = await saveExportsNVL(data);
     if (res.success) handleCancel();
   };
 
-  const handleOk = () => {
-    window.localStorage.setItem("ScanXuatNvl", JSON.stringify(data));
-    setVisible(false);
-  };
-
   const handleCancel = () => {
     window.localStorage.removeItem("ScanXuatNvl");
     setVisible(false);
-    setData([]);
+    setData();
   };
-  const onScanResult = useCallback(
-    (value, data) => {
-      console.log(data);
-      if (value) {
-        const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
-        if (data) {
-          if (data.locator_id === value) {
-            sendResult(data);
-          } else {
-            messageAlert("Vị trí không đúng");
-          }
-        } else {
-          getData(value);
-        }
-      }
-    },
-    [data]
-  );
+  const onScanResult = useCallback((value) => {
+    const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
+    if (value && data) {
+      sendResult({ ...data, locator_id: value });
+    } else {
+      getData(value);
+    }
+  }, [data]);
 
   return (
     <div>
@@ -107,7 +76,7 @@ function PopupXuatKhoNvl(props) {
       >
         <ScanQR
           isHideButton={true}
-          onResult={(res) => onScanResult(res, data)}
+          onResult={(res) => onScanResult(res)}
         />
         <Row className="mt-3">
           <Col span={24}>
@@ -116,7 +85,7 @@ function PopupXuatKhoNvl(props) {
               pagination={false}
               bordered
               columns={columns}
-              dataSource={data}
+              dataSource={data ? [data] : []}
             />
           </Col>
         </Row>
