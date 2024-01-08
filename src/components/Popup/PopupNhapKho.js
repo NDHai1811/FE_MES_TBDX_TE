@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Modal, Row, Col, Table, message } from "antd";
+import React from "react";
+import { Modal, Row, Col, Table } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
@@ -43,79 +43,98 @@ const columns = [
 ];
 
 function PopupNhapKhoNvl(props) {
-  const { visible, setVisible, setCurrentScan } = props;
+  const { visible, setVisible } = props;
   const list = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
   const [data, setData] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
 
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
 
-  const messageAlert = (content, type = "error") => {
-    messageApi.open({
-      type,
-      content,
-      className: "custom-class",
-      style: {
-        marginTop: "50%",
-      },
-    });
-  };
-
-  const isSendRef = useRef(false);
+  // const messageAlert = (content, type = "error") => {
+  //   messageApi.open({
+  //     type,
+  //     content,
+  //     className: "custom-class",
+  //     style: {
+  //       marginTop: "50%",
+  //     },
+  //   });
+  // };
 
   useEffect(() => {
     if (currentData) {
-      getData();
+      if (!list) {
+        setData([
+          ...data,
+          { material_id: currentData, locator_id: "", so_kg: "" },
+        ]);
+      } else {
+        if (!data[data.length - 1].locator_id) {
+          const item = data.find((val) => !val.locator_id);
+          const newData = data.map((val) => {
+            if (val.material_id === item.material_id) {
+              val.locator_id = currentData;
+            }
+            return { ...val };
+          });
+          setData(newData);
+        }
+      }
     }
   }, [currentData]);
 
-  const getData = () => {
-    getScanList({ material_id: currentData })
-      .then((res) => {
-        if (res.data.length > 1) {
-          const items = data?.map((val) => {
-            if (val.material_id === currentData) {
-              val.status = 1;
-            }
-            return {
-              ...val,
-            };
-          });
-          setData(
-            data?.length > 0
-              ? items
-              : res.data?.map((val) => ({ ...val, isScanLocation: false }))
-          );
-        } else if (res.data.length === 1) {
-          window.localStorage.setItem(
-            "ScanNhapNvl",
-            JSON.stringify(
-              res.data?.map((val) => ({ ...val, isScanLocation: false }))
-            )
-          );
-          handleCancel();
-        }
-        console.log(data, currentData);
-        setCurrentScan(data.find(e=>e.material_id === currentData));
-      })
-      .catch((err) => {
-        console.log("Lấy danh sách scan thất bại: ", err);
-        messageAlert("Mã cuộn không tồn tại");
-      });
-  };
+  // useEffect(() => {
+  //   if (currentData) {
+  //     getData();
+  //   }
+  // }, [currentData]);
 
-  const sendResult = (value) => {
-    const materialIds = data
-      ?.filter((item) => item.status === 1)
-      .map((val) => val.material_id);
+  // const getData = () => {
+  //   getScanList({ material_id: currentData })
+  //     .then((res) => {
+  //       if (res.data.length > 1) {
+  //         const items = data?.map((val) => {
+  //           if (val.material_id === currentData) {
+  //             val.status = 1;
+  //           }
+  //           return {
+  //             ...val,
+  //           };
+  //         });
+  //         setData(
+  //           data?.length > 0
+  //             ? items
+  //             : res.data?.map((val) => ({ ...val, isScanLocation: false }))
+  //         );
+  //       } else if (res.data.length === 1) {
+  //         window.localStorage.setItem(
+  //           "ScanNhapNvl",
+  //           JSON.stringify(
+  //             res.data?.map((val) => ({ ...val, isScanLocation: false }))
+  //           )
+  //         );
+  //         handleCancel();
+  //       }
+  //       console.log(data, currentData);
+  //       setCurrentScan(data.find((e) => e.material_id === currentData));
+  //     })
+  //     .catch((err) => {
+  //       console.log("Lấy danh sách scan thất bại: ", err);
+  //       messageAlert("Mã cuộn không tồn tại");
+  //     });
+  // };
+
+  const sendResult = () => {
+    const materialIds = data.map((val) => val.material_id);
+    const locatorIds = data.map((val) => val.locator_id);
     const resData = {
       material_id: materialIds,
-      locator_id: value,
+      locator_id: locatorIds,
     };
+
     sendResultScan(resData)
       .then((res) => {
-        console.log(res);
-        if(res.success) window.localStorage.removeItem("ScanNhapNvl");
+        if (res.success) window.localStorage.removeItem("ScanNhapNvl");
         handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
@@ -131,31 +150,17 @@ function PopupNhapKhoNvl(props) {
   };
 
   const onScanResult = (value) => {
-    if (list) {
-      const isLocation = data.some((val) => val.locator_id === value);
-      if (isLocation) {
-        if (!isSendRef.current) {
-          isSendRef.current = true;
-          sendResult(value);
-        }
-      } else {
-        messageAlert(
-          "Vị trí hiện tại không đúng, xin vui lòng quét vị trí lại"
-        );
-      }
-    } else {
-      setCurrentData(value);
-    }
+    setCurrentData(value);
   };
 
   return (
     <div>
-      {contextHolder}
+      {/* {contextHolder} */}
       <Modal
         title="Quét mã"
         open={visible}
-        onOk={handleOk}
-        okText={!list ? "Lưu" : null}
+        onOk={!list ? handleOk : sendResult}
+        okText={!list ? "Xong" : "Lưu"}
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >

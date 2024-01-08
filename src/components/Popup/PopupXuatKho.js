@@ -3,7 +3,12 @@ import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
-import { getScanList, saveExportsNVL, scanExportsNVL, sendResultScan } from "../../api/oi/warehouse";
+import {
+  getScanList,
+  saveExportsNVL,
+  scanExportsNVL,
+  sendResultScan,
+} from "../../api/oi/warehouse";
 import { useEffect } from "react";
 
 const columns = [
@@ -24,11 +29,7 @@ const columns = [
     dataIndex: "locator_id",
     key: "locator_id",
     align: "center",
-    render: (value, record) => (
-      <span style={{ color: "gray" }}>
-        {value}
-      </span>
-    ),
+    render: (value, record) => <span style={{ color: "gray" }}>{value}</span>,
   },
 ];
 
@@ -38,16 +39,16 @@ function PopupXuatKhoNvl(props) {
 
   const getData = async (value) => {
     var res = await scanExportsNVL({ material_id: value });
-    if(res.success){
+    if (res.success) {
       setData([res.data]);
       setCurrentScan(res.data);
       window.localStorage.setItem("ScanXuatNvl", JSON.stringify(res.data));
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     window.localStorage.removeItem("ScanXuatNvl");
-  }, [])
+  }, []);
   const [messageApi, contextHolder] = message.useMessage();
 
   const messageAlert = (content, type = "error") => {
@@ -62,8 +63,7 @@ function PopupXuatKhoNvl(props) {
   };
 
   const sendResult = async (data) => {
-    var res = await saveExportsNVL(data)
-    console.log(res);
+    var res = await saveExportsNVL(data);
     if (res.success) handleCancel();
   };
 
@@ -73,26 +73,28 @@ function PopupXuatKhoNvl(props) {
   };
 
   const handleCancel = () => {
-    window.localStorage.removeItem("ScanXuatNvl")
+    window.localStorage.removeItem("ScanXuatNvl");
     setVisible(false);
     setData([]);
   };
-  const onScanResult = useCallback((value, data) => {
-    console.log(data);
-    if(value){
-      const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
-      if (data) {
-        if(data.locator_id === value){
-          sendResult(data);
+  const onScanResult = useCallback(
+    (value, data) => {
+      console.log(data);
+      if (value) {
+        const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
+        if (data) {
+          if (data.locator_id === value) {
+            sendResult(data);
+          } else {
+            messageAlert("Vị trí không đúng");
+          }
+        } else {
+          getData(value);
         }
-        else{
-          messageAlert("Vị trí không đúng");
-        }
-      } else {
-        getData(value);
       }
-    }
-  }, [data]);
+    },
+    [data]
+  );
 
   return (
     <div>
@@ -103,7 +105,10 @@ function PopupXuatKhoNvl(props) {
         onCancel={handleCancel}
         okButtonProps={{ style: { display: "none" } }}
       >
-        <ScanQR isHideButton={true} onResult={(res) => onScanResult(res, data)} />
+        <ScanQR
+          isHideButton={true}
+          onResult={(res) => onScanResult(res, data)}
+        />
         <Row className="mt-3">
           <Col span={24}>
             <Table
