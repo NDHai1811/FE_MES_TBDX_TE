@@ -85,7 +85,7 @@ const IQC = (props) => {
       align: "center",
     },
     {
-      title: "Số phế",
+      title: "NG",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
