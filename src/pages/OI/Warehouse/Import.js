@@ -152,29 +152,29 @@ const Import = (props) => {
       dataIndex: "sl_nhap",
       key: "sl_nhap",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
     },
     {
       title: "Sl xuất",
       dataIndex: "sl_xuat",
       key: "sl_xuat",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
     },
     {
       title: "Sl tồn",
       dataIndex: "sl_ton",
       key: "sl_ton",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
     },
-    {
-      title: "Số ngày tồn kho",
-      dataIndex: "so_ngay_ton",
-      key: "so_ngay_ton",
-      align: "center",
-      render: (value) => value || "-",
-    },
+    // {
+    //   title: "Số ngày tồn kho",
+    //   dataIndex: "so_ngay_ton",
+    //   key: "so_ngay_ton",
+    //   align: "center",
+    //   render: (value) => value || "-",
+    // },
   ];
 
   useEffect(() => {
