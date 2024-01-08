@@ -17,6 +17,8 @@ import {
   InputNumber,
   Select,
   Modal,
+  Checkbox,
+  Popover,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -205,43 +207,15 @@ const Orders = () => {
       },
     ]);
   };
-
-  const showModal = (record) => {
-    setSplitKey(record.id);
-    setIsModalVisible(true);
-  };
-
-  const handleOk = async () => {
-    console.log(inputData);
-    setIsModalVisible(false);
-    await splitOrders({ id: splitKey, inputData: inputData });
-    setInputData([
-      {
-        so_luong: 0,
-        ngay_giao: "",
-        xuong_giao: "",
-      },
-    ]);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setInputData([
-      {
-        so_luong: 0,
-        ngay_giao: "",
-        xuong_giao: "",
-      },
-    ]);
-  };
-
-  const col_detailTable = [
+  const [hideData, setHideData] = useState([]);
+  const colDetailTable = [
     {
       title: "Mã khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
       editable: true,
+      checked: true,
       fixed: "left",
       width: "2%",
     },
@@ -251,6 +225,7 @@ const Orders = () => {
       key: "mdh",
       align: "center",
       editable: true,
+      checked: true,
       fixed: "left",
       width: "2%",
     },
@@ -262,6 +237,7 @@ const Orders = () => {
       fixed: "left",
       width: "2.6%",
       editable: true,
+      checked: true,
     },
     {
       title: "L",
@@ -270,6 +246,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
+      checked: true,
       width: "1.4%",
     },
     {
@@ -279,6 +256,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
+      checked: true,
       width: "1.4%",
     },
     {
@@ -288,6 +266,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
+      checked: true,
       width: "1.4%",
     },
     {
@@ -297,6 +276,7 @@ const Orders = () => {
       align: "center",
       fixed: "left",
       editable: true,
+      checked: true,
       width: "1%",
     },
     {
@@ -306,6 +286,7 @@ const Orders = () => {
       align: "center",
       width: "1.2%",
       editable: true,
+      checked: true,
     },
     {
       title: "Kích thước ĐH",
@@ -313,6 +294,7 @@ const Orders = () => {
       key: "kich_thuoc",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Đơn vị tính",
@@ -321,6 +303,7 @@ const Orders = () => {
       align: "center",
       width: "1.2%",
       editable: true,
+      checked: true,
     },
     {
       title: "Kích thước chuẩn",
@@ -329,6 +312,7 @@ const Orders = () => {
       align: "center",
       width: "2.5%",
       editable: true,
+      checked: true,
     },
     {
       title: "Quy cách DRC",
@@ -337,6 +321,7 @@ const Orders = () => {
       align: "center",
       width: "2%",
       editable: true,
+      checked: true,
     },
     {
       title: "Phân loại 1",
@@ -345,6 +330,7 @@ const Orders = () => {
       align: "center",
       width: "4%",
       editable: true,
+      checked: true,
     },
     {
       title: "Phân loại 2",
@@ -353,6 +339,7 @@ const Orders = () => {
       align: "center",
       width: "4%",
       editable: true,
+      checked: true,
     },
     {
       title: "Mã buyer",
@@ -360,6 +347,7 @@ const Orders = () => {
       key: "buyer_id",
       align: "center",
       editable: true,
+      checked: true,
       width: "5%",
     },
     {
@@ -368,6 +356,7 @@ const Orders = () => {
       key: "toc_do",
       align: "center",
       editable: true,
+      checked: true,
       width: "2%",
     },
     {
@@ -376,6 +365,7 @@ const Orders = () => {
       key: "tg_doi_model",
       align: "center",
       editable: true,
+      checked: true,
       width: "2%",
     },
     {
@@ -384,6 +374,7 @@ const Orders = () => {
       key: "so_ra",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Khổ",
@@ -391,6 +382,7 @@ const Orders = () => {
       key: "kho",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Khổ tổng",
@@ -398,6 +390,7 @@ const Orders = () => {
       key: "kho_tong",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Dài tấm",
@@ -405,6 +398,7 @@ const Orders = () => {
       key: "dai_tam",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Số dao",
@@ -412,6 +406,7 @@ const Orders = () => {
       key: "so_dao",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Chia máy + p8",
@@ -419,6 +414,7 @@ const Orders = () => {
       key: "layout_type",
       align: "center",
       editable: true,
+      checked: true,
       width: "2%",
     },
     {
@@ -427,6 +423,7 @@ const Orders = () => {
       key: "layout_id",
       align: "center",
       editable: true,
+      checked: true,
       width: "4%",
     },
     {
@@ -435,6 +432,7 @@ const Orders = () => {
       key: "order",
       align: "center",
       editable: true,
+      checked: true,
       width: "6%",
     },
     {
@@ -443,6 +441,7 @@ const Orders = () => {
       key: "slg",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "SLT",
@@ -450,6 +449,7 @@ const Orders = () => {
       key: "slt",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "TMO",
@@ -457,6 +457,7 @@ const Orders = () => {
       key: "tmo",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "PO",
@@ -464,6 +465,7 @@ const Orders = () => {
       key: "po",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "STYLE",
@@ -471,6 +473,7 @@ const Orders = () => {
       key: "style",
       align: "center",
       editable: true,
+      checked: true,
       width: "10%",
     },
     {
@@ -479,6 +482,7 @@ const Orders = () => {
       key: "style_no",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "COLOR",
@@ -486,6 +490,7 @@ const Orders = () => {
       key: "color",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "ITEM",
@@ -493,6 +498,7 @@ const Orders = () => {
       key: "item",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "RM",
@@ -500,6 +506,7 @@ const Orders = () => {
       key: "rm",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "SIZE",
@@ -507,6 +514,7 @@ const Orders = () => {
       key: "size",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Đơn giá",
@@ -514,6 +522,7 @@ const Orders = () => {
       key: "price",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Thành tiền",
@@ -521,6 +530,7 @@ const Orders = () => {
       key: "into_money",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Đợt",
@@ -528,6 +538,7 @@ const Orders = () => {
       key: "dot",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Xưởng giao",
@@ -535,6 +546,7 @@ const Orders = () => {
       key: "xuong_giao",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Ghi chú khách hàng",
@@ -542,6 +554,7 @@ const Orders = () => {
       key: "note_1",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Ngày giao hàng trên đơn",
@@ -550,6 +563,7 @@ const Orders = () => {
       align: "center",
       width: "2.6%",
       editable: true,
+      checked: true,
     },
     {
       title: "Ngày giao hàng SX",
@@ -558,6 +572,7 @@ const Orders = () => {
       align: "center",
       width: "2.6%",
       editable: true,
+      checked: true,
     },
     {
       title: "Người đặt hàng",
@@ -565,6 +580,7 @@ const Orders = () => {
       key: "nguoi_dat_hang",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Ghi chú của TBDX",
@@ -572,10 +588,13 @@ const Orders = () => {
       key: "note_2",
       align: "center",
       editable: true,
+      checked: true,
     },
     {
       title: "Tác vụ",
       dataIndex: "action",
+      key: "action",
+      checked: true,
       align: "center",
       fixed: "right",
       width: "2%",
@@ -624,11 +643,119 @@ const Orders = () => {
     },
   ];
 
+  const mergedColumns = colDetailTable.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType:
+          col.dataIndex === "cao" ||
+          col.dataIndex === "dai" ||
+          col.dataIndex === "price" ||
+          col.dataIndex === "rong"
+            ? "number"
+            : col.dataIndex === "ngay_dat_hang" ||
+              col.dataIndex === "han_giao" ||
+              col.dataIndex === "han_giao_sx"
+            ? "dateTime"
+            : col.dataIndex === "buyer_id" ||
+              col.dataIndex === "layout_id" ||
+              col.dataIndex === "layout_type" ||
+              col.dataIndex === "phan_loai_1" ||
+              col.dataIndex === "phan_loai_2" ||
+              col.dataIndex === "quy_cach_drc"
+            ? "select"
+            : "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+        onChange,
+        onSelect,
+        options:
+          col.dataIndex === "buyer_id"
+            ? buyers
+            : col.dataIndex === "layout_type"
+            ? layoutTypes
+            : col.dataIndex === "layout_id"
+            ? layouts
+            : col.dataIndex === "phan_loai_1"
+            ? PL1s
+            : col.dataIndex === "phan_loai_2"
+            ? PL2s
+            : listDRC,
+      }),
+    };
+  });
+
+  const handleVisibleChange = (checkedValues) => {
+    if (mergedColumns) {
+      const uncheckedColumns = mergedColumns
+        .filter(
+          (col) => !checkedValues.includes(col.key) && col.key !== "action"
+        )
+        .map((val) => val.key);
+      setHideData(uncheckedColumns);
+    }
+  };
+
+  const content = (
+    <Checkbox.Group
+      style={{ width: "100%", display: "flex", flexWrap: "wrap" }}
+      options={mergedColumns
+        .filter((col) => col.key !== "action")
+        .map((col) => ({
+          label: col.title,
+          value: col.key,
+        }))}
+      defaultValue={mergedColumns
+        .filter((col) => col.key !== "action")
+        .map((col) => col.key)}
+      onChange={handleVisibleChange}
+    />
+  );
+
+  const showModal = (record) => {
+    setSplitKey(record.id);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    setIsModalVisible(false);
+    await splitOrders({ id: splitKey, inputData: inputData });
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+        xuong_giao: "",
+      },
+    ]);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setInputData([
+      {
+        so_luong: 0,
+        ngay_giao: "",
+        xuong_giao: "",
+      },
+    ]);
+  };
+
   useEffect(() => {
     getBuyerList();
     getLayouts();
     getDRCs();
   }, []);
+
+  useEffect(() => {
+    if (editingKey) {
+      getBuyerList();
+    }
+  }, [editingKey]);
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -677,53 +804,6 @@ const Orders = () => {
     const res = await getListDRC();
     setListDRC(res.map((val) => ({ label: val.id, value: val.id })));
   };
-
-  const mergedColumns = col_detailTable.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType:
-          col.dataIndex === "cao" ||
-          col.dataIndex === "dai" ||
-          col.dataIndex === "price" ||
-          col.dataIndex === "rong"
-            ? "number"
-            : col.dataIndex === "ngay_dat_hang" ||
-              col.dataIndex === "han_giao" ||
-              col.dataIndex === "han_giao_sx"
-            ? "dateTime"
-            : col.dataIndex === "buyer_id" ||
-              col.dataIndex === "layout_id" ||
-              col.dataIndex === "layout_type" ||
-              col.dataIndex === "phan_loai_1" ||
-              col.dataIndex === "phan_loai_2" ||
-              col.dataIndex === "quy_cach_drc"
-            ? "select"
-            : "text",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-        onChange,
-        onSelect,
-        options:
-          col.dataIndex === "buyer_id"
-            ? buyers
-            : col.dataIndex === "layout_type"
-            ? layoutTypes
-            : col.dataIndex === "layout_id"
-            ? layouts
-            : col.dataIndex === "phan_loai_1"
-            ? PL1s
-            : col.dataIndex === "phan_loai_2"
-            ? PL2s
-            : listDRC,
-      }),
-    };
-  });
 
   const onChange = (value, dataIndex) => {
     const items = data.map((val) => {
@@ -1198,6 +1278,9 @@ const Orders = () => {
               </Space>
             }
           >
+            <Popover content={content} title="Ẩn/Hiện cột" trigger="click">
+              <Button style={{ marginBottom: "4px" }}>Ẩn/Hiện cột</Button>
+            </Popover>
             <Spin spinning={loading}>
               <Form form={form} component={false}>
                 <Table
@@ -1215,7 +1298,9 @@ const Orders = () => {
                     x: "380vw",
                     y: "80vh",
                   }}
-                  columns={mergedColumns}
+                  columns={mergedColumns.filter(
+                    (column) => !hideData.includes(column.key)
+                  )}
                   dataSource={data}
                 />
               </Form>

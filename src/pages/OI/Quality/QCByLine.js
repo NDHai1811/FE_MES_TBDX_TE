@@ -120,17 +120,17 @@ const QCByLine = (props) => {
           },
         };
       },
-      // render: () => (
-      //   <div onClick={() => setOpenModal(true)}>
-      //     <Checksheet1
-      //       text="Kiểm"
-      //       selectedLot={selectedRow}
-      //       onSubmit={onSubmitResult}
-      //       onClose={() => setOpenModal(false)}
-      //       line_id={line_id}
-      //     />
-      //   </div>
-      // ),
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_tinh_nang;
+          }
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Kiểm tra ngoại quan",
@@ -150,7 +150,7 @@ const QCByLine = (props) => {
           if (line_id === "iqc") {
             return record.phan_dinh === 1 ? 0 : 1;
           } else {
-            return record.sl_ng;
+            return record.sl_ngoai_quan;
           }
         } else {
           return "-";
@@ -234,16 +234,34 @@ const QCByLine = (props) => {
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      render: (value, record, index) =>
-        value ? value : record.checked_tinh_nang ? value : "-",
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_tinh_nang;
+          }
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      render: (value, record, index) =>
-        value ? value : record.checked_ngoai_quan ? value : "-",
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          if (line_id === "iqc") {
+            return record.phan_dinh === 1 ? 0 : 1;
+          } else {
+            return record.sl_ngoai_quan;
+          }
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Tổng phế",
@@ -299,7 +317,7 @@ const QCByLine = (props) => {
         return "table-row-green";
       }
     }
-    switch (record.phan_dinh) {
+    switch (record.iqc) {
       case 0:
         return "";
       case 1:
@@ -450,7 +468,7 @@ const QCByLine = (props) => {
     if (line_id === "iqc") {
       var res = await sendIQCResult({
         line_id: line_id,
-        lot_id: selectedRow?.ma_cuon_ncc,
+        ma_cuon_ncc: selectedRow?.ma_cuon_ncc,
         lo_sx: selectedRow?.lo_sx,
         data: values,
       });
@@ -462,7 +480,11 @@ const QCByLine = (props) => {
         data: values,
       });
     }
-    getQcData();
+    if (line_id === "iqc" && isIqc) {
+      getData();
+    } else {
+      getQcData();
+    }
   };
   return (
     <React.Fragment>
