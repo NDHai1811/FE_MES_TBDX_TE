@@ -48,7 +48,10 @@ const Checksheet1 = (props) => {
           delete values["tinh_nang"][key];
         }
         const error = checksheet.find((e) => e.id === key);
-        values["tinh_nang"][key]["name"] = error?.name;
+        console.log(error);
+        if(values["tinh_nang"][error.id]){
+          values["tinh_nang"][error.id].name = error?.name;
+        }
       });
       closeModal();
       onSubmit(values);
@@ -258,7 +261,7 @@ const Checksheet1 = (props) => {
                         </Form.Item>
                       </Col>
                       <Col span={12}>
-                        <Form.Item name={[e.id, "result"]} noStyle>
+                        <Form.Item name={[e.id, "result"]} noStyle rules={[{ required: true }]}>
                           <Radio.Group
                             style={{
                               float: "right",

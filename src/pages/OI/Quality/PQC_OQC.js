@@ -19,43 +19,50 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
+  getIQCOverall,
+  getQCOverall,
+  getLotIQCList,
   getLotQCList,
   getQCLine,
-  getQCOverall,
+  sendIQCResult,
   sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
+import { useRef } from "react";
 
-const QCByMachine = (props) => {
+const PQC_OQC = (props) => {
   document.title = "Kiểm tra chất lượng";
-  const { machine_id } = useParams();
+  const { line_id } = useParams();
   const history = useHistory();
+  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
-  const [machineOptions, setMachineOptions] = useState([]);
-  const [params, setParams] = useState({machine: [machine_id], start_date: dayjs(), end_date: dayjs()});
+  const [lineOptions, setLineOptions] = useState([]);
+  const [params, setParams] = useState({ line_id: line_id, start_date: dayjs(), end_date: dayjs() });
   const [overall, setOverall] = useState([]);
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
-  const [date, setDate] = useState({
-    start_date: dayjs(),
-    end_date: dayjs(),
-  });
+  useEffect(()=>{
+    if(!line_id && lineOptions.length > 0){
+      const item = lineOptions[0];
+      history.push('/quality/qc/'+item?.value);
+    }
+  }, [line_id, lineOptions])
   const overallColumns = [
     {
-      title: "Công đoạn",
+      title: "IQC/PQC/OQC",
       dataIndex: "cong_doan",
       key: "cong_doan",
       align: "center",
       render: () => (
         <Select
-          options={machineOptions}
-          value={machine_id}
+          options={lineOptions}
+          value={line_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
@@ -112,6 +119,13 @@ const QCByMachine = (props) => {
           },
         };
       },
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          return record.sl_tinh_nang;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Kiểm tra ngoại quan",
@@ -129,6 +143,13 @@ const QCByMachine = (props) => {
           },
         };
       },
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          return record.sl_ngoai_quan;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Số phế",
@@ -145,6 +166,13 @@ const QCByMachine = (props) => {
             cursor: 'pointer'
           },
         };
+      },
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          return record.sl_ng;
+        } else {
+          return "-";
+        }
       },
     },
     {
@@ -175,24 +203,61 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
+      align: "center",
+    },
+    {
+      title: "Số lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+    },
+    {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      render: (value, record, index) => record.checked_tinh_nang ? value : "-",
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          return record.sl_tinh_nang;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      render: (value, record, index) => record.checked_ngoai_quan ? value : "-",
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          return record.sl_ngoai_quan;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Tổng phế",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
+      render: (text, record) => {
+        if (record.phan_dinh !== 0) {
+          return record.sl_ng;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Phán định",
@@ -212,39 +277,7 @@ const QCByMachine = (props) => {
         }
       },
     },
-    {
-      title: "Mã layout",
-      dataIndex: "layout_id",
-      key: "layout_id",
-      align: "center",
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
-      key: "san_luong",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
-      align: "center",
-    },
   ];
-
-  const disabledStartDate = (current) => {
-    return current && current < dayjs().subtract(7, "day");
-  };
-
-  const disabledEndDate = (current) => {
-    return current && current.startOf("day") < date.start_date.startOf("day");
-  };
 
   const rowClassName = (record, index) => {
     if (record.id === selectedRow?.id) {
@@ -268,64 +301,57 @@ const QCByMachine = (props) => {
     }
   };
 
-  useEffect(() => {
-    getListOption();
-  }, []);
-
   const getListOption = async () => {
     setLoading(true);
-    var machine = await getQCLine();
-    setMachineOptions(machine.data);
+    var res = await getQCLine();
+    setLineOptions(res.data);
     setLoading(false);
   };
-  async function getData() {
+
+  const getQcData = async () => {
     setLoading(true);
-    var overall = await getQCOverall({ ...params});
+    var overall = await getQCOverall({ ...params });
     setOverall(overall.data);
-    var res = await getLotQCList({ ...params});
+    var res = await getLotQCList({ ...params });
     setData(res.data);
     if (res.data.length > 0) {
-      var current = res.data.find((e) => e?.id === selectedRow?.id);
-      if (current?.phan_dinh !== selectedRow?.phan_dinh) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.phan_dinh &&
+        current?.phan_dinh !== selectedRow?.phan_dinh
+      ) {
         setSelectedRow();
       }
     }
     setLoading(false);
-  }
+  };
   useEffect(() => {
-    if (machine_id) {
-      getData();
-    }
+    getQcData();
+    getListOption();
   }, [params]);
-  useEffect(() => {
-    if (machineOptions.length > 0) {
-      var target = machineOptions.find((e) => e.value === machine_id);
-      if (!target) {
-        target = machineOptions[0];
-      }
-        history.push("/quality/sx/" + target.value);
-    }
-  }, [machineOptions]);
+
   const onChangeLine = (value) => {
-    setParams({...params, machine: value ? [value] : []})
-      history.push("/quality/sx/" + value);
+    history.push("/quality/qc/" + value);
+    const item = lineOptions.find(e=>e.value === value);
+    setParams({...params, machine: item?.machine});
   };
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
   const onSubmitSLP = async (values) => {
-    if (selectedRow?.lo_sx) {
+    if (selectedRow?.lot_id) {
       onSubmitResult(values);
     }
     setOpenModal1(false);
     form1.resetFields();
   };
   const onSubmitPhanDinh = async (values) => {
-    if (selectedRow?.lo_sx) {
+    if (selectedRow?.lot_id) {
       onSubmitResult(values);
     }
     setOpenModal2(false);
     form2.resetFields();
   };
+
   const [openModal1, setOpenModal1] = useState(false);
   const [openModal2, setOpenModal2] = useState(false);
 
@@ -338,11 +364,12 @@ const QCByMachine = (props) => {
       setSelectedRow({ ...selectedRow, checked_sl_ng: true });
     }
     var res = await sendQCResult({
-      machine_id: machine_id,
+      machine_id: selectedRow?.machine_id,
+      lot_id: selectedRow?.lot_id,
       lo_sx: selectedRow?.lo_sx,
       data: values,
     });
-    getData();
+    getQcData();
   };
   return (
     <React.Fragment>
@@ -358,13 +385,13 @@ const QCByMachine = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
+            // scroll={
+            //   window.screen.width < 720
+            //     ? {
+            //         x: window.screen.width,
+            //       }
+            //     : false
+            // }
             />
           </Col>
         </Row>
@@ -378,8 +405,8 @@ const QCByMachine = (props) => {
               scroll={
                 window.screen.width < 720
                   ? {
-                      x: window.screen.width,
-                    }
+                    x: window.screen.width,
+                  }
                   : false
               }
               className="custom-table"
@@ -401,8 +428,9 @@ const QCByMachine = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              // disabledDate={disabledStartDate}
-              onChange={(value) => value.isValid() && setParams({ ...params, start_date: value })}
+              onChange={(value) =>
+                value.isValid() && setParams({ ...params, start_date: value })
+              }
             />
           </Col>
           <Col span={12}>
@@ -411,8 +439,9 @@ const QCByMachine = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              // disabledDate={disabledEndDate}
-              onChange={(value) => value.isValid() && setParams({ ...params, end_date: value })}
+              onChange={(value) =>
+                value.isValid() && setParams({ ...params, end_date: value })
+              }
             />
           </Col>
         </Row>
@@ -423,7 +452,7 @@ const QCByMachine = (props) => {
           }}
           scroll={{
             x: "calc(700px + 50%)",
-            y: 300,
+            y: 350,
           }}
           pagination={false}
           bordered={true}
@@ -435,10 +464,7 @@ const QCByMachine = (props) => {
             return {
               onClick: (event) => {
                 onClickRow(event, record);
-              }, // click row
-              // onDoubleClick: (event) => {
-              //   onDBClickRow(event, record, index);
-              // }, // double click row
+              },
             };
           }}
           components={{
@@ -516,21 +542,23 @@ const QCByMachine = (props) => {
         </Modal>
       </Spin>
       <Checksheet1
+        text="tính năng"
         open={openModalCK1}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK1}
-        machine_id={machine_id}
+        line_id={line_id}
       />
       <Checksheet2
+        text="ngoại quan"
         open={openModalCK2}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK2}
-        machine_id={machine_id}
+        line_id={line_id}
       />
     </React.Fragment>
   );
 };
 
-export default withRouter(QCByMachine);
+export default withRouter(PQC_OQC);

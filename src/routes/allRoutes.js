@@ -93,7 +93,7 @@ const authProtectedRoutes = [
     path: ["/manufacture", "/manufacture/:machine_id"],
     component: Manufacture,
   },
-  { path: ["/quality"], component: Quality },
+  { path: ["/quality/:type"], component: Quality },
   { path: ["/quality/sx", "/quality/sx/:machine_id"], component: QCByMachine },
   { path: ["/quality/qc", "/quality/qc/:line_id"], component: QCByLine },
   { path: ["/equipment", "/equipment/:machine_id"], component: Equipment },
