@@ -260,7 +260,7 @@ const Export2 = (props) => {
         <Col span={24}>
           <Table
             scroll={{
-            //   x: "calc(700px + 50%)",
+              x: "calc(700px + 50%)",
               y: 300,
             }}
             rowClassName={(record, index) =>
