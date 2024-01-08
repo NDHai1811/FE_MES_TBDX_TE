@@ -51,13 +51,14 @@ function PopupQuetQr(props) {
   const onSendResult = () => {
     sendMappingResult({ lo_sx: loSx })
       .then((res) => {
-        console.log(res.data);
-        setSelectedItem?.((prevItems) =>
-          prevItems.map((item) => ({
-            ...item,
-            mapping: "Đã mapping",
-          }))
-        );
+        if (res.data) {
+          setSelectedItem?.((prevItems) =>
+            prevItems.map((item) => ({
+              ...item,
+              mapping: "Đã mapping",
+            }))
+          );
+        }
       })
       .catch((err) => console.log("Gửi dữ liệu mapping thất bại: ", err));
   };
@@ -67,9 +68,9 @@ function PopupQuetQr(props) {
       if (currentResult) {
         const item = checkData.find((val) => !val.isScan);
         let result = currentResult;
-        if (item.check_api === 1) {
-          result = await mappingCheckMaterial({ material_id: currentResult });
-        }
+        // if (item.check_api === 1) {
+        //   result = await mappingCheckMaterial({ material_id: currentResult });
+        // }
         if (result === item.value) {
           setData(data.map((val) => ({ ...val, [item.key]: currentResult })));
           setCheckData(
