@@ -56,14 +56,16 @@ function PopupXuatKhoNvl(props) {
     setVisible(false);
     setData();
   };
-  const onScanResult = useCallback((value) => {
+  const onScanResult = (value) => {
     const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
     if (value && data) {
-      sendResult({ ...data, locator_id: value });
-    } else {
+      if(value !== data.material_id){
+        sendResult({ ...data, locator_id: value });
+      }
+    } else if(value && !data) {
       getData(value);
     }
-  }, [data]);
+  };
 
   return (
     <div>
