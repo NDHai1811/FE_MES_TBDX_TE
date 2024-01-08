@@ -335,7 +335,7 @@ const QCByLine = (props) => {
           isIqc ? val.value === "iqc" : val.value !== "iqc"
         )
       );
-      if(line_id==='iqc'){
+      if (line_id === 'iqc') {
         isGetOption.current = false;
       }
       setLoading(false);
@@ -343,7 +343,7 @@ const QCByLine = (props) => {
   };
 
   async function getData() {
-    if(line_id){
+    if (line_id) {
       setLoading(true);
       var overall = await getIQCOverall({ ...params, line_id: line_id });
       setOverall(overall.data);
@@ -359,13 +359,13 @@ const QCByLine = (props) => {
         }
       }
     }
-    
+
     setLoading(false);
   }
 
   const getQcData = async () => {
-    
-    if(machines.length){
+
+    if (machines.length) {
       setLoading(true);
       var overall = await getQCOverall({ ...params, machine: machines });
       setOverall(overall.data);
@@ -450,7 +450,7 @@ const QCByLine = (props) => {
     if (line_id === "iqc") {
       var res = await sendIQCResult({
         line_id: line_id,
-        lot_id: selectedRow?.lot_id,
+        lot_id: selectedRow?.ma_cuon_ncc,
         lo_sx: selectedRow?.lo_sx,
         data: values,
       });
@@ -478,13 +478,13 @@ const QCByLine = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
+            // scroll={
+            //   window.screen.width < 720
+            //     ? {
+            //         x: window.screen.width,
+            //       }
+            //     : false
+            // }
             />
           </Col>
         </Row>
@@ -498,8 +498,8 @@ const QCByLine = (props) => {
               scroll={
                 window.screen.width < 720
                   ? {
-                      x: window.screen.width,
-                    }
+                    x: window.screen.width,
+                  }
                   : false
               }
               className="custom-table"
