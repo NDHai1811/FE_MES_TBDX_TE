@@ -10,32 +10,13 @@ import {
   sendResultScan,
 } from "../../api/oi/warehouse";
 import { useEffect } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
 
-const columns = [
-  {
-    title: "Mã cuộn",
-    dataIndex: "material_id",
-    key: "material_id",
-    align: "center",
-  },
-  {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
-    align: "center",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "locator_id",
-    key: "locator_id",
-    align: "center",
-    render: (value, record) => <span style={{ color: "gray" }}>{value}</span>,
-  },
-];
+
 
 function PopupXuatKhoNvl(props) {
-  const { visible, setVisible, setCurrentScan, data, setData } = props;
-
+  const { visible, setVisible, setCurrentScan } = props;
+  const [data, setData] = useState();
   const getData = async (value) => {
     var res = await scanExportsNVL({ material_id: value });
     if (res.success) {
@@ -44,7 +25,44 @@ function PopupXuatKhoNvl(props) {
       setCurrentScan(res.data);
     }
   }
-  const [messageApi, contextHolder] = message.useMessage();
+  const columns = [
+    {
+      title: "Mã cuộn",
+      dataIndex: "material_id",
+      key: "material_id",
+      align: "center",
+    },
+    {
+      title: "Số kg",
+      dataIndex: "so_kg",
+      key: "so_kg",
+      align: "center",
+    },
+    {
+      title: "Vị trí",
+      dataIndex: "locator_id",
+      key: "locator_id",
+      align: "center",
+      render: (value, record) => <span style={{ color: "gray" }}>{value}</span>,
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "locator_id",
+      key: "locator_id",
+      align: "center",
+      render: (text, record, index) => (
+        <DeleteOutlined
+          style={{ color: "red", fontSize: 18 }}
+          onClick={() => handleDelete(index)}
+        />
+      ),
+    },
+  ];
+  const handleDelete = (index) => {
+    setData();
+    window.localStorage.removeItem("ScanXuatNvl");
+    setCurrentScan()
+  };
 
   const sendResult = async (data) => {
     var res = await saveExportsNVL(data);
@@ -55,19 +73,21 @@ function PopupXuatKhoNvl(props) {
     window.localStorage.removeItem("ScanXuatNvl");
     setVisible(false);
     setData();
+    setCurrentScan();
   };
-  const onScanResult = useCallback((value) => {
+  const onScanResult = (value) => {
     const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
     if (value && data) {
-      sendResult({ ...data, locator_id: value });
-    } else {
+      if(value !== data.material_id){
+        sendResult({ ...data, locator_id: value });
+      }
+    } else if(value && !data) {
       getData(value);
     }
-  }, [data]);
+  };
 
   return (
     <div>
-      {contextHolder}
       <Modal
         title="Quét mã"
         open={visible}
