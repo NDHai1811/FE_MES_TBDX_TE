@@ -210,9 +210,9 @@ const Orders = () => {
   const [hideData, setHideData] = useState([]);
   const colDetailTable = [
     {
-      title: "Mã khách hàng",
-      dataIndex: "customer_id",
-      key: "customer_id",
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
       align: "center",
       editable: true,
       checked: true,
@@ -228,16 +228,6 @@ const Orders = () => {
       checked: true,
       fixed: "left",
       width: "2%",
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngay_dat_hang",
-      key: "ngay_dat_hang",
-      align: "center",
-      fixed: "left",
-      width: "2.6%",
-      editable: true,
-      checked: true,
     },
     {
       title: "L",
@@ -566,6 +556,15 @@ const Orders = () => {
       checked: true,
     },
     {
+      title: "Ngày đặt hàng",
+      dataIndex: "ngay_dat_hang",
+      key: "ngay_dat_hang",
+      align: "center",
+      width: "2.6%",
+      editable: true,
+      checked: true,
+    },
+    {
       title: "Ngày giao hàng SX",
       dataIndex: "han_giao_sx",
       key: "han_giao_sx",
@@ -579,6 +578,15 @@ const Orders = () => {
       dataIndex: "nguoi_dat_hang",
       key: "nguoi_dat_hang",
       align: "center",
+      editable: true,
+      checked: true,
+    },
+    {
+      title: "Ngày đặt hàng",
+      dataIndex: "ngay_dat_hang",
+      key: "ngay_dat_hang",
+      align: "center",
+      width: "2.6%",
       editable: true,
       checked: true,
     },
@@ -653,22 +661,22 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-          col.dataIndex === "dai" ||
-          col.dataIndex === "price" ||
-          col.dataIndex === "rong"
+            col.dataIndex === "dai" ||
+            col.dataIndex === "price" ||
+            col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" ||
               col.dataIndex === "han_giao" ||
               col.dataIndex === "han_giao_sx"
-            ? "dateTime"
-            : col.dataIndex === "buyer_id" ||
-              col.dataIndex === "layout_id" ||
-              col.dataIndex === "layout_type" ||
-              col.dataIndex === "phan_loai_1" ||
-              col.dataIndex === "phan_loai_2" ||
-              col.dataIndex === "quy_cach_drc"
-            ? "select"
-            : "text",
+              ? "dateTime"
+              : col.dataIndex === "buyer_id" ||
+                col.dataIndex === "layout_id" ||
+                col.dataIndex === "layout_type" ||
+                col.dataIndex === "phan_loai_1" ||
+                col.dataIndex === "phan_loai_2" ||
+                col.dataIndex === "quy_cach_drc"
+                ? "select"
+                : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -678,14 +686,14 @@ const Orders = () => {
           col.dataIndex === "buyer_id"
             ? buyers
             : col.dataIndex === "layout_type"
-            ? layoutTypes
-            : col.dataIndex === "layout_id"
-            ? layouts
-            : col.dataIndex === "phan_loai_1"
-            ? PL1s
-            : col.dataIndex === "phan_loai_2"
-            ? PL2s
-            : listDRC,
+              ? layoutTypes
+              : col.dataIndex === "layout_id"
+                ? layouts
+                : col.dataIndex === "phan_loai_1"
+                  ? PL1s
+                  : col.dataIndex === "phan_loai_2"
+                    ? PL2s
+                    : listDRC,
       }),
     };
   });
