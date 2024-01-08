@@ -154,6 +154,7 @@ const Manufacture1 = (props) => {
   const componentRef3 = useRef();
 
   const [params, setParams] = useState({
+    machine_id: machine_id,
     start_date: dayjs(),
     end_date: dayjs(),
   });
@@ -257,17 +258,17 @@ const Manufacture1 = (props) => {
     //   var res = await getTem();
     //   setListCheck(res)
     // })()
-    loadDataRescursive();
   }, []);
 
+  var interval;
+  useEffect(() => {
+    clearTimeout(interval)
+    loadDataRescursive();
+  }, [params]);
+  
   const loadDataRescursive = async () => {
     if (!machine_id) return;
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-    const res = await getLotByMachine(resData);
+    const res = await getLotByMachine(params);
     setData(res.data);
     if (res.data[0]?.status === 1) {
       setSelectedLot(res.data[0]);
@@ -276,16 +277,16 @@ const Manufacture1 = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-        setTimeout(function () {
-          loadDataRescursive();
-        }, 5000);
+      interval = setTimeout(function () {
+        loadDataRescursive();
+      }, 5000);
     }
   };
 
   const getListMachine = () => {
     getMachines()
       .then((res) =>
-        setMachineOptions(res.data?.filter((val) => val.value === "S01"))
+        setMachineOptions(res.data)
       )
       .catch((err) => console.log("Get list machine error: ", err));
   };
@@ -298,7 +299,7 @@ const Manufacture1 = (props) => {
       end_date: params.end_date,
     };
 
-    getOverAll(resData)
+    getOverAll(params)
       .then((res) => setOverall(res.data))
       .catch((err) => {
         console.error("Get over all error: ", err);
@@ -312,7 +313,7 @@ const Manufacture1 = (props) => {
       start_date: params.start_date,
       end_date: params.end_date,
     };
-    const res = await getLotByMachine(resData);
+    const res = await getLotByMachine(params);
     setLoading(true);
     return res.data;
   };
@@ -344,6 +345,9 @@ const Manufacture1 = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
+      if(machine_id){
+        setParams({...params, machine_id})
+      }
       if (machine_id === "S01") {
         print();
       } else if (machine_id == "P06" || machine_id == "P15") {

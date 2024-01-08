@@ -226,7 +226,7 @@ const Export2 = (props) => {
             dataSource={currentScan ? [currentScan] : []}
           />
         </Col>
-        <Col span={12}>
+        <Col span={24}>
           <Button
             block
             className="h-100 w-100"
@@ -240,22 +240,6 @@ const Export2 = (props) => {
             }}
           >
             Quét QR Code
-          </Button>
-        </Col>
-        <Col span={12}>
-          <Button
-            block
-            className="h-100 w-100"
-            icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
-            type="primary"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onClick={onShowPopup}
-          >
-            Nhập lại
           </Button>
         </Col>
         <Col span={24}>

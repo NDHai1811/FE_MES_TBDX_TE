@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Modal, Row, Col, Table, Input, Button, Space } from "antd";
+import { Modal, Row, Col, Table, Input, Button, Space, message } from "antd";
 import "./PopupQuetQr.css";
 import { handleNGMaterial, sendResultPrint } from "../../api/oi/warehouse";
 import ScanButton from "../Button/ScanButton";
+import ScanQR from "../Scanner";
 
 function PopupInTemKhoNvl(props) {
   const { visible, setVisible, data, setCurrentScan } = props;
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [value, setValue] = useState("");
 
   const columns = [
@@ -64,8 +65,13 @@ function PopupInTemKhoNvl(props) {
 
   const onScan = (result) => {
     const target = data.find(e=>e.material_id === result);
-    setMaterial(target);
-    setValue(target?.so_kg)
+    if(target){
+      setMaterial(target);
+      setValue(target?.so_kg)
+    }else{
+      messageApi.error('Không tìm thấy mã cuộn TBDX');
+    }
+    
   }
 
   const moveToKho13 = async () => {
@@ -76,6 +82,7 @@ function PopupInTemKhoNvl(props) {
   }
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Nhập lại"
         open={visible}
@@ -91,7 +98,7 @@ function PopupInTemKhoNvl(props) {
       >
         <Row className="mt-2">
           <Col span={24}>
-            <ScanButton onScan={onScan}></ScanButton>
+            <ScanQR isHideButton={true} onResult={(res) => onScan(res)} />
           </Col>
           <Col span={24}>
             <Table
