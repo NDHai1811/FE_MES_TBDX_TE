@@ -194,12 +194,6 @@ const IQC = (props) => {
       align: "center",
     },
     {
-      title: "Số lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
-      align: "center",
-    },
-    {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
