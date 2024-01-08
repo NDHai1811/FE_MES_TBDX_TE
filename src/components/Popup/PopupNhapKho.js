@@ -10,7 +10,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 const SCAN_TIME_OUT = 1000;
 
 function PopupNhapKhoNvl(props) {
-  const { visible, setVisible, setCurrentScan } = props;
+  const { visible, setVisible, setCurrentScan, getLogs, getOverAll } = props;
   const list = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
   const [data, setData] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
@@ -102,14 +102,19 @@ function PopupNhapKhoNvl(props) {
           setData(
             data?.length > 0
               ? items
-              : res.data?.map((val) => ({ ...val, isScanLocation: false }))
+              : res.data?.map((val) => {
+                  if (val.material_id === currentData) {
+                    val.status = 1;
+                  }
+                  return {
+                    ...val,
+                  };
+                })
           );
         } else if (res.data.length === 1) {
           window.localStorage.setItem(
             "ScanNhapNvl",
-            JSON.stringify(
-              res.data?.map((val) => ({ ...val, isScanLocation: false }))
-            )
+            JSON.stringify(res.data?.map((val) => ({ ...val, status: 1 })))
           );
           handleCancel();
         }
@@ -131,7 +136,11 @@ function PopupNhapKhoNvl(props) {
     };
     sendResultScan(resData)
       .then((res) => {
-        if (res.success) window.localStorage.removeItem("ScanNhapNvl");
+        if (res.success) {
+          window.localStorage.removeItem("ScanNhapNvl");
+          getLogs?.();
+          getOverAll?.();
+        }
         handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));

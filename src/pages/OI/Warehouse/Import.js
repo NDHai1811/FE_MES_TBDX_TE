@@ -117,13 +117,11 @@ const Import = (props) => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
-  const [currentScan, setCurrentScan] = useState(
-    {
-      material_id: "",
-      so_kg: "",
-      locator_id: "",
-    },
-  );
+  const [currentScan, setCurrentScan] = useState({
+    material_id: "",
+    so_kg: "",
+    locator_id: "",
+  });
 
   const onShowPopup = () => {
     setVisible(true);
@@ -198,7 +196,7 @@ const Import = (props) => {
       );
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     !visible && getLogs();
   }, [visible]);
   return (
@@ -290,6 +288,8 @@ const Import = (props) => {
           visible={isScan}
           setVisible={setIsScan}
           setCurrentScan={setCurrentScan}
+          getLogs={getLogs}
+          getOverAll={getOverAll}
         />
       )}
     </React.Fragment>
