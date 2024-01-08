@@ -485,13 +485,13 @@ const QCByLine = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-              // scroll={
-              //   window.screen.width < 720
-              //     ? {
-              //         x: window.screen.width,
-              //       }
-              //     : false
-              // }
+            // scroll={
+            //   window.screen.width < 720
+            //     ? {
+            //         x: window.screen.width,
+            //       }
+            //     : false
+            // }
             />
           </Col>
         </Row>
@@ -505,8 +505,8 @@ const QCByLine = (props) => {
               scroll={
                 window.screen.width < 720
                   ? {
-                      x: window.screen.width,
-                    }
+                    x: window.screen.width,
+                  }
                   : false
               }
               className="custom-table"
