@@ -30,7 +30,7 @@ function PopupInTemKhoNvl(props) {
       render: (text, record, index) => (
         <Input
           type="number"
-          value={record.so_luong}
+          value={record.so_kg}
           onChange={(e) => onChangeQuantity(e.target.value, index)}
           placeholder="Nhập kg..."
           style={{ width: 100 }}
@@ -60,7 +60,7 @@ function PopupInTemKhoNvl(props) {
   const onChangeQuantity = (value, index) => {
     const newItems = materials.map((val, i) => {
       if (i === index) {
-        val.so_luong = value;
+        val.so_kg = value;
       }
       return { ...val };
     });
@@ -76,13 +76,17 @@ function PopupInTemKhoNvl(props) {
   const sendResult = () => {
     const resData = materials.map((val) => ({
       ...val,
-      so_luong: parseInt(val.so_luong, 10),
+      so_kg: parseInt(val.so_kg, 10),
     }));
 
-    sendResultPrint(resData)
+    sendResultPrint({data: resData})
       .then((res) => {
         console.log({ res });
-        window.localStorage.removeItem("NhapLaiNvl");
+        if(res.success){
+          window.localStorage.removeItem("NhapLaiNvl");
+          setVisible(false);
+        }
+        
         // setCurrentScan([
         //   {
         //     material_id: res.data.parent_id,
@@ -100,11 +104,11 @@ function PopupInTemKhoNvl(props) {
         if (materials.length > 0) {
           setMaterials([
             ...materials,
-            { material_id: currentData, so_luong: "", locator_id: "" },
+            { material_id: currentData, so_kg: "", locator_id: "" },
           ]);
         } else {
           setMaterials([
-            { material_id: currentData, so_luong: "", locator_id: "" },
+            { material_id: currentData, so_kg: "", locator_id: "" },
           ]);
         }
       }
@@ -113,7 +117,6 @@ function PopupInTemKhoNvl(props) {
 
   const handleOk = () => {
     sendResult();
-    setVisible(false);
   };
 
   const save = () => {
@@ -153,13 +156,15 @@ function PopupInTemKhoNvl(props) {
 
   const moveToKho13 = () => {
     const resData = materials.map((val) => ({
-      material_id: val.material_id,
-      so_luong: parseInt(val.so_luong, 10),
+      ...val,
+      so_kg: parseInt(val.so_kg, 10),
     }));
 
-    handleNGMaterial(resData)
+    handleNGMaterial({data: resData})
       .then((res) => {
         console.log({ res });
+        setMaterials([]);
+        handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu in tem thất bại: ", err));
   };
@@ -192,7 +197,7 @@ function PopupInTemKhoNvl(props) {
               className="mt-3"
               locale={{ emptyText: "Trống" }}
               columns={columns}
-              dataSource={materials ? materials : []}
+              dataSource={materials}
             />
           </Col>
         </Row>

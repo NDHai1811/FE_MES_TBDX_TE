@@ -249,11 +249,12 @@ const Manufacture1 = (props) => {
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    loadDataRescursive(params);
+    loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
   }, [params]);
   
-  const loadDataRescursive = async (params) => {
+  const loadDataRescursive = async (params,machine_id) => {
+    console.log(params, machine_id);
     if (!machine_id) return;
     const res = await getLotByMachine(params);
     setData(res.data);
@@ -265,7 +266,7 @@ const Manufacture1 = (props) => {
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
       timeout = setTimeout(function () {
-        loadDataRescursive(params);
+        loadDataRescursive(params, machine_id);
       }, 5000);
     }
   };

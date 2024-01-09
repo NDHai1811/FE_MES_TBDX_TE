@@ -36,7 +36,7 @@ const Manufacture = () => {
     <React.Fragment>
       {machine_id === "S01" ? (
         <Manufacture1 />
-      ) : machine_id === "D05" || machine_id === "D06" ? (
+      ) : (machine_id === "D05" || machine_id === "D06") ? (
         <NhapTay />
       ) : (
         <InDan />

@@ -40,13 +40,6 @@ const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${to
 
 const columns = [
   {
-    title: "Mã Lot",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
     title: "Lô SX",
     dataIndex: "lo_sx",
     key: "lo_sx",
@@ -263,11 +256,12 @@ const InDan = (props) => {
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    loadDataRescursive(params);
+    loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
-  }, [params]);
+  }, [params, machine_id]);
   
-  const loadDataRescursive = async (params) => {
+  const loadDataRescursive = async (params, machine_id) => {
+    console.log(params, machine_id);
     if (!machine_id) return;
     const res = await getLotByMachine(params);
     setData(res.data);
@@ -279,7 +273,7 @@ const InDan = (props) => {
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
       timeout = setTimeout(function () {
-        loadDataRescursive(params);
+        loadDataRescursive(params, machine_id);
       }, 5000);
     }
   };
@@ -535,11 +529,7 @@ const InDan = (props) => {
               }
               pagination={false}
               bordered
-              columns={
-                machine_id === "S01"
-                  ? columns.filter((e, i) => i !== 0)
-                  : columns
-              }
+              columns={columns}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
