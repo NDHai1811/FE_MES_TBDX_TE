@@ -45,6 +45,7 @@ function PopupInTemKhoNvl(props) {
           onChange={(e) => onChangeQuantity(e.target.value, index)}
           placeholder="Nhập kg..."
           style={{ width: 100 }}
+          disabled={list}
         />
       ),
     },

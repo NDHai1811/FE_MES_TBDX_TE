@@ -11,7 +11,14 @@ import {
 } from "../../api/oi/warehouse";
 
 function PopupQuetQrNhapKho(props) {
-  const { visible, setVisible, setResData, setSelectedItem, setInfo } = props;
+  const {
+    visible,
+    setVisible,
+    setResData,
+    setSelectedItem,
+    setInfo,
+    setResult,
+  } = props;
 
   const [columns, setColumns] = useState([]);
   const [currentResult, setCurrentResult] = useState("");
@@ -153,6 +160,7 @@ function PopupQuetQrNhapKho(props) {
           },
         ]);
         setInfo(res.data);
+        setResult?.(res.data);
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };

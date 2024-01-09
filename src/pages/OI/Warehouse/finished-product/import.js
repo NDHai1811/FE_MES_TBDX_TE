@@ -322,6 +322,7 @@ const Import = (props) => {
           setResData={setResData}
           setInfo={setInfo}
           setSelectedItem={setSelectedItem}
+          setResult={setResult}
         />
       )}
       {isScan && (
@@ -333,8 +334,7 @@ const Import = (props) => {
         >
           <ScanQR
             isScan={isScan}
-            onResult={(res) => {
-              setResult(res);
+            onResult={() => {
               setIsScan(false);
               setSelectedItem([
                 { so_luong: "", pallet_id: "", locator_id: "" },
