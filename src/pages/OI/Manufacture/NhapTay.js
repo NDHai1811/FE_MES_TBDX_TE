@@ -26,10 +26,7 @@ import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
-import {
-  COMMON_DATE_FORMAT,
-  COMMON_DATE_FORMAT_REQUEST,
-} from "../../../commons/constants";
+import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getMachines } from "../../../api/oi/equipment";
@@ -47,20 +44,6 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
     title: "Sản lượng kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
@@ -71,12 +54,14 @@ const columns = [
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Phán định",
@@ -86,16 +71,37 @@ const columns = [
     render: (value) => (value === 1 ? "OK" : "-"),
   },
   {
+    title: "Mã layout",
+    dataIndex: "layout_id",
+    key: "layout_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
     title: "MQL",
     dataIndex: "mql",
     key: "mql",
     align: "center",
     render: (value, record, index) => value || "-",
   },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
 ];
 
-const Manufacture1 = (props) => {
-  document.title = "Sản xuất máy Sóng";
+const NhapTay = (props) => {
+  document.title = "Sản xuất máy thủ công";
   const { machine_id } = useParams();
   const currentColumns = [
     {
@@ -110,21 +116,29 @@ const Manufacture1 = (props) => {
       dataIndex: "dinh_muc",
       key: "dinh_muc",
       align: "center",
-      render: (value) => value,
+      render: (value) => value || "-",
     },
     {
       title: "Sản lượng đầu ra",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
-      render: (value) => value,
+      render: (value) => value || "-",
+      onHeaderCell: () => {
+        return {
+          onClick: ()=> lotCurrent && onShowPopup(),
+          style: {
+            cursor: 'pointer'
+          }
+        };
+      },
     },
     {
       title: "Sản lượng đạt",
       dataIndex: "sl_ok",
       key: "sl_ok",
       align: "center",
-      render: (value) => value,
+      render: (value) => value || "-",
     },
     {
       title: "Phán định",
@@ -149,7 +163,10 @@ const Manufacture1 = (props) => {
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
+  const [lotCurrent, setLotCurrent] = useState();
   const [listCheck, setListCheck] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [value, setValue] = useState("");
   const [deviceID, setDeviceID] = useState(
     "e9aba8d0-85da-11ee-8392-a51389126dc6"
   );
@@ -159,6 +176,14 @@ const Manufacture1 = (props) => {
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
   const ws = useRef(null);
+
+  const onShowPopup = () => {
+    setVisible(true);
+  };
+
+  const closePopup = () => {
+    setVisible(false);
+  };
 
   const reloadData = async () => {
     // const resData = await getListLotDetail();
@@ -240,10 +265,6 @@ const Manufacture1 = (props) => {
 
   useEffect(() => {
     getListMachine();
-    // (async ()=>{
-    //   var res = await getTem();
-    //   setListCheck(res)
-    // })()
   }, []);
 
   var timeout;
@@ -269,19 +290,35 @@ const Manufacture1 = (props) => {
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
   }, [params.start_date, params.end_date, params.machine_id]);
-  
+
   const getListMachine = () => {
     getMachines()
-      .then((res) => {
-        setMachineOptions(res.data);
-        window.localStorage.setItem('machines', JSON.stringify(res.data));
-      })
+    .then((res) => {
+      setMachineOptions(res.data);
+      window.localStorage.setItem('machines', JSON.stringify(res.data));
+    })
       .catch((err) => console.log("Get list machine error: ", err));
+  };
+
+  const onChangeValue = (val) => {
+    setValue(val);
+  };
+
+  const onConfirm = () => {
+    setLotCurrent({...lotCurrent, san_luong: value});
+    setValue("");
+    closePopup();
   };
 
   const getOverAllDetail = () => {
     setLoading(true);
-    getOverAll(params)
+    const resData = {
+      machine_id,
+      start_date: params.start_date,
+      end_date: params.end_date,
+    };
+
+    getOverAll(resData)
       .then((res) => setOverall(res.data))
       .catch((err) => {
         console.error("Get over all error: ", err);
@@ -290,7 +327,12 @@ const Manufacture1 = (props) => {
   };
 
   const getListLotDetail = async () => {
-    const res = await getLotByMachine(params);
+    const resData = {
+      machine_id,
+      start_date: params.start_date,
+      end_date: params.end_date,
+    };
+    const res = await getLotByMachine(resData);
     setLoading(true);
     return res.data;
   };
@@ -306,12 +348,12 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record.status === 1) {
+    if (record?.id === lotCurrent?.id) {
       return "table-row-green";
     }
-    if (record.status === 2) {
-      return "table-row-yellow";
-    }
+    // if (record.status === 2) {
+    //   return "table-row-yellow";
+    // }
     if (record.status === 3) {
       return "table-row-yellow blink";
     }
@@ -322,9 +364,6 @@ const Manufacture1 = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
-      if (machine_id) {
-        setParams({ ...params, machine_id })
-      }
       if (machine_id === "S01") {
         print();
       } else if (machine_id == "P06" || machine_id == "P15") {
@@ -333,7 +372,7 @@ const Manufacture1 = (props) => {
         printDan();
       }
       (async () => {
-        reloadData();
+        reloadData()
       })();
     }
     setListCheck([]);
@@ -433,6 +472,12 @@ const Manufacture1 = (props) => {
     setParams({ ...params, end_date: value });
   };
 
+  const onClickRow = (record) => {
+    if(record.status < 3){
+      setLotCurrent(record);
+    }
+  }
+
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -456,7 +501,7 @@ const Manufacture1 = (props) => {
               className="custom-table"
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
-              dataSource={selectedLot ? [selectedLot] : []}
+              dataSource={lotCurrent ? [lotCurrent] : []}
             />
           </Col>
           <Row
@@ -469,7 +514,6 @@ const Manufacture1 = (props) => {
           >
             <Col span={9}>
               <DatePicker
-                allowClear={false}
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -479,7 +523,6 @@ const Manufacture1 = (props) => {
             </Col>
             <Col span={9}>
               <DatePicker
-                allowClear={false}
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -524,6 +567,11 @@ const Manufacture1 = (props) => {
               pagination={false}
               bordered
               columns={columns}
+              onRow={(record, index) => {
+                return {
+                  onClick: () => onClickRow(record),
+                };
+              }}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
@@ -545,8 +593,23 @@ const Manufacture1 = (props) => {
           />
         </Modal>
       )}
+      {visible && (
+        <Modal
+          title="Sản lượng đầu ra"
+          open={visible}
+          onCancel={closePopup}
+          onOk={onConfirm}
+        >
+          <InputNumber
+            defaultValue={lotCurrent?.san_luong}
+            placeholder="Nhập sản lượng đầu ra"
+            onChange={onChangeValue}
+            style={{ width: "100%" }}
+          />
+        </Modal>
+      )}
     </React.Fragment>
   );
 };
 
-export default Manufacture1;
+export default NhapTay;

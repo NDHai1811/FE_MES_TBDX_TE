@@ -9,6 +9,7 @@ import { useProfile } from "../components/hooks/UserHooks";
 import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
 
 const Screen = (props) => {
+  document.title = "Danh sách các màn"
   const { userProfile } = useProfile();
   const { Title } = Typography;
 
@@ -50,9 +51,14 @@ const Screen = (props) => {
       permission: "oi-tb",
     },
     {
-      title: `Kho ${isRawMaterialWarehouse ? "NVL" : "TP"}`,
-      link: `/warehouse/${isRawMaterialWarehouse ? "kho-nvl" : "kho-tp"}/nhap`,
-      permission: "oi-kho",
+      title: `Kho TP`,
+      link: `/warehouse/kho-tp/nhap`,
+      permission: "kho-tp",
+    },
+    {
+      title: `Kho NVL`,
+      link: `/warehouse/kho-nvl/nhap`,
+      permission: "kho-nvl",
     },
   ];
   const listUI = [

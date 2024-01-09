@@ -15,6 +15,7 @@ import { getCustomers } from "../../../api/ui/main";
 import {
     createProductPlan,
     getListProductPlan,
+    getOrderList,
     handleOrder,
     handlePlan,
 } from "../../../api/ui/manufacture";
@@ -40,8 +41,8 @@ const TaoKeHoachSanXuat = () => {
 
     const loadListOrders = async () => {
         setLoadingOrders(true);
-        const res = await getOrders(orderParams);
-        setData(res);
+        const res = await getOrderList(orderParams);
+        setData(res.data);
         setLoadingOrders(false);
     };
 
@@ -55,7 +56,7 @@ const TaoKeHoachSanXuat = () => {
 
     const onFinish = async (values) => {
         const res = await createProductPlan({ data: previewPlan });
-        if (res) {
+        if (res.success) {
             window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
         }
     };
@@ -80,9 +81,12 @@ const TaoKeHoachSanXuat = () => {
         }
         setLoadingPlans(true)
         const res = await handleOrder(inp);
-        setPreviewPlan(res.data);
-        setOpenMdlOrder(false);
-        setLoadingPlans(false);
+        if(res.success){
+            setPreviewPlan(res.data);
+            setOpenMdlOrder(false);
+            setLoadingPlans(false);
+        }
+        
 
     };
     const insertLSX = async () => {
@@ -105,10 +109,11 @@ const TaoKeHoachSanXuat = () => {
         }
         setLoadingPlans(true)
         const res = await handlePlan(inp);
-        setPreviewPlan(res.data);
-        setOpenMdlPlan(false);
-        setLoadingPlans(false);
-
+        if(res.success){
+            setPreviewPlan(res.data);
+            setOpenMdlPlan(false);
+            setLoadingPlans(false);
+        }
     };
 
     useEffect(() => {
@@ -123,16 +128,18 @@ const TaoKeHoachSanXuat = () => {
     const openModal = async () => {
         if (!planParams.machine_id) {
             message.info('Chưa chọn máy');
+        }else{
+            // if (planParams.machine_id == 'S01') {
+                setData([]);
+                setOpenMdlOrder(true);
+                loadListOrders();
+            // } else {
+            //     setListPlan([]);
+            //     setOpenMdlPlan(true);
+            //     loadListPlans();
+            // }
         }
-        if (planParams.machine_id == 'S01') {
-            setData([]);
-            setOpenMdlOrder(true);
-            loadListOrders();
-        } else {
-            setListPlan([]);
-            setOpenMdlPlan(true);
-            loadListPlans();
-        }
+        
     }
     const columnKHSX = [
         {
@@ -154,6 +161,13 @@ const TaoKeHoachSanXuat = () => {
             title: 'MDH',
             dataIndex: 'mdh',
             key: 'mdh',
+            align: 'center',
+            width: '40%',
+        },
+        {
+            title: 'Khổ tổng',
+            dataIndex: 'kho_tong',
+            key: 'kho_tong',
             align: 'center',
             width: '40%',
         },
@@ -188,11 +202,16 @@ const TaoKeHoachSanXuat = () => {
     ]
     const col_detailTable = [
         {
+            title: 'Hạn giao',
+            dataIndex: 'han_giao',
+            key: 'han_giao',
+            align: 'center',
+        },
+        {
             title: 'Ngày đặt hàng',
             dataIndex: 'ngay_dat_hang',
             key: 'ngay_dat_hang',
             align: 'center',
-            fixed: 'left'
         },
         {
             title: 'Khách hàng',
@@ -258,12 +277,6 @@ const TaoKeHoachSanXuat = () => {
             title: 'Ghi chú 1',
             dataIndex: 'note_1',
             key: 'note_1',
-            align: 'center',
-        },
-        {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
             align: 'center',
         },
         {
@@ -282,11 +295,10 @@ const TaoKeHoachSanXuat = () => {
             fixed: 'left'
         },
         {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dat_hang',
-            key: 'ngay_dat_hang',
+            title: 'Hạn giao',
+            dataIndex: 'han_giao',
+            key: 'han_giao',
             align: 'center',
-            fixed: 'left'
         },
         {
             title: 'Khách hàng',
@@ -355,9 +367,9 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         },
         {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
+            title: 'Ngày đặt hàng',
+            dataIndex: 'ngay_dat_hang',
+            key: 'ngay_dat_hang',
             align: 'center',
         },
         {
@@ -375,7 +387,9 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
-            loadListOrders();
+            if(orderParams.machine_id){
+                loadListOrders();
+            }
         })()
     }, [orderParams])
 
@@ -405,7 +419,10 @@ const TaoKeHoachSanXuat = () => {
                                         className="mb-3"
                                         rules={[{ required: true }]}
                                     >
-                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => setPlanParams({ ...planParams, machine_id: value })} />
+                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => {
+                                            setPlanParams({ ...planParams, machine_id: value });
+                                            setOrderParams({ ...orderParams, machine_id: value });
+                                        }} />
                                     </Form.Item>
                                 </Col>
                                 <Col span={7}>

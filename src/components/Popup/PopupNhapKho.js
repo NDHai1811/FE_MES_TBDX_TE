@@ -5,50 +5,19 @@ import ScanQR from "../Scanner";
 import { useState } from "react";
 import { getScanList, sendResultScan } from "../../api/oi/warehouse";
 import { useEffect } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
 
-const columns = [
-  {
-    title: "Mã cuộn",
-    dataIndex: "material_id",
-    key: "material_id",
-    align: "center",
-    render: (value, record) => (
-      <span style={{ color: record.status === 1 ? "black" : "gray" }}>
-        {value}
-      </span>
-    ),
-  },
-  {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
-    align: "center",
-    render: (value, record) => (
-      <span style={{ color: record.status === 1 ? "black" : "gray" }}>
-        {value}
-      </span>
-    ),
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "locator_id",
-    key: "locator_id",
-    align: "center",
-    render: (value, record) => (
-      <span style={{ color: record.isScanLocation ? "black" : "gray" }}>
-        {value}
-      </span>
-    ),
-  },
-];
+const SCAN_TIME_OUT = 1000;
 
 function PopupNhapKhoNvl(props) {
-  const { visible, setVisible, setCurrentScan } = props;
+  const { visible, setVisible, setCurrentScan, getLogs, getOverAll } = props;
   const list = JSON.parse(window.localStorage.getItem("ScanNhapNvl"));
   const [data, setData] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
 
   const [messageApi, contextHolder] = message.useMessage();
+
+  const scanRef = useRef();
 
   const messageAlert = (content, type = "error") => {
     messageApi.open({
@@ -61,13 +30,62 @@ function PopupNhapKhoNvl(props) {
     });
   };
 
-  const isSendRef = useRef(false);
+  const columns = [
+    {
+      title: "Mã cuộn",
+      dataIndex: "material_id",
+      key: "material_id",
+      align: "center",
+      render: (value, record) => (
+        <span style={{ color: record.status === 1 ? "black" : "gray" }}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      title: "Số kg",
+      dataIndex: "so_kg",
+      key: "so_kg",
+      align: "center",
+      render: (value, record) => (
+        <span style={{ color: record.status === 1 ? "black" : "gray" }}>
+          {value}
+        </span>
+      ),
+    },
+    {
+      title: "Vị trí",
+      dataIndex: "locator_id",
+      key: "locator_id",
+      align: "center",
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "action",
+      key: "action",
+      align: "center",
+      render: (text, record, index) => (
+        <DeleteOutlined
+          style={{ color: "red", fontSize: 18 }}
+          onClick={() => handleDelete(index)}
+        />
+      ),
+    },
+  ];
 
   useEffect(() => {
     if (currentData) {
-      getData();
+      if (!list) {
+        getData();
+      }
     }
   }, [currentData]);
+
+  const handleDelete = (index) => {
+    const newData = [...data];
+    newData.splice(index, 1);
+    setData(newData);
+  };
 
   const getData = () => {
     getScanList({ material_id: currentData })
@@ -84,19 +102,23 @@ function PopupNhapKhoNvl(props) {
           setData(
             data?.length > 0
               ? items
-              : res.data?.map((val) => ({ ...val, isScanLocation: false }))
+              : res.data?.map((val) => {
+                  if (val.material_id === currentData) {
+                    val.status = 1;
+                  }
+                  return {
+                    ...val,
+                  };
+                })
           );
         } else if (res.data.length === 1) {
           window.localStorage.setItem(
             "ScanNhapNvl",
-            JSON.stringify(
-              res.data?.map((val) => ({ ...val, isScanLocation: false }))
-            )
+            JSON.stringify(res.data?.map((val) => ({ ...val, status: 1 })))
           );
           handleCancel();
         }
-        console.log(data, currentData);
-        setCurrentScan(data.find(e=>e.material_id === currentData));
+        setCurrentScan(data.find((e) => e.material_id === currentData));
       })
       .catch((err) => {
         console.log("Lấy danh sách scan thất bại: ", err);
@@ -104,18 +126,21 @@ function PopupNhapKhoNvl(props) {
       });
   };
 
-  const sendResult = (value) => {
-    const materialIds = data
-      ?.filter((item) => item.status === 1)
-      .map((val) => val.material_id);
+  const sendResult = () => {
+    const materialIds = data.map((val) => val.material_id);
+    const locatorIds = data.map((val) => val.locator_id);
+
     const resData = {
       material_id: materialIds,
-      locator_id: value,
+      locator_id: locatorIds,
     };
     sendResultScan(resData)
       .then((res) => {
-        console.log(res);
-        if(res.success) window.localStorage.removeItem("ScanNhapNvl");
+        if (res.success) {
+          window.localStorage.removeItem("ScanNhapNvl");
+          getLogs?.();
+          getOverAll?.();
+        }
         handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
@@ -132,17 +157,23 @@ function PopupNhapKhoNvl(props) {
 
   const onScanResult = (value) => {
     if (list) {
-      const isLocation = data.some((val) => val.locator_id === value);
-      if (isLocation) {
-        if (!isSendRef.current) {
-          isSendRef.current = true;
-          sendResult(value);
-        }
-      } else {
-        messageAlert(
-          "Vị trí hiện tại không đúng, xin vui lòng quét vị trí lại"
-        );
+      if (scanRef.current) {
+        clearTimeout(scanRef.current);
       }
+      scanRef.current = setTimeout(() => {
+        if (data.some(e=>!e.locator_id)) {
+          const item = data.find((val) => !val.locator_id);
+          const newData = data.map((val) => {
+            if (val.material_id === item.material_id) {
+              val.locator_id = value;
+            }
+            return {
+              ...val,
+            };
+          });
+          setData(newData);
+        }
+      }, SCAN_TIME_OUT);
     } else {
       setCurrentData(value);
     }
@@ -154,8 +185,8 @@ function PopupNhapKhoNvl(props) {
       <Modal
         title="Quét mã"
         open={visible}
-        onOk={handleOk}
-        okText={!list ? "Lưu" : null}
+        onOk={!list ? handleOk : sendResult}
+        okText={!list ? "Lưu" : "Xong"}
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
       >

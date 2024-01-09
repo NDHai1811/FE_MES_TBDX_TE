@@ -39,7 +39,7 @@ const Checksheet2 = (props) => {
   const [checksheet, setChecksheet] = useState([]);
 
   const onFinish = async (values) => {
-    if (selectedLot?.lot_id) {
+    if (selectedLot) {
       Object.keys(values["ngoai_quan"] ?? {}).forEach((key) => {
         const isNullish = Object.values(values["ngoai_quan"][key]).every(
           (value) => {
@@ -53,7 +53,9 @@ const Checksheet2 = (props) => {
           delete values["ngoai_quan"][key];
         }
         const error = errorsList.find(e=>e.id === key);
-        values["ngoai_quan"][key]['name'] = error?.name;
+        if(values["ngoai_quan"][error.id]){
+          values["ngoai_quan"][error.id].name = error?.name;
+        }
       });
       if (!values.ngoai_quan) {
         messageApi.error("Không có dữ liệu lỗi ngoại quan");

@@ -6,10 +6,11 @@ import {
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { getTablesNvl } from "../../../api/oi/warehouse";
+import { getExportsNVL, getTablesNvl } from "../../../api/oi/warehouse";
 import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
 import PopupInTemKhoNvl from "../../../components/Popup/PopupInTemKhoNvl";
 import { getWarehouseOverall } from "../../../api/oi/warehouse";
+import PopupXuatKhoNvl from "../../../components/Popup/PopupXuatKho";
 
 const columnDetail = [
   {
@@ -38,7 +39,7 @@ const columnDetail = [
   },
 ];
 
-const importColumns = [
+const exportColumns = [
   {
     title: "STT",
     dataIndex: "stt",
@@ -48,8 +49,8 @@ const importColumns = [
   },
   {
     title: "Mã cuộn TBDX",
-    dataIndex: "material_id",
-    key: "material_id",
+    dataIndex: "id",
+    key: "id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -108,7 +109,7 @@ const options = [
   },
 ];
 
-const Import = (props) => {
+const Export2 = (props) => {
   document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
@@ -117,11 +118,13 @@ const Import = (props) => {
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
   const [overall, setOverall] = useState([]);
-  const [currentScan, setCurrentScan] = useState({
-    material_id: "",
-    so_kg: "",
-    locator_id: "",
-  });
+  const [currentScan, setCurrentScan] = useState(
+    {
+      material_id: "",
+      so_kg: "",
+      locator_id: "",
+    },
+  );
 
   const onShowPopup = () => {
     setVisible(true);
@@ -152,21 +155,21 @@ const Import = (props) => {
       dataIndex: "sl_nhap",
       key: "sl_nhap",
       align: "center",
-      render: (value) => value || 0,
+      render: (value) => value || "-",
     },
     {
       title: "Sl xuất",
       dataIndex: "sl_xuat",
       key: "sl_xuat",
       align: "center",
-      render: (value) => value || 0,
+      render: (value) => value || "-",
     },
     {
       title: "Sl tồn",
       dataIndex: "sl_ton",
       key: "sl_ton",
       align: "center",
-      render: (value) => value || 0,
+      render: (value) => value || "-",
     },
     // {
     //   title: "Số ngày tồn kho",
@@ -189,16 +192,16 @@ const Import = (props) => {
   };
 
   const getLogs = () => {
-    getTablesNvl()
+    getExportsNVL()
       .then((res) => setLogs(res.data))
       .catch((err) =>
-        console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
+        console.log("Lấy danh sách bảng xuất kho nvl thất bại: ", err)
       );
   };
 
-  useEffect(() => {
-    !visible && getLogs();
-  }, [visible]);
+  useEffect(()=>{
+    (!visible || !isScan) && getLogs();
+  }, [visible, isScan]);
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[6, 12]}>
@@ -215,6 +218,7 @@ const Import = (props) => {
         <Col span={24}>
           <Table
             pagination={false}
+            locale={{emptyText:'Trống'}}
             bordered
             size="small"
             className="mb-1 custom-table"
@@ -222,7 +226,7 @@ const Import = (props) => {
             dataSource={currentScan ? [currentScan] : []}
           />
         </Col>
-        <Col span={12}>
+        <Col span={24}>
           <Button
             block
             className="h-100 w-100"
@@ -236,22 +240,6 @@ const Import = (props) => {
             }}
           >
             Quét QR Code
-          </Button>
-        </Col>
-        <Col span={12}>
-          <Button
-            block
-            className="h-100 w-100"
-            icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
-            type="primary"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onClick={onShowPopup}
-          >
-            Nhập lại
           </Button>
         </Col>
         <Col span={24}>
@@ -270,7 +258,7 @@ const Import = (props) => {
             pagination={false}
             bordered
             className="mb-4"
-            columns={importColumns}
+            columns={exportColumns}
             dataSource={logs}
           />
         </Col>
@@ -281,21 +269,15 @@ const Import = (props) => {
           setVisible={setVisible}
           data={logs}
           setCurrentScan={setCurrentScan}
-          getLogs={getLogs}
-          getOverAll={getOverAll}
         />
       )}
-      {isScan && (
-        <PopupNhapKhoNvl
-          visible={isScan}
-          setVisible={setIsScan}
-          setCurrentScan={setCurrentScan}
-          getLogs={getLogs}
-          getOverAll={getOverAll}
-        />
-      )}
+      <PopupXuatKhoNvl
+        visible={isScan}
+        setVisible={setIsScan}
+        setCurrentScan={setCurrentScan}
+      />
     </React.Fragment>
   );
 };
 
-export default Import;
+export default Export2;

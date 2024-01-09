@@ -5,7 +5,7 @@ import { getParamaters, sendErrorInputResults } from "../../api/oi/equipment";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 function PopupThongSo(props) {
-  const { visible, setVisible, lo_sx } = props;
+  const { visible, setVisible, lo_sx, getLogs } = props;
   const { machine_id } = useParams();
   const [form] = Form.useForm();
 
@@ -50,7 +50,10 @@ function PopupThongSo(props) {
     };
 
     sendErrorInputResults(resData)
-      .then(setVisible(false))
+      .then(() => {
+        setVisible(false);
+        getLogs?.();
+      })
       .catch((err) => console.log("Gửi kết quả nhập lỗi thất bại: ", err));
   };
 

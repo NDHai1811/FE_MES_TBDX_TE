@@ -38,7 +38,7 @@ export async function storeProductPlan(params) {
 }
 export async function createProductPlan(params) {
     const res = await axios.post("ui/manufacture/create-plan", params);
-    return res.data;
+    return res;
 }
 
 export async function getBuyers(params) {
@@ -51,7 +51,22 @@ export async function getListLayout(params) {
     return res.data;
 }
 
+export async function getListDRC(params) {
+    const res = await axios.get('ui/manufacture/drc/list', { params });
+    return res.data;
+}
+
 export async function handleOrder(params) {
     const res = await axios.post("ui/manufacture/handle-order", params);
+    return res;
+}
+
+export async function getOrderList(params) {
+    const res = await axios.get("ui/manufacture/order/list", {params});
+    return res;
+}
+
+export async function exportKHSX(params) {
+    const res = await axios.get("ui/manufacture/production-plan/export", {params});
     return res;
 }

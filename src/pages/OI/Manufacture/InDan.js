@@ -47,20 +47,6 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
     title: "Sản lượng kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
@@ -86,16 +72,37 @@ const columns = [
     render: (value) => (value === 1 ? "OK" : "-"),
   },
   {
+    title: "Mã layout",
+    dataIndex: "layout_id",
+    key: "layout_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
     title: "MQL",
     dataIndex: "mql",
     key: "mql",
     align: "center",
     render: (value, record, index) => value || "-",
   },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
 ];
 
-const Manufacture1 = (props) => {
-  document.title = "Sản xuất máy Sóng";
+const InDan = (props) => {
+  document.title = "Sản xuất máy In";
   const { machine_id } = useParams();
   const currentColumns = [
     {
@@ -270,6 +277,24 @@ const Manufacture1 = (props) => {
     return () => clearTimeout(timeout);
   }, [params.start_date, params.end_date, params.machine_id]);
   
+  const loadDataRescursive = async (params, machine_id) => {
+    console.log(params, machine_id);
+    if (!machine_id) return;
+    const res = await getLotByMachine(params);
+    setData(res.data);
+    if (res.data[0]?.status === 1) {
+      setSelectedLot(res.data[0]);
+    } else {
+      setSelectedLot(null);
+    }
+    if (res.success) {
+      if (window.location.href.indexOf("manufacture") > -1)
+      timeout = setTimeout(function () {
+        loadDataRescursive(params, machine_id);
+      }, 5000);
+    }
+  };
+
   const getListMachine = () => {
     getMachines()
       .then((res) => {
@@ -322,8 +347,8 @@ const Manufacture1 = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
-      if (machine_id) {
-        setParams({ ...params, machine_id })
+      if(machine_id){
+        setParams({...params, machine_id})
       }
       if (machine_id === "S01") {
         print();
@@ -333,7 +358,7 @@ const Manufacture1 = (props) => {
         printDan();
       }
       (async () => {
-        reloadData();
+        reloadData()
       })();
     }
     setListCheck([]);
@@ -469,7 +494,6 @@ const Manufacture1 = (props) => {
           >
             <Col span={9}>
               <DatePicker
-                allowClear={false}
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -479,7 +503,6 @@ const Manufacture1 = (props) => {
             </Col>
             <Col span={9}>
               <DatePicker
-                allowClear={false}
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -549,4 +572,4 @@ const Manufacture1 = (props) => {
   );
 };
 
-export default Manufacture1;
+export default InDan;

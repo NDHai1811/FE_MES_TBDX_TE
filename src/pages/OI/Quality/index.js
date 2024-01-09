@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
 import {
-  useHistory,
+  useHistory, useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import QCByLine from "./QCByLine";
+import QCByMachine from "./QCByMachine";
 
 const Quality = (props) => {
   document.title = "Kiểm tra chất lượng";
+  const {type} = useParams()
   const history = useHistory();
   const { userProfile } = useProfile();
   const qcPermission = ["pqc", "oqc", "iqc"].filter((value) =>
@@ -15,14 +18,15 @@ const Quality = (props) => {
   );
   useEffect(()=>{
     if(qcPermission.length > 0){
-      history.push('/quality/qc/iqc');
+      history.push('/quality/qc');
     }else{
-      history.push('/quality/sx/S01');
+      history.push('/quality/sx');
     }
   }, []);
 
   return (
     <React.Fragment>
+      {type === 'qc' ? <QCByLine/> : <QCByMachine/>}
     </React.Fragment>
   );
 };

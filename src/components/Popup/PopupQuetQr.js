@@ -10,7 +10,7 @@ import {
 } from "../../api/oi/equipment";
 
 function PopupQuetQr(props) {
-  const { visible, setVisible, loSx, setSelectedItem } = props;
+  const { visible, setVisible, loSx, setSelectedItem, getLogs } = props;
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [checkData, setCheckData] = useState([]);
@@ -51,13 +51,15 @@ function PopupQuetQr(props) {
   const onSendResult = () => {
     sendMappingResult({ lo_sx: loSx })
       .then((res) => {
-        console.log(res.data);
-        setSelectedItem?.((prevItems) =>
-          prevItems.map((item) => ({
-            ...item,
-            mapping: "Đã mapping",
-          }))
-        );
+        if (res.data) {
+          setSelectedItem?.((prevItems) =>
+            prevItems.map((item) => ({
+              ...item,
+              mapping: "Đã mapping",
+            }))
+          );
+          getLogs?.();
+        }
       })
       .catch((err) => console.log("Gửi dữ liệu mapping thất bại: ", err));
   };
@@ -68,18 +70,28 @@ function PopupQuetQr(props) {
         const item = checkData.find((val) => !val.isScan);
         let result = currentResult;
         if (item.check_api === 1) {
-          result = await mappingCheckMaterial({ material_id: currentResult });
-        }
-        if (result === item.value) {
-          setData(data.map((val) => ({ ...val, [item.key]: currentResult })));
+          const res = await mappingCheckMaterial({ material_id: currentResult });
+          if (res.success === true) {
+            result = res.data;
+            setData(data.map((val) => ({ ...val, [item.key]: result })));
+            setCheckData(
+              checkData.map((val) => {
+                return val.key === item.key ? { ...val, isScan: true } : val;
+              })
+            );
+          }
+        } else {
+          setData(data.map((val) => ({ ...val, [item.key]: result })));
           setCheckData(
             checkData.map((val) => {
               return val.key === item.key ? { ...val, isScan: true } : val;
             })
           );
-        } else {
-          messageAlert("Mã không đúng yêu cầu");
         }
+        // if (result === item.value) {
+        // } else {
+        //   messageAlert("Mã không đúng yêu cầu");
+        // }
       }
     })();
   }, [currentResult]);

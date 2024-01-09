@@ -1,17 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Button, Modal, Select, message } from "antd";
+import { Row, Col, Table, Button, Select } from "antd";
 import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { warehousTPData } from "../mock-data";
-import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { getWarehouseOverall, importData } from "../../../../api/oi/warehouse";
+import {
+  getWarehouseOverall,
+  getWarehouseTpLogs,
+} from "../../../../api/oi/warehouse";
 import TemPallet from "../TemPallet";
 import { useReactToPrint } from "react-to-print";
+import PopupQuetQrThanhPham from "../../../../components/Popup/PopupQuetQrThanhPham";
 
 const columnDetail = [
   {
@@ -47,8 +49,8 @@ const importColumns = [
   },
   {
     title: "Mã tem",
-    dataIndex: "tem_id",
-    key: "tem_id",
+    dataIndex: "pallet_id",
+    key: "pallet_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -61,15 +63,15 @@ const importColumns = [
   },
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số đơn hàng",
-    dataIndex: "so_don_hang",
-    key: "so_don_hang",
+    title: "Mã đơn hàng",
+    dataIndex: "mdh",
+    key: "mdh",
     align: "center",
     render: (value) => value || "-",
   },
@@ -82,8 +84,8 @@ const importColumns = [
   },
   {
     title: "Thời gian nhập kho",
-    dataIndex: "tg_nhap_kho",
-    key: "tg_nhap_kho",
+    dataIndex: "thoi_gian_nhap",
+    key: "thoi_gian_nhap",
     align: "center",
     render: (value) => value || "-",
   },
@@ -106,6 +108,7 @@ const Import = (props) => {
   const history = useHistory();
   const componentRef1 = useRef();
   const [logs, setLogs] = useState([]);
+  const [warehouseOverall, setWarehouseOverall] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
       pallet_id: "",
@@ -114,25 +117,24 @@ const Import = (props) => {
     },
   ]);
 
-  const [messageApi, contextHolder] = message.useMessage();
-  const messageAlert = (content, type = "error") => {
-    messageApi.open({
-      type,
-      content,
-      className: "custom-class",
-      style: {
-        marginTop: "50%",
-      },
-    });
-  };
-
   useEffect(() => {
-    getLogs();
+    getData();
   }, []);
 
-  const getLogs = () => {
+  const getData = () => {
+    getLogs();
+    getWarehouseOverallData();
+  };
+
+  const getWarehouseOverallData = () => {
     getWarehouseOverall()
-      .then((res) => setLogs([res.data]))
+      .then((res) => setWarehouseOverall([res.data]))
+      .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
+  };
+
+  const getLogs = () => {
+    getWarehouseTpLogs()
+      .then((res) => setLogs(res.data))
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
 
@@ -203,23 +205,6 @@ const Import = (props) => {
     content: () => componentRef1.current,
   });
 
-  useEffect(() => {
-    if (result && resData.locator_id) {
-      if (result === resData.locator_id) {
-        importWarehouse();
-      }
-    }
-  }, [info]);
-
-  const importWarehouse = () => {
-    importData(resData)
-      .then((res) => {
-        console.log(res.data);
-        messageAlert("Nhập kho thành phẩm thành công!");
-      })
-      .catch((err) => console.log("Nhập kho thành phẩm thất bại: ", err));
-  };
-
   const onShowPopup = () => {
     setVisible(true);
   };
@@ -230,7 +215,6 @@ const Import = (props) => {
 
   return (
     <React.Fragment>
-      {contextHolder}
       <Row className="mt-3" gutter={[4, 12]}>
         <Col span={24}>
           <Table
@@ -238,7 +222,7 @@ const Import = (props) => {
             bordered
             className="mb-1"
             columns={column2}
-            dataSource={logs}
+            dataSource={warehouseOverall}
           />
         </Col>
         <Col span={24}>
@@ -303,7 +287,7 @@ const Import = (props) => {
             bordered
             className="mb-4"
             columns={importColumns}
-            dataSource={warehousTPData}
+            dataSource={logs}
             // onRow={(record) => {
             //   return {
             //     onClick: () => onSelectItem(record),
@@ -322,26 +306,15 @@ const Import = (props) => {
           setResData={setResData}
           setInfo={setInfo}
           setSelectedItem={setSelectedItem}
+          setResult={setResult}
         />
       )}
       {isScan && (
-        <Modal
-          title="Quét QR"
-          open={isScan}
-          onCancel={() => setIsScan(false)}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isScan}
-            onResult={(res) => {
-              setResult(res);
-              setIsScan(false);
-              setSelectedItem([
-                { so_luong: "", pallet_id: "", locator_id: "" },
-              ]);
-            }}
-          />
-        </Modal>
+        <PopupQuetQrThanhPham
+          visible={isScan}
+          setVisible={setIsScan}
+          getLogs={getData}
+        />
       )}
     </React.Fragment>
   );
