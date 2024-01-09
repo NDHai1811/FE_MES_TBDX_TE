@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Button, Modal, Select, message } from "antd";
+import { Row, Col, Table, Button, Select } from "antd";
 import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { warehousTPData } from "../mock-data";
-import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { getWarehouseOverall, importData } from "../../../../api/oi/warehouse";
+import { getWarehouseOverall } from "../../../../api/oi/warehouse";
 import TemPallet from "../TemPallet";
 import { useReactToPrint } from "react-to-print";
+import PopupQuetQrThanhPham from "../../../../components/Popup/PopupQuetQrThanhPham";
 
 const columnDetail = [
   {
@@ -114,18 +114,6 @@ const Import = (props) => {
     },
   ]);
 
-  const [messageApi, contextHolder] = message.useMessage();
-  const messageAlert = (content, type = "error") => {
-    messageApi.open({
-      type,
-      content,
-      className: "custom-class",
-      style: {
-        marginTop: "50%",
-      },
-    });
-  };
-
   useEffect(() => {
     getLogs();
   }, []);
@@ -203,23 +191,6 @@ const Import = (props) => {
     content: () => componentRef1.current,
   });
 
-  useEffect(() => {
-    if (result && resData.locator_id) {
-      if (result === resData.locator_id) {
-        importWarehouse();
-      }
-    }
-  }, [info]);
-
-  const importWarehouse = () => {
-    importData(resData)
-      .then((res) => {
-        console.log(res.data);
-        messageAlert("Nhập kho thành phẩm thành công!");
-      })
-      .catch((err) => console.log("Nhập kho thành phẩm thất bại: ", err));
-  };
-
   const onShowPopup = () => {
     setVisible(true);
   };
@@ -230,7 +201,6 @@ const Import = (props) => {
 
   return (
     <React.Fragment>
-      {contextHolder}
       <Row className="mt-3" gutter={[4, 12]}>
         <Col span={24}>
           <Table
@@ -326,22 +296,11 @@ const Import = (props) => {
         />
       )}
       {isScan && (
-        <Modal
-          title="Quét QR"
-          open={isScan}
-          onCancel={() => setIsScan(false)}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isScan}
-            onResult={() => {
-              setIsScan(false);
-              setSelectedItem([
-                { so_luong: "", pallet_id: "", locator_id: "" },
-              ]);
-            }}
-          />
-        </Modal>
+        <PopupQuetQrThanhPham
+          visible={isScan}
+          setVisible={setIsScan}
+          getLogs={getLogs}
+        />
       )}
     </React.Fragment>
   );
