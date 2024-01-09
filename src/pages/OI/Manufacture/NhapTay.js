@@ -54,12 +54,14 @@ const columns = [
     dataIndex: "san_luong",
     key: "san_luong",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
+    render: (value) => value || "-",
   },
   {
     title: "Phán định",
@@ -114,14 +116,14 @@ const NhapTay = (props) => {
       dataIndex: "dinh_muc",
       key: "dinh_muc",
       align: "center",
-      render: (value) => value,
+      render: (value) => value || "-",
     },
     {
       title: "Sản lượng đầu ra",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
-      render: (value) => value,
+      render: (value) => value || "-",
       onHeaderCell: () => {
         return {
           onClick: ()=> lotCurrent && onShowPopup(),
@@ -136,7 +138,7 @@ const NhapTay = (props) => {
       dataIndex: "sl_ok",
       key: "sl_ok",
       align: "center",
-      render: (value) => value,
+      render: (value) => value || "-",
     },
     {
       title: "Phán định",
@@ -184,11 +186,11 @@ const NhapTay = (props) => {
   };
 
   const reloadData = async () => {
-    const resData = await getListLotDetail();
-    setData(resData);
-    if (resData?.[0]?.status === 1) {
-      setSelectedLot(resData?.[0]);
-    }
+    // const resData = await getListLotDetail();
+    // setData(resData);
+    // if (resData?.[0]?.status === 1) {
+    //   setSelectedLot(resData?.[0]);
+    // }
     getOverAllDetail();
   };
   const overallColumns = [
@@ -268,31 +270,33 @@ const NhapTay = (props) => {
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    loadDataRescursive(params);
+    const loadDataRescursive = async (params,machine_id) => {
+      console.log(params, machine_id);
+      if (!machine_id) return;
+      const res = await getLotByMachine(params);
+      setData(res.data);
+      if (res.data[0]?.status === 1) {
+        setSelectedLot(res.data[0]);
+      } else {
+        setSelectedLot(null);
+      }
+      if (res.success) {
+        if (window.location.href.indexOf("manufacture") > -1)
+        timeout = setTimeout(function () {
+          loadDataRescursive(params, machine_id);
+        }, 5000);
+      }
+    };
+    loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
-  }, [params]);
-  
-  const loadDataRescursive = async (params) => {
-    if (!machine_id) return;
-    const res = await getLotByMachine(params);
-    setData(res.data);
-    if (res.data[0]?.status === 1) {
-      setSelectedLot(res.data[0]);
-    } else {
-      setSelectedLot(null);
-    }
-    if (res.success) {
-      if (window.location.href.indexOf("manufacture") > -1)
-      timeout = setTimeout(function () {
-        loadDataRescursive(params);
-      }, 5000);
-    }
-  };
-
+  }, [params.start_date, params.end_date, params.machine_id]);
 
   const getListMachine = () => {
     getMachines()
-      .then((res) => setMachineOptions(res.data))
+    .then((res) => {
+      setMachineOptions(res.data);
+      window.localStorage.setItem('machines', JSON.stringify(res.data));
+    })
       .catch((err) => console.log("Get list machine error: ", err));
   };
 
@@ -344,12 +348,12 @@ const NhapTay = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record.status === 1) {
+    if (record?.id === lotCurrent?.id) {
       return "table-row-green";
     }
-    if (record.status === 2) {
-      return "table-row-yellow";
-    }
+    // if (record.status === 2) {
+    //   return "table-row-yellow";
+    // }
     if (record.status === 3) {
       return "table-row-yellow blink";
     }
@@ -368,8 +372,7 @@ const NhapTay = (props) => {
         printDan();
       }
       (async () => {
-        setData(await getListLotDetail());
-        getOverAllDetail();
+        reloadData()
       })();
     }
     setListCheck([]);
@@ -469,6 +472,12 @@ const NhapTay = (props) => {
     setParams({ ...params, end_date: value });
   };
 
+  const onClickRow = (record) => {
+    if(record.status < 3){
+      setLotCurrent(record);
+    }
+  }
+
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -560,7 +569,7 @@ const NhapTay = (props) => {
               columns={columns}
               onRow={(record, index) => {
                 return {
-                  onClick: () => setLotCurrent(record),
+                  onClick: () => onClickRow(record),
                 };
               }}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}

@@ -161,11 +161,11 @@ const Manufacture1 = (props) => {
   const ws = useRef(null);
 
   const reloadData = async () => {
-    const resData = await getListLotDetail();
-    setData(resData);
-    if (resData?.[0]?.status === 1) {
-      setSelectedLot(resData?.[0]);
-    }
+    // const resData = await getListLotDetail();
+    // setData(resData);
+    // if (resData?.[0]?.status === 1) {
+    //   setSelectedLot(resData?.[0]);
+    // }
     getOverAllDetail();
   };
   const overallColumns = [
@@ -249,33 +249,33 @@ const Manufacture1 = (props) => {
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
+    const loadDataRescursive = async (params,machine_id) => {
+      console.log(params, machine_id);
+      if (!machine_id) return;
+      const res = await getLotByMachine(params);
+      setData(res.data);
+      if (res.data[0]?.status === 1) {
+        setSelectedLot(res.data[0]);
+      } else {
+        setSelectedLot(null);
+      }
+      if (res.success) {
+        if (window.location.href.indexOf("manufacture") > -1)
+        timeout = setTimeout(function () {
+          loadDataRescursive(params, machine_id);
+        }, 5000);
+      }
+    };
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
-  }, [params]);
+  }, [params.start_date, params.end_date, params.machine_id]);
   
-  const loadDataRescursive = async (params,machine_id) => {
-    console.log(params, machine_id);
-    if (!machine_id) return;
-    const res = await getLotByMachine(params);
-    setData(res.data);
-    if (res.data[0]?.status === 1) {
-      setSelectedLot(res.data[0]);
-    } else {
-      setSelectedLot(null);
-    }
-    if (res.success) {
-      if (window.location.href.indexOf("manufacture") > -1)
-      timeout = setTimeout(function () {
-        loadDataRescursive(params, machine_id);
-      }, 5000);
-    }
-  };
-
   const getListMachine = () => {
     getMachines()
-      .then((res) =>
-        setMachineOptions(res.data)
-      )
+      .then((res) => {
+        setMachineOptions(res.data);
+        window.localStorage.setItem('machines', JSON.stringify(res.data));
+      })
       .catch((err) => console.log("Get list machine error: ", err));
   };
 
@@ -333,8 +333,7 @@ const Manufacture1 = (props) => {
         printDan();
       }
       (async () => {
-        setData(await getListLotDetail());
-        getOverAllDetail();
+        reloadData();
       })();
     }
     setListCheck([]);
@@ -470,6 +469,7 @@ const Manufacture1 = (props) => {
           >
             <Col span={9}>
               <DatePicker
+                allowClear={false}
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -479,6 +479,7 @@ const Manufacture1 = (props) => {
             </Col>
             <Col span={9}>
               <DatePicker
+                allowClear={false}
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
