@@ -37,13 +37,6 @@ const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${to
 
 const columns = [
   {
-    title: "Mã Lot",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
     title: "Lô SX",
     dataIndex: "lo_sx",
     key: "lo_sx",
@@ -110,9 +103,9 @@ const NhapTay = (props) => {
   const { machine_id } = useParams();
   const currentColumns = [
     {
-      title: machine_id === "S01" ? "Lô SX" : "Mã lot",
-      dataIndex: machine_id === "S01" ? "lot_id" : "lo_sx",
-      key: machine_id === "S01" ? "lot_id" : "lo_sx",
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
       align: "center",
       render: (value) => value || "-",
     },
@@ -159,6 +152,7 @@ const NhapTay = (props) => {
   const componentRef3 = useRef();
 
   const [params, setParams] = useState({
+    machine_id: machine_id,
     start_date: dayjs(),
     end_date: dayjs(),
   });
@@ -563,11 +557,7 @@ const NhapTay = (props) => {
               }
               pagination={false}
               bordered
-              columns={
-                machine_id === "S01"
-                  ? columns.filter((e, i) => i !== 0)
-                  : columns
-              }
+              columns={columns}
               onRow={(record, index) => {
                 return {
                   onClick: () => setLotCurrent(record),
