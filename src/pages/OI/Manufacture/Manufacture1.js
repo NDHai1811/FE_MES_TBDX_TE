@@ -95,13 +95,13 @@ const columns = [
 ];
 
 const Manufacture1 = (props) => {
-  document.title = "Sản xuất";
+  document.title = "Sản xuất máy Sóng";
   const { machine_id } = useParams();
   const currentColumns = [
     {
-      title: machine_id === "S01" ? "Lô SX" : "Mã lot",
-      dataIndex: machine_id === "S01" ? "lot_id" : "lo_sx",
-      key: machine_id === "S01" ? "lot_id" : "lo_sx",
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
       align: "center",
       render: (value) => value || "-",
     },

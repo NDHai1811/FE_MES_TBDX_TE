@@ -7,7 +7,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import Manufacture1 from "./Manufacture1";
 import NhapTay from "./NhapTay";
-import InDan from "./NhapTay";
+import InDan from "./InDan";
 const Manufacture = () => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
@@ -34,13 +34,9 @@ const Manufacture = () => {
 
   return (
     <React.Fragment>
-      {machine_id === "S01" ? (
-        <Manufacture1 />
-      ) : (machine_id === "D05" || machine_id === "D06") ? (
-        <NhapTay />
-      ) : (
-        <InDan />
-      )}
+      {machine_id === "S01" && <Manufacture1 />}
+      {(machine_id === "D05" || machine_id === "D06") && <NhapTay />}
+      {(machine_id === "P15" || machine_id === "P06") && <InDan />}
     </React.Fragment>
   );
 };
