@@ -23,7 +23,7 @@ import "../style.scss";
 import { baseURL } from "../../../config";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
-import { createWarehouseImport, deleteWarehouseImport, getListPlanMaterialExport, getListPlanMaterialImport, updateWarehouseImport } from "../../../api/ui/warehouse";
+import { createWarehouseImport, deleteWarehouseImport, exportWarehouseTicket, getListPlanMaterialExport, getListPlanMaterialImport, updateWarehouseImport } from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
 
 const { TabPane } = Tabs;
@@ -160,7 +160,7 @@ const WarehouseExportPlan = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [importList, setImportList] = useState([]);
   const [exportList, setExportList] = useState([]);
@@ -458,7 +458,22 @@ const WarehouseExportPlan = (props) => {
         />
       ]
     }
-  ]
+  ];
+  const [exportLoading, setExportLoading] = useState(false);
+  const exportFile = async () => {
+    setExportLoading(true);
+    var material_ids = [];
+    importList.forEach(e=>{
+      if(listCheck.includes(e.id)){
+        material_ids.push(e.material_id)
+      }
+    })
+    const res = await exportWarehouseTicket({...params, material_ids: material_ids});
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
+  };
   return (
     <>
       {contextHolder}
@@ -478,18 +493,18 @@ const WarehouseExportPlan = (props) => {
                     placeholder="Bắt đầu"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
+                      setParams({ ...params, start_date: value })
                     }
-                    value={params.date[0]}
+                    value={params.start_date}
                   />
                   <DatePicker
                     allowClear={false}
                     placeholder="Kết thúc"
                     style={{ width: "100%" }}
                     onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
+                      setParams({ ...params, end_date: value })
                     }
-                    value={params.date[1]}
+                    value={params.end_date}
                   />
                 </Space>
               </Form>
@@ -572,6 +587,13 @@ const WarehouseExportPlan = (props) => {
                   tabBarExtraContent={
                     currentTab === "1" ? (
                       <Space>
+                        <Button
+                          type="primary"
+                          onClick={exportFile}
+                          loading={exportLoading}
+                        >
+                          Xuất phiếu nhập kho
+                        </Button>
                         <Upload
                           showUploadList={false}
                           name="file"
