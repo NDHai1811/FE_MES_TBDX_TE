@@ -6,7 +6,7 @@ const qrcodeRegionId = "html5qr-code-full-region";
 // Creates the configuration object for Html5QrcodeScanner.
 const createConfig = (props) => {
   let config = {
-    facingMode: "environment",
+    videoConstraints: { facingMode: { exact: "environment" } },
   };
   if (props.fps) {
     config.fps = props.fps;
@@ -21,7 +21,7 @@ const createConfig = (props) => {
     config.disableFlip = props.disableFlip;
   }
   if (props.facingMode) {
-    config.facingMode = props.facingMode;
+    config.facingMode = props.facingMode || "environment";
   }
   if (props.formatsToSupport) {
     config.formatsToSupport = props.formatsToSupport;

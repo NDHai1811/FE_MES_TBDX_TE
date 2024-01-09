@@ -322,6 +322,7 @@ const Import = (props) => {
           setResData={setResData}
           setInfo={setInfo}
           setSelectedItem={setSelectedItem}
+          setResult={setResult}
         />
       )}
       {isScan && (
