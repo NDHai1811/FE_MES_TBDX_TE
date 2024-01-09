@@ -34,6 +34,7 @@ function PopupInTemKhoNvl(props) {
           onChange={(e) => onChangeQuantity(e.target.value, index)}
           placeholder="Nhập kg..."
           style={{ width: 100 }}
+          disabled={list}
         />
       ),
     },
@@ -79,14 +80,14 @@ function PopupInTemKhoNvl(props) {
       so_kg: parseInt(val.so_kg, 10),
     }));
 
-    sendResultPrint({data: resData})
+    sendResultPrint({ data: resData })
       .then((res) => {
         console.log({ res });
-        if(res.success){
+        if (res.success) {
           window.localStorage.removeItem("NhapLaiNvl");
           setVisible(false);
         }
-        
+
         // setCurrentScan([
         //   {
         //     material_id: res.data.parent_id,
@@ -160,7 +161,7 @@ function PopupInTemKhoNvl(props) {
       so_kg: parseInt(val.so_kg, 10),
     }));
 
-    handleNGMaterial({data: resData})
+    handleNGMaterial({ data: resData })
       .then((res) => {
         console.log({ res });
         setMaterials([]);
