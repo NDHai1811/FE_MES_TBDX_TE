@@ -14,7 +14,7 @@ function PopupQuetQrThanhPham(props) {
 
   const columns = [
     {
-      title: "Mã cuộn",
+      title: "Mã tem",
       dataIndex: "pallet_id",
       key: "pallet_id",
       align: "center",

@@ -49,11 +49,15 @@ export const exportNvlData = async (data) => {
 };
 
 export const getExportsNVL = async (params) => {
-  return await axios.get("/oi/warehouse/mlt/export/log-list", {params});
+  return await axios.get("/oi/warehouse/mlt/export/log-list", { params });
 };
 export const scanExportsNVL = async (params) => {
-  return await axios.get("/oi/warehouse/mlt/export/scan", {params});
+  return await axios.get("/oi/warehouse/mlt/export/scan", { params });
 };
 export const saveExportsNVL = async (params) => {
-  return await axios.get("/oi/warehouse/mlt/export/result", {params});
+  return await axios.get("/oi/warehouse/mlt/export/result", { params });
+};
+
+export const getWarehouseTpLogs = async () => {
+  return await axios.get("oi/warehouse/fg/import/logs");
 };
