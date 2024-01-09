@@ -9,6 +9,7 @@ import { useProfile } from "../components/hooks/UserHooks";
 import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
 
 const Screen = (props) => {
+  document.title = "Danh sách các màn"
   const { userProfile } = useProfile();
   const { Title } = Typography;
 

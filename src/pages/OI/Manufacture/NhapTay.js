@@ -131,7 +131,10 @@ const NhapTay = (props) => {
       render: (value) => value,
       onHeaderCell: () => {
         return {
-          onClick: onShowPopup,
+          onClick: ()=> lotCurrent && onShowPopup(),
+          style: {
+            cursor: 'pointer'
+          }
         };
       },
     },
@@ -164,7 +167,7 @@ const NhapTay = (props) => {
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
-  const [lotCurrent, setLotCurrent] = useState([]);
+  const [lotCurrent, setLotCurrent] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -266,21 +269,18 @@ const NhapTay = (props) => {
 
   useEffect(() => {
     getListMachine();
-    // (async ()=>{
-    //   var res = await getTem();
-    //   setListCheck(res)
-    // })()
-    loadDataRescursive();
   }, []);
 
-  const loadDataRescursive = async () => {
+  var timeout;
+  useEffect(() => {
+    clearTimeout(timeout)
+    loadDataRescursive(params);
+    return () => clearTimeout(timeout);
+  }, [params]);
+  
+  const loadDataRescursive = async (params) => {
     if (!machine_id) return;
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-    const res = await getLotByMachine(resData);
+    const res = await getLotByMachine(params);
     setData(res.data);
     if (res.data[0]?.status === 1) {
       setSelectedLot(res.data[0]);
@@ -289,11 +289,12 @@ const NhapTay = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-        setTimeout(function () {
-          loadDataRescursive();
-        }, 5000);
+      timeout = setTimeout(function () {
+        loadDataRescursive(params);
+      }, 5000);
     }
   };
+
 
   const getListMachine = () => {
     getMachines()
@@ -306,13 +307,7 @@ const NhapTay = (props) => {
   };
 
   const onConfirm = () => {
-    setLotCurrent((prevState) => {
-      let newState = [...prevState];
-      if (newState[0]) {
-        newState[0].san_luong = value;
-      }
-      return newState;
-    });
+    setLotCurrent({...lotCurrent, san_luong: value});
     setValue("");
     closePopup();
   };
@@ -345,7 +340,7 @@ const NhapTay = (props) => {
   };
 
   const onChangeLine = (value) => {
-    history.push("/manufacture/" + value);
+    window.location.href = ("/manufacture/" + value);
   };
 
   const onScan = async (result) => {
@@ -503,7 +498,7 @@ const NhapTay = (props) => {
               className="custom-table"
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
-              dataSource={lotCurrent}
+              dataSource={lotCurrent ? [lotCurrent] : []}
             />
           </Col>
           <Row
@@ -575,7 +570,7 @@ const NhapTay = (props) => {
               }
               onRow={(record, index) => {
                 return {
-                  onClick: () => setLotCurrent([record]),
+                  onClick: () => setLotCurrent(record),
                 };
               }}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
@@ -607,7 +602,7 @@ const NhapTay = (props) => {
           onOk={onConfirm}
         >
           <InputNumber
-            defaultValue={lotCurrent[0]?.san_luong}
+            defaultValue={lotCurrent?.san_luong}
             placeholder="Nhập sản lượng đầu ra"
             onChange={onChangeValue}
             style={{ width: "100%" }}
