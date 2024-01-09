@@ -17,13 +17,14 @@ const PrintTemplate = ({ info }) => {
         <table>
           <thead>
             <tr>
-              <th style={{ width: "50%" }}></th>
-              <th style={{ width: "50%" }}></th>
+              <th style={{ width: "33%" }}></th>
+              <th style={{ width: "33%" }}></th>
+              <th style={{ width: "33%" }}></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colSpan={2}>
+              <td colSpan={3}>
                 <div className="d-flex justify-content-between">
                   <QRCode
                     style={{ marginRight: "5px" }}
@@ -36,11 +37,11 @@ const PrintTemplate = ({ info }) => {
                     <h3
                       style={{
                         marginLeft: "8px",
-                        fontSize: "28px",
+                        fontSize: "24px",
                         marginTop: "18px",
                       }}
                     >
-                      TEM GỘP NHẬP KHO
+                      TEM GỘP
                     </h3>
                   </div>
                   <div className="flex-column">
@@ -58,17 +59,19 @@ const PrintTemplate = ({ info }) => {
               </td>
             </tr>
             <tr>
-              <td colSpan={2}>Khách hàng: {info[0]?.khach_hang}</td>
+              <td colSpan={3}>Khách hàng: {info[0]?.khach_hang}</td>
             </tr>
             <tr>
+              <td className="text-center">Mã quản lý</td>
               <td className="text-center">Mã quản lý</td>
               <td className="text-center">Số lượng</td>
             </tr>
             {info.map(function (detail) {
               return (
                 <tr>
-                  <td>{detail.mql}</td>
-                  <td>{detail.so_luong}</td>
+                  <td className="text-center">{detail.mdh}</td>
+                  <td className="text-center">{detail.mql}</td>
+                  <td className="text-center">{detail.so_luong}</td>
                 </tr>
               );
             })}

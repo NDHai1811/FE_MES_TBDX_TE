@@ -20,8 +20,7 @@
   td {
     border: 1px solid black;
     min-height: 150px;
-    max-width: 136px;
-    font-size: 14px;
+    font-size: 16px;
     word-wrap: break-word;
   }
 
@@ -31,8 +30,8 @@
     margin-top: auto;
     margin-bottom: auto;
     background-color: #fff;
-    width: 454px;
-    height: 378px;
+    width: 550px;
+    height: 700px;
     border-collapse: collapse;
   }
 }
