@@ -40,16 +40,23 @@ const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${to
 
 const columns = [
   {
-    title: "Mã Lot",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
     title: "Lô SX",
     dataIndex: "lo_sx",
     key: "lo_sx",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -79,30 +86,9 @@ const columns = [
     render: (value) => (value === 1 ? "OK" : "-"),
   },
   {
-    title: "Mã layout",
-    dataIndex: "layout_id",
-    key: "layout_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
     title: "MQL",
     dataIndex: "mql",
     key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -265,7 +251,7 @@ const Manufacture1 = (props) => {
     clearTimeout(interval)
     loadDataRescursive();
   }, [params]);
-  
+
   const loadDataRescursive = async () => {
     if (!machine_id) return;
     const res = await getLotByMachine(params);
@@ -277,9 +263,9 @@ const Manufacture1 = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-      interval = setTimeout(function () {
-        loadDataRescursive();
-      }, 5000);
+        interval = setTimeout(function () {
+          loadDataRescursive();
+        }, 5000);
     }
   };
 
@@ -345,8 +331,8 @@ const Manufacture1 = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
-      if(machine_id){
-        setParams({...params, machine_id})
+      if (machine_id) {
+        setParams({ ...params, machine_id })
       }
       if (machine_id === "S01") {
         print();
@@ -545,11 +531,7 @@ const Manufacture1 = (props) => {
               }
               pagination={false}
               bordered
-              columns={
-                machine_id === "S01"
-                  ? columns.filter((e, i) => i !== 0)
-                  : columns
-              }
+              columns={columns}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
