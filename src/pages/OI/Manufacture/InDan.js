@@ -113,9 +113,9 @@ const InDan = (props) => {
   const { machine_id } = useParams();
   const currentColumns = [
     {
-      title: machine_id === "S01" ? "Lô SX" : "Mã lot",
-      dataIndex: machine_id === "S01" ? "lot_id" : "lo_sx",
-      key: machine_id === "S01" ? "lot_id" : "lo_sx",
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
       align: "center",
       render: (value) => value || "-",
     },
@@ -154,6 +154,7 @@ const InDan = (props) => {
   const componentRef3 = useRef();
 
   const [params, setParams] = useState({
+    machine_id: machine_id,
     start_date: dayjs(),
     end_date: dayjs(),
   });
@@ -257,17 +258,18 @@ const InDan = (props) => {
     //   var res = await getTem();
     //   setListCheck(res)
     // })()
-    loadDataRescursive();
   }, []);
 
-  const loadDataRescursive = async () => {
+  var timeout;
+  useEffect(() => {
+    clearTimeout(timeout)
+    loadDataRescursive(params);
+    return () => clearTimeout(timeout);
+  }, [params]);
+  
+  const loadDataRescursive = async (params) => {
     if (!machine_id) return;
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-    const res = await getLotByMachine(resData);
+    const res = await getLotByMachine(params);
     setData(res.data);
     if (res.data[0]?.status === 1) {
       setSelectedLot(res.data[0]);
@@ -276,9 +278,9 @@ const InDan = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-        setTimeout(function () {
-          loadDataRescursive();
-        }, 5000);
+      timeout = setTimeout(function () {
+        loadDataRescursive(params);
+      }, 5000);
     }
   };
 
@@ -292,13 +294,7 @@ const InDan = (props) => {
 
   const getOverAllDetail = () => {
     setLoading(true);
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-
-    getOverAll(resData)
+    getOverAll(params)
       .then((res) => setOverall(res.data))
       .catch((err) => {
         console.error("Get over all error: ", err);
@@ -307,18 +303,13 @@ const InDan = (props) => {
   };
 
   const getListLotDetail = async () => {
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-    const res = await getLotByMachine(resData);
+    const res = await getLotByMachine(params);
     setLoading(true);
     return res.data;
   };
 
   const onChangeLine = (value) => {
-    history.push("/manufacture/" + value);
+    window.location.href = ("/manufacture/" + value);
   };
 
   const onScan = async (result) => {
@@ -344,6 +335,9 @@ const InDan = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
+      if(machine_id){
+        setParams({...params, machine_id})
+      }
       if (machine_id === "S01") {
         print();
       } else if (machine_id == "P06" || machine_id == "P15") {
