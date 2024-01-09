@@ -10,7 +10,7 @@ import {
 } from "../../api/oi/equipment";
 
 function PopupQuetQr(props) {
-  const { visible, setVisible, loSx, setSelectedItem } = props;
+  const { visible, setVisible, loSx, setSelectedItem, getLogs } = props;
   const [data, setData] = useState([]);
   const [columns, setColumns] = useState([]);
   const [checkData, setCheckData] = useState([]);
@@ -58,6 +58,7 @@ function PopupQuetQr(props) {
               mapping: "Đã mapping",
             }))
           );
+          getLogs?.();
         }
       })
       .catch((err) => console.log("Gửi dữ liệu mapping thất bại: ", err));
