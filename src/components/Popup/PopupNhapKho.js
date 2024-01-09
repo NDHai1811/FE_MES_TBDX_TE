@@ -161,7 +161,6 @@ function PopupNhapKhoNvl(props) {
         clearTimeout(scanRef.current);
       }
       scanRef.current = setTimeout(() => {
-        console.log(data);
         if (data.some(e=>!e.locator_id)) {
           const item = data.find((val) => !val.locator_id);
           const newData = data.map((val) => {
@@ -172,7 +171,6 @@ function PopupNhapKhoNvl(props) {
               ...val,
             };
           });
-          console.log(newData);
           setData(newData);
         }
       }, SCAN_TIME_OUT);
