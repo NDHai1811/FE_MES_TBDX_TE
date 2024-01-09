@@ -152,6 +152,10 @@ const PL2s = [
     value: "Thung 1 nap",
   },
   {
+    label: "Cánh chồm",
+    value: "Canh chom",
+  },
+  {
     label: "Pad U",
     value: "Pad U",
   },
