@@ -246,13 +246,14 @@ const Manufacture1 = (props) => {
     // })()
   }, []);
 
-  var interval;
+  var timeout;
   useEffect(() => {
-    clearTimeout(interval)
-    loadDataRescursive();
+    clearTimeout(timeout)
+    loadDataRescursive(params);
+    return () => clearTimeout(timeout);
   }, [params]);
-
-  const loadDataRescursive = async () => {
+  
+  const loadDataRescursive = async (params) => {
     if (!machine_id) return;
     const res = await getLotByMachine(params);
     setData(res.data);
@@ -263,9 +264,9 @@ const Manufacture1 = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-        interval = setTimeout(function () {
-          loadDataRescursive();
-        }, 5000);
+      timeout = setTimeout(function () {
+        loadDataRescursive(params);
+      }, 5000);
     }
   };
 
@@ -279,12 +280,6 @@ const Manufacture1 = (props) => {
 
   const getOverAllDetail = () => {
     setLoading(true);
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-
     getOverAll(params)
       .then((res) => setOverall(res.data))
       .catch((err) => {
@@ -294,18 +289,13 @@ const Manufacture1 = (props) => {
   };
 
   const getListLotDetail = async () => {
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
     const res = await getLotByMachine(params);
     setLoading(true);
     return res.data;
   };
 
   const onChangeLine = (value) => {
-    history.push("/manufacture/" + value);
+    window.location.href = ("/manufacture/" + value);
   };
 
   const onScan = async (result) => {

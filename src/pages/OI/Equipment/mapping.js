@@ -251,6 +251,7 @@ const Mapping = () => {
           setVisible={setVisible}
           loSx={selectedItem[0].lo_sx}
           setSelectedItem={setSelectedItem}
+          getLogs={getLogs}
         />
       )}
       {isShowPopup && (
@@ -258,6 +259,7 @@ const Mapping = () => {
           visible={isShowPopup}
           setVisible={setIsShowPopup}
           lo_sx={selectedItem?.[0]?.lo_sx}
+          getLogs={getLogs}
         />
       )}
     </React.Fragment>
