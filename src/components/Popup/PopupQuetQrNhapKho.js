@@ -39,9 +39,9 @@ function PopupQuetQrNhapKho(props) {
               render: (value, record, index) => index + 1,
             },
             {
-              title: "Mã lot",
-              dataIndex: "lot_id",
-              key: "lot_id",
+              title: "Mã lô sản xuất",
+              dataIndex: "lo_sx",
+              key: "lo_sx",
               align: "center",
               render: (value) => value || "-",
             },
@@ -65,7 +65,7 @@ function PopupQuetQrNhapKho(props) {
 
   useEffect(() => {
     if (currentResult) {
-      const isExisted = data?.some((val) => val?.lot_id === currentResult);
+      const isExisted = data?.some((val) => val?.lo_sx === currentResult);
       if (!isExisted) {
         getQuantity();
       }
@@ -73,12 +73,12 @@ function PopupQuetQrNhapKho(props) {
   }, [currentResult]);
 
   const getQuantity = () => {
-    getQuantityLot({ lot_id: currentResult })
+    getQuantityLot({ lo_sx: currentResult })
       .then((res) => {
-        if (res.data?.id) {
+        if (res.data?.lo_sx) {
           setData((prevData) => [
             ...prevData,
-            { lot_id: res.data.id, so_luong: res.data.so_luong },
+            { lo_sx: res.data.lo_sx, so_luong: res.data.so_luong },
           ]);
         }
       })
@@ -106,9 +106,9 @@ function PopupQuetQrNhapKho(props) {
                 render: (value, record, index) => index + 1,
               },
               {
-                title: "Mã lot",
-                dataIndex: "lot_id",
-                key: "lot_id",
+                title: "Mã lô sản xuất",
+                dataIndex: "lo_sx",
+                key: "lo_sx",
                 align: "center",
                 render: (value) => value || "-",
               },
@@ -134,13 +134,13 @@ function PopupQuetQrNhapKho(props) {
 
   const sendResult = () => {
     const totalQuantity = data.reduce((sum, val) => sum + val.so_luong, 0);
-    const lotIds = data.map((val) => val.lot_id);
+    const lotIds = data.map((val) => val.lo_sx);
 
     const resData = {
       pallet_id: palletId,
       number_of_lot: data.length,
       so_luong: totalQuantity,
-      lot_id: lotIds,
+      lo_sx: lotIds,
     };
 
     sendStorePallet(resData)
