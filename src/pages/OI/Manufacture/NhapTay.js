@@ -99,7 +99,7 @@ const columns = [
 ];
 
 const NhapTay = (props) => {
-  document.title = "Sản xuất";
+  document.title = "Sản xuất máy thủ công";
   const { machine_id } = useParams();
   const currentColumns = [
     {

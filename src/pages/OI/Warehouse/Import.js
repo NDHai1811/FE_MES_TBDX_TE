@@ -281,6 +281,8 @@ const Import = (props) => {
           setVisible={setVisible}
           data={logs}
           setCurrentScan={setCurrentScan}
+          getLogs={getLogs}
+          getOverAll={getOverAll}
         />
       )}
       {isScan && (

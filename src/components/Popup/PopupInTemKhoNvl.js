@@ -8,12 +8,23 @@ import { DeleteOutlined } from "@ant-design/icons";
 const SCAN_TIME_OUT = 1000;
 
 function PopupInTemKhoNvl(props) {
-  const { visible, setVisible, setCurrentScan } = props;
+  const { visible, setVisible, setCurrentScan, getLogs, getOverAll } = props;
   const [messageApi, contextHolder] = message.useMessage();
   const list = JSON.parse(window.localStorage.getItem("NhapLaiNvl"));
   const [materials, setMaterials] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
   const scanRef = useRef();
+
+  const messageAlert = (content, type = "error") => {
+    messageApi.open({
+      type,
+      content,
+      className: "custom-class",
+      style: {
+        marginTop: "50%",
+      },
+    });
+  };
 
   const columns = [
     {
@@ -86,6 +97,8 @@ function PopupInTemKhoNvl(props) {
         if (res.success) {
           window.localStorage.removeItem("NhapLaiNvl");
           setVisible(false);
+          getLogs?.();
+          getOverAll?.();
         }
 
         // setCurrentScan([
@@ -102,15 +115,22 @@ function PopupInTemKhoNvl(props) {
   useEffect(() => {
     if (currentData) {
       if (materials.length < 3) {
-        if (materials.length > 0) {
-          setMaterials([
-            ...materials,
-            { material_id: currentData, so_kg: "", locator_id: "" },
-          ]);
+        const isExisted = materials.some(
+          (val) => val.material_id === currentData
+        );
+        if (!isExisted) {
+          if (materials.length > 0) {
+            setMaterials([
+              ...materials,
+              { material_id: currentData, so_kg: "", locator_id: "" },
+            ]);
+          } else {
+            setMaterials([
+              { material_id: currentData, so_kg: "", locator_id: "" },
+            ]);
+          }
         } else {
-          setMaterials([
-            { material_id: currentData, so_kg: "", locator_id: "" },
-          ]);
+          messageAlert("Mã cuộn bị trùng, Vui lòng quét mã cuộn khác!");
         }
       }
     }
