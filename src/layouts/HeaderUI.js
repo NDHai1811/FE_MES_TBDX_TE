@@ -82,6 +82,10 @@ const items = [
         key: "warehouse/quan-ly-kho-nvl",
       },
       {
+        label: "Kế hoạch xuất kho",
+        key: "warehouse/ke-hoach-xuat-kho",
+      },
+      {
         label: "Quản lý giấy cuộn",
         key: "warehouse/quan-ly-giay-cuon",
       },

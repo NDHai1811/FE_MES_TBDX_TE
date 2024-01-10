@@ -437,6 +437,7 @@ export async function exportWarehouses(params) {
   return res;
 }
 
+
 //Cells
 export async function getCells(params) {
   const res = await axios.get("/cells/list", { params });

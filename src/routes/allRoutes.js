@@ -54,6 +54,7 @@ import QCByLine from "../pages/OI/Quality/QCByLine";
 import Orders from "../pages/UI/MasterData/Orders";
 import Layout from "../pages/UI/Manufacture/Layout";
 import Buyer from "../pages/UI/Manufacture/Buyer";
+import WarehouseMLT from "../pages/UI/Warehouse/WarehouseMLT";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -77,9 +78,10 @@ const authProtectedRoutes = [
   { path: ["/ui/equipment/thong-ke-loi"], component: UIEquipment1 },
   { path: ["/ui/equipment/thong-so-may"], component: UIEquipment2 },
   { path: ["/ui/equipment/quan-ly-khuon-film"], component: QuanLyKhuonFilm },
+  { path: ["/ui/warehouse/ke-hoach-xuat-kho"], component: WarehouseExportPlan },
   {
     path: ["/ui", "/ui/warehouse/quan-ly-giay-cuon"],
-    component: WarehouseExportPlan,
+    component: WarehouseMLT,
   },
   { path: ["/ui/warehouse/quan-ly-kho"], component: ThanhPhamGiay },
   { path: ["/ui/warehouse/quan-ly-kho-nvl"], component: KhoNVL },
