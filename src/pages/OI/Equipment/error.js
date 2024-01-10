@@ -68,7 +68,7 @@ const Error = () => {
 
   useEffect(() => {
     getLogs();
-  }, []);
+  }, [machine_id]);
 
   const getLogs = () => {
     getErrorLogs({ machine_id: machine_id })
@@ -189,7 +189,7 @@ const Error = () => {
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>
         <Table
-          rowClassName={(record, index) => "table-row-light"}
+          rowClassName={(record, index) =>record.ten_su_co ? "table-row-grey" : "table-row-light"}
           locale={{ emptyText: "Trống" }}
           pagination={false}
           bordered={true}
@@ -214,6 +214,7 @@ const Error = () => {
           visible={visible}
           setVisible={setVisible}
           selectedError={selectedError}
+          getLogs={getLogs}
         />
       )}
     </React.Fragment>
