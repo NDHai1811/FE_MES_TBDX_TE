@@ -98,7 +98,7 @@ const options = [
 ];
 
 const Import = (props) => {
-  document.title = "Kho NVL";
+  document.title = "Kho thành phẩm";
   const { line } = useParams();
   const history = useHistory();
   const [selectedItem, setSelectedItem] = useState([
