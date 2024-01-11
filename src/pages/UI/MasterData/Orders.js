@@ -115,69 +115,69 @@ const layoutTypes = [
 const PL1s = [
   {
     label: "THÙNG",
-    value: "Thung",
+    value: "thung",
   },
   {
     label: "PAD",
-    value: "Pad",
+    value: "pad",
   },
   {
     label: "INNER",
-    value: "Inner",
+    value: "inner",
   },
 ];
 const PL2s = [
   {
     label: "Thùng 1 mảnh",
-    value: "Thung 1 manh",
+    value: "thung-1-manh",
   },
   {
     label: "Thùng 2 mảnh",
-    value: "Thung 2 manh",
+    value: "thung-2-manh",
   },
   {
     label: "Thùng 4 mảnh",
-    value: "Thung 4 manh",
+    value: "thung-4-manh",
   },
   {
     label: "Thùng thường",
-    value: "Thung thuong",
+    value: "thung-thuong",
   },
   {
     label: "Thùng bế",
-    value: "Thung be",
+    value: "thung-be",
   },
   {
     label: "Thùng 1 nắp",
-    value: "Thung 1 nap",
+    value: "thung-1-nap",
   },
   {
     label: "Cánh chồm",
-    value: "Canh chom",
+    value: "canh-chom",
   },
   {
     label: "Pad U",
-    value: "Pad U",
+    value: "pad-u",
   },
   {
     label: "Pad Z, rãnh",
-    value: "Pad Z, ranh",
+    value: "pad-z-ranh",
   },
   {
     label: "Giấy tấm không tề",
-    value: "Giay tam khong te",
-  },
+    value: "giay-tam-khong-te",
+ },
   {
     label: "Giấy tấm có tề 1 mảnh (DxR)",
-    value: "Giay tam co te 1 manh (DxR)",
+    value: "giay-tam-co-te-1-manh-dxr",
   },
   {
     label: "Giấy tấm có tề 1 mảnh (DxRxC)",
-    value: "Giay tam co te 1 manh (DxRxC)",
+    value: "giay-tam-co-te-1-manh-dxrxc",
   },
   {
     label: "Giấy tấm có tề 2 mảnh (DxRxC)",
-    value: "Giay tam co te 2 manh (DxRxC)",
+    value: "giay-tam-co-te-2-manh-dxrxc",
   },
 ];
 const Orders = () => {
@@ -325,6 +325,7 @@ const Orders = () => {
       width: "4%",
       editable: true,
       checked: true,
+      render: (value)=>PL1s.find(e=>e.value === value)?.label
     },
     {
       title: "Phân loại 2",
@@ -334,6 +335,7 @@ const Orders = () => {
       width: "4%",
       editable: true,
       checked: true,
+      render: (value)=>PL2s.find(e=>e.value === value)?.label
     },
     {
       title: "Mã buyer",
@@ -686,22 +688,42 @@ const Orders = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options:
-          col.dataIndex === "buyer_id"
-            ? buyers
-            : col.dataIndex === "layout_type"
-              ? layoutTypes
-              : col.dataIndex === "layout_id"
-                ? layouts
-                : col.dataIndex === "phan_loai_1"
-                  ? PL1s
-                  : col.dataIndex === "phan_loai_2"
-                    ? PL2s
-                    : listDRC,
-      }),
+        options: options(col.dataIndex)
+      })
     };
   });
 
+  const options = (dataIndex) => {
+    var record = data.find(e=>e.id === editingKey);
+    let filteredOptions = [];
+    switch (dataIndex) {
+      case 'buyer_id':
+        var phan_loai_1 = PL1s.find(e=>e.value.toLowerCase() === record?.phan_loai_1.toLowerCase())?.label;
+        filteredOptions = buyers.filter(e=>e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
+        break;
+      case 'layout_type': 
+        filteredOptions = layoutTypes; 
+        break;
+      case 'layout_id': 
+        filteredOptions = layouts; 
+        break;
+      case 'phan_loai_1':
+        var options = record?.customer_specifications ?? [];
+        filteredOptions = PL1s.filter(e=>options.some(o=>o.phan_loai_1 === e.value));
+        break;
+      case 'phan_loai_2':
+        filteredOptions = PL2s;
+        break;
+      default:
+        var options = record?.customer_specifications ?? [];
+        filteredOptions = options.filter(e=>record?.phan_loai_1 === e.phan_loai_1 && record?.customer_id === e.customer_id).map(e=>({value: e.drc_id, label: e.drc_id}));
+        if(filteredOptions.length <= 0){
+          filteredOptions = listDRC;
+        }
+        break;
+    }
+    return filteredOptions;
+  }
   const handleVisibleChange = (checkedValues) => {
     if (mergedColumns) {
       const uncheckedColumns = mergedColumns
@@ -776,20 +798,26 @@ const Orders = () => {
   };
 
   const removeAccents = (str) => {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(str){
+      // return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      return PL1s.find(e=>e.value === str)?.label;
+    }
+    else{
+      return "";
+    }
   };
 
   const getBuyerList = async () => {
     const item = data.find((value) => value.key === editingKey);
     const res = await getBuyers();
-    const filteredBuyers = res.filter(
-      (val) =>
-        val.customer_id.startsWith(item?.customer_id) &&
-        removeAccents(val.phan_loai_1)
-          .toLowerCase()
-          .endsWith(removeAccents(item?.phan_loai_1).toLowerCase())
-    );
-    setBuyers(filteredBuyers.map((val) => ({ label: val.id, value: val.id })));
+    // const filteredBuyers = res.filter(
+    //   (val) =>
+    //     val.customer_id.startsWith(item?.customer_id) &&
+    //     removeAccents(val.phan_loai_1)
+    //       .toLowerCase()
+    //       .endsWith(removeAccents(item?.phan_loai_1).toLowerCase())
+    // );
+    setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
   };
 
   const onSelect = (value, dataIndex) => {
