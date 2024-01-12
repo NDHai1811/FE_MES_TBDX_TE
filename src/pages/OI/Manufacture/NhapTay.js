@@ -21,6 +21,7 @@ import {
   getLotByMachine,
   getInfoTem,
   scanQrCode,
+  manualInput,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
@@ -51,8 +52,8 @@ const columns = [
   },
   {
     title: "Sản lượng đầu ra",
-    dataIndex: "san_luong",
-    key: "san_luong",
+    dataIndex: "sl_dau_ra_hang_loat",
+    key: "sl_dau_ra_hang_loat",
     align: "center",
     render: (value) => value || "-",
   },
@@ -187,11 +188,9 @@ const NhapTay = (props) => {
   };
 
   const reloadData = async () => {
-    // const resData = await getListLotDetail();
-    // setData(resData);
-    // if (resData?.[0]?.status === 1) {
-    //   setSelectedLot(resData?.[0]);
-    // }
+    const resData = await getListLotDetail();
+    setData(resData);
+    setLotCurrent(resData.find(e=>e?.lo_sx === lotCurrent?.lo_sx));
     getOverAllDetail();
   };
   const overallColumns = [
@@ -236,15 +235,15 @@ const NhapTay = (props) => {
     },
   ];
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     (async () => {
-  //       if (machine_id) {
-  //         reloadData();
-  //       }
-  //     })();
-  //   }
-  // }, [machine_id, machineOptions, loadData]);
+  useEffect(() => {
+    if (machineOptions.length > 0) {
+      (async () => {
+        if (machine_id) {
+          reloadData();
+        }
+      })();
+    }
+  }, [machine_id, machineOptions, params.start_date, params.end_date]);
 
   // useEffect(() => {
   //   if (machineOptions.length > 0) {
@@ -268,29 +267,29 @@ const NhapTay = (props) => {
     getListMachine();
   }, []);
 
-  var timeout;
-  useEffect(() => {
-    clearTimeout(timeout)
-    const loadDataRescursive = async (params,machine_id) => {
-      console.log(params, machine_id);
-      if (!machine_id) return;
-      const res = await getLotByMachine(params);
-      setData(res.data);
-      if (res.data[0]?.status === 1) {
-        setSelectedLot(res.data[0]);
-      } else {
-        setSelectedLot(null);
-      }
-      if (res.success) {
-        if (window.location.href.indexOf("manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
-      }
-    };
-    loadDataRescursive(params, machine_id);
-    return () => clearTimeout(timeout);
-  }, [params.start_date, params.end_date, params.machine_id]);
+  // var timeout;
+  // useEffect(() => {
+  //   clearTimeout(timeout)
+  //   const loadDataRescursive = async (params,machine_id) => {
+  //     console.log(params, machine_id);
+  //     if (!machine_id) return;
+  //     const res = await getLotByMachine(params);
+  //     setData(res.data);
+  //     if (res.data[0]?.status === 1) {
+  //       setSelectedLot(res.data[0]);
+  //     } else {
+  //       setSelectedLot(null);
+  //     }
+  //     if (res.success) {
+  //       if (window.location.href.indexOf("manufacture") > -1)
+  //       timeout = setTimeout(function () {
+  //         loadDataRescursive(params, machine_id);
+  //       }, 5000);
+  //     }
+  //   };
+  //   loadDataRescursive(params, machine_id);
+  //   return () => clearTimeout(timeout);
+  // }, [params.start_date, params.end_date, params.machine_id]);
 
   const getListMachine = () => {
     // getMachines()
@@ -305,10 +304,14 @@ const NhapTay = (props) => {
     setValue(val);
   };
 
-  const onConfirm = () => {
-    setLotCurrent({...lotCurrent, san_luong: value});
-    setValue("");
-    closePopup();
+  const onConfirm = async () => {
+    var res = await manualInput({...lotCurrent, san_luong: value, machine_id: machine_id});
+    if(res.success){
+      setLotCurrent({...lotCurrent, san_luong: value});
+      setValue("");
+      closePopup();
+      reloadData();
+    }
   };
 
   const getOverAllDetail = () => {
@@ -349,7 +352,7 @@ const NhapTay = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if (record?.id === lotCurrent?.id) {
+    if (record?.lo_sx === lotCurrent?.lo_sx) {
       return "table-row-green";
     }
     // if (record.status === 2) {

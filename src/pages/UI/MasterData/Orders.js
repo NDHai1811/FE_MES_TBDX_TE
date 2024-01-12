@@ -737,18 +737,26 @@ const Orders = () => {
 
   const content = (
     <Checkbox.Group
-      style={{ width: "100%", display: "flex", flexWrap: "wrap" }}
-      options={mergedColumns
-        .filter((col) => col.key !== "action")
-        .map((col) => ({
-          label: col.title,
-          value: col.key,
-        }))}
+      style={{ width: "100%"}}
+      // options={mergedColumns
+      //   .filter((col) => col.key !== "action")
+      //   .map((col) => ({
+      //     label: col.title,
+      //     value: col.key,
+      //   }))}
       defaultValue={mergedColumns
         .filter((col) => col.key !== "action")
         .map((col) => col.key)}
       onChange={handleVisibleChange}
-    />
+    >
+      <Row gutter={[4, 4]} style={{width:'100%'}}>
+        {
+          mergedColumns
+          .filter((col) => col.key !== "action")
+          .map((col) => (<Col span={4}><Checkbox value={col.dataIndex}>{col.title}</Checkbox></Col>))
+        }
+      </Row>
+    </Checkbox.Group>
   );
 
   const showModal = (record) => {
