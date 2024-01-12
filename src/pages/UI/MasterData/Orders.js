@@ -685,7 +685,7 @@ const Orders = () => {
     let filteredOptions = [];
     switch (dataIndex) {
       case 'buyer_id':
-        var phan_loai_1 = PL1s.find(e=>e.value.toLowerCase() === record?.phan_loai_1.toLowerCase())?.label;
+        var phan_loai_1 = PL1s.find(e=>e.value?.toLowerCase() === record?.phan_loai_1?.toLowerCase())?.label;
         filteredOptions = buyers.filter(e=>e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
         break;
       case 'layout_type': 
