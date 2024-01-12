@@ -158,7 +158,8 @@ const NhapTay = (props) => {
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  const [machineOptions, setMachineOptions] = useState([]);
+  // const [machineOptions, setMachineOptions] = useState([]);
+  const {machineOptions = []} = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
@@ -235,25 +236,25 @@ const NhapTay = (props) => {
     },
   ];
 
-  useEffect(() => {
-    if (machineOptions.length > 0) {
-      (async () => {
-        if (machine_id) {
-          reloadData();
-        }
-      })();
-    }
-  }, [machine_id, machineOptions, loadData]);
+  // useEffect(() => {
+  //   if (machineOptions.length > 0) {
+  //     (async () => {
+  //       if (machine_id) {
+  //         reloadData();
+  //       }
+  //     })();
+  //   }
+  // }, [machine_id, machineOptions, loadData]);
 
-  useEffect(() => {
-    if (machineOptions.length > 0) {
-      var target = machineOptions.find((e) => e.value === machine_id);
-      if (!target) {
-        target = machineOptions[0];
-      }
-      history.push("/manufacture/" + target.value);
-    }
-  }, [machineOptions]);
+  // useEffect(() => {
+  //   if (machineOptions.length > 0) {
+  //     var target = machineOptions.find((e) => e.value === machine_id);
+  //     if (!target) {
+  //       target = machineOptions[0];
+  //     }
+  //     history.push("/manufacture/" + target.value);
+  //   }
+  // }, [machineOptions]);
 
   useEffect(() => {
     if (isScan === 1) {
@@ -292,12 +293,12 @@ const NhapTay = (props) => {
   }, [params.start_date, params.end_date, params.machine_id]);
 
   const getListMachine = () => {
-    getMachines()
-    .then((res) => {
-      setMachineOptions(res.data);
-      window.localStorage.setItem('machines', JSON.stringify(res.data));
-    })
-      .catch((err) => console.log("Get list machine error: ", err));
+    // getMachines()
+    // .then((res) => {
+    //   setMachineOptions(res.data);
+    //   window.localStorage.setItem('machines', JSON.stringify(res.data));
+    // })
+    //   .catch((err) => console.log("Get list machine error: ", err));
   };
 
   const onChangeValue = (val) => {
