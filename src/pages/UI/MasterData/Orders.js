@@ -215,8 +215,8 @@ const Orders = () => {
   const colDetailTable = [
     {
       title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      dataIndex: "short_name",
+      key: "short_name",
       align: "center",
       editable: true,
       checked: true,
