@@ -701,16 +701,15 @@ const Orders = () => {
         filteredOptions = layouts;
         break;
       case 'phan_loai_1':
-        var options = record?.customer_specifications ?? [];
-        filteredOptions = PL1s.filter(e => options.some(o => o.phan_loai_1 === e.value));
+        filteredOptions = PL1s;
         break;
       case 'phan_loai_2':
         filteredOptions = PL2s;
         break;
       default:
         var options = record?.customer_specifications ?? [];
-        filteredOptions = options.filter(e => record?.phan_loai_1 === e.phan_loai_1 && record?.customer_id === e.customer_id).map(e => ({ value: e.drc_id, label: e.drc_id }));
-        if (filteredOptions.length <= 0) {
+        filteredOptions = options.filter(e=>record?.phan_loai_1 === e?.phan_loai_1 && record?.customer_id === e?.customer_id).map(e=>({value: e.drc_id, label: e.drc_id}));
+        if(filteredOptions.length <= 0){
           filteredOptions = listDRC;
         }
         break;
