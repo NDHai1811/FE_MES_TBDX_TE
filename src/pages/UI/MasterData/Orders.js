@@ -311,15 +311,6 @@ const Orders = () => {
       checked: true,
     },
     {
-      title: "Quy cách DRC",
-      dataIndex: "quy_cach_drc",
-      key: "quy_cach_drc",
-      align: "center",
-      width: "2%",
-      editable: true,
-      checked: true,
-    },
-    {
       title: "Phân loại 1",
       dataIndex: "phan_loai_1",
       key: "phan_loai_1",
@@ -328,6 +319,15 @@ const Orders = () => {
       editable: true,
       checked: true,
       render: (value) => PL1s.find(e => e.value === value)?.label
+    },
+    {
+      title: "Quy cách DRC",
+      dataIndex: "quy_cach_drc",
+      key: "quy_cach_drc",
+      align: "center",
+      width: "2%",
+      editable: true,
+      checked: true,
     },
     {
       title: "Phân loại 2",
@@ -708,8 +708,8 @@ const Orders = () => {
         break;
       default:
         var options = record?.customer_specifications ?? [];
-        filteredOptions = options.filter(e=>record?.phan_loai_1 === e?.phan_loai_1 && record?.customer_id === e?.customer_id).map(e=>({value: e.drc_id, label: e.drc_id}));
-        if(filteredOptions.length <= 0){
+        filteredOptions = options.filter(e => record?.phan_loai_1 === e?.phan_loai_1 && record?.customer_id === e?.customer_id).map(e => ({ value: e.drc_id, label: e.drc_id }));
+        if (filteredOptions.length <= 0) {
           filteredOptions = listDRC;
         }
         break;
@@ -1339,6 +1339,7 @@ const Orders = () => {
                     current: page,
                     size: 'default',
                     total: totalPage,
+                    showSizeChanger: true,
                     onChange: (page, pageSize) => {
                       setPage(page);
                       setPageSize(pageSize);
