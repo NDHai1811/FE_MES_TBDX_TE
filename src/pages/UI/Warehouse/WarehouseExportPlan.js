@@ -364,15 +364,6 @@ const WarehouseExportPlan = () => {
                 layout="vertical"
                 onFinish={btn_click}
               >
-                <Form.Item label="Mã buyer" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                    placeholder="Nhập mã buyer"
-                  />
-                </Form.Item>
                 <Form.Item label="Mã khách hàng" className="mb-3">
                   <Input
                     allowClear
@@ -380,6 +371,24 @@ const WarehouseExportPlan = () => {
                       setParams({ ...params, customer_id: e.target.value })
                     }
                     placeholder="Nhập mã khách hàng"
+                  />
+                </Form.Item>
+                <Form.Item label="Mã đơn hàng" className="mb-3">
+                  <Input
+                    allowClear
+                    onChange={(e) =>
+                      setParams({ ...params, mdh: e.target.value })
+                    }
+                    placeholder="Nhập mã đơn hàng"
+                  />
+                </Form.Item>
+                <Form.Item label="Mã quản lý" className="mb-3">
+                  <Input
+                    allowClear
+                    onChange={(e) =>
+                      setParams({ ...params, mql: e.target.value })
+                    }
+                    placeholder="Nhập mã quản lý"
                   />
                 </Form.Item>
                 <Form.Item style={{ textAlign: "center" }}>

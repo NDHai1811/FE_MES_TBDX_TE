@@ -560,15 +560,6 @@ const Orders = () => {
       checked: true,
     },
     {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngay_dat_hang",
-      key: "ngay_dat_hang",
-      align: "center",
-      width: "2.6%",
-      editable: true,
-      checked: true,
-    },
-    {
       title: "Ngày giao hàng SX",
       dataIndex: "han_giao_sx",
       key: "han_giao_sx",
