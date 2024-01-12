@@ -82,7 +82,7 @@ const EditableCell = ({
             format={COMMON_DATE_TABLE_FORMAT_REQUEST}
             placeholder="Chọn ngày"
             value={dateValue}
-            onChange={(value) => value.isValid() && onChange(value, dataIndex)}
+            onChange={(value) => onChange(value, dataIndex)}
           />
         ) : (
           <Form.Item
@@ -598,6 +598,14 @@ const Orders = () => {
       checked: true,
     },
     {
+      title: "Ghi chú sóng",
+      dataIndex: "note_3",
+      key: "note_3",
+      align: "center",
+      editable: true,
+      checked: true,
+    },
+    {
       title: "Tác vụ",
       dataIndex: "action",
       key: "action",
@@ -844,11 +852,12 @@ const Orders = () => {
       }
       return { ...val };
     });
-    value.isValid() && setData(items);
+    console.log(items);
+    setData(items);
   };
 
   function btn_click() {
-    setParams({...params, page: 1, pageSize: 10})
+    loadListTable(params)
   }
 
   const onAdd = () => {
@@ -909,7 +918,7 @@ const Orders = () => {
   };
   useEffect(() => {
     (async () => {
-      loadListTable();
+      loadListTable(params);
     })();
   }, [params.page, params.pageSize]);
 
@@ -946,9 +955,9 @@ const Orders = () => {
         item?.han_giao_sx,
         COMMON_DATE_TABLE_FORMAT_REQUEST
       );
-      !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
-      !item?.han_giao && delete row?.han_giao;
-      !item?.han_giao_sx && delete row?.han_giao_sx;
+      // !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
+      // !item?.han_giao && delete row?.han_giao;
+      // !item?.han_giao_sx && delete row?.han_giao_sx;
     }
 
     if (typeof editingKey === "number") {
