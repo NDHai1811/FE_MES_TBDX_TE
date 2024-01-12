@@ -117,6 +117,10 @@ const items = [
         key: "master-data/cong-doan",
       },
       {
+        label: "Khách hàng",
+        key: "master-data/customer",
+      },
+      {
         label: "Máy và NVL",
         children: [
           {

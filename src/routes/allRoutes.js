@@ -54,6 +54,7 @@ import QCByLine from "../pages/OI/Quality/QCByLine";
 import Orders from "../pages/UI/MasterData/Orders";
 import Layout from "../pages/UI/Manufacture/Layout";
 import Buyer from "../pages/UI/Manufacture/Buyer";
+import Customer from "../pages/UI/MasterData/Customer";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -118,6 +119,7 @@ const authProtectedRoutes = [
   { path: ["/ui/master-data/maintenance"], component: Maintenance },
   { path: ["/ui/manufacture/don-hang"], component: Orders },
   { path: ["/ui/manufacture/danh-sach-buyer"], component: Buyer },
+  { path: ["/ui/master-data/customer"], component: Customer },
   {
     path: ["/ui/master-data/maintenance/create"],
     component: CreateMaintenance,

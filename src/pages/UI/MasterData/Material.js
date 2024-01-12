@@ -49,6 +49,7 @@ const Materials = () => {
   const [editingKey, setEditingKey] = useState("");
   const onUpdate = async () => {
     const row = await form.validateFields();
+    console.log(row);
     const item = data.find((val) => val.key === editingKey);
 
     if (typeof editingKey === "number") {
@@ -134,6 +135,14 @@ const Materials = () => {
       key: "dinh_luong",
       align: "center",
       editable: true,
+    },
+    {
+      title: "FSC",
+      dataIndex: "fsc",
+      key: "fsc",
+      align: "center",
+      editable: true,
+      render: (value, item, index) => (value ? "X" : ""),
     },
     {
       title: "Tác vụ",
@@ -280,19 +289,6 @@ const Materials = () => {
       message.info("Chưa chọn bản ghi cần xóa");
     }
   };
-  const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
-  const onEdit = () => {
-    if (listCheck.length > 1) {
-      message.info("Chỉ chọn 1 bản ghi để chỉnh sửa");
-    } else if (listCheck.length == 0) {
-      message.info("Chưa chọn bản ghi cần chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue(result);
-      setOpenMdlEdit(true);
-      setTitleMdlEdit("Cập nhật");
-    }
-  };
   const componentRef1 = useRef();
 
   const handlePrint = useReactToPrint({
@@ -300,9 +296,14 @@ const Materials = () => {
   });
 
   const onInsert = () => {
-    setTitleMdlEdit("Thêm mới");
     form.resetFields();
-    setOpenMdlEdit(true);
+    setData([
+      {
+        key: data.length + 1,
+      },
+      ...data,
+    ]);
+    setEditingKey(data.length + 1);
   };
   const [form] = Form.useForm();
   const onFinish = async (values) => {
@@ -424,10 +425,9 @@ const Materials = () => {
             style={{ height: "100%" }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
           >
-            <Divider>Thời gian truy vấn</Divider>
+            {/* <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <DatePicker
                     allowClear={false}
@@ -449,7 +449,7 @@ const Materials = () => {
                   />
                 </Space>
               </Form>
-            </div>
+            </div> */}
             <Divider>Điều kiện truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -459,6 +459,9 @@ const Materials = () => {
                 >
                   <Input
                     placeholder={"Nhập mã cuộn TBDX"}
+                    onChange={(e) =>
+                      setParams({ ...params, id: e.target.value })
+                    }
                   />
                 </Form.Item>
                 <Form.Item
@@ -467,6 +470,9 @@ const Materials = () => {
                 >
                   <Input
                     placeholder={"Nhập mã cuộn NCC"}
+                    onChange={(e) =>
+                      setParams({ ...params, ma_cuon_ncc: e.target.value })
+                    }
                   />
                 </Form.Item>
                 <Form.Item
@@ -475,6 +481,9 @@ const Materials = () => {
                 >
                   <Input
                     placeholder={"Nhập loại giấy"}
+                    onChange={(e) =>
+                      setParams({ ...params, loai_giay: e.target.value })
+                    }
                   />
                 </Form.Item>
               </Form>
@@ -539,7 +548,7 @@ const Materials = () => {
                   </Button>
                 </Upload>
                 <Button type="primary" onClick={onInsert}>
-                  Thêm
+                  Thêm NVL
                 </Button>
                 <Button type="primary" onClick={handlePrint}>
                   In tem NVL
@@ -554,13 +563,13 @@ const Materials = () => {
             }
           >
             <Spin spinning={loading}>
-              <Form form={form}>
+              <Form form={form} component={false}>
               <Table
                 bordered
                 columns={mergedColumns}
                 dataSource={data}
                 className="h-100"
-                // rowSelection={rowSelection}
+                rowSelection={rowSelection}
                 size="small"
                 components={{
                   body: {
@@ -573,7 +582,7 @@ const Materials = () => {
           </Card>
         </Col>
       </Row>
-      <Modal
+      {/* <Modal
         title={isEdit ? "Cập nhật" : "Thêm mới"}
         open={openMdl}
         onCancel={() => setOpenMdl(false)}
@@ -649,7 +658,7 @@ const Materials = () => {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
