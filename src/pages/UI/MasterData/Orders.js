@@ -183,7 +183,13 @@ const PL2s = [
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
   const [form] = Form.useForm();
-  const [params, setParams] = useState({});
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const [editingKey, setEditingKey] = useState("");
   const [splitKey, setSplitKey] = useState("");
   const [data, setData] = useState([]);
@@ -842,7 +848,7 @@ const Orders = () => {
   };
 
   function btn_click() {
-    loadListTable(params);
+    setParams({...params, page: 1, pageSize: 10})
   }
 
   const onAdd = () => {
@@ -892,8 +898,9 @@ const Orders = () => {
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getOrders(params);
+    setTotalPage(res.totalPage);
     setData(
-      res.map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
@@ -901,9 +908,9 @@ const Orders = () => {
   };
   useEffect(() => {
     (async () => {
-      loadListTable(params);
+      loadListTable();
     })();
-  }, []);
+  }, [params.page, params.pageSize]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -1313,7 +1320,16 @@ const Orders = () => {
                   rowSelection={rowSelection}
                   size="small"
                   bordered
-                  pagination={{ position: ["bottomRight"] }}
+                  pagination={{
+                    current: page,
+                    size: 'default',
+                    total: totalPage,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    }
+                  }}
                   components={{
                     body: {
                       cell: EditableCell,
@@ -1336,7 +1352,7 @@ const Orders = () => {
       </Row>
       <Modal
         title="Tách đơn hàng"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         okText="Lưu"

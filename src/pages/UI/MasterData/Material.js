@@ -41,9 +41,13 @@ import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 const Materials = () => {
   document.title = "Quản lý nguyên vật liệu";
   const [listCheck, setListCheck] = useState([]);
-  const [openMdl, setOpenMdl] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [params, setParams] = useState({});
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const [loading, setLoading] = useState(false);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [editingKey, setEditingKey] = useState("");
@@ -251,8 +255,9 @@ const Materials = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getMaterials(params);
+    setTotalPage(res.totalPage);
     setData(
-      res.map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
@@ -262,7 +267,7 @@ const Materials = () => {
     (async () => {
       loadListTable();
     })();
-  }, []);
+  }, [params.page, params.pageSize]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -564,19 +569,29 @@ const Materials = () => {
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
-              <Table
-                bordered
-                columns={mergedColumns}
-                dataSource={data}
-                className="h-100"
-                rowSelection={rowSelection}
-                size="small"
-                components={{
-                  body: {
-                    cell: EditableCell,
-                  },
-                }}
-              />
+                <Table
+                  bordered
+                  columns={mergedColumns}
+                  dataSource={data}
+                  className="h-100"
+                  rowSelection={rowSelection}
+                  size="small"
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  pagination={{
+                    current: page,
+                    size: 'default',
+                    total: totalPage,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    }
+                  }}
+                />
               </Form>
             </Spin>
           </Card>
