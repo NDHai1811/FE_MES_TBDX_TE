@@ -691,8 +691,8 @@ const Orders = () => {
     let filteredOptions = [];
     switch (dataIndex) {
       case 'buyer_id':
-        var phan_loai_1 = PL1s.find(e=>e.value?.toLowerCase() === record?.phan_loai_1?.toLowerCase())?.label;
-        filteredOptions = buyers.filter(e=>e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
+        var phan_loai_1 = PL1s.find(e => e.value?.toLowerCase() === record?.phan_loai_1?.toLowerCase())?.label;
+        filteredOptions = buyers.filter(e => e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
         break;
       case 'layout_type':
         filteredOptions = layoutTypes;
@@ -1139,6 +1139,16 @@ const Orders = () => {
                       placeholder="Nhập H"
                     />
                   </Form.Item>
+                  <Form.Item label="Kích thước" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({ ...params, kich_thuoc: e.target.value, page: 1 }); setPage(1)
+                      }
+                      }
+                      placeholder="Nhập kích thước"
+                    />
+                  </Form.Item>
                   <Form.Item label="Order" className="mb-3">
                     <Input
                       allowClear
@@ -1156,17 +1166,7 @@ const Orders = () => {
                         setParams({ ...params, mql: e.target.value, page: 1 }); setPage(1)
                       }
                       }
-                      placeholder="Nhập MDH"
-                    />
-                  </Form.Item>
-                  <Form.Item label="KÍCH THƯỚC" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, kich_thuoc: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập L"
+                      placeholder="Nhập MQL"
                     />
                   </Form.Item>
                   <Form.Item label="PO" className="mb-3">
