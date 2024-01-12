@@ -166,7 +166,7 @@ const PL2s = [
   {
     label: "Giấy tấm không tề",
     value: "giay-tam-khong-te",
- },
+  },
   {
     label: "Giấy tấm có tề 1 mảnh (DxR)",
     value: "giay-tam-co-te-1-manh-dxr",
@@ -183,7 +183,10 @@ const PL2s = [
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
   const [form] = Form.useForm();
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 10,
+  });
   const [editingKey, setEditingKey] = useState("");
   const [splitKey, setSplitKey] = useState("");
   const [data, setData] = useState([]);
@@ -193,6 +196,9 @@ const Orders = () => {
   const [listDRC, setListDRC] = useState([]);
   const [listCheck, setListCheck] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [inputData, setInputData] = useState([
     {
       so_luong: 0,
@@ -321,7 +327,7 @@ const Orders = () => {
       width: "4%",
       editable: true,
       checked: true,
-      render: (value)=>PL1s.find(e=>e.value === value)?.label
+      render: (value) => PL1s.find(e => e.value === value)?.label
     },
     {
       title: "Phân loại 2",
@@ -331,7 +337,7 @@ const Orders = () => {
       width: "4%",
       editable: true,
       checked: true,
-      render: (value)=>PL2s.find(e=>e.value === value)?.label
+      render: (value) => PL2s.find(e => e.value === value)?.label
     },
     {
       title: "Mã buyer",
@@ -681,30 +687,30 @@ const Orders = () => {
   });
 
   const options = (dataIndex) => {
-    var record = data.find(e=>e.id === editingKey);
+    var record = data.find(e => e.id === editingKey);
     let filteredOptions = [];
     switch (dataIndex) {
       case 'buyer_id':
-        var phan_loai_1 = PL1s.find(e=>e.value.toLowerCase() === record?.phan_loai_1.toLowerCase())?.label;
-        filteredOptions = buyers.filter(e=>e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
+        var phan_loai_1 = PL1s.find(e => e.value.toLowerCase() === record?.phan_loai_1.toLowerCase())?.label;
+        filteredOptions = buyers.filter(e => e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
         break;
-      case 'layout_type': 
-        filteredOptions = layoutTypes; 
+      case 'layout_type':
+        filteredOptions = layoutTypes;
         break;
-      case 'layout_id': 
-        filteredOptions = layouts; 
+      case 'layout_id':
+        filteredOptions = layouts;
         break;
       case 'phan_loai_1':
         var options = record?.customer_specifications ?? [];
-        filteredOptions = PL1s.filter(e=>options.some(o=>o.phan_loai_1 === e.value));
+        filteredOptions = PL1s.filter(e => options.some(o => o.phan_loai_1 === e.value));
         break;
       case 'phan_loai_2':
         filteredOptions = PL2s;
         break;
       default:
         var options = record?.customer_specifications ?? [];
-        filteredOptions = options.filter(e=>record?.phan_loai_1 === e.phan_loai_1 && record?.customer_id === e.customer_id).map(e=>({value: e.drc_id, label: e.drc_id}));
-        if(filteredOptions.length <= 0){
+        filteredOptions = options.filter(e => record?.phan_loai_1 === e.phan_loai_1 && record?.customer_id === e.customer_id).map(e => ({ value: e.drc_id, label: e.drc_id }));
+        if (filteredOptions.length <= 0) {
           filteredOptions = listDRC;
         }
         break;
@@ -785,11 +791,11 @@ const Orders = () => {
   };
 
   const removeAccents = (str) => {
-    if(str){
+    if (str) {
       // return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      return PL1s.find(e=>e.value === str)?.label;
+      return PL1s.find(e => e.value === str)?.label;
     }
-    else{
+    else {
       return "";
     }
   };
@@ -894,17 +900,18 @@ const Orders = () => {
     setLoading(true);
     const res = await getOrders(params);
     setData(
-      res.map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
+    setTotalPage(res.totalPage);
     setLoading(false);
   };
   useEffect(() => {
     (async () => {
       loadListTable(params);
     })();
-  }, []);
+  }, [params]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -1085,8 +1092,9 @@ const Orders = () => {
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, customer_id: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, customer_id: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập mã khách hàng"
                     />
@@ -1094,8 +1102,9 @@ const Orders = () => {
                   <Form.Item label="MDH" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, mdh: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, mdh: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập MDH"
                     />
@@ -1103,8 +1112,9 @@ const Orders = () => {
                   <Form.Item label="L" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, length: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, length: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập L"
                     />
@@ -1112,8 +1122,9 @@ const Orders = () => {
                   <Form.Item label="W" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, width: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, width: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập W"
                     />
@@ -1121,8 +1132,9 @@ const Orders = () => {
                   <Form.Item label="H" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, height: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, height: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập H"
                     />
@@ -1130,8 +1142,9 @@ const Orders = () => {
                   <Form.Item label="Order" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, order: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, order: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập order"
                     />
@@ -1139,8 +1152,9 @@ const Orders = () => {
                   <Form.Item label="MQL" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, mql: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, mql: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập MDH"
                     />
@@ -1148,8 +1162,9 @@ const Orders = () => {
                   <Form.Item label="KÍCH THƯỚC" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, kich_thuoc: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, kich_thuoc: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập L"
                     />
@@ -1157,8 +1172,9 @@ const Orders = () => {
                   <Form.Item label="PO" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, po: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, po: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập PO"
                     />
@@ -1166,8 +1182,9 @@ const Orders = () => {
                   <Form.Item label="STYLE" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, style: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, style: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập STYLE"
                     />
@@ -1175,8 +1192,9 @@ const Orders = () => {
                   <Form.Item label="STYLE NO" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, style_no: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, style_no: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập STYLE NO"
                     />
@@ -1184,8 +1202,9 @@ const Orders = () => {
                   <Form.Item label="COLOR" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, color: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, color: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập COLOR"
                     />
@@ -1193,8 +1212,9 @@ const Orders = () => {
                   <Form.Item label="ITEM" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, item: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, item: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập ITEM"
                     />
@@ -1202,8 +1222,9 @@ const Orders = () => {
                   <Form.Item label="RM" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, rm: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, rm: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập RM"
                     />
@@ -1211,8 +1232,9 @@ const Orders = () => {
                   <Form.Item label="SIZE" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, size: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, size: e.target.value, page: 1 }); setPage(1)
+                      }
                       }
                       placeholder="Nhập SIZE"
                     />
@@ -1314,7 +1336,16 @@ const Orders = () => {
                   rowSelection={rowSelection}
                   size="small"
                   bordered
-                  pagination={{ position: ["bottomRight"] }}
+                  pagination={{
+                    current: page,
+                    size: 'default',
+                    total: totalPage,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    }
+                  }}
                   components={{
                     body: {
                       cell: EditableCell,
