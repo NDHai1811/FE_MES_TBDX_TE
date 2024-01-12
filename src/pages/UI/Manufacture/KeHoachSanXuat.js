@@ -15,11 +15,15 @@ import {
   Modal,
   Spin,
   Tree,
+  InputNumber,
+  Popconfirm,
+  Typography,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
 import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
+  deleteRecordProductPlan,
   exportKHSX,
   getListProductPlan,
   storeProductPlan,
@@ -29,6 +33,7 @@ import {
   useHistory,
 } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
@@ -138,6 +143,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "ghi_chu",
       key: "ghi_chu",
       align: "center",
+      editable: true
     },
     {
       title: "Mã quản lý",
@@ -223,6 +229,52 @@ const KeHoachSanXuat = () => {
       key: "khuon_id",
       align: "center",
     },
+    {
+      title: "Tác vụ",
+      dataIndex: "action",
+      key: "action",
+      checked: true,
+      align: "center",
+      fixed: "right",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => onUpdate(record)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Lưu
+            </Typography.Link>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+              <a>Hủy</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <span>
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            />
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa?"
+              onConfirm={() => onDetele(record)}
+            >
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 18,
+                }}
+              />
+            </Popconfirm>
+          </span>
+        );
+      },
+    },
   ];
 
   function btn_click() {
@@ -248,7 +300,7 @@ const KeHoachSanXuat = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
-    setData(res);
+    setData(res.map(e=>({...e, key: e.id})));
     setLoading(false);
   };
 
@@ -268,14 +320,34 @@ const KeHoachSanXuat = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    if (values.id) {
-      const res = await updateProductPlan(values);
-    } else {
-      const res = await storeProductPlan(values);
+  const onUpdate = async () => {
+    const row = await form.validateFields();
+    const item = data.find((val) => val.key === editingKey);
+    const res = await updateProductPlan({...item, ...row});
+    if (res) {
+      form.resetFields();
+      loadListTable();
+      setEditingKey("");
     }
-    setOpenMdlEdit(false);
+  };
+  const onDetele = async (record) => {
+    await deleteRecordProductPlan({ id: record.id });
     loadListTable();
+  };
+  const edit = (record) => {
+    form.setFieldsValue({
+      ...record,
+    });
+    setEditingKey(record.key);
+  };
+
+  const cancel = () => {
+    if (typeof editingKey === "number") {
+      const newData = [...data];
+      newData.shift();
+      setData(newData);
+    }
+    setEditingKey("");
   };
   const insertRecord = () => {
     history.push("/ui/manufacture/tao-ke-hoach-san-xuat");
@@ -336,6 +408,99 @@ const KeHoachSanXuat = () => {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
+  };
+  const EditableCell = ({
+    editing,
+    dataIndex,
+    title,
+    inputType,
+    record,
+    index,
+    children,
+    onChange,
+    onSelect,
+    options,
+    ...restProps
+  }) => {
+    let inputNode;
+    switch (inputType) {
+      case "number":
+        inputNode = <InputNumber />;
+        break;
+      case "select":
+        inputNode = (
+          <Select
+            value={record?.[dataIndex]}
+            options={options}
+            onChange={(value) => onSelect(value, dataIndex)}
+            bordered
+            showSearch
+          />
+        );
+        break;
+      default:
+        inputNode = <Input />;
+    }
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item
+            name={dataIndex}
+            style={{
+              margin: 0,
+            }}
+            initialValue={record?.[dataIndex]}
+          >
+            {inputNode}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  };
+  const isEditing = (record) => record.key === editingKey;
+  const [editingKey, setEditingKey] = useState("");
+  const mergedColumns = col_detailTable.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType: "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+        onChange,
+        onSelect,
+        options: options(col.dataIndex)
+      })
+    };
+  });
+  const options = (dataIndex) => {
+    var record = data.find(e => e.id === editingKey);
+    let filteredOptions = [];
+    return filteredOptions;
+  }
+  const onChange = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    value.isValid() && setData(items);
+  };
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    setData(items);
   };
   return (
     <>
@@ -510,6 +675,7 @@ const KeHoachSanXuat = () => {
             }
           >
             <Spin spinning={loading}>
+              <Form form={form} component={false}>
               <Table
                 size="small"
                 bordered
@@ -518,210 +684,20 @@ const KeHoachSanXuat = () => {
                   x: "200vw",
                   y: "80vh",
                 }}
-                columns={col_detailTable}
+                components={{
+                  body: {
+                    cell: EditableCell,
+                  },
+                }}
+                rowClassName="editable-row"
+                columns={mergedColumns}
                 dataSource={data}
               />
+              </Form>
             </Spin>
           </Card>
         </Col>
       </Row>
-      <Modal
-        title={titleMdlEdit}
-        open={openMdlEdit}
-        onCancel={() => setOpenMdlEdit(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            <Col span={12} className="d-none">
-              <Form.Item name="id" className="mb-3 d-none">
-                <Input></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thứ tự ưu tiên"
-                name="thu_tu_uu_tien"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập thứ tự ưu tiên"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày sản xuất (YYYY-MM-DD)"
-                name="ngay_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ngày sản xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày đặt hàng (YYYY-MM-DD)"
-                name="ngay_dat_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ngày đặt hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ngày giao hàng (YYYY-MM-DD)"
-                name="ngay_giao_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ngày giao hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thời gian bắt đầu (YYYY-MM-DD HH:mm:ss)"
-                name="thoi_gian_bat_dau"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thời gian kết thúc (YYYY-MM-DD HH:mm:ss)"
-                name="thoi_gian_ket_thuc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Máy"
-                name="machine_id"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập tên máy"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Công đoạn"
-                name="cong_doan_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập công đoạn"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã sản phẩm"
-                name="product_id"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã sản phẩm"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Khách hàng"
-                name="khach_hang"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập khách hàng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Ca sản xuất"
-                name="ca_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập ca sản xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Lô sản xuất"
-                name="lo_sx"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập lô sản xuất"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số bát"
-                name="so_bat"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số bát"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số lượng nguyên liệu đầu vào (tờ)"
-                name="sl_nvl"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số lượng nguyên liệu đầu vào (tờ)"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Kế hoạch SL thành phẩm (tờ)"
-                name="sl_thanh_pham"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập kế hoạch SL thành phẩm (tờ)"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="UPH"
-                name="UPH"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="UPH"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Nhân lực"
-                name="nhan_luc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhân lực"></Input>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };
