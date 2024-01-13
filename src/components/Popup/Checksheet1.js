@@ -70,7 +70,7 @@ const Checksheet1 = (props) => {
           var res = await getIQCChecksheetList({
             line_id: line_id,
             lo_sx: selectedLot?.lo_sx,
-            ma_vat_tu: selectedLot?.ma_vat_tu,
+            ma_ncc: selectedLot?.loai_giay+selectedLot?.dinh_luong,
           });
           setChecksheet(res.data);
         }
