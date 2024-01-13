@@ -237,7 +237,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "2%",
+      width: "1.6%",
     },
     {
       title: "L",
@@ -246,7 +246,8 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "1.4%",
+      fixed: "left",
+      width: "1.2%",
     },
     {
       title: "W",
@@ -255,7 +256,8 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "1.4%",
+      fixed: "left",
+      width: "1.2%",
     },
     {
       title: "H",
@@ -264,7 +266,17 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "1.4%",
+      fixed: "left",
+      width: "1.2%",
+    },
+    {
+      title: "Kích thước ĐH",
+      dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
+      align: "center",
+      editable: true,
+      fixed: "left",
+      checked: true,
     },
     {
       title: "MQL",
@@ -281,14 +293,6 @@ const Orders = () => {
       key: "sl",
       align: "center",
       width: "1.2%",
-      editable: true,
-      checked: true,
-    },
-    {
-      title: "Kích thước ĐH",
-      dataIndex: "kich_thuoc",
-      key: "kich_thuoc",
-      align: "center",
       editable: true,
       checked: true,
     },
@@ -365,6 +369,14 @@ const Orders = () => {
       editable: true,
       checked: true,
       width: "2%",
+    },
+    {
+      title: "Ghi chú sóng",
+      dataIndex: "note_3",
+      key: "note_3",
+      align: "center",
+      editable: true,
+      checked: true,
     },
     {
       title: "Số ra",
@@ -598,14 +610,6 @@ const Orders = () => {
       checked: true,
     },
     {
-      title: "Ghi chú sóng",
-      dataIndex: "note_3",
-      key: "note_3",
-      align: "center",
-      editable: true,
-      checked: true,
-    },
-    {
       title: "Tác vụ",
       dataIndex: "action",
       key: "action",
@@ -737,7 +741,7 @@ const Orders = () => {
 
   const content = (
     <Checkbox.Group
-      style={{ width: "100%"}}
+      style={{ width: "100%" }}
       // options={mergedColumns
       //   .filter((col) => col.key !== "action")
       //   .map((col) => ({
@@ -749,11 +753,11 @@ const Orders = () => {
         .map((col) => col.key)}
       onChange={handleVisibleChange}
     >
-      <Row gutter={[4, 4]} style={{width:'100%'}}>
+      <Row gutter={[4, 4]} style={{ width: '100%' }}>
         {
           mergedColumns
-          .filter((col) => col.key !== "action")
-          .map((col) => (<Col span={4}><Checkbox value={col.dataIndex}>{col.title}</Checkbox></Col>))
+            .filter((col) => col.key !== "action")
+            .map((col) => (<Col span={4}><Checkbox value={col.dataIndex}>{col.title}</Checkbox></Col>))
         }
       </Row>
     </Checkbox.Group>

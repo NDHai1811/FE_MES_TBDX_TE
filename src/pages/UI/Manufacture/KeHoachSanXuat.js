@@ -331,6 +331,7 @@ const KeHoachSanXuat = () => {
     }
   };
   const onDetele = async (record) => {
+    console.log(record);
     await deleteRecordProductPlan({ id: record.id });
     loadListTable();
   };
