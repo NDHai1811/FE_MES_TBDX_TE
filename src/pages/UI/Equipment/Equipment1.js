@@ -62,15 +62,15 @@ const columnTable = [
   },
   {
     title: "Thời gian dừng",
-    dataIndex: "thoi_gian_dung",
-    key: "thoi_gian_dung",
+    dataIndex: "start_time",
+    key: "start_time",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Thời gian chạy",
-    dataIndex: "thoi_gian_chay",
-    key: "thoi_gian_chay",
+    dataIndex: "end_time",
+    key: "end_time",
     align: "center",
     render: (value) => value || "-",
   },
@@ -130,159 +130,6 @@ const columnTable = [
       );
     },
     align: "center",
-  },
-];
-
-const logs = [
-  {
-    machine_id: "D05",
-    khach_hang: "CÔNG TY TNHH AFIRST VINA",
-    don_hang: "344/12",
-    lo_sx: "231210001",
-    thoi_gian_dung: "10/12/2023 08:19:20",
-    thoi_gian_chay: "10/12/2023 08:35:20",
-    ma_su_co: "ERR01",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "D05",
-    khach_hang: "CÔNG TY TNHH AFIRST VINA",
-    don_hang: "344/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "10/10/2023 09:10:20",
-    thoi_gian_chay: "10/10/2023 09:15:20",
-    ma_su_co: "ERR02",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "S01",
-    khach_hang: "CÔNG TY TNHH AFIRST VINA",
-    don_hang: "1532/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "10/12/2023 08:19:20",
-    thoi_gian_chay: "10/12/2023 08:35:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "S01",
-    khach_hang: "CÔNG TY TNHH AFIRST VINA",
-    don_hang: "1441/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "10/12/2023 08:13:20",
-    thoi_gian_chay: "10/12/2023 08:17:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "P06",
-    khach_hang: "AN PHUOC GROUP",
-    don_hang: "1524/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "10/12/2023 08:19:20",
-    thoi_gian_chay: "10/12/2023 08:35:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "P06",
-    khach_hang: "AN PHUOC GROUP",
-    don_hang: "1344/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "11/12/2023 08:19:20",
-    thoi_gian_chay: "11/12/2023 08:35:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "P15",
-    khach_hang: "CÔNG TY AN PHÁT",
-    don_hang: "344/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "11/12/2023 15:19:20",
-    thoi_gian_chay: "11/12/2023 15:38:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "D05",
-    khach_hang: "AN PHUOC GROUP",
-    don_hang: "1441/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "11/12/2023 16:40:20",
-    thoi_gian_chay: "11/12/2023 16:45:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "S01",
-    khach_hang: "AN PHUOC GROUP",
-    don_hang: "1442/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "11/12/2023 14:19:20",
-    thoi_gian_chay: "11/12/2023 14:35:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
-  },
-  {
-    machine_id: "S01",
-    khach_hang: "AN PHUOC GROUP",
-    don_hang: "1044/12",
-    lo_sx: "231210004",
-    thoi_gian_dung: "11/12/2023 17:09:20",
-    thoi_gian_chay: "11/12/2023 17:15:20",
-    ma_su_co: "ERR03",
-    ten_su_co: "Đổi mã hàng",
-    nguyen_nhan: "Đổi mã hàng",
-    cach_xu_ly: "",
-    thoi_gian_xu_ly: "",
-    nguoi_xu_ly: "Trần Văn Thái",
-    tinh_trang: "1",
   },
 ];
 
@@ -450,28 +297,7 @@ const Equipment1 = (props) => {
   const [listLoSX, setListLoSX] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
   const [data, setData] = useState();
-  const [dataPieChart, setDataPieChart] = useState([
-    {
-      name: "P01",
-      value: 18,
-    },
-    {
-      name: "P02",
-      value: 5,
-    },
-    {
-      name: "D01",
-      value: 9,
-    },
-    {
-      name: "D02",
-      value: 20,
-    },
-    {
-      name: "S01",
-      value: 11,
-    },
-  ]);
+  const [dataPieChart, setDataPieChart] = useState([]);
   const [dataColChart, setDataColChart] = useState([
     {
       name: "Máy in P.06",
@@ -551,12 +377,17 @@ const Equipment1 = (props) => {
       const res1 = await getMachineErrorList(params);
       setData(res1.data);
       const res2 = await getErrorMachineFrenquency(params);
+      console.log(res2.data);
       setDataPieChart(res2.data);
       const res3 = await getMachinePerformance(params);
       setDataColChart(res3.data);
       setLoading(false);
     })();
   }
+
+  useEffect(() => {
+    btn_click()
+  }, []);
 
   useEffect(() => {
     console.log(dataColChart);
@@ -663,23 +494,6 @@ const Equipment1 = (props) => {
             style={{ height: "100%" }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
           >
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Tree
-                    checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
-                    treeData={itemsMenu}
-                    style={{ maxHeight: "80px", overflowY: "auto" }}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -875,7 +689,7 @@ const Equipment1 = (props) => {
                       y: "50vh",
                     }}
                     columns={columnTable}
-                    dataSource={logs}
+                    dataSource={data}
                   />
                 </Spin>
               </Card>

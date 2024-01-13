@@ -64,26 +64,25 @@ const Mapping = () => {
   const [visible, setVisible] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [date, setDate] = useState({
-    startDate: dayjs(),
-    endDate: dayjs(),
+  const [params, setParams] = useState({
+    machine_id: machine_id,
+    start_date: dayjs(),
+    end_date: dayjs(),
   });
   const [selectedItem, setSelectedItem] = useState([]);
   const [tableColumns, setTableColumns] = useState(columns1);
 
+  useEffect(()=>{
+    setParams({...params, machine_id: machine_id})
+  }, [machine_id])
   useEffect(() => {
     if (machine_id) {
       getLogs();
     }
-  }, [machine_id, date.startDate, date.endDate]);
+  }, [params.machine_id, params.start_date, params.end_date]);
 
   const getLogs = () => {
-    const resData = {
-      machine_id: machine_id,
-      start_date: formatDateTime(date.startDate, COMMON_DATE_FORMAT_REQUEST),
-      end_date: formatDateTime(date.endDate, COMMON_DATE_FORMAT_REQUEST),
-    };
-    getEquipmentLogs(resData)
+    getEquipmentLogs(params)
       .then((res) => {
         setLogs(res.data.data);
         const newColumns = res.data.columns.map((val) => ({
@@ -101,7 +100,7 @@ const Mapping = () => {
   };
 
   const disabledEndDate = (current) => {
-    return current && current.startOf("day") < date.startDate.startOf("day");
+    return current && current.startOf("day") < params.start_date.startOf("day");
   };
 
   const columns = [
@@ -158,10 +157,10 @@ const Mapping = () => {
   ];
 
   const onShowPopup = async () => {
-    const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
-    if (res.data) {
-      setVisible(true);
-    }
+    // const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
+    // if (res.success) {
+    selectedItem && setVisible(true);
+    // }
   };
 
   const onShowPopupParameter = async () => {
@@ -205,7 +204,7 @@ const Mapping = () => {
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
             disabledDate={disabledStartDate}
-            onChange={(value) => setDate({ ...date, startDate: value })}
+            onChange={(value) => setParams({ ...params, start_date: value })}
           />
         </Col>
         <Col span={12}>
@@ -215,7 +214,7 @@ const Mapping = () => {
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
             disabledDate={disabledEndDate}
-            onChange={(value) => setDate({ ...date, endDate: value })}
+            onChange={(value) => setParams({ ...params, end_date: value })}
           />
         </Col>
       </Row>

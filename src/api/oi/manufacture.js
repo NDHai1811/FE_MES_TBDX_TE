@@ -79,3 +79,6 @@ export async function getManufactureOverall(params) {
 export async function getInfoTem(params){
   return await axios.get("/oi/manufacture/intem", { params: params });
 }
+export async function manualInput(params){
+  return await axios.post("/oi/manufacture/manual-input", params);
+}

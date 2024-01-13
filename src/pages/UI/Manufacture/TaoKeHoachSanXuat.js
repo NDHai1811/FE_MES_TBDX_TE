@@ -284,6 +284,12 @@ const TaoKeHoachSanXuat = () => {
             dataIndex: 'note_2',
             key: 'note_2',
             align: 'center',
+        },
+        {
+            title: 'Ghi chú sóng',
+            dataIndex: 'note_3',
+            key: 'note_3',
+            align: 'center',
         }
     ];
     const col_detailTable_plan = [

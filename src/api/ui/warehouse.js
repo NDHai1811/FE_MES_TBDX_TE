@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getListPlanMaterialImport = async (params) => {
-  return await axios.get("/ui/warehouse/list-material-import", {params});
+  return await axios.get("/ui/warehouse/list-material-import", { params });
 };
 
 export const getListPlanMaterialExport = async () => {
@@ -17,9 +17,14 @@ export const createWarehouseImport = async (params) => {
 };
 
 export const deleteWarehouseImport = async (params) => {
-  return await axios.post("/ui/warehouse/delete-material-import",params);
+  return await axios.post("/ui/warehouse/delete-material-import", params);
 };
 
 export const exportWarehouseTicket = async (params) => {
-  return await axios.get("/ui/warehouse/import-material-ticket/export",{params});
+  return await axios.get("/ui/warehouse/import-material-ticket/export", { params });
 };
+
+export async function getWarehouseFGExportList(params) {
+  const res = await axios.get("/ui/warehouse/fg/export/list", { params });
+  return res.data;
+}

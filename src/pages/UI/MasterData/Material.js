@@ -20,6 +20,8 @@ import {
   Modal,
   Spin,
   Popconfirm,
+  InputNumber,
+  Typography
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useRef, useEffect } from "react";
@@ -30,94 +32,232 @@ import {
   getMaterials,
   updateMaterial,
 } from "../../../api";
+import TemNVL from "../Warehouse/TemNVL";
+import { useReactToPrint } from "react-to-print";
+import { exportWarehouseTicket } from "../../../api/ui/warehouse";
+import dayjs from "dayjs";
+import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 
 const Materials = () => {
   document.title = "Quản lý nguyên vật liệu";
   const [listCheck, setListCheck] = useState([]);
-  const [openMdl, setOpenMdl] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [form] = Form.useForm();
-  const [params, setParams] = useState({});
-  const col_detailTable = [
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 10,
+  });
+  const [loading, setLoading] = useState(false);
+  const [openMdlEdit, setOpenMdlEdit] = useState(false);
+  const [editingKey, setEditingKey] = useState("");
+  const onUpdate = async () => {
+    const row = await form.validateFields();
+    console.log(row);
+    const item = data.find((val) => val.key === editingKey);
+
+    if (typeof editingKey === "number") {
+      const res = await createMaterial(row);
+      if (res) {
+        form.resetFields();
+        loadListTable(params);
+        setEditingKey("");
+      }
+    } else {
+      row.id = editingKey;
+      if (listCheck.length > 0) {
+        row.ids = listCheck;
+      }
+      const res = await updateMaterial(row);
+      if (res) {
+        form.resetFields();
+        loadListTable();
+        setEditingKey("");
+        // if (listCheck.length > 0) {
+        //   setListCheck([]);
+        // }
+      }
+    }
+  };
+
+  const onDetele = async (record) => {
+    await deleteMaterials({ id: record.id });
+    loadListTable();
+  };
+  const columns = [
     {
-      title: "Mã",
+      title: "Mã cuộn TBDX",
       dataIndex: "id",
       key: "id",
       align: "center",
-      fixed: "left",
+      editable: true,
     },
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
+      title: "Mã vật tư",
+      dataIndex: "ma_vat_tu",
+      key: "ma_vat_tu",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Tên nhà cung cấp",
+      dataIndex: "ten_ncc",
+      key: "ten_ncc",
       align: "center",
     },
     {
-      title: "Tên",
-      dataIndex: "ten",
-      key: "ten",
+      title: "Mã cuộn nhà cung cấp",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
       align: "center",
+      editable: true,
     },
     {
-      title: "Thông số",
-      dataIndex: "thong_so",
-      key: "thong_so",
+      title: "Số kg",
+      dataIndex: "so_kg",
+      key: "so_kg",
       align: "center",
-      children: [
-        {
-          title: "Màu",
-          dataIndex: "mau",
-          key: "mau",
-          align: "center",
-        },
-        {
-          title: "DL",
-          dataIndex: "DL",
-          key: "DL",
-          align: "center",
-        },
-      ],
+      editable: true,
+    },
+    {
+      title: "Loại giấy",
+      dataIndex: "loai_giay",
+      key: "loai_giay",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Khổ giấy",
+      dataIndex: "kho_giay",
+      key: "kho_giay",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Định lượng",
+      dataIndex: "dinh_luong",
+      key: "dinh_luong",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "FSC",
+      dataIndex: "fsc",
+      key: "fsc",
+      align: "center",
+      editable: true,
+      render: (value, item, index) => (value ? "X" : ""),
+    },
+    {
+      title: "Tác vụ",
+      dataIndex: "action",
+      key: "action",
+      checked: true,
+      align: "center",
+      fixed: "right",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => onUpdate(record)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Lưu
+            </Typography.Link>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+              <a>Hủy</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <span>
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            />
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa?"
+              onConfirm={() => onDetele(record)}
+            >
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 18,
+                }}
+              />
+            </Popconfirm>
+          </span>
+        );
+      },
     },
   ];
   const formFields = [
     {
-      title: "Mã",
-      key: "id",
+      title: "Mã cuộn TBDX",
+      key: "material_id",
+
     },
     {
-      title: "Code",
-      key: "code",
+      title: "Mã vật tư",
+      key: "ma_vat_tu",
     },
     {
-      title: "Tên",
-      key: "ten",
+      title: "Tên nhà cung cấp",
+      key: "ten_ncc",
     },
     {
-      title: "Thông số",
-      key: "thong_so",
-      children: [
-        {
-          title: "Màu",
-          key: "mau",
-        },
-        {
-          title: "DL",
-          key: "DL",
-        },
-      ],
+      title: "Mã cuộn nhà cung cấp",
+      key: "ma_cuon_ncc",
+    },
+    {
+      title: "Số kg",
+      key: "so_kg",
+    },
+    {
+      title: "Loại giấy",
+      key: "loai_giay",
+    },
+    {
+      title: "Khổ giấy",
+      key: "kho_giay",
+    },
+    {
+      title: "Định lượng",
+      key: "dinh_luong",
     },
   ];
 
+  const edit = (record) => {
+    form.setFieldsValue({
+      ...record,
+    });
+    setEditingKey(record.key);
+  };
+
+  const cancel = () => {
+    if (typeof editingKey === "number") {
+      const newData = [...data];
+      newData.shift();
+      setData(newData);
+    }
+    setEditingKey("");
+  };
+
   function btn_click() {
-    loadListTable(params);
+    loadListTable();
   }
 
   const [data, setData] = useState([]);
-  const loadListTable = async (params) => {
+  const loadListTable = async () => {
     setLoading(true);
     const res = await getMaterials(params);
+    setTotalPage(res.totalPage);
     setData(
-      res.map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
@@ -125,9 +265,9 @@ const Materials = () => {
   };
   useEffect(() => {
     (async () => {
-      loadListTable(params);
+      loadListTable();
     })();
-  }, []);
+  }, [params.page, params.pageSize]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -145,27 +285,6 @@ const Materials = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    console.log(values);
-    if (isEdit) {
-      const res = await updateMaterial(values);
-      console.log(res);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    } else {
-      const res = await createMaterial(values);
-      console.log(res);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    }
-  };
-
   const deleteRecord = async () => {
     if (listCheck.length > 0) {
       const res = await deleteMaterials(listCheck);
@@ -175,172 +294,310 @@ const Materials = () => {
       message.info("Chưa chọn bản ghi cần xóa");
     }
   };
-  const editRecord = () => {
-    setIsEdit(true);
-    if (listCheck.length !== 1) {
-      message.info("Chọn 1 bản ghi để chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({ ...result });
-      setOpenMdl(true);
-    }
-  };
-  const insertRecord = () => {
-    setIsEdit(false);
+  const componentRef1 = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef1.current,
+  });
+
+  const onInsert = () => {
     form.resetFields();
-    setOpenMdl(true);
+    setData([
+      {
+        key: data.length + 1,
+      },
+      ...data,
+    ]);
+    setEditingKey(data.length + 1);
   };
-  const [loadingExport, setLoadingExport] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
+  const onFinish = async (values) => {
+    // if (values.id) {
+    //   const res = await updateWarehouseImport(values);
+    // } else {
+    //   const res = await createWarehouseImport(values);
+    // }
+    setOpenMdlEdit(false);
+  };
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys)
+    },
+  };
   const [exportLoading, setExportLoading] = useState(false);
+  const [exportLoading1, setExportLoading1] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportMaterials(params);
+    const res = await exportWarehouseTicket({ ...params, material_ids: listCheck });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
-    },
+  const onChange = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    value.isValid() && setData(items);
   };
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    setData(items);
+  };
+  const EditableCell = ({
+    editing,
+    dataIndex,
+    title,
+    inputType,
+    record,
+    index,
+    children,
+    onChange,
+    onSelect,
+    options,
+    ...restProps
+  }) => {
+    let inputNode;
+    switch (inputType) {
+      case "number":
+        inputNode = <InputNumber />;
+        break;
+      case "select":
+        inputNode = (
+          <Select
+            value={record?.[dataIndex]}
+            options={options}
+            onChange={(value) => onSelect(value, dataIndex)}
+            bordered
+            showSearch
+          />
+        );
+        break;
+      default:
+        inputNode = <Input />;
+    }
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item
+            name={dataIndex}
+            style={{
+              margin: 0,
+            }}
+            initialValue={record?.[dataIndex]}
+          >
+            {inputNode}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  };
+  const isEditing = (record) => record.key === editingKey;
+  const mergedColumns = columns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        inputType: "text",
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+        onChange,
+        onSelect,
+        options: []
+      })
+    };
+  });
   return (
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
+        <Col span={4}>
+          <Card
+            style={{ height: "100%" }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+          >
+            {/* <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
-              >
-                <Form.Item label="Mã lỗi" className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Bắt đầu"
+                    style={{ width: "100%" }}
+                    onChange={(value) =>
+                      setParams({ ...params, start_date: value })
+                    }
+                    value={params.start_date}
+                  />
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Kết thúc"
+                    style={{ width: "100%" }}
+                    onChange={(value) =>
+                      setParams({ ...params, end_date: value })
+                    }
+                    value={params.end_date}
+                  />
+                </Space>
+              </Form>
+            </div> */}
+            <Divider>Điều kiện truy vấn</Divider>
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item
+                  label={"Mã cuộn TBDX"}
+                  className="mb-3"
+                >
                   <Input
-                    allowClear
+                    placeholder={"Nhập mã cuộn TBDX"}
                     onChange={(e) =>
                       setParams({ ...params, id: e.target.value })
                     }
-                    placeholder="Nhập mã"
                   />
                 </Form.Item>
-                <Form.Item label="Code" className="mb-3">
+                <Form.Item
+                  label={"Mã cuộn NCC"}
+                  className="mb-3"
+                >
                   <Input
-                    allowClear
+                    placeholder={"Nhập mã cuộn NCC"}
                     onChange={(e) =>
-                      setParams({ ...params, code: e.target.value })
+                      setParams({ ...params, ma_cuon_ncc: e.target.value })
                     }
-                    placeholder="Nhập tên"
                   />
                 </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
+                <Form.Item
+                  label={"Loại giấy"}
+                  className="mb-3"
+                >
+                  <Input
+                    placeholder={"Nhập loại giấy"}
+                    onChange={(e) =>
+                      setParams({ ...params, loai_giay: e.target.value })
+                    }
+                  />
                 </Form.Item>
               </Form>
             </div>
+            <div
+              style={{
+                padding: "10px",
+                textAlign: "center",
+              }}
+              layout="vertical"
+            >
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
+              >
+                Truy vấn
+              </Button>
+            </div>
           </Card>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Quản lý nguyên vật liệu"
             extra={
               <Space>
-                <Upload
-                  showUploadList={false}
-                  name="files"
-                  action={baseURL + "/api/material/import"}
-                  headers={{
-                    authorization: "authorization-text",
-                  }}
-                  onChange={(info) => {
-                    setLoadingExport(true);
-                    if (info.file.status === "error") {
-                      setLoadingExport(false);
-                      error();
-                    } else if (info.file.status === "done") {
-                      if (info.file.response.success === true) {
-                        loadListTable(params);
-                        success();
-                        setLoadingExport(false);
-                      } else {
-                        loadListTable(params);
-                        message.error(info.file.response.message);
-                        setLoadingExport(false);
-                      }
-                    }
-                  }}
-                >
-                  <Button
-                    style={{ marginLeft: "15px" }}
-                    type="primary"
-                    loading={loadingExport}
-                  >
-                    Upload Excel
-                  </Button>
-                </Upload>
                 <Button
                   type="primary"
                   onClick={exportFile}
                   loading={exportLoading}
                 >
-                  Export Excel
+                  Xuất phiếu nhập kho
                 </Button>
-                <Button
-                  type="primary"
-                  onClick={editRecord}
-                  disabled={listCheck.length <= 0}
+                <Upload
+                  showUploadList={false}
+                  name="file"
+                  action={baseURL + "/api/upload-nhap-kho-nvl"}
+                  headers={{
+                    authorization: "authorization-text",
+                  }}
+                  onChange={(info) => {
+                    setExportLoading1(true);
+                    if (info.file.status === "error") {
+                      error();
+                      setExportLoading1(false);
+                    } else if (info.file.status === "done") {
+                      if (info.file.response.success === true) {
+                        loadListTable();
+                        success();
+                        setExportLoading1(false);
+                      } else {
+                        loadListTable();
+                        message.error(info.file.response.message);
+                        setExportLoading1(false);
+                      }
+                    }
+                  }}
                 >
-                  Edit
-                </Button>
-                <Button type="primary" onClick={insertRecord}>
-                  Insert
-                </Button>
-                <Popconfirm
-                  title="Xoá bản ghi"
-                  description={
-                    "Bạn có chắc xoá " + listCheck.length + " bản ghi đã chọn?"
-                  }
-                  onConfirm={deleteRecord}
-                  okText="Có"
-                  cancelText="Không"
-                  placement="bottomRight"
-                >
-                  <Button type="primary" disabled={listCheck.length <= 0}>
-                    Delete
+                  <Button type="primary" loading={exportLoading1}>
+                    Upload excel
                   </Button>
-                </Popconfirm>
+                </Upload>
+                <Button type="primary" onClick={onInsert}>
+                  Thêm NVL
+                </Button>
+                <Button type="primary" onClick={handlePrint}>
+                  In tem NVL
+                </Button>
+                <div className="report-history-invoice">
+                  <TemNVL
+                    listCheck={data.filter(e => listCheck.includes(e.id)).map(e => ({ ...e, material_id: e.id }))}
+                    ref={componentRef1}
+                  />
+                </div>
               </Space>
             }
           >
             <Spin spinning={loading}>
-              <Table
-                size="small"
-                bordered
-                pagination={{ position: ["topRight", "bottomRight"] }}
-                scroll={{
-                  x: "130vw",
-                  y: "80vh",
-                }}
-                columns={col_detailTable}
-                dataSource={data}
-                rowSelection={rowSelection}
-              />
+              <Form form={form} component={false}>
+                <Table
+                  bordered
+                  columns={mergedColumns}
+                  dataSource={data}
+                  className="h-100"
+                  rowSelection={rowSelection}
+                  size="small"
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  pagination={{
+                    current: page,
+                    size: 'default',
+                    total: totalPage,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    }
+                  }}
+                />
+              </Form>
             </Spin>
           </Card>
         </Col>
       </Row>
-      <Modal
+      {/* <Modal
         title={isEdit ? "Cập nhật" : "Thêm mới"}
         open={openMdl}
         onCancel={() => setOpenMdl(false)}
@@ -416,7 +673,7 @@ const Materials = () => {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

@@ -82,6 +82,10 @@ const items = [
         key: "warehouse/quan-ly-kho-nvl",
       },
       {
+        label: "Kế hoạch xuất kho",
+        key: "warehouse/ke-hoach-xuat-kho",
+      },
+      {
         label: "Quản lý giấy cuộn",
         key: "warehouse/quan-ly-giay-cuon",
       },
@@ -115,6 +119,10 @@ const items = [
       {
         label: "Danh sách công đoạn",
         key: "master-data/cong-doan",
+      },
+      {
+        label: "Khách hàng",
+        key: "master-data/customer",
       },
       {
         label: "Máy và NVL",

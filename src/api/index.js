@@ -437,6 +437,7 @@ export async function exportWarehouses(params) {
   return res;
 }
 
+
 //Cells
 export async function getCells(params) {
   const res = await axios.get("/cells/list", { params });
@@ -591,7 +592,23 @@ export async function deleteLayouts(params){
   return res.data;
 }
 
-
+//Customer
+export async function getCustomer(params){
+  const res = await axios.get('/customer/list', {params});
+  return res.data;
+}
+export async function createCustomer(params){
+  const res = await axios.post('/customer/create', params);
+  return res.data;
+}
+export async function updateCustomer(params){
+  const res = await axios.patch('/customer/update', params);
+  return res.data;
+}
+export async function deleteCustomer(params){
+  const res = await axios.delete('/customer/delete', {params});
+  return res.data;
+}
 
 export async function getTem(params){
   const res = await axios.get('/intem', {params});
