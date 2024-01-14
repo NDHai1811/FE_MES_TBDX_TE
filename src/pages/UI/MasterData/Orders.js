@@ -319,7 +319,7 @@ const Orders = () => {
       dataIndex: "phan_loai_1",
       key: "phan_loai_1",
       align: "center",
-      width: "4%",
+      width: "2%",
       editable: true,
       checked: true,
       render: (value) => PL1s.find(e => e.value === value)?.label
