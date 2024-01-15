@@ -60,7 +60,8 @@ const KeHoachSanXuat = () => {
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: '2%'
+      width: '2%',
+      editable: true
     },
     {
       title: "Lô sx",
@@ -143,7 +144,6 @@ const KeHoachSanXuat = () => {
       dataIndex: "ghi_chu",
       key: "ghi_chu",
       align: "center",
-      editable: true
     },
     {
       title: "Mã quản lý",

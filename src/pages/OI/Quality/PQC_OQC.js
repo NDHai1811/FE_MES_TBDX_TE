@@ -51,6 +51,9 @@ const PQC_OQC = (props) => {
     if(!line_id && lineOptions.length > 0){
       const item = lineOptions[0];
       history.push('/quality/qc/'+item?.value);
+    }else if(line_id && lineOptions.length > 0){
+      const item = lineOptions.find(e=>e.value === line_id);
+      setParams({...params, machine: item?.machine})
     }
   }, [line_id, lineOptions])
   const overallColumns = [
@@ -309,6 +312,7 @@ const PQC_OQC = (props) => {
   };
 
   const getQcData = async () => {
+    console.log(lineOptions);
     setLoading(true);
     var overall = await getQCOverall({ ...params });
     setOverall(overall.data);
@@ -325,9 +329,14 @@ const PQC_OQC = (props) => {
     }
     setLoading(false);
   };
-  useEffect(() => {
-    getQcData();
+
+  useEffect(()=>{
     getListOption();
+  }, [])
+  useEffect(() => {
+    if(params.machine && params.machine?.length){
+      getQcData();
+    }
   }, [params]);
 
   const onChangeLine = (value) => {

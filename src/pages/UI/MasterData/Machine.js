@@ -81,6 +81,13 @@ const Machine = () => {
       align: "center",
       render: (value, item, index) => value?.name,
     },
+    {
+      title: "IOT",
+      dataIndex: "is_iot",
+      key: "is_iot",
+      align: "center",
+      render: (value, item, index) => value ? "Có": "Không",
+    },
   ];
   const formFields = [
     {
@@ -107,6 +114,12 @@ const Machine = () => {
       title: "Công đoạn",
       key: "line",
       required: true,
+    },
+    {
+      title: "IOT",
+      key: "is_iot",
+      required: true,
+      isTrueFalse: true
     },
   ];
 

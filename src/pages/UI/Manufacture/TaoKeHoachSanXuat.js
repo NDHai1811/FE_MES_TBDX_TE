@@ -202,9 +202,9 @@ const TaoKeHoachSanXuat = () => {
     ]
     const col_detailTable = [
         {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
+            title: 'Hạn giao SX',
+            dataIndex: 'han_giao_sx',
+            key: 'han_giao_sx',
             align: 'center',
         },
         {
@@ -256,12 +256,6 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         },
         {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
             title: 'Số lượng',
             dataIndex: 'sl',
             key: 'sl',
@@ -271,6 +265,12 @@ const TaoKeHoachSanXuat = () => {
             title: 'Size',
             dataIndex: 'size',
             key: 'size',
+            align: 'center',
+        },
+        {
+            title: 'Mã Layout',
+            dataIndex: 'layout_id',
+            key: 'layout_id',
             align: 'center',
         },
         {
@@ -301,9 +301,9 @@ const TaoKeHoachSanXuat = () => {
             fixed: 'left'
         },
         {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
+            title: 'Hạn giao SX',
+            dataIndex: 'han_giao_sx',
+            key: 'han_giao_sx',
             align: 'center',
         },
         {
