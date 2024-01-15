@@ -188,9 +188,15 @@ const IQC = (props) => {
       align: "center",
     },
     {
-      title: "Sản lượng đầu ra",
-      dataIndex: "sl_dau_ra_hang_loat",
-      key: "sl_dau_ra_hang_loat",
+      title: "Khối lượng của cuộn",
+      dataIndex: "so_kg",
+      key: "so_kg",
+      align: "center",
+    },
+    {
+      title: "Định lượng",
+      dataIndex: "dinh_luong",
+      key: "dinh_luong",
       align: "center",
     },
     {
