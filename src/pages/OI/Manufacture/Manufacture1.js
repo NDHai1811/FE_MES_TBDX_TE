@@ -488,16 +488,7 @@ const Manufacture1 = (props) => {
                 onChange={onChangeEndDate}
               />
             </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={() => setIsScan(1)}
-                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-              />
-            </Col>
-            <Col span={3}>
+            <Col span={6}>
               <Button
                 size="medium"
                 type="primary"

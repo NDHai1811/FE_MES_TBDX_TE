@@ -46,6 +46,7 @@ const KeHoachSanXuat = () => {
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loSX, setLoSX] = useState([]);
+  const [listCheck, setListCheck] = useState([]);
   const col_detailTable = [
     {
       title: "STT",
@@ -60,7 +61,8 @@ const KeHoachSanXuat = () => {
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: '2%'
+      width: '2%',
+      editable: true
     },
     {
       title: "Lô sx",
@@ -143,7 +145,6 @@ const KeHoachSanXuat = () => {
       dataIndex: "ghi_chu",
       key: "ghi_chu",
       align: "center",
-      editable: true
     },
     {
       title: "Mã quản lý",
@@ -405,7 +406,7 @@ const KeHoachSanXuat = () => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportKHSX(params);
+    const res = await exportKHSX({...params, plan_ids: listCheck});
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -503,6 +504,11 @@ const KeHoachSanXuat = () => {
       return { ...val };
     });
     setData(items);
+  };
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+        setListCheck(selectedRowKeys);
+    },
   };
   return (
     <>
@@ -691,6 +697,7 @@ const KeHoachSanXuat = () => {
                     cell: EditableCell,
                   },
                 }}
+                rowSelection={rowSelection}
                 rowClassName="editable-row"
                 columns={mergedColumns}
                 dataSource={data}

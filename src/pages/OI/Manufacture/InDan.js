@@ -326,9 +326,11 @@ const InDan = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lot_id: result, machine_id: machine_id })
-      .then(reloadData())
+    scanQrCode({ lo_sx: result, machine_id: machine_id })
+      .then((response)=>response.success && reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
+    setIsOpenQRScanner(false);
+    setIsScan(2)
   };
 
   const rowClassName = (record, index) => {
@@ -495,6 +497,7 @@ const InDan = (props) => {
           >
             <Col span={9}>
               <DatePicker
+                allowClear={false}
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -504,6 +507,7 @@ const InDan = (props) => {
             </Col>
             <Col span={9}>
               <DatePicker
+                allowClear={false}
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}

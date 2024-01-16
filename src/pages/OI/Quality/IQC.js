@@ -295,9 +295,12 @@ const IQC = (props) => {
     setLoading(false);
   }
 
+  useEffect(()=>{
+    getListOption();
+  }, [])
+  
   useEffect(() => {
     getData();
-    getListOption();
   }, [params]);
 
   const [form1] = Form.useForm();
