@@ -476,6 +476,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: '3%'
     },
     {
       title: "STYLE",
@@ -1376,7 +1377,7 @@ const Orders = () => {
                   rowClassName="editable-row"
                   scroll={{
                     x: "380vw",
-                    y: "80vh",
+                    y: "60vh",
                   }}
                   columns={mergedColumns.filter(
                     (column) => !hideData.includes(column.key)
