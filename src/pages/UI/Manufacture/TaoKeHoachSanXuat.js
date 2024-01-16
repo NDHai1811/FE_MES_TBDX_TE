@@ -81,12 +81,12 @@ const TaoKeHoachSanXuat = () => {
         }
         setLoadingPlans(true)
         const res = await handleOrder(inp);
-        if(res.success){
+        if (res.success) {
             setPreviewPlan(res.data);
             setOpenMdlOrder(false);
             setLoadingPlans(false);
         }
-        
+
 
     };
     const insertLSX = async () => {
@@ -109,7 +109,7 @@ const TaoKeHoachSanXuat = () => {
         }
         setLoadingPlans(true)
         const res = await handlePlan(inp);
-        if(res.success){
+        if (res.success) {
             setPreviewPlan(res.data);
             setOpenMdlPlan(false);
             setLoadingPlans(false);
@@ -121,25 +121,25 @@ const TaoKeHoachSanXuat = () => {
             const res1 = await getMachineList();
             setListMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.name_input })))
+            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
         })();
     }, []);
 
     const openModal = async () => {
         if (!planParams.machine_id) {
             message.info('Chưa chọn máy');
-        }else{
+        } else {
             // if (planParams.machine_id == 'S01') {
-                setData([]);
-                setOpenMdlOrder(true);
-                loadListOrders();
+            setData([]);
+            setOpenMdlOrder(true);
+            loadListOrders();
             // } else {
             //     setListPlan([]);
             //     setOpenMdlPlan(true);
             //     loadListPlans();
             // }
         }
-        
+
     }
     const columnKHSX = [
         {
@@ -393,7 +393,7 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
-            if(orderParams.machine_id){
+            if (orderParams.machine_id) {
                 loadListOrders();
             }
         })()
@@ -401,6 +401,7 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
+            console.log(lsxParams);
             loadListPlans();
         })()
     }, [lsxParams])
@@ -568,11 +569,11 @@ const TaoKeHoachSanXuat = () => {
                                     onChange={(value) =>
                                         setLSXParams({ ...lsxParams, customer_id: value })
                                     }
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? "")
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
-                                    }
+                                    // filterOption={(input, option) =>
+                                    //     (option?.label ?? "")
+                                    //         .toLowerCase()
+                                    //         .includes(input.toLowerCase())
+                                    // }
                                     popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
                                     options={listCustomers}
                                 />

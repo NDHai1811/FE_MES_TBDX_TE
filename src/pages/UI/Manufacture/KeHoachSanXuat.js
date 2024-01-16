@@ -174,6 +174,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       align: "center",
+      width:'8%'
     },
     {
       title: "PAD",
@@ -682,8 +683,8 @@ const KeHoachSanXuat = () => {
                 bordered
                 pagination={false}
                 scroll={{
-                  x: "200vw",
-                  y: "80vh",
+                  x: "300vw",
+                  y: "70vh",
                 }}
                 components={{
                   body: {
