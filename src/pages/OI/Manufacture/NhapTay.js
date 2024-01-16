@@ -518,6 +518,7 @@ const NhapTay = (props) => {
           >
             <Col span={9}>
               <DatePicker
+                allowClear={false}
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -527,6 +528,7 @@ const NhapTay = (props) => {
             </Col>
             <Col span={9}>
               <DatePicker
+                allowClear={false}
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
