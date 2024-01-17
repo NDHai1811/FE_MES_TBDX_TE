@@ -9,6 +9,7 @@ import {
     Select,
     Modal,
     message,
+    Input
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
@@ -476,7 +477,7 @@ const TaoKeHoachSanXuat = () => {
             >
                 <Form layout="vertical">
                     <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
@@ -499,7 +500,21 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
+                            <Form.Item
+                                label="MDH"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) =>
+                                        setOrderParams({ ...orderParams, mdh: e.target.value })
+                                    }
+                                    placeholder="Nhập MDH"
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
                             <Form.Item
                                 label="Bắt đầu"
                                 className="mb-3"
@@ -515,7 +530,7 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Kết thúc"
                                 className="mb-3"
