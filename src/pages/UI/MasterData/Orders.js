@@ -419,6 +419,14 @@ const Orders = () => {
       checked: true,
     },
     {
+      title: "Số mét tới",
+      dataIndex: "so_met_toi",
+      key: "so_met_toi",
+      align: "center",
+      editable: true,
+      checked: true,
+    },
+    {
       title: "Chia máy + p8",
       dataIndex: "layout_type",
       key: "layout_type",
@@ -920,6 +928,7 @@ const Orders = () => {
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getOrders(params);
+    console.log(res);
     setTotalPage(res.totalPage);
     setData(
       res.data.map((e) => {
@@ -1116,6 +1125,16 @@ const Orders = () => {
                       allowClear
                       onChange={(e) => {
                         setParams({ ...params, customer_id: e.target.value, page: 1 }); setPage(1)
+                      }
+                      }
+                      placeholder="Nhập mã khách hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tên khách hàng viết tắt" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({ ...params, short_name: e.target.value, page: 1 }); setPage(1)
                       }
                       }
                       placeholder="Nhập mã khách hàng"

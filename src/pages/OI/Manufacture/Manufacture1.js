@@ -321,11 +321,28 @@ const Manufacture1 = (props) => {
     }
     return "";
   };
-  useEffect(() => {
-    if (listCheck.length > 0) {
-      if (machine_id) {
-        setParams({ ...params, machine_id })
-      }
+  // useEffect(() => {
+  //   if (listCheck.length > 0) {
+  //     if (machine_id) {
+  //       setParams({ ...params, machine_id })
+  //     }
+  //     if (machine_id === "S01") {
+  //       print();
+  //     } else if (machine_id == "P06" || machine_id == "P15") {
+  //       printIn();
+  //     } else if (machine_id == "D05" || machine_id == "D06") {
+  //       printDan();
+  //     }
+  //     (async () => {
+  //       reloadData();
+  //     })();
+  //   }
+  //   setListCheck([]);
+  // }, [listCheck.length]);
+
+  const handlePrint = async () => {
+    const res = await getInfoTem({ machine_id: machine_id });
+    if (res.data.length) {
       if (machine_id === "S01") {
         print();
       } else if (machine_id == "P06" || machine_id == "P15") {
@@ -333,18 +350,8 @@ const Manufacture1 = (props) => {
       } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();
       }
-      (async () => {
-        reloadData();
-      })();
     }
     setListCheck([]);
-  }, [listCheck.length]);
-
-  const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
-      setListCheck(res.data);
-    }
   };
 
   const print = useReactToPrint({
@@ -434,6 +441,12 @@ const Manufacture1 = (props) => {
     setParams({ ...params, end_date: value });
   };
 
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys);
+    },
+  };
+
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -516,6 +529,7 @@ const Manufacture1 = (props) => {
               pagination={false}
               bordered
               columns={columns}
+              rowSelection={rowSelection}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>

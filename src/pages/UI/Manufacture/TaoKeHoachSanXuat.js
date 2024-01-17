@@ -487,7 +487,7 @@ const TaoKeHoachSanXuat = () => {
                                     placeholder="Chọn khách hàng"
                                     style={{ width: "100%" }}
                                     onChange={(value) =>
-                                        setOrderParams({ ...orderParams, customer_id: value })
+                                        setOrderParams({ ...orderParams, short_name: value })
                                     }
                                     filterOption={(input, option) =>
                                         (option?.label ?? "")

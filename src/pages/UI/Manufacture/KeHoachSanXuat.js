@@ -159,7 +159,7 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Kho",
+      title: "Khổ",
       dataIndex: "kho",
       key: "kho",
       align: "center",
@@ -336,6 +336,15 @@ const KeHoachSanXuat = () => {
     console.log(record);
     await deleteRecordProductPlan({ id: record.id });
     loadListTable();
+  };
+  const deleteRecord = async () => {
+    if (listCheck.length > 0) {
+      const res = await deleteRecordProductPlan(listCheck);
+      setListCheck([]);
+      loadListTable(params);
+    } else {
+      message.info("Chưa chọn bản ghi cần xóa");
+    }
   };
   const edit = (record) => {
     form.setFieldsValue({
@@ -679,6 +688,7 @@ const KeHoachSanXuat = () => {
                 <Button type="primary" onClick={insertRecord}>
                   Tạo kế hoạch
                 </Button>
+                <Button type="primary" onClick={deleteRecord}>Xoá</Button>
               </Space>
             }
           >
