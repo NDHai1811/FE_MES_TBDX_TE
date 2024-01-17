@@ -211,15 +211,15 @@ const Manufacture1 = (props) => {
     },
   ];
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     (async () => {
-  //       if (machine_id) {
-  //         reloadData();
-  //       }
-  //     })();
-  //   }
-  // }, [machine_id, machineOptions, loadData]);
+  useEffect(() => {
+    if (machineOptions.length > 0) {
+      (async () => {
+        if (machine_id) {
+          reloadData();
+        }
+      })();
+    }
+  }, [machine_id, machineOptions, loadData]);
 
   // useEffect(() => {
   //   if (machineOptions.length > 0) {
