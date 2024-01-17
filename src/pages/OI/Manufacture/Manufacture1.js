@@ -128,8 +128,8 @@ const Manufacture1 = (props) => {
     },
     {
       title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
-      key: "san_luong",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
       align: "center",
       render: (value) => value,
     },
