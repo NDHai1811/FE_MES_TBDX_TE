@@ -19,7 +19,6 @@
 
   td {
     border: 1px solid black;
-    min-height: 150px;
     max-width: 136px;
     font-size: 14px;
     word-wrap: break-word;
@@ -28,7 +27,7 @@
   table {
     margin-left: 5px;
     margin-right: 5px;
-    margin-top: 40px;
+    margin-top: 20px;
     margin-bottom: auto;
     background-color: #fff;
     width: 350px;

@@ -39,10 +39,17 @@ const token =
 const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const columns = [
+  // {
+  //   title: "Lô SX",
+  //   dataIndex: "lo_sx",
+  //   key: "lo_sx",
+  //   align: "center",
+  //   render: (value, record, index) => value || "-",
+  // },
   {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
+    title: "MDH",
+    dataIndex: "mdh",
+    key: "mdh",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -54,26 +61,40 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
+    title: "Số lớp",
+    dataIndex: "so_lop",
+    key: "so_lop",
     align: "center",
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Sản lượng kế hoạch",
+    title: "Khổ tổng",
+    dataIndex: "kho_tong",
+    key: "kho_tong",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Dài tấm",
+    dataIndex: "dai_tam",
+    key: "dai_tam",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "SL kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
   },
   {
-    title: "Sản lượng đầu ra",
+    title: "SL đầu ra",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
   },
   {
-    title: "Sản lượng đạt",
+    title: "SL đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
@@ -84,13 +105,6 @@ const columns = [
     key: "phan_dinh",
     align: "center",
     render: (value) => (value === 1 ? "OK" : "-"),
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
   },
 ];
 
@@ -145,7 +159,7 @@ const Manufacture1 = (props) => {
     end_date: dayjs(),
   });
   // const [machineOptions, setMachineOptions] = useState([]);
-  const {machineOptions = []} = props
+  const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
@@ -211,15 +225,15 @@ const Manufacture1 = (props) => {
     },
   ];
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     (async () => {
-  //       if (machine_id) {
-  //         reloadData();
-  //       }
-  //     })();
-  //   }
-  // }, [machine_id, machineOptions, loadData]);
+  useEffect(() => {
+    if (machineOptions.length > 0) {
+      (async () => {
+        if (machine_id) {
+          reloadData();
+        }
+      })();
+    }
+  }, [machine_id, machineOptions, loadData]);
 
   // useEffect(() => {
   //   if (machineOptions.length > 0) {
@@ -250,7 +264,7 @@ const Manufacture1 = (props) => {
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    const loadDataRescursive = async (params,machine_id) => {
+    const loadDataRescursive = async (params, machine_id) => {
       console.log(params, machine_id);
       if (!machine_id) return;
       const res = await getLotByMachine(params);
@@ -262,15 +276,15 @@ const Manufacture1 = (props) => {
       }
       if (res.success) {
         if (window.location.href.indexOf("manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
+          timeout = setTimeout(function () {
+            loadDataRescursive(params, machine_id);
+          }, 5000);
       }
     };
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
   }, [params.start_date, params.end_date, params.machine_id]);
-  
+
   const getListMachine = () => {
     // getMachines()
     //   .then((res) => {
@@ -341,29 +355,15 @@ const Manufacture1 = (props) => {
   // }, [listCheck.length]);
 
   const handlePrint = async () => {
-    if(listCheck.length > 0){
-      const res = await getInfoTem({ machine_id: machine_id, ids: listCheck });
-      if (res.success && res.data.length > 0) {
-        setListTem(res.data)
-      }
-      setListCheck([]);
+    if (machine_id === "S01") {
+      print();
+    } else if (machine_id == "P06" || machine_id == "P15") {
+      printIn();
+    } else if (machine_id == "D05" || machine_id == "D06") {
+      printDan();
     }
-    
+    setListCheck([]);
   };
-
-  const [listTem, setListTem] = useState([]);
-
-  useEffect(()=>{
-    if(listTem.length > 0){
-      if (machine_id === "S01") {
-        print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
-      }
-    }
-  }, [listTem])
 
   const print = useReactToPrint({
     content: () => componentRef1.current,
@@ -455,7 +455,7 @@ const Manufacture1 = (props) => {
   const rowSelection = {
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
+      setListCheck(selectedRows);
     },
     getCheckboxProps: (record) => ({
       disabled: !record?.id
@@ -525,9 +525,9 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listTem} ref={componentRef1} />
-                <TemIn listCheck={listTem} ref={componentRef2} />
-                <TemDan listCheck={listTem} ref={componentRef3} />
+                <Tem listCheck={listCheck} ref={componentRef1} />
+                <TemIn listCheck={listCheck} ref={componentRef2} />
+                <TemDan listCheck={listCheck} ref={componentRef3} />
               </div>
             </Col>
           </Row>
@@ -545,7 +545,7 @@ const Manufacture1 = (props) => {
               bordered
               columns={columns}
               rowSelection={rowSelection}
-              dataSource={data.map((e, index) => ({ ...e, key: e.id }))}
+              dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
         </Row>
