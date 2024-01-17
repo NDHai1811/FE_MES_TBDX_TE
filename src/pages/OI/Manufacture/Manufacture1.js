@@ -355,15 +355,12 @@ const Manufacture1 = (props) => {
   // }, [listCheck.length]);
 
   const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
-      if (machine_id === "S01") {
-        print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
-      }
+    if (machine_id === "S01") {
+      print();
+    } else if (machine_id == "P06" || machine_id == "P15") {
+      printIn();
+    } else if (machine_id == "D05" || machine_id == "D06") {
+      printDan();
     }
     setListCheck([]);
   };
@@ -457,7 +454,7 @@ const Manufacture1 = (props) => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
+      setListCheck(selectedRows);
     },
   };
 
