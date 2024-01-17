@@ -341,8 +341,20 @@ const Manufacture1 = (props) => {
   // }, [listCheck.length]);
 
   const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
+    if(listCheck.length > 0){
+      const res = await getInfoTem({ machine_id: machine_id, ids: listCheck });
+      if (res.success && res.data.length > 0) {
+        setListTem(res.data)
+      }
+      setListCheck([]);
+    }
+    
+  };
+
+  const [listTem, setListTem] = useState([]);
+
+  useEffect(()=>{
+    if(listTem.length > 0){
       if (machine_id === "S01") {
         print();
       } else if (machine_id == "P06" || machine_id == "P15") {
@@ -351,8 +363,7 @@ const Manufacture1 = (props) => {
         printDan();
       }
     }
-    setListCheck([]);
-  };
+  }, [listTem])
 
   const print = useReactToPrint({
     content: () => componentRef1.current,
@@ -442,9 +453,13 @@ const Manufacture1 = (props) => {
   };
 
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
+    getCheckboxProps: (record) => ({
+      disabled: !record?.id
+    }),
   };
 
   return (
@@ -510,9 +525,9 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
-                <TemIn listCheck={listCheck} ref={componentRef2} />
-                <TemDan listCheck={listCheck} ref={componentRef3} />
+                <Tem listCheck={listTem} ref={componentRef1} />
+                <TemIn listCheck={listTem} ref={componentRef2} />
+                <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
             </Col>
           </Row>
@@ -530,7 +545,7 @@ const Manufacture1 = (props) => {
               bordered
               columns={columns}
               rowSelection={rowSelection}
-              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+              dataSource={data.map((e, index) => ({ ...e, key: e.id }))}
             />
           </Col>
         </Row>
