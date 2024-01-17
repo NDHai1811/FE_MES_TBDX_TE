@@ -20,7 +20,8 @@ import {
   Typography,
 } from "antd";
 import { baseURL } from "../../../config";
-import React, { useState, useEffect } from "react";
+import { useReactToPrint } from "react-to-print";
+import React, { useState, useEffect, useRef } from "react";
 import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
@@ -33,7 +34,8 @@ import {
   useHistory,
 } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
+import TemXaLot from "./TemXaLot";
 
 const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
@@ -47,6 +49,8 @@ const KeHoachSanXuat = () => {
   const [orders, setOrders] = useState([]);
   const [loSX, setLoSX] = useState([]);
   const [listCheck, setListCheck] = useState([]);
+  const [listPrint, setListPrint] = useState([]);
+  const componentRef1 = useRef();
   const col_detailTable = [
     {
       title: "STT",
@@ -175,7 +179,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       align: "center",
-      width:'8%'
+      width: '8%'
     },
     {
       title: "PAD",
@@ -302,7 +306,7 @@ const KeHoachSanXuat = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
-    setData(res.map(e=>({...e, key: e.id})));
+    setData(res.map(e => ({ ...e, key: e.id })));
     setLoading(false);
   };
 
@@ -325,7 +329,7 @@ const KeHoachSanXuat = () => {
   const onUpdate = async () => {
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
-    const res = await updateProductPlan({...item, ...row});
+    const res = await updateProductPlan({ ...item, ...row });
     if (res) {
       form.resetFields();
       loadListTable();
@@ -406,6 +410,16 @@ const KeHoachSanXuat = () => {
         },
       ],
     },
+    {
+      title: "Xả lót",
+      key: "33",
+      children: [
+        {
+          title: "Xả lót",
+          key: "XL01",
+        },
+      ],
+    },
   ];
   const onCheck = (selectedKeys, e) => {
     const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
@@ -415,7 +429,7 @@ const KeHoachSanXuat = () => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportKHSX({...params, plan_ids: listCheck});
+    const res = await exportKHSX({ ...params, plan_ids: listCheck });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -473,6 +487,13 @@ const KeHoachSanXuat = () => {
   };
   const isEditing = (record) => record.key === editingKey;
   const [editingKey, setEditingKey] = useState("");
+  const print = useReactToPrint({
+    content: () => componentRef1.current,
+  });
+  const handlePrint = async () => {
+    print();
+    setListCheck([]);
+  };
   const mergedColumns = col_detailTable.map((col) => {
     if (!col.editable) {
       return col;
@@ -516,7 +537,8 @@ const KeHoachSanXuat = () => {
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-        setListCheck(selectedRowKeys);
+      setListPrint(selectedRows);
+      setListCheck(selectedRowKeys);
     },
   };
   return (
@@ -689,29 +711,41 @@ const KeHoachSanXuat = () => {
                   Tạo kế hoạch
                 </Button>
                 <Button type="primary" onClick={deleteRecord}>Xoá</Button>
+
+                <Button
+                  size="medium"
+                  type="primary"
+                  style={{ width: "100%" }}
+                  onClick={handlePrint}
+                >
+                  In tem xả lot
+                </Button>
+                <div className="report-history-invoice">
+                  <TemXaLot listCheck={listPrint} ref={componentRef1} />
+                </div>
               </Space>
             }
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
-              <Table
-                size="small"
-                bordered
-                pagination={false}
-                scroll={{
-                  x: "300vw",
-                  y: "70vh",
-                }}
-                components={{
-                  body: {
-                    cell: EditableCell,
-                  },
-                }}
-                rowSelection={rowSelection}
-                rowClassName="editable-row"
-                columns={mergedColumns}
-                dataSource={data}
-              />
+                <Table
+                  size="small"
+                  bordered
+                  pagination={false}
+                  scroll={{
+                    x: "300vw",
+                    y: "70vh",
+                  }}
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  rowSelection={rowSelection}
+                  rowClassName="editable-row"
+                  columns={mergedColumns}
+                  dataSource={data}
+                />
               </Form>
             </Spin>
           </Card>
