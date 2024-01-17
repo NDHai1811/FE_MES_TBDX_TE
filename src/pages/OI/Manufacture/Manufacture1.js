@@ -165,6 +165,7 @@ const Manufacture1 = (props) => {
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
+  const [listTem, setListTem] = useState([])
   const [deviceID, setDeviceID] = useState(
     "e9aba8d0-85da-11ee-8392-a51389126dc6"
   );
@@ -176,11 +177,6 @@ const Manufacture1 = (props) => {
   const ws = useRef(null);
 
   const reloadData = async () => {
-    // const resData = await getListLotDetail();
-    // setData(resData);
-    // if (resData?.[0]?.status === 1) {
-    //   setSelectedLot(resData?.[0]);
-    // }
     getOverAllDetail();
   };
   const overallColumns = [
@@ -234,16 +230,6 @@ const Manufacture1 = (props) => {
       })();
     }
   }, [machine_id, machineOptions, loadData]);
-
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     var target = machineOptions.find((e) => e.value === machine_id);
-  //     if (!target) {
-  //       target = machineOptions[0];
-  //     }
-  //     history.push("/manufacture/" + target.value);
-  //   }
-  // }, [machineOptions]);
 
   useEffect(() => {
     if (isScan === 1) {
@@ -355,14 +341,17 @@ const Manufacture1 = (props) => {
   // }, [listCheck.length]);
 
   const handlePrint = async () => {
-    if (machine_id === "S01") {
-      print();
-    } else if (machine_id == "P06" || machine_id == "P15") {
-      printIn();
-    } else if (machine_id == "D05" || machine_id == "D06") {
-      printDan();
+    if(listTem.length > 0){
+      if (machine_id === "S01") {
+        print();
+      } else if (machine_id == "P06" || machine_id == "P15") {
+        printIn();
+      } else if (machine_id == "D05" || machine_id == "D06") {
+        printDan();
+      }
+      setListCheck([]);
+      setListTem([]);
     }
-    setListCheck([]);
   };
 
   const print = useReactToPrint({
@@ -452,10 +441,16 @@ const Manufacture1 = (props) => {
     setParams({ ...params, end_date: value });
   };
 
+  
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRows);
+      setListCheck(selectedRowKeys)
+      setListTem(selectedRows);
     },
+    getCheckboxProps: (record) => ({
+      disabled: !record?.id
+    }),
   };
 
   return (
@@ -521,9 +516,9 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
-                <TemIn listCheck={listCheck} ref={componentRef2} />
-                <TemDan listCheck={listCheck} ref={componentRef3} />
+                <Tem listCheck={listTem} ref={componentRef1} />
+                <TemIn listCheck={listTem} ref={componentRef2} />
+                <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
             </Col>
           </Row>
