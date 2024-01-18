@@ -144,9 +144,17 @@ const TaoKeHoachSanXuat = () => {
     }
     const columnKHSX = [
         {
-            title: 'Thứ tự ưu tiên',
+            title: 'Thứ tự',
             dataIndex: 'thu_tu_uu_tien',
             key: 'thu_tu_uu_tien',
+            align: 'center',
+            fixed: 'left',
+            width: '10%',
+        },
+        {
+            title: 'Khách hàng',
+            dataIndex: 'khach_hang',
+            key: 'khach_hang',
             align: 'center',
             fixed: 'left',
             width: '20%',
@@ -163,21 +171,28 @@ const TaoKeHoachSanXuat = () => {
             dataIndex: 'mdh',
             key: 'mdh',
             align: 'center',
-            width: '40%',
-        },
-        {
-            title: 'Khổ tổng',
-            dataIndex: 'kho_tong',
-            key: 'kho_tong',
-            align: 'center',
-            width: '40%',
+            width: '20%',
         },
         {
             title: 'MQL',
             dataIndex: 'mql',
             key: 'mql',
             align: 'center',
-            width: '40%',
+            width: '10%',
+        },
+        {
+            title: 'Kích thước',
+            dataIndex: 'kich_thuoc',
+            key: 'kich_thuoc',
+            align: 'center',
+            width: '20%',
+        },
+        {
+            title: 'Khổ tổng',
+            dataIndex: 'kho_tong',
+            key: 'kho_tong',
+            align: 'center',
+            width: '20%',
         },
         {
             title: 'Số lượng',
@@ -207,66 +222,56 @@ const TaoKeHoachSanXuat = () => {
             dataIndex: 'han_giao_sx',
             key: 'han_giao_sx',
             align: 'center',
-        },
-        {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dat_hang',
-            key: 'ngay_dat_hang',
-            align: 'center',
+            width: '6%'
         },
         {
             title: 'Khách hàng',
             dataIndex: 'khach_hang',
             key: 'khach_hang',
             align: 'center',
+            width: '10%'
         },
         {
-            title: 'Mã đơn hàng',
+            title: 'MDH',
             dataIndex: 'mdh',
             key: 'mdh',
             align: 'center',
+            width: '5%'
         },
         {
-            title: 'Đơn hàng',
-            dataIndex: 'order',
-            key: 'order',
-            align: 'center',
-        },
-        {
-            title: 'Mã quản lý',
+            title: 'MQL',
             dataIndex: 'mql',
             key: 'mql',
             align: 'center',
+            width: '3%'
         },
         {
             title: 'Dài',
             dataIndex: 'dai',
             key: 'dai',
             align: 'center',
+            width: '3%'
         },
         {
             title: 'Rộng',
             dataIndex: 'rong',
             key: 'rong',
             align: 'center',
+            width: '3%'
         },
         {
             title: 'Cao',
             dataIndex: 'cao',
             key: 'cao',
             align: 'center',
+            width: '3%'
         },
         {
             title: 'Số lượng',
             dataIndex: 'sl',
             key: 'sl',
             align: 'center',
-        },
-        {
-            title: 'Size',
-            dataIndex: 'size',
-            key: 'size',
-            align: 'center',
+            width: '5%'
         },
         {
             title: 'Mã Layout',
@@ -275,13 +280,13 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         },
         {
-            title: 'Ghi chú 1',
+            title: 'Ghi chú khách',
             dataIndex: 'note_1',
             key: 'note_1',
             align: 'center',
         },
         {
-            title: 'Ghi chú 2',
+            title: 'Ghi chú TBDX',
             dataIndex: 'note_2',
             key: 'note_2',
             align: 'center',
