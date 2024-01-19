@@ -26,8 +26,8 @@ import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
   exportKHSX,
+  exportKHXaLot,
   getListProductPlan,
-  storeProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
 import {
@@ -435,6 +435,15 @@ const KeHoachSanXuat = () => {
     }
     setExportLoading(false);
   };
+  const [exportLoadingXL, setExportLoadingXL] = useState(false);
+  const exportFileXL = async () => {
+    setExportLoadingXL(true);
+    const res = await exportKHXaLot({ ...params, plan_ids: listCheck });
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoadingXL(false);
+  };
   const EditableCell = ({
     editing,
     dataIndex,
@@ -673,7 +682,14 @@ const KeHoachSanXuat = () => {
                   onClick={exportFile}
                   loading={exportLoading}
                 >
-                  Xuất file KHSX
+                  KHSX Sóng
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={exportFileXL}
+                  loading={exportLoadingXL}
+                >
+                  KHSX Xả Lot
                 </Button>
                 <Upload
                   showUploadList={false}

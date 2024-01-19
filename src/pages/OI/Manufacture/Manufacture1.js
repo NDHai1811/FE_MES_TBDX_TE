@@ -448,9 +448,9 @@ const Manufacture1 = (props) => {
       setListCheck(selectedRowKeys)
       setListTem(selectedRows);
     },
-    getCheckboxProps: (record) => ({
-      disabled: !record?.id
-    }),
+    // getCheckboxProps: (record) => ({
+    //   disabled: !record?.id
+    // }),
   };
 
   return (
