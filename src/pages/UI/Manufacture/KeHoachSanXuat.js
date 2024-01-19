@@ -58,14 +58,14 @@ const KeHoachSanXuat = () => {
       key: "stt",
       render: (value, item, index) => index + 1,
       align: "center",
-      width: '2%'
+      width: '1.5%'
     },
     {
       title: "Thứ tự ưu tiên",
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: '2%',
+      width: '1.8%',
       editable: true
     },
     {
@@ -73,67 +73,88 @@ const KeHoachSanXuat = () => {
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
+      width: '3%',
     },
     {
       title: "Máy sx",
       dataIndex: "machine_id",
       key: "machine_id",
       align: "center",
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngay_dat_hang",
-      key: "ngay_dat_hang",
-      align: "center",
-      width: '5%'
+      width: '2%',
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
-      width: '10%'
+      width: '4%'
     },
     {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
+      width: '3%'
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      width: '1.5%'
     },
     {
       title: "L",
       dataIndex: "dai",
       key: "dai",
       align: "center",
+      width: '1.5%'
     },
     {
       title: "W",
       dataIndex: "rong",
       key: "rong",
       align: "center",
+      width: '1.5%'
     },
     {
       title: "H",
       dataIndex: "cao",
       key: "cao",
       align: "center",
+      width: '1.5%'
     },
     {
-      title: "Số lượng kế hoạch",
+      title: "Số lượng",
       dataIndex: "sl_kh",
       key: "sl_kh",
       align: "center",
+      width: '2.5%'
     },
     {
-      title: "Số m tới",
-      dataIndex: "so_m_toi",
-      key: "so_m_toi",
+      title: "Khổ",
+      dataIndex: "kho",
+      key: "kho",
       align: "center",
     },
     {
-      title: "Ngày sản xuất",
-      dataIndex: "ngay_sx",
-      key: "ngay_sx",
+      title: "Kết cấu giấy",
+      dataIndex: "ket_cau_giay",
+      key: "ket_cau_giay",
+      align: "center",
+      width: '8%'
+    },
+    {
+      title: "Thời gian bắt đầu",
+      dataIndex: "thoi_gian_bat_dau",
+      key: "thoi_gian_bat_dau",
+      align: "center",
+      width: '5%'
+    },
+    {
+      title: "Thời gian kết thúc",
+      dataIndex: "thoi_gian_ket_thuc",
+      key: "thoi_gian_ket_thuc",
       align: "center",
       width: '5%'
     },
@@ -151,70 +172,15 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Mã quản lý",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-    },
-    {
-      title: "Số lớp",
-      dataIndex: "so_lop",
-      key: "so_lop",
-      align: "center",
-    },
-    {
-      title: "Khổ",
-      dataIndex: "kho",
-      key: "kho",
-      align: "center",
-    },
-    {
-      title: "SL thực tế",
-      dataIndex: "sl_thuc_te",
-      key: "sl_thuc_te",
-      align: "center",
-    },
-    {
-      title: "Kết cấu giấy",
-      dataIndex: "ket_cau_giay",
-      key: "ket_cau_giay",
-      align: "center",
-      width: '8%'
-    },
-    {
-      title: "PAD",
-      dataIndex: "pad",
-      key: "pad",
-      align: "center",
-    },
-    {
       title: "Số dao",
       dataIndex: "so_dao",
       key: "so_dao",
       align: "center",
     },
     {
-      title: "Số dao kế hoạch",
-      dataIndex: "so_dao_kh",
-      key: "so_dao_kh",
-      align: "center",
-    },
-    {
-      title: "Dải tấm",
+      title: "Dài tấm",
       dataIndex: "dai_tam",
       key: "dai_tam",
-      align: "center",
-    },
-    {
-      title: "Nhóm máy",
-      dataIndex: "nhom_may",
-      key: "nhom_may",
-      align: "center",
-    },
-    {
-      title: "Số thân",
-      dataIndex: "so_than",
-      key: "so_than",
       align: "center",
     },
     {
@@ -224,15 +190,9 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Film",
-      dataIndex: "film_id",
-      key: "film_id",
-      align: "center",
-    },
-    {
-      title: "Khuôn",
-      dataIndex: "khuon_id",
-      key: "khuon_id",
+      title: "SL thực tế",
+      dataIndex: "sl_thuc_te",
+      key: "sl_thuc_te",
       align: "center",
     },
     {
@@ -242,6 +202,7 @@ const KeHoachSanXuat = () => {
       checked: true,
       align: "center",
       fixed: "right",
+      width:'2%',
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
