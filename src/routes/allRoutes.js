@@ -56,6 +56,7 @@ import Layout from "../pages/UI/Manufacture/Layout";
 import Buyer from "../pages/UI/Manufacture/Buyer";
 import Customer from "../pages/UI/MasterData/Customer";
 import WarehouseMLT from "../pages/UI/Warehouse/WarehouseMLT";
+import TaoTem from "../pages/UI/Manufacture/TaoTem";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -72,6 +73,7 @@ const authProtectedRoutes = [
     path: ["/ui/manufacture/tao-ke-hoach-san-xuat"],
     component: UITaoKeHoachSanXuat,
   },
+  { path: ["/ui/manufacture/tao-tem"], component: TaoTem },
   { path: ["/ui/manufacture/lich-su-san-xuat"], component: UIManufactureLSSX },
   { path: ["/ui/manufacture/layout"], component: Layout },
   { path: ["/ui/quality/PQC"], component: UIQualityPQC },

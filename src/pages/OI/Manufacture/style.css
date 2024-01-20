@@ -11,6 +11,11 @@
     display: none;
   }
 
+  b {
+    font-weight: 500;
+    margin-left: 5px;
+  }
+
   .print-only {
     display: block;
     width: 100%;
