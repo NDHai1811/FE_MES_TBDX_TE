@@ -75,3 +75,13 @@ export async function exportKHSX(params) {
     const res = await axios.get("ui/manufacture/production-plan/export", {params});
     return res;
 }
+
+export async function exportKHXaLot(params) {
+    const res = await axios.get("ui/manufacture/production-plan/export-xa-lot", {params});
+    return res;
+}
+
+export async function exportPreviewPlan(params) {
+    const res = await axios.post("ui/manufacture/production-plan/export-preview-plan", params);
+    return res;
+}

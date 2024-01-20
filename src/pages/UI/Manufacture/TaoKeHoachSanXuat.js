@@ -15,6 +15,8 @@ import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
 import {
     createProductPlan,
+    exportKHSX,
+    exportPreviewPlan,
     getListProductPlan,
     getOrderList,
     handleOrder,
@@ -23,6 +25,7 @@ import {
 import dayjs from "dayjs";
 import { getOrders } from "../../../api";
 import { getMachineList } from "../../../api/ui/machine";
+import { baseURL } from "../../../config";
 
 const TaoKeHoachSanXuat = () => {
     const [listCustomers, setListCustomers] = useState([]);
@@ -410,7 +413,16 @@ const TaoKeHoachSanXuat = () => {
             console.log(lsxParams);
             loadListPlans();
         })()
-    }, [lsxParams])
+    }, [lsxParams]);
+    const [exportLoading, setExportLoading] = useState(false);
+    const exportFile = async () => {
+        setExportLoading(true);
+        const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date});
+        if (res.success) {
+            window.location.href = baseURL + res.data;
+        }
+        setExportLoading(false);
+    };
     return (
         <>
             <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
@@ -425,7 +437,7 @@ const TaoKeHoachSanXuat = () => {
                             form={form}
                             onFinish={onFinish}
                         >
-                            <Row gutter={[16, 16]}>
+                            <Row gutter={[8, 8]}>
                                 <Col span={7}>
                                     <Form.Item
                                         label="Chọn máy"
@@ -457,7 +469,10 @@ const TaoKeHoachSanXuat = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col span={4} style={{ marginTop: '30px' }}>
-                                    <Button type="primary" onClick={() => openModal()}>Chọn danh sách</Button>
+                                    <Button type="primary" onClick={() => openModal()} className="w-100">Chọn danh sách</Button>
+                                </Col>
+                                <Col span={4} style={{ marginTop: '30px' }}>
+                                    <Button type="primary" onClick={() => exportFile()} loading={exportLoading} className="w-100">Tải file excel</Button>
                                 </Col>
                             </Row>
                         </Form>
