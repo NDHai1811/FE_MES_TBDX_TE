@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Modal, Row, Col, Table, message } from "antd";
+import { Modal, Row, Col, Table, message, Input } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useEffect } from "react";
@@ -15,6 +15,7 @@ function PopupQuetQr(props) {
   const [columns, setColumns] = useState([]);
   const [checkData, setCheckData] = useState([]);
   const [currentResult, setCurrentResult] = useState("");
+  const [currentValue, setCurrentValue] = useState("");
 
   const resultQuantity = checkData?.reduce((sum, val) => {
     return val.isScan ? sum + 1 : sum;
@@ -48,6 +49,25 @@ function PopupQuetQr(props) {
   //   return await mappingCheckMaterial({ material_id: currentResult });
   // };
 
+  const handleEnterPress = () => {
+    setData((prevData) => {
+      const newData = prevData.map((item) => {
+        const emptyKeys = Object.keys(item).find((key) => item[key] === "");
+        if (emptyKeys) {
+          item[emptyKeys] = currentValue;
+        }
+        return { ...item };
+      });
+      return newData;
+    });
+    setCurrentValue("");
+  };
+
+  const onChangeValue = (e) => {
+    const inputValue = e.target.value;
+    setCurrentValue(inputValue);
+  };
+
   const onSendResult = () => {
     sendMappingResult({ lo_sx: loSx })
       .then((res) => {
@@ -70,7 +90,9 @@ function PopupQuetQr(props) {
         const item = checkData.find((val) => !val.isScan);
         let result = currentResult;
         if (item.check_api === 1) {
-          const res = await mappingCheckMaterial({ material_id: currentResult });
+          const res = await mappingCheckMaterial({
+            material_id: currentResult,
+          });
           if (res.success === true) {
             result = res.data;
             setData(data.map((val) => ({ ...val, [item.key]: result })));
@@ -112,7 +134,10 @@ function PopupQuetQr(props) {
       });
       setColumns(columns);
 
-      const result = keys.map((key) => ({ [key]: "" }));
+      const result = keys.reduce((acc, key) => {
+        acc[key] = "";
+        return acc;
+      }, {});
       setData([result]);
 
       const checkData = res.data.check_api.map((val, index) => ({
@@ -146,6 +171,13 @@ function PopupQuetQr(props) {
         okButtonProps={{ style: { display: "none" } }}
       >
         <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
+        <Input
+          placeholder="Nhập giá trị"
+          onPressEnter={handleEnterPress}
+          style={{ marginTop: 8, height: 50 }}
+          value={currentValue}
+          onChange={onChangeValue}
+        />
         <Row className="mt-3">
           <Col span={24}>
             <Table
