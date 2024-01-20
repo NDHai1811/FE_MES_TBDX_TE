@@ -30,11 +30,12 @@ import {
   getListProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
-import {
-  useHistory,
-} from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
-import { DeleteOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import TemXaLot from "./TemXaLot";
 
 const KeHoachSanXuat = () => {
@@ -43,7 +44,10 @@ const KeHoachSanXuat = () => {
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [machines, setMachines] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -58,78 +62,78 @@ const KeHoachSanXuat = () => {
       key: "stt",
       render: (value, item, index) => index + 1,
       align: "center",
-      width: '1.5%'
+      width: "1.5%",
     },
     {
       title: "Thứ tự ưu tiên",
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: '1.8%',
-      editable: true
+      width: "1.8%",
+      editable: true,
     },
     {
       title: "Lô sx",
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
-      width: '3%',
+      width: "3%",
     },
     {
       title: "Máy sx",
       dataIndex: "machine_id",
       key: "machine_id",
       align: "center",
-      width: '2%',
+      width: "2%",
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
-      width: '4%'
+      width: "4%",
     },
     {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
-      width: '3%'
+      width: "3%",
     },
     {
       title: "MQL",
       dataIndex: "mql",
       key: "mql",
       align: "center",
-      width: '1.5%'
+      width: "1.5%",
     },
     {
       title: "L",
       dataIndex: "dai",
       key: "dai",
       align: "center",
-      width: '1.5%'
+      width: "1.5%",
     },
     {
       title: "W",
       dataIndex: "rong",
       key: "rong",
       align: "center",
-      width: '1.5%'
+      width: "1.5%",
     },
     {
       title: "H",
       dataIndex: "cao",
       key: "cao",
       align: "center",
-      width: '1.5%'
+      width: "1.5%",
     },
     {
       title: "Số lượng",
       dataIndex: "sl_kh",
       key: "sl_kh",
       align: "center",
-      width: '2.5%'
+      width: "2.5%",
     },
     {
       title: "Khổ",
@@ -142,28 +146,28 @@ const KeHoachSanXuat = () => {
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       align: "center",
-      width: '8%'
+      width: "8%",
     },
     {
       title: "Thời gian bắt đầu",
       dataIndex: "thoi_gian_bat_dau",
       key: "thoi_gian_bat_dau",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "Thời gian kết thúc",
       dataIndex: "thoi_gian_ket_thuc",
       key: "thoi_gian_ket_thuc",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "Ngày giao hàng",
       dataIndex: "ngay_giao_hang",
       key: "ngay_giao_hang",
       align: "center",
-      width: '5%'
+      width: "5%",
     },
     {
       title: "Ghi chú",
@@ -202,7 +206,7 @@ const KeHoachSanXuat = () => {
       checked: true,
       align: "center",
       fixed: "right",
-      width:'2%',
+      width: "2%",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -250,16 +254,16 @@ const KeHoachSanXuat = () => {
 
   useEffect(() => {
     btn_click();
-  }, [])
+  }, []);
 
   useEffect(() => {
     (async () => {
       const res1 = await getCustomers();
       setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
       const res2 = await getOrders();
-      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })))
+      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })));
       const res3 = await getLoSanXuat();
-      setLoSX(res3.data.map((e) => ({ label: e, value: e })))
+      setLoSX(res3.data.map((e) => ({ label: e, value: e })));
     })();
   }, []);
 
@@ -267,7 +271,7 @@ const KeHoachSanXuat = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
-    setData(res.map(e => ({ ...e, key: e.id })));
+    setData(res.map((e) => ({ ...e, key: e.id })));
     setLoading(false);
   };
 
@@ -383,9 +387,11 @@ const KeHoachSanXuat = () => {
     },
   ];
   const onCheck = (selectedKeys, e) => {
-    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
+    const filteredKeys = selectedKeys.filter(
+      (key) => !itemsMenu.some((e) => e.key === key)
+    );
     setParams({ ...params, machine: filteredKeys });
-  }
+  };
 
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
@@ -478,15 +484,15 @@ const KeHoachSanXuat = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: options(col.dataIndex)
-      })
+        options: options(col.dataIndex),
+      }),
     };
   });
   const options = (dataIndex) => {
-    var record = data.find(e => e.id === editingKey);
+    var record = data.find((e) => e.id === editingKey);
     let filteredOptions = [];
     return filteredOptions;
-  }
+  };
   const onChange = (value, dataIndex) => {
     const items = data.map((val) => {
       if (val.key === editingKey) {
@@ -516,121 +522,125 @@ const KeHoachSanXuat = () => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Tree
-                    checkable
-                    onCheck={onCheck}
-                    treeData={itemsMenu}
-                  // style={{ maxHeight: '80px', overflowY: 'auto' }}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, start_date: value })
-                    }
-                    value={params.start_date}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, end_date: value })
-                    }
-                    value={params.end_date}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, customer_id: value })
-                    }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
-                    options={customers}
-                  />
-                </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, order_id: value });
-                    }}
-                    placeholder="Nhập đơn hàng"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={orders}
-                  />
-                </Form.Item>
-                <Form.Item label="Lô Sản xuất" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập lô sản xuất"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={loSX}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Divider>Công đoạn</Divider>
+                  <Form.Item className="mb-3">
+                    <Tree
+                      checkable
+                      onCheck={onCheck}
+                      treeData={itemsMenu}
+                      // style={{ maxHeight: '80px', overflowY: 'auto' }}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, start_date: value })
+                      }
+                      value={params.start_date}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, end_date: value })
+                      }
+                      value={params.end_date}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập khách hàng"
+                      onChange={(value) =>
+                        setParams({ ...params, customer_id: value })
+                      }
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
+                      options={customers}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Đơn hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, order_id: value });
+                      }}
+                      placeholder="Nhập đơn hàng"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={orders}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Lô Sản xuất" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập lô sản xuất"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={loSX}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
@@ -677,17 +687,16 @@ const KeHoachSanXuat = () => {
                     }
                   }}
                 >
-                  <Button
-                    type="primary"
-                    loading={loadingExport}
-                  >
+                  <Button type="primary" loading={loadingExport}>
                     Upload Excel
                   </Button>
                 </Upload>
                 <Button type="primary" onClick={insertRecord}>
                   Tạo kế hoạch
                 </Button>
-                <Button type="primary" onClick={deleteRecord}>Xoá</Button>
+                <Button type="primary" onClick={deleteRecord}>
+                  Xoá
+                </Button>
 
                 <Button
                   size="medium"

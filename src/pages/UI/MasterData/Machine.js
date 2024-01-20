@@ -86,7 +86,7 @@ const Machine = () => {
       dataIndex: "is_iot",
       key: "is_iot",
       align: "center",
-      render: (value, item, index) => value ? "Có": "Không",
+      render: (value, item, index) => (value ? "Có" : "Không"),
     },
   ];
   const formFields = [
@@ -119,7 +119,7 @@ const Machine = () => {
       title: "IOT",
       key: "is_iot",
       required: true,
-      isTrueFalse: true
+      isTrueFalse: true,
     },
   ];
 
@@ -223,47 +223,49 @@ const Machine = () => {
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
-              >
-                <Form.Item label="Mã" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                    placeholder="Nhập mã"
-                  />
-                </Form.Item>
-                <Form.Item label="Tên" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, name: e.target.value })
-                    }
-                    placeholder="Nhập tên"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
+                >
+                  <Form.Item label="Mã" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, id: e.target.value })
+                      }
+                      placeholder="Nhập mã"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tên" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, name: e.target.value })
+                      }
+                      placeholder="Nhập tên"
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ textAlign: "center" }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "80%" }}
+                    >
+                      Tìm kiếm
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Máy"

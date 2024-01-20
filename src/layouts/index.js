@@ -28,7 +28,10 @@ const Layout = (props) => {
             <Header />
             <div
               className="main-content"
-              style={{ paddingInline: "0.5em", minHeight: "100%" }}
+              style={{
+                paddingInline: "0.5em",
+                minHeight: "100%",
+              }}
             >
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <UserCard />
@@ -43,7 +46,7 @@ const Layout = (props) => {
       ) : (
         <div id="layout-wrapper" style={{ height: "100%", minHeight: "100vh" }}>
           <HeaderUI />
-          <div>{props.children}</div>
+          <div className="content-below-header">{props.children}</div>
         </div>
       )}
     </React.Fragment>

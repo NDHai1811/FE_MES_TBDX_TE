@@ -21,7 +21,7 @@ import {
   Spin,
   Popconfirm,
   InputNumber,
-  Typography
+  Typography,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useRef, useEffect } from "react";
@@ -199,7 +199,6 @@ const Materials = () => {
     {
       title: "Mã cuộn TBDX",
       key: "material_id",
-
     },
     {
       title: "Mã vật tư",
@@ -321,14 +320,17 @@ const Materials = () => {
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys)
+      setListCheck(selectedRowKeys);
     },
   };
   const [exportLoading, setExportLoading] = useState(false);
   const [exportLoading1, setExportLoading1] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportWarehouseTicket({ ...params, material_ids: listCheck });
+    const res = await exportWarehouseTicket({
+      ...params,
+      material_ids: listCheck,
+    });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -417,8 +419,8 @@ const Materials = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: []
-      })
+        options: [],
+      }),
     };
   });
   return (
@@ -426,11 +428,12 @@ const Materials = () => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            {/* <Divider>Thời gian truy vấn</Divider>
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+            >
+              {/* <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Space direction="vertical" style={{ width: "100%" }}>
@@ -455,60 +458,52 @@ const Materials = () => {
                 </Space>
               </Form>
             </div> */}
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item
-                  label={"Mã cuộn TBDX"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập mã cuộn TBDX"}
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={"Mã cuộn NCC"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập mã cuộn NCC"}
-                    onChange={(e) =>
-                      setParams({ ...params, ma_cuon_ncc: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={"Loại giấy"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập loại giấy"}
-                    onChange={(e) =>
-                      setParams({ ...params, loai_giay: e.target.value })
-                    }
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
-            >
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label={"Mã cuộn TBDX"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập mã cuộn TBDX"}
+                      onChange={(e) =>
+                        setParams({ ...params, id: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item label={"Mã cuộn NCC"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập mã cuộn NCC"}
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_ncc: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item label={"Loại giấy"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập loại giấy"}
+                      onChange={(e) =>
+                        setParams({ ...params, loai_giay: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  onClick={btn_click}
+                  style={{ width: "80%" }}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
@@ -560,7 +555,9 @@ const Materials = () => {
                 </Button>
                 <div className="report-history-invoice">
                   <TemNVL
-                    listCheck={data.filter(e => listCheck.includes(e.id)).map(e => ({ ...e, material_id: e.id }))}
+                    listCheck={data
+                      .filter((e) => listCheck.includes(e.id))
+                      .map((e) => ({ ...e, material_id: e.id }))}
                     ref={componentRef1}
                   />
                 </div>
@@ -583,13 +580,13 @@ const Materials = () => {
                   }}
                   pagination={{
                     current: page,
-                    size: 'default',
+                    size: "default",
                     total: totalPage,
                     onChange: (page, pageSize) => {
                       setPage(page);
                       setPageSize(pageSize);
                       setParams({ ...params, page: page, pageSize: pageSize });
-                    }
+                    },
                   }}
                 />
               </Form>
