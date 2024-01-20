@@ -102,7 +102,7 @@ const columns = [
 ];
 
 const InDan = (props) => {
-  document.title = "Sản xuất máy In";
+  document.title = "Sản xuất máy tự động";
   const { machine_id } = useParams();
   const currentColumns = [
     {

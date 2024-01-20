@@ -272,7 +272,7 @@ const Machine = () => {
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/parameters/import"}
+                  action={baseURL + "/api/machines/import"}
                   headers={{
                     authorization: "authorization-text",
                   }}
