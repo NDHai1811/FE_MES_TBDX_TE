@@ -21,7 +21,7 @@ import {
   Spin,
   Popconfirm,
   InputNumber,
-  Typography
+  Typography,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useRef, useEffect } from "react";
@@ -153,7 +153,6 @@ const Customer = () => {
     {
       title: "Mã KH",
       key: "id",
-
     },
     {
       title: "Tên KH",
@@ -246,7 +245,7 @@ const Customer = () => {
   const [form] = Form.useForm();
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys)
+      setListCheck(selectedRowKeys);
     },
   };
   const [exportLoading, setExportLoading] = useState(false);
@@ -334,8 +333,8 @@ const Customer = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: []
-      })
+        options: [],
+      }),
     };
   });
   return (
@@ -343,53 +342,49 @@ const Customer = () => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item
-                  label={"Mã KH"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập mã KH"}
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={"Tên KH"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập tên KH"}
-                    onChange={(e) =>
-                      setParams({ ...params, name: e.target.value })
-                    }
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             >
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label={"Mã KH"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập mã KH"}
+                      onChange={(e) =>
+                        setParams({ ...params, id: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item label={"Tên KH"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập tên KH"}
+                      onChange={(e) =>
+                        setParams({ ...params, name: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  onClick={btn_click}
+                  style={{ width: "80%" }}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card

@@ -243,280 +243,285 @@ const QuanLyKhuonFilm = () => {
   const [listCustomers, setListCustomers] = useState([]);
   const data = [
     {
-      khuon: '66',
-      film: '134',
-      khuon_chay: '2',
-      film_chay: '2',
-      khuon_luu: '120',
-      film_luu: '170',
-      khuon_pm: '17',
-      film_pm: '15',
-      ty_le: '100%'
-    }
-  ]
+      khuon: "66",
+      film: "134",
+      khuon_chay: "2",
+      film_chay: "2",
+      khuon_luu: "120",
+      film_luu: "170",
+      khuon_pm: "17",
+      film_pm: "15",
+      ty_le: "100%",
+    },
+  ];
   const dataTable = [
     {
-      stt: '1',
-      ma_khuon: 'KBL-129',
-      ten_khuon: 'KBL-129',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "1",
+      ma_khuon: "KBL-129",
+      ten_khuon: "KBL-129",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '2',
-      ma_khuon: 'KBL-019',
-      ten_khuon: 'KBL-019',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "2",
+      ma_khuon: "KBL-019",
+      ten_khuon: "KBL-019",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '3',
-      ma_khuon: 'KBL-129',
-      ten_khuon: 'KBL-129',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "3",
+      ma_khuon: "KBL-129",
+      ten_khuon: "KBL-129",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '4',
-      ma_khuon: 'KBL-076',
-      ten_khuon: 'KBL-076',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "4",
+      ma_khuon: "KBL-076",
+      ten_khuon: "KBL-076",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '5',
-      ma_khuon: 'KBL-129',
-      ten_khuon: 'KBL-129',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "5",
+      ma_khuon: "KBL-129",
+      ten_khuon: "KBL-129",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '6',
-      ma_khuon: 'KBL-018',
-      ten_khuon: 'KBL-018',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "6",
+      ma_khuon: "KBL-018",
+      ten_khuon: "KBL-018",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '7',
-      ma_khuon: 'KBL-035',
-      ten_khuon: 'KBL-035',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "7",
+      ma_khuon: "KBL-035",
+      ten_khuon: "KBL-035",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '8',
-      ma_khuon: 'KBL-017',
-      ten_khuon: 'KBL-017',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "8",
+      ma_khuon: "KBL-017",
+      ten_khuon: "KBL-017",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
     {
-      stt: '9',
-      ma_khuon: 'KBL-018',
-      ten_khuon: 'KBL-018',
-      khach_hang: 'TAICERA',
-      ngay_tao: '10/12/2023',
-      ngay_pm: '10/12/2023',
-      so_shot: '1',
-      nguoi_pm: 'Trần Văn Thái',
-      chu_ky_pm: '1',
-      ngay_bao_tri_tiep_theo: '20/12/2023',
-      tinh_trang: '1',
-      hanh_dong_cuoi: '',
-      vị_tri_khuon: 'P16',
-      ngay_len_khuon_gan_nhat: '10/12/2023',
+      stt: "9",
+      ma_khuon: "KBL-018",
+      ten_khuon: "KBL-018",
+      khach_hang: "TAICERA",
+      ngay_tao: "10/12/2023",
+      ngay_pm: "10/12/2023",
+      so_shot: "1",
+      nguoi_pm: "Trần Văn Thái",
+      chu_ky_pm: "1",
+      ngay_bao_tri_tiep_theo: "20/12/2023",
+      tinh_trang: "1",
+      hanh_dong_cuoi: "",
+      vị_tri_khuon: "P16",
+      ngay_len_khuon_gan_nhat: "10/12/2023",
     },
-
-  ]
+  ];
   return (
     <>
       <Row style={{ padding: "8px" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Tree
-                    checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
-                    treeData={itemsMenu}
-                    style={{ maxHeight: "80px", overflowY: "auto" }}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
-                    }
-                    value={params.date[0]}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
-                    }
-                    value={params.date[1]}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Tên/mã khuôn/film" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Chọn khuôn/film"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Vị trí" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
-                    }}
-                    placeholder="Chọn vị trí"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={[]}
-                  />
-                </Form.Item>
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Chọn khách hàng"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             >
-              <Button type="primary" style={{ width: "80%" }}>
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Divider>Công đoạn</Divider>
+                  <Form.Item className="mb-3">
+                    <Tree
+                      checkable
+                      defaultExpandedKeys={["0-0-0", "0-0-1"]}
+                      defaultSelectedKeys={["0-0-0", "0-0-1"]}
+                      defaultCheckedKeys={["0-0-0", "0-0-1"]}
+                      // onSelect={onSelect}
+                      // onCheck={onCheck}
+                      treeData={itemsMenu}
+                      style={{ maxHeight: "80px", overflowY: "auto" }}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [value, params.date[1]] })
+                      }
+                      value={params.date[0]}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [params.date[0], value] })
+                      }
+                      value={params.date[1]}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Tên/mã khuôn/film" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Chọn khuôn/film"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Vị trí" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, ten_sp: value });
+                      }}
+                      placeholder="Chọn vị trí"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={[]}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Chọn khách hàng"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
+              >
+                <Button type="primary" style={{ width: "80%" }}>
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
@@ -531,7 +536,12 @@ const QuanLyKhuonFilm = () => {
             }
           >
             <Table columns={columns} dataSource={data} bordered />
-            <Table columns={columnsTable} dataSource={dataTable} bordered className="mt-5" />
+            <Table
+              columns={columnsTable}
+              dataSource={dataTable}
+              bordered
+              className="mt-5"
+            />
           </Card>
         </Col>
       </Row>

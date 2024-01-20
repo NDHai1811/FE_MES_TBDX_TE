@@ -5,6 +5,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import logolight from "../assets/images/logo.jpg";
 import { useProfile } from "../components/hooks/UserHooks";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import './layoutStyle.scss';
 
 const items = [
   {
@@ -249,6 +250,7 @@ const HeaderUI = () => {
           paddingTop: "3px",
           paddingBottom: "3px",
         }}
+        className="fixed-header"
       >
         <Row style={{ alignItems: "center" }}>
           <Col span={4}>

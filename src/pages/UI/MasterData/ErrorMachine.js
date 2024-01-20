@@ -75,7 +75,7 @@ const ErrorMachines = () => {
   const formFields = [
     {
       key: "id",
-      hidden: true
+      hidden: true,
     },
     {
       title: "Mã lỗi ",
@@ -201,47 +201,49 @@ const ErrorMachines = () => {
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
-              >
-                <Form.Item label="Công đoạn" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, line: e.target.value })
-                    }
-                    placeholder="Nhập mã"
-                  />
-                </Form.Item>
-                <Form.Item label="Mã lỗi" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, code: e.target.value })
-                    }
-                    placeholder="Nhập tên"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
+                >
+                  <Form.Item label="Công đoạn" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, line: e.target.value })
+                      }
+                      placeholder="Nhập mã"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã lỗi" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, code: e.target.value })
+                      }
+                      placeholder="Nhập tên"
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ textAlign: "center" }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "80%" }}
+                    >
+                      Tìm kiếm
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Quản lý thông số sản phẩm"
@@ -320,7 +322,7 @@ const ErrorMachines = () => {
                 bordered
                 pagination={{ position: ["topRight", "bottomRight"] }}
                 columns={col_detailTable}
-                dataSource={data.map(e=>({...e, key: e.id}))}
+                dataSource={data.map((e) => ({ ...e, key: e.id }))}
                 rowSelection={rowSelection}
               />
             </Spin>

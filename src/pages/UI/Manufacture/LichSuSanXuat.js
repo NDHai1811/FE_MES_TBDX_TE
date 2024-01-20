@@ -15,7 +15,12 @@ import {
   Tree,
 } from "antd";
 import "../style.scss";
-import { getCustomers, getLines, getLoSanXuat, getOrders } from "../../../api/ui/main";
+import {
+  getCustomers,
+  getLines,
+  getLoSanXuat,
+  getOrders,
+} from "../../../api/ui/main";
 import {
   exportProduceHistory,
   exportReportProduceHistory,
@@ -133,7 +138,7 @@ const columns3 = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width:'10%'
+    width: "10%",
   },
   {
     title: "Đơn hàng",
@@ -152,7 +157,7 @@ const columns3 = [
     dataIndex: "lot_id",
     key: "lot_id",
     align: "center",
-    width:'5%'
+    width: "5%",
   },
   {
     title: "Mã layout",
@@ -288,7 +293,10 @@ const columns3 = [
 
 const LichSuSanXuat = (props) => {
   document.title = "UI - Lịch sử sản xuất";
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loSX, setLoSX] = useState([]);
@@ -297,9 +305,9 @@ const LichSuSanXuat = (props) => {
       const res1 = await getCustomers();
       setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
       const res2 = await getOrders();
-      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })))
+      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })));
       const res3 = await getLoSanXuat();
-      setLoSX(res3.data.map((e) => ({ label: e, value: e })))
+      setLoSX(res3.data.map((e) => ({ label: e, value: e })));
     })();
     btn_click();
   }, []);
@@ -485,128 +493,134 @@ const LichSuSanXuat = (props) => {
     },
   ];
   const onCheck = (selectedKeys, e) => {
-    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e=>e.key === key));
-    setParams({...params, machine: filteredKeys});
-  }
+    const filteredKeys = selectedKeys.filter(
+      (key) => !itemsMenu.some((e) => e.key === key)
+    );
+    setParams({ ...params, machine: filteredKeys });
+  };
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Tree
-                    checkable
-                    onCheck={onCheck}
-                    treeData={itemsMenu}
-                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, start_date: value})
-                    }
-                    value={params.start_date}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, end_date: value })
-                    }
-                    value={params.end_date}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, customer_id: value })
-                    }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
-                    options={customers}
-                  />
-                </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, order_id: value });
-                    }}
-                    placeholder="Nhập đơn hàng"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={orders}
-                  />
-                </Form.Item>
-                <Form.Item label="Lô Sản xuất" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập lô sản xuất"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={loSX}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Divider>Công đoạn</Divider>
+                  <Form.Item className="mb-3">
+                    <Tree
+                      checkable
+                      onCheck={onCheck}
+                      treeData={itemsMenu}
+                      // style={{ maxHeight: '80px', overflowY: 'auto' }}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, start_date: value })
+                      }
+                      value={params.start_date}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, end_date: value })
+                      }
+                      value={params.end_date}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập khách hàng"
+                      onChange={(value) =>
+                        setParams({ ...params, customer_id: value })
+                      }
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
+                      options={customers}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Đơn hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, order_id: value });
+                      }}
+                      placeholder="Nhập đơn hàng"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={orders}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Lô Sản xuất" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập lô sản xuất"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={loSX}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
