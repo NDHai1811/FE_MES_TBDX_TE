@@ -80,5 +80,11 @@ export async function getInfoTem(params){
   return await axios.get("/oi/manufacture/intem", { params: params });
 }
 export async function manualInput(params){
-  return await axios.post("/oi/manufacture/manual-input", params);
+  return await axios.post("/oi/manufacture/manual/input", params);
+}
+export async function manualScan(params){
+  return await axios.post("/oi/manufacture/manual/scan", params);
+}
+export async function manualList(params){
+  return await axios.get("/oi/manufacture/manual/list", {params});
 }

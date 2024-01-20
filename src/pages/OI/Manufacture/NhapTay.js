@@ -22,6 +22,8 @@ import {
   getInfoTem,
   scanQrCode,
   manualInput,
+  manualList,
+  manualScan,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
@@ -167,6 +169,7 @@ const NhapTay = (props) => {
   const [selectedLot, setSelectedLot] = useState();
   const [lotCurrent, setLotCurrent] = useState();
   const [listCheck, setListCheck] = useState([]);
+  const [listTem, setListTem] = useState([])
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
   const [deviceID, setDeviceID] = useState(
@@ -188,9 +191,10 @@ const NhapTay = (props) => {
   };
 
   const reloadData = async () => {
-    const resData = await getListLotDetail();
-    setData(resData);
-    setLotCurrent(resData.find(e=>e?.lo_sx === lotCurrent?.lo_sx));
+    const resData = await manualList({machine_id: machine_id});
+    console.log(resData);
+    setData(resData.data);
+    setLotCurrent(resData.data.find(e=>e?.lo_sx === lotCurrent?.lo_sx));
     getOverAllDetail();
   };
   const overallColumns = [
@@ -307,7 +311,7 @@ const NhapTay = (props) => {
   const onConfirm = async () => {
     var res = await manualInput({...lotCurrent, san_luong: value, machine_id: machine_id});
     if(res.success){
-      setLotCurrent({...lotCurrent, san_luong: value});
+      setLotCurrent();
       setValue("");
       closePopup();
       reloadData();
@@ -346,8 +350,8 @@ const NhapTay = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lot_id: result, machine_id: machine_id })
-      .then(reloadData())
+    manualScan({ lo_sx: result, machine_id: machine_id })
+      .then(()=>{reloadData(); handleCloseMdl()})
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
 
@@ -366,26 +370,33 @@ const NhapTay = (props) => {
     }
     return "";
   };
-  useEffect(() => {
-    if (listCheck.length > 0) {
-      if (machine_id === "S01") {
-        print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
-      }
-      (async () => {
-        reloadData()
-      })();
-    }
-    setListCheck([]);
-  }, [listCheck.length]);
+  // useEffect(() => {
+  //   if (listCheck.length > 0) {
+  //     if (machine_id === "S01") {
+  //       print();
+  //     } else if (machine_id == "P06" || machine_id == "P15") {
+  //       printIn();
+  //     } else if (machine_id == "D05" || machine_id == "D06") {
+  //       printDan();
+  //     }
+  //     (async () => {
+  //       reloadData()
+  //     })();
+  //   }
+  //   setListCheck([]);
+  // }, [listCheck.length]);
 
   const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
-      setListCheck(res.data);
+    if(listTem.length > 0){
+      if (machine_id === "S01") {
+        print();
+      } else if (machine_id.includes('P')) {
+        printIn();
+      } else if (machine_id.includes('D')) {
+        printDan();
+      }
+      setListCheck([]);
+      setListTem([]);
     }
   };
 
@@ -398,6 +409,17 @@ const NhapTay = (props) => {
   const printDan = useReactToPrint({
     content: () => componentRef3.current,
   });
+
+  const rowSelection = {
+    selectedRowKeys: listCheck,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys)
+      setListTem(selectedRows);
+    },
+    // getCheckboxProps: (record) => ({
+    //   disabled: !record?.id
+    // }),
+  };
 
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
@@ -554,9 +576,9 @@ const NhapTay = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
-                <TemIn listCheck={listCheck} ref={componentRef2} />
-                <TemDan listCheck={listCheck} ref={componentRef3} />
+                <Tem listCheck={listTem} ref={componentRef1} />
+                <TemIn listCheck={listTem} ref={componentRef2} />
+                <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
             </Col>
           </Row>
@@ -578,6 +600,7 @@ const NhapTay = (props) => {
                   onClick: () => onClickRow(record),
                 };
               }}
+              rowSelection={rowSelection}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
