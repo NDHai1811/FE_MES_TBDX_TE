@@ -394,7 +394,7 @@ const Customer = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý nguyên vật liệu"
+            title="Quản lý khách hàng"
             extra={
               <Space>
                 {/* <Upload
