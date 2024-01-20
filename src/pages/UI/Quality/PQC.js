@@ -25,7 +25,13 @@ import {
   exportReportQC,
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
-import { getErrorDetailList, getQualityOverall, getTopError, getTrendingError, recheckQC } from "../../../api/ui/quality";
+import {
+  getErrorDetailList,
+  getQualityOverall,
+  getTopError,
+  getTrendingError,
+  recheckQC,
+} from "../../../api/ui/quality";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
@@ -104,7 +110,7 @@ const QualityPQC = (props) => {
   const [dataTable2, setDataTable2] = useState();
   const [dataLineChart, setDataLineChart] = useState([]);
   const [dataPieChart, setDataPieChart] = useState([]);
-  const [dataPieChart_NG, setDataPieChart_NG] = useState([])
+  const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
 
   const configPieChart = {
     data: dataPieChart,
@@ -138,20 +144,20 @@ const QualityPQC = (props) => {
     },
   };
   const configLineChart = {
-    data:dataLineChart,
-    height:200,
-    xField: 'date',
-    yField: 'value',
-    seriesField: 'error',
+    data: dataLineChart,
+    height: 200,
+    xField: "date",
+    yField: "value",
+    seriesField: "error",
     legend: {
-        position: 'top',
+      position: "top",
     },
     smooth: true,
     animation: {
-        appear: {
-        animation: 'path-in',
+      appear: {
+        animation: "path-in",
         duration: 5000,
-        },
+      },
     },
   };
 
@@ -318,7 +324,7 @@ const QualityPQC = (props) => {
   ];
 
   const recheck = async (id) => {
-    var res = await recheckQC({id});
+    var res = await recheckQC({ id });
   };
   const [dataDetail, setDataDetail] = useState([]);
 
@@ -330,20 +336,22 @@ const QualityPQC = (props) => {
       const res2 = await getQualityOverall(params);
       setSummaryData(res2.data);
       const res3 = await getTopError(params);
-      setDataPieChart(Object.keys(res3.data ?? {}).map(key=>{
-        return res3.data[key]
-      }));
+      setDataPieChart(
+        Object.keys(res3.data ?? {}).map((key) => {
+          return res3.data[key];
+        })
+      );
       const res4 = await getTrendingError(params);
       var line_data = [];
-      Object.keys(res4.data ?? {}).map(key=>{
-        Object.keys(res4.data[key] ?? {}).map(error_key=>{
+      Object.keys(res4.data ?? {}).map((key) => {
+        Object.keys(res4.data[key] ?? {}).map((error_key) => {
           line_data.push({
-            date:key,
-            error:error_key,
-            value:res4.data[key][error_key]
-          })
-        })
-      })
+            date: key,
+            error: error_key,
+            value: res4.data[key][error_key],
+          });
+        });
+      });
       setDataLineChart(line_data);
       setLoading(false);
     })();
@@ -448,42 +456,42 @@ const QualityPQC = (props) => {
       key: "san_luong_dem_duoc",
       dataIndex: "san_luong_dem_duoc",
       align: "center",
-      render:(value)=>value??0
+      render: (value) => value ?? 0,
     },
     {
       title: "Lỗi ngoại quan",
       key: "sl_ngoai_quan",
       dataIndex: "sl_ngoai_quan",
       align: "center",
-      render:(value)=>value??0
+      render: (value) => value ?? 0,
     },
     {
       title: "Lỗi tính năng",
       key: "sl_tinh_nang",
       dataIndex: "sl_tinh_nang",
       align: "center",
-      render:(value)=>value??0
+      render: (value) => value ?? 0,
     },
     {
       title: "Tỷ lệ lỗi",
       key: "ti_le_loi",
       dataIndex: "ti_le_loi",
       align: "center",
-      render:(value)=>value??0
+      render: (value) => value ?? 0,
     },
     {
       title: "Số phế",
       key: "sl_ng",
       dataIndex: "sl_ng",
       align: "center",
-      render:(value)=>value??0
+      render: (value) => value ?? 0,
     },
     {
       title: "Tỷ lệ phế",
       key: "ti_le_ng",
       dataIndex: "ti_le_ng",
       align: "center",
-      render:(value)=>value??0
+      render: (value) => value ?? 0,
     },
   ];
   const [summaryData, setSummaryData] = useState([
@@ -542,169 +550,179 @@ const QualityPQC = (props) => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
-                <Form.Item className="mb-3">
-                  <Tree
-                    checkable
-                    defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                    defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                    defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                    // onSelect={onSelect}
-                    // onCheck={onCheck}
-                    treeData={itemsMenu}
-                    style={{ maxHeight: '80px', overflowY: 'auto' }}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
-                    }
-                    value={params.date[0]}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
-                    }
-                    value={params.date[1]}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập máy"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
-                    }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listCustomers}
-                  />
-                </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
-                    }}
-                    placeholder="Nhập đơn hàng"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listNameProducts}
-                  />
-                </Form.Item>
-                <Form.Item label="Lô Sản xuất" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập lô sản xuất"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Quy cách" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập quy cách"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Lỗi" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập lỗi"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Divider>Công đoạn</Divider>
+                  <Form.Item className="mb-3">
+                    <Tree
+                      checkable
+                      defaultExpandedKeys={["0-0-0", "0-0-1"]}
+                      defaultSelectedKeys={["0-0-0", "0-0-1"]}
+                      defaultCheckedKeys={["0-0-0", "0-0-1"]}
+                      // onSelect={onSelect}
+                      // onCheck={onCheck}
+                      treeData={itemsMenu}
+                      style={{ maxHeight: "80px", overflowY: "auto" }}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [value, params.date[1]] })
+                      }
+                      value={params.date[0]}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [params.date[0], value] })
+                      }
+                      value={params.date[1]}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Máy" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập máy"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập khách hàng"
+                      onChange={(value) =>
+                        setParams({ ...params, khach_hang: value })
+                      }
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={listCustomers}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Đơn hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, ten_sp: value });
+                      }}
+                      placeholder="Nhập đơn hàng"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={listNameProducts}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Lô Sản xuất" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập lô sản xuất"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Quy cách" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập quy cách"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Lỗi" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập lỗi"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
 
         <Col span={20}>
@@ -725,13 +743,21 @@ const QualityPQC = (props) => {
               </Card>
             </Col> */}
             <Col span={16}>
-              <Card title="Biểu đồ xu hướng lỗi" style={{ height: '100%',padding: '0px'}} bodyStyle={{padding:12}}>
-                <Line {...configLineChart}/>
+              <Card
+                title="Biểu đồ xu hướng lỗi"
+                style={{ height: "100%", padding: "0px" }}
+                bodyStyle={{ padding: 12 }}
+              >
+                <Line {...configLineChart} />
               </Card>
             </Col>
             <Col span={8}>
-              <Card title="5 lỗi công đoạn" style={{ height: '100%',padding: '0px'}} bodyStyle={{padding:12}}>
-                <Pie {...configPieChart}/>
+              <Card
+                title="5 lỗi công đoạn"
+                style={{ height: "100%", padding: "0px" }}
+                bodyStyle={{ padding: 12 }}
+              >
+                <Pie {...configPieChart} />
               </Card>
             </Col>
             <Col span={24}>

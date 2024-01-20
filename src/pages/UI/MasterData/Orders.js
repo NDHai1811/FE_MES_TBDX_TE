@@ -40,6 +40,7 @@ import {
   getListDRC,
   getListLayout,
 } from "../../../api/ui/manufacture";
+import "../style.scss";
 
 const EditableCell = ({
   editing,
@@ -322,7 +323,7 @@ const Orders = () => {
       width: "2%",
       editable: true,
       checked: true,
-      render: (value) => PL1s.find(e => e.value === value)?.label
+      render: (value) => PL1s.find((e) => e.value === value)?.label,
     },
     {
       title: "Quy cách DRC",
@@ -341,7 +342,7 @@ const Orders = () => {
       width: "4%",
       editable: true,
       checked: true,
-      render: (value) => PL2s.find(e => e.value === value)?.label
+      render: (value) => PL2s.find((e) => e.value === value)?.label,
     },
     {
       title: "Mã buyer",
@@ -484,7 +485,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: '3%'
+      width: "3%",
     },
     {
       title: "STYLE",
@@ -689,62 +690,77 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-            col.dataIndex === "dai" ||
-            col.dataIndex === "price" ||
-            col.dataIndex === "rong"
+          col.dataIndex === "dai" ||
+          col.dataIndex === "price" ||
+          col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" ||
               col.dataIndex === "han_giao" ||
               col.dataIndex === "han_giao_sx"
-              ? "dateTime"
-              : col.dataIndex === "buyer_id" ||
-                col.dataIndex === "layout_id" ||
-                col.dataIndex === "layout_type" ||
-                col.dataIndex === "phan_loai_1" ||
-                col.dataIndex === "phan_loai_2" ||
-                col.dataIndex === "quy_cach_drc"
-                ? "select"
-                : "text",
+            ? "dateTime"
+            : col.dataIndex === "buyer_id" ||
+              col.dataIndex === "layout_id" ||
+              col.dataIndex === "layout_type" ||
+              col.dataIndex === "phan_loai_1" ||
+              col.dataIndex === "phan_loai_2" ||
+              col.dataIndex === "quy_cach_drc"
+            ? "select"
+            : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: options(col.dataIndex)
-      })
+        options: options(col.dataIndex),
+      }),
     };
   });
 
   const options = (dataIndex) => {
-    var record = data.find(e => e.id === editingKey);
+    var record = data.find((e) => e.id === editingKey);
     let filteredOptions = [];
     switch (dataIndex) {
-      case 'buyer_id':
-        var phan_loai_1 = PL1s.find(e => e.value?.toLowerCase() === record?.phan_loai_1?.toLowerCase())?.label;
-        filteredOptions = buyers.filter(e => e.value?.endsWith(phan_loai_1?.toUpperCase()) && e.value?.startsWith(record?.customer_id));
+      case "buyer_id":
+        var phan_loai_1 = PL1s.find(
+          (e) => e.value?.toLowerCase() === record?.phan_loai_1?.toLowerCase()
+        )?.label;
+        filteredOptions = buyers.filter(
+          (e) =>
+            e.value?.endsWith(phan_loai_1?.toUpperCase()) &&
+            e.value?.startsWith(record?.customer_id)
+        );
         break;
-      case 'layout_type':
+      case "layout_type":
         filteredOptions = layoutTypes;
         break;
-      case 'layout_id':
+      case "layout_id":
         filteredOptions = layouts;
         break;
-      case 'phan_loai_1':
+      case "phan_loai_1":
         filteredOptions = PL1s;
         break;
-      case 'phan_loai_2':
+      case "phan_loai_2":
         filteredOptions = PL2s;
         break;
       default:
         var options = record?.customer_specifications ?? [];
-        filteredOptions = options.filter(e => record?.phan_loai_1 === e?.phan_loai_1 && record?.customer_id === e?.customer_id).map(e => ({ value: e.drc_id, label: e.drc_id + ' (' + e.drc.description + ')' }));
+        filteredOptions = options
+          .filter(
+            (e) =>
+              record?.phan_loai_1 === e?.phan_loai_1 &&
+              record?.customer_id === e?.customer_id
+          )
+          .map((e) => ({
+            value: e.drc_id,
+            label: e.drc_id + " (" + e.drc.description + ")",
+          }));
         if (filteredOptions.length <= 0) {
           filteredOptions = listDRC;
         }
         break;
     }
     return filteredOptions;
-  }
+  };
   const handleVisibleChange = (checkedValues) => {
     if (mergedColumns) {
       const uncheckedColumns = mergedColumns
@@ -770,12 +786,14 @@ const Orders = () => {
         .map((col) => col.key)}
       onChange={handleVisibleChange}
     >
-      <Row gutter={[4, 4]} style={{ width: '100%' }}>
-        {
-          mergedColumns
-            .filter((col) => col.key !== "action")
-            .map((col) => (<Col span={4}><Checkbox value={col.dataIndex}>{col.title}</Checkbox></Col>))
-        }
+      <Row gutter={[4, 4]} style={{ width: "100%" }}>
+        {mergedColumns
+          .filter((col) => col.key !== "action")
+          .map((col) => (
+            <Col span={4}>
+              <Checkbox value={col.dataIndex}>{col.title}</Checkbox>
+            </Col>
+          ))}
       </Row>
     </Checkbox.Group>
   );
@@ -829,9 +847,8 @@ const Orders = () => {
   const removeAccents = (str) => {
     if (str) {
       // return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      return PL1s.find(e => e.value === str)?.label;
-    }
-    else {
+      return PL1s.find((e) => e.value === str)?.label;
+    } else {
       return "";
     }
   };
@@ -871,7 +888,12 @@ const Orders = () => {
 
   const getDRCs = async () => {
     const res = await getListDRC();
-    setListDRC(res.map((val) => ({ label: val.id + ' (' + val.description + ')', value: val.id })));
+    setListDRC(
+      res.map((val) => ({
+        label: val.id + " (" + val.description + ")",
+        value: val.id,
+      }))
+    );
   };
 
   const onChange = (value, dataIndex) => {
@@ -886,7 +908,7 @@ const Orders = () => {
   };
 
   function btn_click() {
-    loadListTable(params)
+    loadListTable(params);
   }
 
   const onAdd = () => {
@@ -1112,195 +1134,253 @@ const Orders = () => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 5px" }}
-                layout="vertical"
-                onFinish={btn_click}
-              >
-                <div
-                  style={{
-                    overflow: "auto scroll",
-                    maxHeight: "75vh",
-                    padding: "0 5px",
-                    marginBottom: "10px",
-                  }}
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 5px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
                 >
-                  <Form.Item label="Mã khách hàng" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, customer_id: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập mã khách hàng"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Tên khách hàng viết tắt" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, short_name: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập mã khách hàng"
-                    />
-                  </Form.Item>
-                  <Form.Item label="MDH" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, mdh: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập MDH"
-                    />
-                  </Form.Item>
-                  <Form.Item label="L" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, length: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập L"
-                    />
-                  </Form.Item>
-                  <Form.Item label="W" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, width: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập W"
-                    />
-                  </Form.Item>
-                  <Form.Item label="H" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, height: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập H"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Kích thước" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, kich_thuoc: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập kích thước"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Order" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, order: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập order"
-                    />
-                  </Form.Item>
-                  <Form.Item label="MQL" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, mql: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập MQL"
-                    />
-                  </Form.Item>
-                  <Form.Item label="PO" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, po: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập PO"
-                    />
-                  </Form.Item>
-                  <Form.Item label="STYLE" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, style: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập STYLE"
-                    />
-                  </Form.Item>
-                  <Form.Item label="STYLE NO" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, style_no: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập STYLE NO"
-                    />
-                  </Form.Item>
-                  <Form.Item label="COLOR" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, color: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập COLOR"
-                    />
-                  </Form.Item>
-                  <Form.Item label="ITEM" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, item: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập ITEM"
-                    />
-                  </Form.Item>
-                  <Form.Item label="RM" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, rm: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập RM"
-                    />
-                  </Form.Item>
-                  <Form.Item label="SIZE" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, size: e.target.value, page: 1 }); setPage(1)
-                      }
-                      }
-                      placeholder="Nhập SIZE"
-                    />
-                  </Form.Item>
-                </div>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
+                  <div
+                    style={{
+                      overflow: "auto scroll",
+                      maxHeight: "75vh",
+                      padding: "0 5px",
+                      marginBottom: "10px",
+                    }}
                   >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+                    <Form.Item label="Mã khách hàng" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            customer_id: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập mã khách hàng"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Tên khách hàng viết tắt" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            short_name: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập mã khách hàng"
+                      />
+                    </Form.Item>
+                    <Form.Item label="MDH" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            mdh: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập MDH"
+                      />
+                    </Form.Item>
+                    <Form.Item label="L" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            length: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập L"
+                      />
+                    </Form.Item>
+                    <Form.Item label="W" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            width: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập W"
+                      />
+                    </Form.Item>
+                    <Form.Item label="H" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            height: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập H"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Kích thước" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            kich_thuoc: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập kích thước"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Order" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            order: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập order"
+                      />
+                    </Form.Item>
+                    <Form.Item label="MQL" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            mql: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập MQL"
+                      />
+                    </Form.Item>
+                    <Form.Item label="PO" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({ ...params, po: e.target.value, page: 1 });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập PO"
+                      />
+                    </Form.Item>
+                    <Form.Item label="STYLE" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            style: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập STYLE"
+                      />
+                    </Form.Item>
+                    <Form.Item label="STYLE NO" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            style_no: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập STYLE NO"
+                      />
+                    </Form.Item>
+                    <Form.Item label="COLOR" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            color: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập COLOR"
+                      />
+                    </Form.Item>
+                    <Form.Item label="ITEM" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            item: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập ITEM"
+                      />
+                    </Form.Item>
+                    <Form.Item label="RM" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({ ...params, rm: e.target.value, page: 1 });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập RM"
+                      />
+                    </Form.Item>
+                    <Form.Item label="SIZE" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            size: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập SIZE"
+                      />
+                    </Form.Item>
+                  </div>
+                  <Form.Item style={{ textAlign: "center" }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "80%" }}
+                    >
+                      Tìm kiếm
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
@@ -1387,14 +1467,14 @@ const Orders = () => {
                   bordered
                   pagination={{
                     current: page,
-                    size: 'default',
+                    size: "default",
                     total: totalPage,
                     showSizeChanger: true,
                     onChange: (page, pageSize) => {
                       setPage(page);
                       setPageSize(pageSize);
                       setParams({ ...params, page: page, pageSize: pageSize });
-                    }
+                    },
                   }}
                   components={{
                     body: {

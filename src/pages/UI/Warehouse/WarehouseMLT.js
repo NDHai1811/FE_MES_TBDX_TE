@@ -23,7 +23,14 @@ import "../style.scss";
 import { baseURL } from "../../../config";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
-import { createWarehouseImport, deleteWarehouseImport, exportWarehouseTicket, getListPlanMaterialExport, getListPlanMaterialImport, updateWarehouseImport } from "../../../api/ui/warehouse";
+import {
+  createWarehouseImport,
+  deleteWarehouseImport,
+  exportWarehouseTicket,
+  getListPlanMaterialExport,
+  getListPlanMaterialImport,
+  updateWarehouseImport,
+} from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
 
 const { TabPane } = Tabs;
@@ -160,7 +167,10 @@ const WarehouseMLT = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [importList, setImportList] = useState([]);
   const [exportList, setExportList] = useState([]);
@@ -343,9 +353,9 @@ const WarehouseMLT = (props) => {
   useEffect(() => {
     (async () => {
       if (currentTab === "1") {
-        getImportList()
+        getImportList();
       } else {
-        getExportList()
+        getExportList();
       }
     })();
   }, [currentTab]);
@@ -428,7 +438,9 @@ const WarehouseMLT = (props) => {
         <Table
           bordered
           columns={columns}
-          dataSource={importList.map(e => { return { ...e, key: e.id } })}
+          dataSource={importList.map((e) => {
+            return { ...e, key: e.id };
+          })}
           scroll={{
             x: "100vw",
             y: "80vh",
@@ -437,8 +449,8 @@ const WarehouseMLT = (props) => {
           rowSelection={rowSelection}
           pagination={false}
           size="small"
-        />
-      ]
+        />,
+      ],
     },
     {
       key: "2",
@@ -455,20 +467,23 @@ const WarehouseMLT = (props) => {
           className="h-100"
           pagination={false}
           size="small"
-        />
-      ]
-    }
+        />,
+      ],
+    },
   ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
     var material_ids = [];
-    importList.forEach(e => {
+    importList.forEach((e) => {
       if (listCheck.includes(e.id)) {
-        material_ids.push(e.material_id)
+        material_ids.push(e.material_id);
       }
-    })
-    const res = await exportWarehouseTicket({ ...params, material_ids: material_ids });
+    });
+    const res = await exportWarehouseTicket({
+      ...params,
+      material_ids: material_ids,
+    });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -479,172 +494,179 @@ const WarehouseMLT = (props) => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, start_date: value })
-                    }
-                    value={params.start_date}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, end_date: value })
-                    }
-                    value={params.end_date}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item
-                  label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={
-                      currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
-                    }
-                    onChange={(e) =>
-                      setParams({ ...params, material_id: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={
-                      currentTab === "1" ? "Nhập mã cuộn NCC" : "Nhập mã vật tư"
-                    }
-                    onChange={(e) =>
-                      setParams({ ...params, ma_cuon_ncc: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={
-                      currentTab === "1"
-                        ? "Nhập loại giấy"
-                        : "Nhập mã cuộn TBDX"
-                    }
-                    onChange={(e) =>
-                      setParams({ ...params, loai_giay: e.target.value })
-                    }
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             >
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, start_date: value })
+                      }
+                      value={params.start_date}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, end_date: value })
+                      }
+                      value={params.end_date}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item
+                    label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={
+                        currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
+                      }
+                      onChange={(e) =>
+                        setParams({ ...params, material_id: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={
+                        currentTab === "1"
+                          ? "Nhập mã cuộn NCC"
+                          : "Nhập mã vật tư"
+                      }
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_ncc: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={
+                        currentTab === "1"
+                          ? "Nhập loại giấy"
+                          : "Nhập mã cuộn TBDX"
+                      }
+                      onChange={(e) =>
+                        setParams({ ...params, loai_giay: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  onClick={btn_click}
+                  style={{ width: "80%" }}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Row
-            style={{ paddingLeft: "4px", paddingRight: "4px", height: "100vh", display: 'contents' }}
+            style={{
+              paddingLeft: "4px",
+              paddingRight: "4px",
+              height: "100vh",
+              display: "contents",
+            }}
             gutter={[8, 8]}
           >
-            <Card
-              bodyStyle={{ width: "100%", height: '100%', paddingTop: 0 }}
-            ><Tabs
-              defaultActiveKey="1"
-              onChange={(activeKey) => setCurrentTab(activeKey)}
-              items={tabsMenu}
-              tabBarExtraContent={
-                currentTab === "1" ? (
-                  <Space>
-                    <Button
-                      type="primary"
-                      onClick={exportFile}
-                      loading={exportLoading}
-                    >
-                      Xuất phiếu nhập kho
-                    </Button>
-                    <Upload
-                      showUploadList={false}
-                      name="file"
-                      action={baseURL + "/api/upload-nhap-kho-nvl"}
-                      headers={{
-                        authorization: "authorization-text",
-                      }}
-                      onChange={(info) => {
-                        setLoading(true);
-                        if (info.file.status === "error") {
-                          error();
-                          setLoading(false);
-                        } else if (info.file.status === "done") {
-                          if (info.file.response.success === true) {
-                            getImportList();
-                            success();
-                            setLoading(false);
-                          } else {
-                            getImportList();
-                            message.error(info.file.response.message);
-                            setLoading(false);
-                          }
-                        }
-                      }}
-                    >
-                      <Button type="primary" loading={loading}>
-                        Upload excel
+            <Card bodyStyle={{ width: "100%", height: "100%", paddingTop: 0 }}>
+              <Tabs
+                defaultActiveKey="1"
+                onChange={(activeKey) => setCurrentTab(activeKey)}
+                items={tabsMenu}
+                tabBarExtraContent={
+                  currentTab === "1" ? (
+                    <Space>
+                      <Button
+                        type="primary"
+                        onClick={exportFile}
+                        loading={exportLoading}
+                      >
+                        Xuất phiếu nhập kho
                       </Button>
-                    </Upload>
-                    <Button type="primary" onClick={deleteRecord}>
-                      Xóa
-                    </Button>
-                    <Button type="primary" onClick={onEdit}>
-                      Sửa
-                    </Button>
-                    <Button type="primary" onClick={onInsert}>
-                      Thêm
-                    </Button>
-                    <Button type="primary" onClick={handlePrint}>
-                      In tem NVL
-                    </Button>
-                    <div className="report-history-invoice">
-                      <TemNVL
-                        listCheck={listMaterialCheck}
-                        ref={componentRef1}
-                      />
-                    </div>
-                  </Space>
-                ) : null
-              }
-            >
-              </Tabs>
+                      <Upload
+                        showUploadList={false}
+                        name="file"
+                        action={baseURL + "/api/upload-nhap-kho-nvl"}
+                        headers={{
+                          authorization: "authorization-text",
+                        }}
+                        onChange={(info) => {
+                          setLoading(true);
+                          if (info.file.status === "error") {
+                            error();
+                            setLoading(false);
+                          } else if (info.file.status === "done") {
+                            if (info.file.response.success === true) {
+                              getImportList();
+                              success();
+                              setLoading(false);
+                            } else {
+                              getImportList();
+                              message.error(info.file.response.message);
+                              setLoading(false);
+                            }
+                          }
+                        }}
+                      >
+                        <Button type="primary" loading={loading}>
+                          Upload excel
+                        </Button>
+                      </Upload>
+                      <Button type="primary" onClick={deleteRecord}>
+                        Xóa
+                      </Button>
+                      <Button type="primary" onClick={onEdit}>
+                        Sửa
+                      </Button>
+                      <Button type="primary" onClick={onInsert}>
+                        Thêm
+                      </Button>
+                      <Button type="primary" onClick={handlePrint}>
+                        In tem NVL
+                      </Button>
+                      <div className="report-history-invoice">
+                        <TemNVL
+                          listCheck={listMaterialCheck}
+                          ref={componentRef1}
+                        />
+                      </div>
+                    </Space>
+                  ) : null
+                }
+              ></Tabs>
             </Card>
           </Row>
         </Col>
@@ -673,7 +695,7 @@ const WarehouseMLT = (props) => {
                 label="Mã cuộn"
                 name="material_id"
                 className="mb-3"
-              // rules={[{ required: true }]}
+                // rules={[{ required: true }]}
               >
                 <Input placeholder="Nhập mã cuộn"></Input>
               </Form.Item>
