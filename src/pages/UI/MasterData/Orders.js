@@ -329,7 +329,7 @@ const Orders = () => {
       dataIndex: "quy_cach_drc",
       key: "quy_cach_drc",
       align: "center",
-      width: "2%",
+      width: "5%",
       editable: true,
       checked: true,
     },
@@ -729,7 +729,7 @@ const Orders = () => {
         break;
       default:
         var options = record?.customer_specifications ?? [];
-        filteredOptions = options.filter(e => record?.phan_loai_1 === e?.phan_loai_1 && record?.customer_id === e?.customer_id).map(e => ({ value: e.drc_id, label: e.drc_id }));
+        filteredOptions = options.filter(e => record?.phan_loai_1 === e?.phan_loai_1 && record?.customer_id === e?.customer_id).map(e => ({ value: e.drc_id, label: e.drc_id + ' (' + e.drc.description + ')' }));
         if (filteredOptions.length <= 0) {
           filteredOptions = listDRC;
         }
@@ -863,7 +863,7 @@ const Orders = () => {
 
   const getDRCs = async () => {
     const res = await getListDRC();
-    setListDRC(res.map((val) => ({ label: val.id, value: val.id })));
+    setListDRC(res.map((val) => ({ label: val.id + ' (' + val.description + ')', value: val.id })));
   };
 
   const onChange = (value, dataIndex) => {

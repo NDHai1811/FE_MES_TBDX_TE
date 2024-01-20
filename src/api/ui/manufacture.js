@@ -46,6 +46,11 @@ export async function getBuyers(params) {
     return res.data;
 }
 
+export async function getTems() {
+    const res = await axios.get("/ui/manufacture/tem/list");
+    return res.data;
+}
+
 export async function getListLayout(params) {
     const res = await axios.get('ui/manufacture/layout/list', { params });
     return res.data;
