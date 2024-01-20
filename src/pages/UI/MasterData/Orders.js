@@ -619,6 +619,14 @@ const Orders = () => {
       checked: true,
     },
     {
+      title: "Ngày lập KH",
+      dataIndex: "ngay_kh",
+      key: "ngay_kh",
+      align: "center",
+      width: '2%',
+      render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.created_at).format('DD-MM-YYYY') : '',
+    },
+    {
       title: "Tác vụ",
       dataIndex: "action",
       key: "action",
