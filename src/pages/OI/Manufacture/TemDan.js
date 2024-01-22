@@ -37,7 +37,7 @@ const PrintTemplate = ({ detail }) => {
                                         type="svg"
                                     />
                                     <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ IN</h3>
+                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ DÁN</h3>
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     <div className="flex-column">
