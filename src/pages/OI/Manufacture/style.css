@@ -6,6 +6,11 @@
   display: none;
 }
 
+@page {
+  size: a6;
+  margin-top: 22%;
+}
+
 @media print {
   .no-print {
     display: none;

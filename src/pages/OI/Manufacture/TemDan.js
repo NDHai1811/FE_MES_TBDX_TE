@@ -27,21 +27,21 @@ const PrintTemplate = ({ detail }) => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td colSpan={45}>
-                                <div className="d-flex justify-content-between">
+                            <td colSpan={4}>
+                                <div className="d-flex justify-content-between" style={{ marginBottom: '15px' }}>
                                     <QRCode
                                         style={{ marginRight: "5px" }}
-                                        value={detail.lo_sx}
+                                        value={detail.qr_code}
                                         bordered={false}
-                                        size={80}
+                                        size={120}
                                         type="svg"
                                     />
                                     <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '28px', marginTop: '18px' }}>TEM TỔ DÁN</h3>
+                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ IN</h3>
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     <div className="flex-column">
-                                        <img src={logolight} width={70} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
+                                        <img src={logolight} width={110} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
@@ -49,58 +49,58 @@ const PrintTemplate = ({ detail }) => {
                             </td>
                         </tr>
                         <tr>
-                            <td className="text-center">Khách hàng</td>
-                            <td>{detail.khach_hang}</td>
-                            <td className="text-center">Số Đ.H:</td>
-                            <td>{detail.order_id}</td>
+                            <td ><b>Khách hàng</b></td>
+                            <td> <span style={{ marginLeft: '10px' }}>{detail.khach_hang}</span></td>
+                            <td><b>Số Đ.H:</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.mdh}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center"><b>Quy cách</b></td>
+                            <td><b>Quy cách</b></td>
                             <td className="text-center" colSpan={3}><b>{detail.quy_cach}</b></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Số lượng</td>
-                            <td >{detail.so_luong}</td>
-                            <td className="text-center">MQL TBDX</td>
-                            <td >{detail.mql}</td>
+                            <td><b>Số lượng</b></td>
+                            <td ><span style={{ marginLeft: '10px' }}>{detail.so_luong}</span></td>
+                            <td><b>MQL TBDX</b></td>
+                            <td ><span style={{ marginLeft: '10px' }}>{detail.mql}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Order:</td>
-                            <td colSpan={3}>{detail.order}</td>
+                            <td><b>Order:</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.order}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">GMO</td>
-                            <td colSpan={3}>{detail.gmo}</td>
+                            <td><b>GMO</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.gmo}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">PO</td>
-                            <td colSpan={3}>{detail.po}</td>
+                            <td><b>PO</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.po}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Style</td>
-                            <td colSpan={3}>{detail.style}</td>
+                            <td><b>Style</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.style}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Style No</td>
-                            <td colSpan={3}>{detail.style_no}</td>
+                            <td><b>Style No</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.style_no}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Color</td>
-                            <td colSpan={3}>{detail.color}</td>
+                            <td><b>Color</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.color}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Ngày SX</td>
-                            <td colSpan={3}>{detail.ngay_sx}</td>
+                            <td><b>Ngày SX</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{dayjs().format('DD/MM/YYYY')}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">N.Viên S.X</td>
-                            <td>{detail.nhan_vien_sx}</td>
-                            <td className="text-center">Máy dán:</td>
-                            <td>{detail.machine_id}</td>
+                            <td><b>N.Viên S.X</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.nhan_vien_sx}</span></td>
+                            <td ><b>Máy in:</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.machine_id}</span></td>
                         </tr>
                         <tr>
-                            <td className="text-center">Ghi chú</td>
-                            <td colSpan={3}></td>
+                            <td><b>Ghi chú</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.note}</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -109,12 +109,22 @@ const PrintTemplate = ({ detail }) => {
         </div>
     );
 };
-export default class TemDan extends React.Component {
+export default class TemIn extends React.Component {
     render() {
         let printingPages = [];
         const { listCheck } = this.props;
         // for (const detail of listCheck) {
+        const listTem = [];
         listCheck.forEach((detail, index) => {
+            if (detail.sl_tem && detail.sl_tem > 0) {
+                for (let i = 0; i < detail.sl_tem; i++) {
+                    listTem.push(detail);
+                }
+            } else {
+                listTem.push(detail);
+            }
+        });
+        listTem.forEach((detail, index) => {
             const tempTemplate = <PrintTemplate detail={detail} key={index} />;
             printingPages.push(tempTemplate);
         });
