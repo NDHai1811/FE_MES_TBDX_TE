@@ -191,7 +191,7 @@ const NhapTay = (props) => {
   };
 
   const reloadData = async () => {
-    const resData = await manualList({ machine_id: machine_id });
+    const resData = await manualList(params);
     console.log(resData);
     setData(resData.data);
     setLotCurrent(resData.data.find(e => e?.lo_sx === lotCurrent?.lo_sx));
