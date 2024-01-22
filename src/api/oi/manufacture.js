@@ -70,9 +70,6 @@ export const getOverAll = async (params) => {
 export async function getLotByMachine(params) {
   return await axios.get("/oi/manufacture/list-lot", { params });
 }
-export async function checkMaterialPosition(params) {
-  return await axios.get("/oi/manufacture/change-lot", { params });
-}
 export async function getManufactureOverall(params) {
   return await axios.get("/oi/manufacture/overall", { params: params });
 }
@@ -87,4 +84,7 @@ export async function manualScan(params){
 }
 export async function manualList(params){
   return await axios.get("/oi/manufacture/manual/list", {params});
+}
+export async function manualPrintStamp(params){
+  return await axios.post("/oi/manufacture/manual/print", params);
 }
