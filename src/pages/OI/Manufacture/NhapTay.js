@@ -129,7 +129,7 @@ const NhapTay = (props) => {
       render: (value) => value || "-",
       onHeaderCell: () => {
         return {
-          onClick: ()=> lotCurrent && onShowPopup(),
+          onClick: () => lotCurrent && onShowPopup(),
           style: {
             cursor: 'pointer'
           }
@@ -162,7 +162,7 @@ const NhapTay = (props) => {
     end_date: dayjs(),
   });
   // const [machineOptions, setMachineOptions] = useState([]);
-  const {machineOptions = []} = props
+  const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
@@ -191,10 +191,10 @@ const NhapTay = (props) => {
   };
 
   const reloadData = async () => {
-    const resData = await manualList({machine_id: machine_id});
+    const resData = await manualList({ machine_id: machine_id });
     console.log(resData);
     setData(resData.data);
-    setLotCurrent(resData.data.find(e=>e?.lo_sx === lotCurrent?.lo_sx));
+    setLotCurrent(resData.data.find(e => e?.lo_sx === lotCurrent?.lo_sx));
     getOverAllDetail();
   };
   const overallColumns = [
@@ -309,8 +309,8 @@ const NhapTay = (props) => {
   };
 
   const onConfirm = async () => {
-    var res = await manualInput({...lotCurrent, san_luong: value, machine_id: machine_id});
-    if(res.success){
+    var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
+    if (res.success) {
       setLotCurrent();
       setValue("");
       closePopup();
@@ -350,8 +350,9 @@ const NhapTay = (props) => {
   };
 
   const onScan = async (result) => {
-    manualScan({ lo_sx: result, machine_id: machine_id })
-      .then(()=>{reloadData(); handleCloseMdl()})
+    const lo_sx = JSON.parse(result).lo_sx;
+    manualScan({ lo_sx: lo_sx, machine_id: machine_id })
+      .then(() => { reloadData(); handleCloseMdl() })
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
 
@@ -387,7 +388,7 @@ const NhapTay = (props) => {
   // }, [listCheck.length]);
 
   const handlePrint = async () => {
-    if(listTem.length > 0){
+    if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
       } else if (machine_id.includes('P')) {
@@ -499,7 +500,7 @@ const NhapTay = (props) => {
   };
 
   const onClickRow = (record) => {
-    if(record.status < 3){
+    if (record.status < 3) {
       setLotCurrent(record);
     }
   }

@@ -31,7 +31,7 @@ const PrintTemplate = ({ detail }) => {
                                 <div className="d-flex justify-content-between" style={{ marginBottom: '15px' }}>
                                     <QRCode
                                         style={{ marginRight: "5px" }}
-                                        value={detail.lo_sx}
+                                        value={detail.qr_code}
                                         bordered={false}
                                         size={120}
                                         type="svg"
@@ -114,7 +114,17 @@ export default class TemIn extends React.Component {
         let printingPages = [];
         const { listCheck } = this.props;
         // for (const detail of listCheck) {
+        const listTem = [];
         listCheck.forEach((detail, index) => {
+            if (detail.sl_tem && detail.sl_tem > 0) {
+                for (let i = 0; i < detail.sl_tem; i++) {
+                    listTem.push(detail);
+                }
+            } else {
+                listTem.push(detail);
+            }
+        });
+        listTem.forEach((detail, index) => {
             const tempTemplate = <PrintTemplate detail={detail} key={index} />;
             printingPages.push(tempTemplate);
         });
