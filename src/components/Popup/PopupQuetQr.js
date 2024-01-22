@@ -18,7 +18,7 @@ function PopupQuetQr(props) {
   const [currentValue, setCurrentValue] = useState("");
 
   const resultQuantity = checkData?.reduce((sum, val) => {
-    return val.isScan ? sum + 1 : sum;
+    return val.isDone ? sum + 1 : sum;
   }, 0);
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -49,17 +49,72 @@ function PopupQuetQr(props) {
   //   return await mappingCheckMaterial({ material_id: currentResult });
   // };
 
-  const handleEnterPress = () => {
-    setData((prevData) => {
-      const newData = prevData.map((item) => {
-        const emptyKeys = Object.keys(item).find((key) => item[key] === "");
-        if (emptyKeys) {
-          item[emptyKeys] = currentValue;
+  const setCurrentData = (result) => {
+    const index = data.findIndex((item) =>
+      Object.values(item).some((val) => val === "")
+    );
+    const newData = data.map((val, i) => {
+      if (index === i) {
+        const emptyKey = Object.keys(val).find((key) => val[key] === "");
+        const emptyKeys = Object.keys(val);
+        const lastedEmptyKey = emptyKeys.find(
+          (it, keyIndex) => keyIndex === emptyKeys.length - 1
+        );
+
+        if (emptyKey === "vi_tri") {
+          if (result === checkData[index]?.vi_tri) {
+            val.vi_tri = result;
+          } else {
+            messageAlert("Mã vị trí không đúng, Vui lòng quét lại");
+          }
+        } else if (emptyKey === lastedEmptyKey) {
+          const itemByIndex = data.find((it, itIndex) => itIndex === index);
+          const nonViTriValues = Object.keys(itemByIndex).filter(
+            (key) => key !== "vi_tri" && key !== lastedEmptyKey
+          );
+          let values = nonViTriValues.map((key) => itemByIndex[key]);
+          values.push(result);
+
+          // Xử lý khi xong tất cả 1 dòng thì gọi api để check value
+          mappingCheckMaterial({
+            lo_sx: loSx,
+            vi_tri: itemByIndex.vi_tri,
+            value: values,
+          })
+            .then(() => setCurrentResult(""))
+            .catch(() => {
+              const newData = data.map((item, i) => {
+                if (i === index) {
+                  const emptyValues = Object.keys(item).reduce((acc, key) => {
+                    acc[key] = "";
+                    return acc;
+                  }, {});
+                  return emptyValues;
+                }
+                return item;
+              });
+              setData(newData);
+            });
+          val[emptyKey] = result;
+          setCheckData(
+            checkData.map((it, itemIndex) => {
+              if (itemIndex === index) {
+                it.isDone = true;
+              }
+              return { ...it };
+            })
+          );
+        } else {
+          val[emptyKey] = result;
         }
-        return { ...item };
-      });
-      return newData;
+      }
+      return { ...val };
     });
+    setData(newData);
+  };
+
+  const handleEnterPress = () => {
+    setCurrentData(currentValue);
     setCurrentValue("");
   };
 
@@ -85,42 +140,21 @@ function PopupQuetQr(props) {
   };
 
   useEffect(() => {
-    (async () => {
-      if (currentResult) {
-        const item = checkData.find((val) => !val.isScan);
-        let result = currentResult;
-        if (item.check_api === 1) {
-          const res = await mappingCheckMaterial({
-            material_id: currentResult,
-          });
-          if (res.success === true) {
-            result = res.data;
-            setData(data.map((val) => ({ ...val, [item.key]: result })));
-            setCheckData(
-              checkData.map((val) => {
-                return val.key === item.key ? { ...val, isScan: true } : val;
-              })
-            );
-          }
-        } else {
-          setData(data.map((val) => ({ ...val, [item.key]: result })));
-          setCheckData(
-            checkData.map((val) => {
-              return val.key === item.key ? { ...val, isScan: true } : val;
-            })
-          );
-        }
-        // if (result === item.value) {
-        // } else {
-        //   messageAlert("Mã không đúng yêu cầu");
-        // }
-      }
-    })();
+    if (currentResult) {
+      setCurrentData(currentResult);
+    }
   }, [currentResult]);
 
   const getMappingList = async () => {
     try {
       const res = await getEquipmentMappingList({ lo_sx: loSx });
+      // const res = {
+      //   data: {
+      //     label: ["Vị trí", "Mã cuộn", "Mã Film", "Ma_muc"],
+      //     key: ["vi_tri", "ma_cuon", "ma_film", "ma_muc"],
+      //     position: ["S010501", "S010302"],
+      //   },
+      // };
       const keys = res.data.key;
       const columns = res.data.label.map((item, index) => {
         const key = keys[index];
@@ -134,19 +168,21 @@ function PopupQuetQr(props) {
       });
       setColumns(columns);
 
-      const result = keys.reduce((acc, key) => {
-        acc[key] = "";
-        return acc;
-      }, {});
-      setData([result]);
+      const list = res.data?.position?.map(() => {
+        const result = keys.reduce((acc, key) => {
+          acc[key] = "";
+          return acc;
+        }, {});
+        return result;
+      });
+      setData(list);
 
-      const checkData = res.data.check_api.map((val, index) => ({
-        check_api: val,
-        value: res.data.value[index],
-        isScan: false,
-        key: keys[index],
-      }));
-      setCheckData(checkData);
+      // const checkData = res.data?.position?.map((val, index) => ({
+      //   vi_tri: val,
+      // }));
+      setCheckData(
+        res.data?.position?.map((val) => ({ vi_tri: val, isDone: false }))
+      );
     } catch (err) {
       console.log("Lấy danh sách mapping thất bại: ", err);
     }
@@ -174,7 +210,7 @@ function PopupQuetQr(props) {
         <Input
           placeholder="Nhập giá trị"
           onPressEnter={handleEnterPress}
-          style={{ marginTop: 8, height: 50 }}
+          style={{ marginTop: 16, height: 50 }}
           value={currentValue}
           onChange={onChangeValue}
         />
