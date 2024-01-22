@@ -447,7 +447,8 @@ const TaoKeHoachSanXuat = () => {
                                         <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => {
                                             setPlanParams({ ...planParams, machine_id: value });
                                             setOrderParams({ ...orderParams, machine_id: value });
-                                        }} />
+                                        }} 
+                                        optionFilterProp="label"/>
                                     </Form.Item>
                                 </Col>
                                 <Col span={7}>
