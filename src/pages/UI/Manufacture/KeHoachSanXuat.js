@@ -665,7 +665,7 @@ const KeHoachSanXuat = () => {
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/upload-ke-hoach-san-xuat"}
+                  action={baseURL + "/api/ui/manufacture/production-plan/import"}
                   headers={{
                     authorization: "authorization-text",
                   }}

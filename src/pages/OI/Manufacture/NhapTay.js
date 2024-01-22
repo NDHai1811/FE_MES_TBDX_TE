@@ -24,7 +24,6 @@ import {
   manualInput,
   manualList,
   manualScan,
-  manualPrintStamp,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
@@ -34,7 +33,6 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getMachines } from "../../../api/oi/equipment";
-import NewTem from "./NewTem";
 
 const token =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
@@ -193,7 +191,7 @@ const NhapTay = (props) => {
   };
 
   const reloadData = async () => {
-    const resData = await manualList(params);
+    const resData = await manualList({machine_id: machine_id});
     console.log(resData);
     setData(resData.data);
     setLotCurrent(resData.data.find(e=>e?.lo_sx === lotCurrent?.lo_sx));
@@ -372,8 +370,24 @@ const NhapTay = (props) => {
     }
     return "";
   };
-  useEffect(() => {
-    if (listTem.length > 0) {
+  // useEffect(() => {
+  //   if (listCheck.length > 0) {
+  //     if (machine_id === "S01") {
+  //       print();
+  //     } else if (machine_id == "P06" || machine_id == "P15") {
+  //       printIn();
+  //     } else if (machine_id == "D05" || machine_id == "D06") {
+  //       printDan();
+  //     }
+  //     (async () => {
+  //       reloadData()
+  //     })();
+  //   }
+  //   setListCheck([]);
+  // }, [listCheck.length]);
+
+  const handlePrint = async () => {
+    if(listTem.length > 0){
       if (machine_id === "S01") {
         print();
       } else if (machine_id.includes('P')) {
@@ -381,30 +395,10 @@ const NhapTay = (props) => {
       } else if (machine_id.includes('D')) {
         printDan();
       }
-      (async () => {
-        reloadData()
-      })();
-    }
-    setListCheck([]);
-  }, [listTem.length]);
-
-  const handlePrint = async () => {
-    var res = await manualPrintStamp({ids: listCheck, machine_id: machine_id});
-    if(res.data.length > 0){
-      setListTem(res.data)
-      // if (machine_id === "S01") {
-      //   print();
-      // } else if (machine_id.includes('P')) {
-      //   printIn();
-      // } else if (machine_id.includes('D')) {
-      //   printDan();
-      // }
-      // setListCheck([]);
-      // setListTem([]);
+      setListCheck([]);
+      setListTem([]);
     }
   };
-
-
 
   const print = useReactToPrint({
     content: () => componentRef1.current,
@@ -420,7 +414,7 @@ const NhapTay = (props) => {
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
-      // setListTem(selectedRows);
+      setListTem(selectedRows);
     },
     // getCheckboxProps: (record) => ({
     //   disabled: !record?.id
@@ -583,7 +577,7 @@ const NhapTay = (props) => {
               />
               <div className="report-history-invoice">
                 <Tem listCheck={listTem} ref={componentRef1} />
-                <NewTem listCheck={listTem} ref={componentRef2} />
+                <TemIn listCheck={listTem} ref={componentRef2} />
                 <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
             </Col>
@@ -607,7 +601,7 @@ const NhapTay = (props) => {
                 };
               }}
               rowSelection={rowSelection}
-              dataSource={data.map((e, index) => ({ ...e, key: e.id }))}
+              dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>
         </Row>
