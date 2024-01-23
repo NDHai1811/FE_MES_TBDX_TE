@@ -10,6 +10,7 @@ import {
   Modal,
   Select,
   InputNumber,
+  message,
 } from "antd";
 import "../style.scss";
 import {
@@ -162,6 +163,9 @@ const NhapTay = (props) => {
     end_date: dayjs(),
   });
   // const [machineOptions, setMachineOptions] = useState([]);
+  const [quantity, setQuantity] = useState();
+  const [visiblePrint, setVisiblePrint] = useState();
+  const [isPrint, setIsPrint] = useState(false);
   const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
@@ -188,6 +192,14 @@ const NhapTay = (props) => {
 
   const closePopup = () => {
     setVisible(false);
+  };
+
+  const onShowPopupPrint = () => {
+    setVisiblePrint(true);
+  };
+
+  const closePopupPrint = () => {
+    setVisiblePrint(false);
   };
 
   const reloadData = async () => {
@@ -267,33 +279,16 @@ const NhapTay = (props) => {
     }
   }, [isScan]);
 
+
+  useEffect(() => {
+    if (listTem.length > 0) {
+      handlePrint();
+    }
+  }, [isPrint]);
+
   useEffect(() => {
     getListMachine();
   }, []);
-
-  // var timeout;
-  // useEffect(() => {
-  //   clearTimeout(timeout)
-  //   const loadDataRescursive = async (params,machine_id) => {
-  //     console.log(params, machine_id);
-  //     if (!machine_id) return;
-  //     const res = await getLotByMachine(params);
-  //     setData(res.data);
-  //     if (res.data[0]?.status === 1) {
-  //       setSelectedLot(res.data[0]);
-  //     } else {
-  //       setSelectedLot(null);
-  //     }
-  //     if (res.success) {
-  //       if (window.location.href.indexOf("manufacture") > -1)
-  //       timeout = setTimeout(function () {
-  //         loadDataRescursive(params, machine_id);
-  //       }, 5000);
-  //     }
-  //   };
-  //   loadDataRescursive(params, machine_id);
-  //   return () => clearTimeout(timeout);
-  // }, [params.start_date, params.end_date, params.machine_id]);
 
   const getListMachine = () => {
     // getMachines()
@@ -307,6 +302,9 @@ const NhapTay = (props) => {
   const onChangeValue = (val) => {
     setValue(val);
   };
+  const onChangeQuantity = (val) => {
+    setQuantity(val);
+  };
 
   const onConfirm = async () => {
     var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
@@ -315,6 +313,20 @@ const NhapTay = (props) => {
       setValue("");
       closePopup();
       reloadData();
+    }
+  };
+
+  const onConfirmPrint = async () => {
+    // var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
+    if (lotCurrent.so_luong < quantity) {
+      message.error('Số lượng nhập vượt quá số lượng thực tế');
+    } else {
+      const res = { ...lotCurrent, so_luong: quantity };
+      setListTem([res]);
+      setIsPrint(!isPrint);
+      setLotCurrent();
+      setQuantity("");
+      closePopupPrint();
     }
   };
 
@@ -371,21 +383,6 @@ const NhapTay = (props) => {
     }
     return "";
   };
-  // useEffect(() => {
-  //   if (listCheck.length > 0) {
-  //     if (machine_id === "S01") {
-  //       print();
-  //     } else if (machine_id == "P06" || machine_id == "P15") {
-  //       printIn();
-  //     } else if (machine_id == "D05" || machine_id == "D06") {
-  //       printDan();
-  //     }
-  //     (async () => {
-  //       reloadData()
-  //     })();
-  //   }
-  //   setListCheck([]);
-  // }, [listCheck.length]);
 
   const handlePrint = async () => {
     if (listTem.length > 0) {
@@ -505,6 +502,14 @@ const NhapTay = (props) => {
     }
   }
 
+  const openMdlPrint = () => {
+    if (typeof (lotCurrent) != 'undefined') {
+      setVisiblePrint(true);
+    } else {
+      message.info('Chưa chọn lô in tem');
+    }
+  }
+
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -539,7 +544,7 @@ const NhapTay = (props) => {
               width: "100%",
             }}
           >
-            <Col span={9}>
+            <Col span={7}>
               <DatePicker
                 allowClear={false}
                 placeholder="Từ ngày"
@@ -549,7 +554,7 @@ const NhapTay = (props) => {
                 onChange={onChangeStartDate}
               />
             </Col>
-            <Col span={9}>
+            <Col span={7}>
               <DatePicker
                 allowClear={false}
                 placeholder="Đến ngày"
@@ -581,6 +586,16 @@ const NhapTay = (props) => {
                 <TemIn listCheck={listTem} ref={componentRef2} />
                 <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
+            </Col>
+            <Col span={3}>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                onClick={openMdlPrint}
+              >
+                IN TEM
+              </Button>
             </Col>
           </Row>
           <Col span={24}>
@@ -634,6 +649,22 @@ const NhapTay = (props) => {
             defaultValue={lotCurrent?.san_luong}
             placeholder="Nhập sản lượng đầu ra"
             onChange={onChangeValue}
+            style={{ width: "100%" }}
+          />
+        </Modal>
+      )}
+      {visiblePrint && (
+        <Modal
+          title="Số lượng trên tem"
+          open={visiblePrint}
+          onCancel={closePopupPrint}
+          onOk={onConfirmPrint}
+        >
+          <InputNumber
+            defaultValue={lotCurrent?.san_luong}
+            max={lotCurrent?.san_luong}
+            placeholder="Nhập sản lượng trên tem"
+            onChange={onChangeQuantity}
             style={{ width: "100%" }}
           />
         </Modal>

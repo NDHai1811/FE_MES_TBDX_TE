@@ -8,7 +8,7 @@ import {
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import {
-  getWarehouseOverall,
+  getWarehouseFGOverall,
   getWarehouseTpLogs,
 } from "../../../../api/oi/warehouse";
 import TemPallet from "../TemPallet";
@@ -127,7 +127,7 @@ const Import = (props) => {
   };
 
   const getWarehouseOverallData = () => {
-    getWarehouseOverall()
+    getWarehouseFGOverall()
       .then((res) => setWarehouseOverall([res.data]))
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
@@ -208,10 +208,6 @@ const Import = (props) => {
   const onShowPopup = () => {
     setVisible(true);
   };
-
-  // const onSelectItem = (val) => {
-  //   setSelectedItem([val]);
-  // };
 
   return (
     <React.Fragment>
