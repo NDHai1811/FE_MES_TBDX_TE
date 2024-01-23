@@ -520,7 +520,7 @@ const KeHoachSanXuat = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", height: "100%" }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
@@ -665,7 +665,7 @@ const KeHoachSanXuat = () => {
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/ui/manufacture/production-plan/import"}
+                  action={baseURL + "/api/manufacture/production-plan/import"}
                   headers={{
                     authorization: "authorization-text",
                   }}
