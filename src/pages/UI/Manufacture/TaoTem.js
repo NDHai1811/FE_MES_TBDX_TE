@@ -24,7 +24,7 @@ import "../style.scss";
 import { useReactToPrint } from "react-to-print";
 import TemIn from "../../OI/Manufacture/TemIn";
 import dayjs from "dayjs";
-import { getOrders } from "../../../api";
+import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
@@ -226,9 +226,11 @@ const TaoTem = () => {
         (async () => {
             loadListTable();
             const res1 = await getMachineList();
-            setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })))
+            setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })));
+            const res3 = await getUsers();
+            setListUsers(res3.map((e) => ({ ...e, label: e.name, value: e.username })));
         })();
     }, []);
 
@@ -307,6 +309,7 @@ const TaoTem = () => {
         setLoadingOrders(false);
     }
     const [listCustomers, setListCustomers] = useState([]);
+    const [listUsers, setListUsers] = useState([]);
     const [listMachines, setListMachines] = useState([]);
     const ordersColumn = [
         {
@@ -393,7 +396,11 @@ const TaoTem = () => {
             messageApi.info('Chưa chọn đơn hàng');
             return 0;
         }
-        var res = await createStampFromOrder({ order_ids: orderChecked, machine_id: orderParams.machine_id });
+        if (!orderParams.nhan_vien_sx) {
+            messageApi.info('Chưa chọn nhân viên');
+            return 0;
+        }
+        var res = await createStampFromOrder({ order_ids: orderChecked, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
         if (res.success) {
             setOpenModal(false);
             setOrderChecked([]);
@@ -524,7 +531,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={5}>
+                        <Col span={4}>
                             <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
@@ -547,7 +554,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={5}>
+                        <Col span={4}>
                             <Form.Item
                                 label="MDH"
                                 className="mb-3"
@@ -561,7 +568,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={5}>
+                        <Col span={4}>
                             <Form.Item
                                 label="Bắt đầu"
                                 className="mb-3"
@@ -577,7 +584,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={5}>
+                        <Col span={4}>
                             <Form.Item
                                 label="Kết thúc"
                                 className="mb-3"
@@ -590,6 +597,29 @@ const TaoTem = () => {
                                         setOrderParams({ ...orderParams, end_date: value })
                                     }
                                     value={orderParams.end_date}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Nhân viên sản xuất"
+                                className="mb-3"
+                            >
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    placeholder="Chọn người sản xuất"
+                                    style={{ width: "100%" }}
+                                    onChange={(value) =>
+                                        setOrderParams({ ...orderParams, nhan_vien_sx: value })
+                                    }
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? "")
+                                            .toLowerCase()
+                                            .includes(input.toLowerCase())
+                                    }
+                                    popupMatchSelectWidth={listUsers.length > 0 ? 400 : 0}
+                                    options={listUsers}
                                 />
                             </Form.Item>
                         </Col>
