@@ -388,7 +388,7 @@ const NhapTay = (props) => {
     if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id.includes('P')) {
+      } else if (machine_id.includes('P') || machine_id.includes('BE') || machine_id.includes('CH') || machine_id.includes('CL')) {
         printIn();
       } else if (machine_id.includes('D')) {
         printDan();
