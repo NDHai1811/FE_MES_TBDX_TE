@@ -8,9 +8,9 @@
 
 @page {
   size: a6;
-  margin-top: 22%;
-  margin-left: 4%;
-  margin-right: 4%;
+  margin-top: 22% !important;
+  margin-left: 5% !important;
+  margin-right: 5% !important;
 }
 
 @media print {
@@ -39,7 +39,7 @@
   table {
     margin-left: 5px;
     margin-right: 5px;
-    margin-top: 20px;
+    margin-top: 120px;
     margin-bottom: auto;
     background-color: #fff;
     width: 350px;
