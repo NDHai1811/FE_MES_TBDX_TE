@@ -204,9 +204,11 @@ const NhapTay = (props) => {
 
   const reloadData = async (lo_sx = null) => {
     const resData = await manualList(params);
-    console.log(resData);
-    setData(resData.data);
-    setLotCurrent(resData.data.find(e => e?.lo_sx === lo_sx));
+    const tableData = resData.data.map((e, index)=>({...e, key: index}));
+    tableData.sort(function(x, y){ return x.lo_sx === lo_sx ? -1 : y.lo_sx === lo_sx ? 1 : 0; })
+    setData(tableData);
+    const target = tableData.find(e => e?.lo_sx === lo_sx);
+    setLotCurrent(target);
     getOverAllDetail();
   };
   const overallColumns = [
@@ -424,70 +426,6 @@ const NhapTay = (props) => {
     setIsScan(2);
   };
 
-  const connectWebsocket = (deviceId, resData) => {
-    const entityId = deviceId;
-    ws.current = new WebSocket(url);
-    ws.current.onopen = function () {
-      const object = {
-        tsSubCmds: [
-          {
-            entityType: "DEVICE",
-            entityId: entityId,
-            scope: "LATEST_TELEMETRY",
-            keys: "Pre_Counter,Error_Counter",
-            cmdId: 10,
-          },
-        ],
-        historyCmds: [],
-        attrSubCmds: [],
-      };
-      const data = JSON.stringify(object);
-      ws.current.send(data);
-    };
-
-    ws.current.onmessage = async function (event) {
-      if (resData[0]?.status !== 1) {
-        return 0;
-      }
-      const receivedMsg = JSON.parse(event.data);
-      const Pre_Counter = receivedMsg.data?.Pre_Counter
-        ? parseInt(receivedMsg.data?.Pre_Counter[0][1])
-        : 0;
-      const Error_Counter = receivedMsg.data?.Error_Counter
-        ? parseInt(receivedMsg.data.Error_Counter[0][1])
-        : 0;
-      let san_luong = parseInt(resData[0]?.san_luong);
-      let sl_ok = parseInt(resData[0]?.sl_ok);
-      let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
-      if (Pre_Counter > 0) {
-        san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
-        if (Error_Counter) {
-          sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
-        }
-        sl_ok = parseInt(san_luong - sl_ng);
-        if (
-          sl_ok >= resData[0]?.dinh_muc ||
-          resData[0]?.sl_ok - Pre_Counter > 10
-        ) {
-          reloadData();
-        } else {
-          const new_data = resData.map((value, index) => {
-            if (index === 0) {
-              value.san_luong = isNaN(san_luong) ? 0 : san_luong;
-              value.sl_ok = isNaN(sl_ok) ? 0 : sl_ok;
-              return value;
-            } else {
-              return value;
-            }
-          });
-
-          setData(new_data);
-          setSelectedLot(new_data[0]);
-        }
-      }
-    };
-  };
-
   const onChangeStartDate = (value) => {
     setParams({ ...params, start_date: value });
   };
@@ -617,7 +555,7 @@ const NhapTay = (props) => {
                 };
               }}
               rowSelection={rowSelection}
-              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+              dataSource={data}
             />
           </Col>
         </Row>
