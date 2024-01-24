@@ -34,15 +34,15 @@ const PrintTemplate = ({ detail }) => {
                                         style={{ marginRight: "5px" }}
                                         value={detail.lo_sx}
                                         bordered={false}
-                                        size={80}
+                                        size={120}
                                         type="svg"
                                     />
                                     <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '28px', marginTop: '18px' }}>TEM XẢ LÓT</h3>
+                                        <h3 style={{ marginLeft: "8px", fontSize: '38px', marginTop: '38px' }}>TEM XẢ LÓT</h3>
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     <div className="flex-column">
-                                        <img src={logolight} width={70} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
+                                        <img src={logolight} width={110} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
@@ -50,9 +50,9 @@ const PrintTemplate = ({ detail }) => {
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={2} className="text-center" style={{ fontSize: '10px' }}>KHÁCH HÀNG</td>
-                            <td colSpan={2} className="text-center" style={{ fontSize: '10px' }}>ĐƠN HÀNG</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>STT</td>
+                            <td colSpan={2} className="text-center" style={{ fontSize: '14px' }}>KHÁCH HÀNG</td>
+                            <td colSpan={2} className="text-center" style={{ fontSize: '14px' }}>ĐƠN HÀNG</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>STT</td>
                         </tr>
                         <tr>
                             <td colSpan={2} className="text-center">{detail.khach_hang}</td>
@@ -60,11 +60,11 @@ const PrintTemplate = ({ detail }) => {
                             <td className="text-center">{detail.thu_tu_uu_tien}</td>
                         </tr>
                         <tr>
-                            <td className="text-center" style={{ fontSize: '10px' }}>DAI</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>RONG</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>CAO</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>LOT</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>SỐ LƯỢNG</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>DAI</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>RONG</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>CAO</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>LOT</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>SỐ LƯỢNG</td>
                         </tr>
                         <tr>
                             <td className="text-center">{detail.dai}</td>
@@ -74,11 +74,11 @@ const PrintTemplate = ({ detail }) => {
                             <td className="text-center">{detail.sl_kh}</td>
                         </tr>
                         <tr>
-                            <td className="text-center" style={{ fontSize: '10px' }}>KHỔ</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>DÀI</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>SỐ DAO</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>XẢ</td>
-                            <td className="text-center" style={{ fontSize: '10px' }}>SỐ LỚP</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>KHỔ</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>DÀI</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>SỐ DAO</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>XẢ</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>SỐ LỚP</td>
                         </tr>
                         <tr>
                             <td className="text-center">{detail.kho}</td>
@@ -88,21 +88,21 @@ const PrintTemplate = ({ detail }) => {
                             <td className="text-center">{detail.so_lop}</td>
                         </tr>
                         <tr>
-                            <td colSpan={4}>Ghi chú sản phẩm</td>
-                            <td className="text-center">Số pallet</td>
+                            <td colSpan={4} style={{ fontSize: '14px', paddingLeft: '10px' }}>GHI CHÚ SẢN PHẨM</td>
+                            <td className="text-center" style={{ fontSize: '14px' }}>SỐ PALLET</td>
                         </tr>
                         <tr>
-                            <td >{detail.note_3}</td>
+                            <td colSpan={4} style={{ paddingLeft: '15px' }}>{detail.note_3}</td>
                             <td ></td>
                         </tr>
                         <tr>
-                            <td colSpan={2}>NHÓM MÁY</td>
-                            <td colSpan={3}>GT</td>
+                            <td colSpan={2} style={{ fontSize: '14px', paddingLeft: '10px' }}>NHÓM MÁY</td>
+                            <td colSpan={3} style={{ paddingLeft: '10px' }}>GT</td>
                         </tr>
                         <tr>
-                            <td>NGÀY SX</td>
-                            <td colSpan={2}>{detail.thoi_gian_bat_dau}</td>
-                            <td>CA SX</td>
+                            <td style={{ fontSize: '14px', paddingLeft: '10px' }}>NGÀY SX</td>
+                            <td colSpan={2} style={{ paddingLeft: '10px' }}>{detail.thoi_gian_bat_dau}</td>
+                            <td style={{ fontSize: '14px', paddingLeft: '10px' }}>CA SX</td>
                             <td></td>
                         </tr>
                     </tbody>
