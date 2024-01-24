@@ -202,11 +202,11 @@ const NhapTay = (props) => {
     setVisiblePrint(false);
   };
 
-  const reloadData = async () => {
+  const reloadData = async (lo_sx = null) => {
     const resData = await manualList(params);
     console.log(resData);
     setData(resData.data);
-    setLotCurrent(resData.data.find(e => e?.lo_sx === lotCurrent?.lo_sx));
+    setLotCurrent(resData.data.find(e => e?.lo_sx === lo_sx));
     getOverAllDetail();
   };
   const overallColumns = [
@@ -364,7 +364,7 @@ const NhapTay = (props) => {
   const onScan = async (result) => {
     const lo_sx = JSON.parse(result).lo_sx;
     manualScan({ lo_sx: lo_sx, machine_id: machine_id })
-      .then(() => { reloadData(); handleCloseMdl() })
+      .then(() => { reloadData(lo_sx); handleCloseMdl() })
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
 
