@@ -690,22 +690,22 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-          col.dataIndex === "dai" ||
-          col.dataIndex === "price" ||
-          col.dataIndex === "rong"
+            col.dataIndex === "dai" ||
+            col.dataIndex === "price" ||
+            col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" ||
               col.dataIndex === "han_giao" ||
               col.dataIndex === "han_giao_sx"
-            ? "dateTime"
-            : col.dataIndex === "buyer_id" ||
-              col.dataIndex === "layout_id" ||
-              col.dataIndex === "layout_type" ||
-              col.dataIndex === "phan_loai_1" ||
-              col.dataIndex === "phan_loai_2" ||
-              col.dataIndex === "quy_cach_drc"
-            ? "select"
-            : "text",
+              ? "dateTime"
+              : col.dataIndex === "buyer_id" ||
+                col.dataIndex === "layout_id" ||
+                col.dataIndex === "layout_type" ||
+                col.dataIndex === "phan_loai_1" ||
+                col.dataIndex === "phan_loai_2" ||
+                col.dataIndex === "quy_cach_drc"
+                ? "select"
+                : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -1177,6 +1177,22 @@ const Orders = () => {
                           setPage(1);
                         }}
                         placeholder="Nhập mã khách hàng"
+                      />
+                    </Form.Item>
+                    <Form.Item label="MDH" className="mb-3">
+                      <Select
+                        mode="tags"
+                        style={{ width: '100%' }}
+                        onChange={(value) => {
+                          setParams({
+                            ...params,
+                            mdh: value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        tokenSeparators={[',']}
+                        options={[]}
                       />
                     </Form.Item>
                     <Form.Item label="MDH" className="mb-3">
