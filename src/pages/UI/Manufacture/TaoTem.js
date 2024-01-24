@@ -452,11 +452,11 @@ const TaoTem = () => {
                                             error();
                                         } else if (info.file.status === "done") {
                                             if (info.file.response.success === true) {
-                                                // loadListTable(params);
+                                                loadListTable();
                                                 success();
                                                 setLoadingExport(false);
                                             } else {
-                                                // loadListTable(params);
+                                                loadListTable();
                                                 message.error(info.file.response.message);
                                                 setLoadingExport(false);
                                             }
