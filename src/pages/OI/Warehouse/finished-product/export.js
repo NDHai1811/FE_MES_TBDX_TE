@@ -229,7 +229,7 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                In tem
+                In tem lại
               </Button>
             </Col>
           </Row>

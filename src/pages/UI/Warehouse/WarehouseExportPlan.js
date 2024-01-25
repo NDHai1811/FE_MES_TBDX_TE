@@ -251,6 +251,10 @@ const WarehouseExportPlan = () => {
           ...row,
           key: row.id,
         });
+        row.id = editingKey;
+        if (listCheck.length > 0) {
+          row.ids = listCheck;
+        }
         await updateBuyers(row);
         setData(newData);
         setEditingKey("");
