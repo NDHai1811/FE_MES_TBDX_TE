@@ -132,10 +132,10 @@ const items = [
             label: "Danh sách máy",
             key: "master-data/may",
           },
-          {
-            label: "Spec sản phẩm",
-            key: "master-data/spec-product",
-          },
+          // {
+          //   label: "Spec sản phẩm",
+          //   key: "master-data/spec-product",
+          // },
           {
             label: "Nguyên vật liệu",
             key: "master-data/material",
@@ -145,10 +145,10 @@ const items = [
             label: "Khuôn",
             key: "master-data/khuon",
           },
-          {
-            label: "JIG",
-            key: "master-data/jig",
-          },
+          // {
+          //   label: "JIG",
+          //   key: "master-data/jig",
+          // },
         ],
       },
 
