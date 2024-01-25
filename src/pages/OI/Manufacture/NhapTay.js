@@ -205,7 +205,7 @@ const NhapTay = (props) => {
   const reloadData = async (lo_sx = null) => {
     const resData = await manualList(params);
     const tableData = resData.data.map((e, index)=>({...e, key: index}));
-    tableData.sort(function(x, y){ return x.lo_sx === lo_sx ? -1 : y.lo_sx === lo_sx ? 1 : 0; })
+    tableData.sort(function(x, y){ return x?.lo_sx === lo_sx ? -1 : y?.lo_sx === lo_sx ? 1 : 0; })
     setData(tableData);
     const target = tableData.find(e => e?.lo_sx === lo_sx);
     setLotCurrent(target);
