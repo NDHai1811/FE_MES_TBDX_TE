@@ -300,7 +300,7 @@ const Khuon = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý khuôn"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

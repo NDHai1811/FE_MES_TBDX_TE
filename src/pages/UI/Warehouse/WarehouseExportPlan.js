@@ -360,7 +360,11 @@ const WarehouseExportPlan = () => {
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
+              className="custom-card scroll"
+            >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
@@ -413,6 +417,8 @@ const WarehouseExportPlan = () => {
           <Card
             style={{ height: "100%" }}
             title="Kế hoạch xuất kho"
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

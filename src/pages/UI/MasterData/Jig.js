@@ -215,6 +215,7 @@ const Jig = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý JIG"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

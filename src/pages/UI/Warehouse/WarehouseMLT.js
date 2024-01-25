@@ -498,6 +498,7 @@ const WarehouseMLT = (props) => {
             <Card
               style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
             >
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
@@ -601,7 +602,11 @@ const WarehouseMLT = (props) => {
             }}
             gutter={[8, 8]}
           >
-            <Card bodyStyle={{ width: "100%", height: "100%", paddingTop: 0 }}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingBottom: 0 }}
+              className="custom-card scroll"
+            >
               <Tabs
                 defaultActiveKey="1"
                 onChange={(activeKey) => setCurrentTab(activeKey)}
