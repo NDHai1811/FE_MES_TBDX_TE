@@ -408,20 +408,22 @@ const Buyer = () => {
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card scroll"
-            actions={[
-              <div
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
-              </div>
-            ]}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>,
+              ]}
+            >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
@@ -455,6 +457,8 @@ const Buyer = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             title="Quản lý Buyer"
             extra={
               <Space>
@@ -512,7 +516,7 @@ const Buyer = () => {
                   pagination={{ position: ["bottomRight"] }}
                   scroll={{
                     x: "130vw",
-                    y: "80vh",
+                    y: "50vh",
                   }}
                   components={{
                     body: {

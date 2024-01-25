@@ -240,6 +240,7 @@ const Users = () => {
             style={{ height: "100%" }}
             className="custom-card scroll"
             title="Quản lý tài khoản"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

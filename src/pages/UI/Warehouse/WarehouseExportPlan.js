@@ -24,8 +24,8 @@ import {
   updateBuyers,
   updateOrder,
 } from "../../../api";
-import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
+import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { getWarehouseFGExportList } from "../../../api/ui/warehouse";
 
@@ -95,14 +95,13 @@ const WarehouseExportPlan = () => {
       key: "ngay_xuat",
       align: "center",
       fixed: "left",
-      editable: hasEditColumn("ngay_xuat"),
+      render: (value, item) => dayjs(value).format('DD/MM/YYYY')
     },
     {
       title: "Mã khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
-      editable: hasEditColumn("customer_id"),
     },
     {
       title: "Mã đơn hàng",

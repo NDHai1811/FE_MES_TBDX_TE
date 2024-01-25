@@ -19,16 +19,8 @@ import { getThongSoMay, getUIItemMenu } from "../../../api/ui/main";
 import { baseURL } from "../../../config";
 import { exportThongSoMay } from "../../../api/ui/export";
 import dayjs from "dayjs";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { getMachineParamLogs } from "../../../api/ui/machine";
+import "../style.scss";
 
 const dataChart = Array.from({ length: 12 }, (_, i) => ({
   time: `10:${String(i * 5).padStart(2, "0")}`,
@@ -950,7 +942,7 @@ const Equipment2 = (props) => {
                 pagination={false}
                 scroll={{
                   x: "500%",
-                  y: "65vh",
+                  y: "50vh",
                 }}
                 // style={{height:'100%'}}
                 onRow={(record, rowIndex) => {

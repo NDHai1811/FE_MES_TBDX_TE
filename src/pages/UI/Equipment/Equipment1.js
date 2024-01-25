@@ -490,9 +490,7 @@ const Equipment1 = (props) => {
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
               className="custom-card scroll"
               actions={[
-                <div
-                  layout="vertical"
-                >
+                <div layout="vertical">
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
@@ -500,7 +498,7 @@ const Equipment1 = (props) => {
                   >
                     Truy vấn
                   </Button>
-                </div>
+                </div>,
               ]}
             >
               <Divider>Thời gian truy vấn</Divider>
@@ -618,22 +616,6 @@ const Equipment1 = (props) => {
                     />
                   </Form.Item>
                 </Form>
-              </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
               </div>
             </Card>
           </div>

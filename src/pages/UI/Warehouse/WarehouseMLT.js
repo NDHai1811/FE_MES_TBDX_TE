@@ -462,7 +462,7 @@ const WarehouseMLT = (props) => {
           dataSource={exportList}
           scroll={{
             x: "100vw",
-            y: "80vh",
+            y: "50vh",
           }}
           className="h-100"
           pagination={false}

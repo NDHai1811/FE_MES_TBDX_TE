@@ -434,7 +434,7 @@ const QuanLyKhuonFilm = () => {
                       // onSelect={onSelect}
                       // onCheck={onCheck}
                       treeData={itemsMenu}
-                      style={{ maxHeight: "80px", overflowY: "auto" }}
+                      // style={{ maxHeight: "80px", overflowY: "auto" }}
                     />
                   </Form.Item>
                 </Form>
@@ -527,6 +527,8 @@ const QuanLyKhuonFilm = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <>
                 <Button type="primary">Xuất excel</Button>

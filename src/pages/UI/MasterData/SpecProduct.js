@@ -447,6 +447,7 @@ const SpecProduct = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý thông số sản phẩm"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

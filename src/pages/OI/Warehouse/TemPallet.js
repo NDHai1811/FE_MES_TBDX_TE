@@ -59,7 +59,7 @@ const PrintTemplate = ({ info }) => {
               </td>
             </tr>
             <tr style={{ lineHeight: '25px' }}>
-              <td colSpan={3}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang}</b></td>
+              <td colSpan={3}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang} {info[0]?.customer_id}</b></td>
             </tr>
             <tr style={{ lineHeight: '20px' }}>
               <td className="text-center">MDH</td>
@@ -87,13 +87,14 @@ const PrintTemplate = ({ info }) => {
 export default class TemPallet extends React.Component {
   render() {
     let printingPages = [];
-    const { info } = this.props;
-    // for (const detail of listCheck) {
-    for (let i = 0; i < 3; i++) {
-      const tempTemplate = <PrintTemplate info={info} />;
-      printingPages.push(tempTemplate);
+    const { listCheck } = this.props;
+    console.log(listCheck);
+    for (const info of listCheck) {
+      for (let i = 0; i < 3; i++) {
+        const tempTemplate = <PrintTemplate info={info} />;
+        printingPages.push(tempTemplate);
+      }
+      return <div>{printingPages}</div>;
     }
-    // }
-    return <div>{printingPages}</div>;
   }
 }

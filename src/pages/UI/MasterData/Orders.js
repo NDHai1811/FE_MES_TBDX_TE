@@ -839,6 +839,7 @@ const Orders = () => {
   }, [editingKey]);
 
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
@@ -846,7 +847,6 @@ const Orders = () => {
 
   const removeAccents = (str) => {
     if (str) {
-      // return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       return PL1s.find((e) => e.value === str)?.label;
     } else {
       return "";
@@ -856,13 +856,6 @@ const Orders = () => {
   const getBuyerList = async () => {
     const item = data.find((value) => value.key === editingKey);
     const res = await getBuyers();
-    // const filteredBuyers = res.filter(
-    //   (val) =>
-    //     val.customer_id.startsWith(item?.customer_id) &&
-    //     removeAccents(val.phan_loai_1)
-    //       .toLowerCase()
-    //       .endsWith(removeAccents(item?.phan_loai_1).toLowerCase())
-    // );
     setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
   };
 
@@ -1007,9 +1000,6 @@ const Orders = () => {
         item?.han_giao_sx,
         COMMON_DATE_TABLE_FORMAT_REQUEST
       );
-      // !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
-      // !item?.han_giao && delete row?.han_giao;
-      // !item?.han_giao_sx && delete row?.han_giao_sx;
     }
 
     if (typeof editingKey === "number") {
@@ -1029,16 +1019,17 @@ const Orders = () => {
         form.resetFields();
         loadListTable(params);
         setEditingKey("");
-        // if (listCheck.length > 0) {
-        //   setListCheck([]);
-        // }
+        if (listCheck.length > 0) {
+          setListCheck([]);
+        }
       }
     }
   };
 
   const onDetele = async (record) => {
-    await deleteOrders({ id: record.id });
+    await deleteOrders({ ids: listCheck });
     loadListTable(params);
+    message.success('Xoá thành công');
   };
 
   const [loadingExport, setLoadingExport] = useState(false);
@@ -1135,25 +1126,28 @@ const Orders = () => {
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card scroll" actions={[
-              <div
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
-              </div>
-            ]}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>,
+              ]}
+            >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
                   style={{ margin: "0 5px" }}
                   layout="vertical"
-                // onFinish={btn_click}
+                  // onFinish={btn_click}
                 >
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
@@ -1186,7 +1180,7 @@ const Orders = () => {
                   <Form.Item label="MDH" className="mb-3">
                     <Select
                       mode="tags"
-                      style={{ width: '100%' }}
+                      style={{ width: "100%" }}
                       placeholder="Nhập mã đơn hàng"
                       onChange={(value) => {
                         setParams({
@@ -1390,6 +1384,31 @@ const Orders = () => {
                       placeholder="Nhập SIZE"
                     />
                   </Form.Item>
+                  <Form.Item label="Ngày giao hàng" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày giao hàng"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, han_giao: value })
+                      }
+                      value={params.han_giao}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Ghi chú TBDX" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          note_2: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập ghi chú TBDX"
+                    />
+                  </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
@@ -1400,7 +1419,7 @@ const Orders = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý đơn hàng"
-            bodyStyle={{paddingBottom:0}}
+            bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
             extra={
               <Space>
@@ -1432,10 +1451,7 @@ const Orders = () => {
                     }
                   }}
                 >
-                  <Button
-                    type="primary"
-                    loading={loadingExport1}
-                  >
+                  <Button type="primary" loading={loadingExport1}>
                     Upload từ KHSX
                   </Button>
                 </Upload>
@@ -1499,7 +1515,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: window.innerHeight * 0.50,
+                  y: window.innerHeight * 0.5,
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)
