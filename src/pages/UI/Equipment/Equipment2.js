@@ -1021,7 +1021,7 @@ const Equipment2 = (props) => {
                 pagination={false}
                 scroll={{
                   x: "500%",
-                  y: "65vh",
+                  y: "50vh",
                 }}
                 // style={{height:'100%'}}
                 onRow={(record, rowIndex) => {
