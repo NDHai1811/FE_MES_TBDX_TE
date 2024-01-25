@@ -516,7 +516,7 @@ const Buyer = () => {
                   pagination={{ position: ["bottomRight"] }}
                   scroll={{
                     x: "130vw",
-                    y: "80vh",
+                    y: "50vh",
                   }}
                   components={{
                     body: {
