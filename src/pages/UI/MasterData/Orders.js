@@ -1367,6 +1367,20 @@ const Orders = () => {
                         placeholder="Nhập SIZE"
                       />
                     </Form.Item>
+                    <Form.Item label="Ghi chú TBDX" className="mb-3">
+                      <Input
+                        allowClear
+                        onChange={(e) => {
+                          setParams({
+                            ...params,
+                            note_2: e.target.value,
+                            page: 1,
+                          });
+                          setPage(1);
+                        }}
+                        placeholder="Nhập ghi chú TBDX"
+                      />
+                    </Form.Item>
                   </div>
                   <Form.Item style={{ textAlign: "center" }}>
                     <Button
