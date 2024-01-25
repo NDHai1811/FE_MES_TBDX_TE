@@ -222,10 +222,18 @@ const Machine = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
+              >
+                Tìm kiếm
+              </Button>
+            ]}>
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
@@ -251,15 +259,6 @@ const Machine = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
-                  <Form.Item style={{ textAlign: "center" }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      style={{ width: "80%" }}
-                    >
-                      Tìm kiếm
-                    </Button>
-                  </Form.Item>
                 </Form>
               </div>
             </Card>
@@ -269,6 +268,7 @@ const Machine = () => {
           <Card
             style={{ height: "100%" }}
             title="Máy"
+            className="custom-card"
             extra={
               <Space>
                 <Upload
@@ -342,7 +342,7 @@ const Machine = () => {
               <Table
                 size="small"
                 bordered
-                pagination={false}
+                pagination={true}
                 columns={col_detailTable}
                 dataSource={data}
                 rowSelection={rowSelection}

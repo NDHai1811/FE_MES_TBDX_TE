@@ -340,13 +340,18 @@ const Customer = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card
-              style={{ height: "100%" }}
-              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-            >
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
+              >
+                Tìm kiếm
+              </Button>
+            ]}>
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -367,21 +372,6 @@ const Customer = () => {
                     />
                   </Form.Item>
                 </Form>
-              </div>
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  onClick={btn_click}
-                  style={{ width: "80%" }}
-                >
-                  Truy vấn
-                </Button>
               </div>
             </Card>
           </div>
@@ -426,6 +416,7 @@ const Customer = () => {
                 </Button>
               </Space>
             }
+            className="custom-card"
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
