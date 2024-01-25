@@ -271,7 +271,6 @@ const Machine = () => {
             bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
             title="Máy"
-            className="custom-card scroll"
             extra={
               <Space>
                 <Upload
