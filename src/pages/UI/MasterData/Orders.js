@@ -839,6 +839,7 @@ const Orders = () => {
   }, [editingKey]);
 
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
@@ -1018,16 +1019,17 @@ const Orders = () => {
         form.resetFields();
         loadListTable(params);
         setEditingKey("");
-        // if (listCheck.length > 0) {
-        //   setListCheck([]);
-        // }
+        if (listCheck.length > 0) {
+          setListCheck([]);
+        }
       }
     }
   };
 
   const onDetele = async (record) => {
-    await deleteOrders({ id: record.id });
+    await deleteOrders({ ids: listCheck });
     loadListTable(params);
+    message.success('Xoá thành công');
   };
 
   const [loadingExport, setLoadingExport] = useState(false);
@@ -1377,20 +1379,31 @@ const Orders = () => {
                       placeholder="Nhập SIZE"
                     />
                   </Form.Item>
+                  <Form.Item label="Ngày giao hàng" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày giao hàng"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, han_giao: value })
+                      }
+                      value={params.han_giao}
+                    />
+                  </Form.Item>
                   <Form.Item label="Ghi chú TBDX" className="mb-3">
-                      <Input
-                        allowClear
-                        onChange={(e) => {
-                          setParams({
-                            ...params,
-                            note_2: e.target.value,
-                            page: 1,
-                          });
-                          setPage(1);
-                        }}
-                        placeholder="Nhập ghi chú TBDX"
-                      />
-                    </Form.Item>
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          note_2: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập ghi chú TBDX"
+                    />
+                  </Form.Item>
                 </Form>
               </div>
             </Card>
@@ -1400,7 +1413,7 @@ const Orders = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý đơn hàng"
-            bodyStyle={{paddingBottom:0}}
+            bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
             extra={
               <Space>

@@ -8,6 +8,7 @@ import {
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import {
+  getListPallet,
   getWarehouseFGOverall,
   getWarehouseTpLogs,
 } from "../../../../api/oi/warehouse";
@@ -101,8 +102,8 @@ const palletColumns = [
   },
   {
     title: "Mã tem",
-    dataIndex: "pallet_id",
-    key: "pallet_id",
+    dataIndex: "id",
+    key: "id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -115,8 +116,8 @@ const palletColumns = [
   },
   {
     title: "Mã khách hàng",
-    dataIndex: "ma_khach_hang",
-    key: "ma_khach_hang",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
     align: "center",
     render: (value) => value || "-",
   },
@@ -140,6 +141,7 @@ const Import = (props) => {
   const componentRef1 = useRef();
   const [logs, setLogs] = useState([]);
   const [warehouseOverall, setWarehouseOverall] = useState([]);
+  const [listPallet, setListPallet] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
       pallet_id: "",
@@ -155,11 +157,18 @@ const Import = (props) => {
   const getData = () => {
     getLogs();
     getWarehouseOverallData();
+    getListPalletFG();
   };
 
   const getWarehouseOverallData = () => {
     getWarehouseFGOverall()
       .then((res) => setWarehouseOverall([res.data]))
+      .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
+  };
+
+  const getListPalletFG = () => {
+    getListPallet()
+      .then((res) => setListPallet(res.data))
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
 
@@ -237,14 +246,22 @@ const Import = (props) => {
     content: () => componentRef1.current,
   });
 
+  const prinTem = () => {
+    print();
+    setListCheck([]);
+  }
   const onShowPopup = () => {
     setVisible(true);
   };
 
   const rowSelection = {
-    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
+      const arr = selectedRows.map((value) => {
+        if (value.losxpallet) {
+          return value.losxpallet
+        }
+      })
+      setListCheck(arr);
     },
   };
 
@@ -260,19 +277,14 @@ const Import = (props) => {
             record.status === 1
               ? "table-row-yellow"
               : record.status === 2
-              ? "table-row-grey"
-              : ""
+                ? "table-row-grey"
+                : ""
           }
           pagination={false}
           bordered
           className="mb-4"
           columns={importColumns}
           dataSource={logs}
-          // onRow={(record) => {
-          //   return {
-          //     onClick: () => onSelectItem(record),
-          //   };
-          // }}
         />
       </Col>
     );
@@ -290,15 +302,15 @@ const Import = (props) => {
             record.status === 1
               ? "table-row-yellow"
               : record.status === 2
-              ? "table-row-grey"
-              : ""
+                ? "table-row-grey"
+                : ""
           }
           pagination={false}
           bordered
           className="mb-4"
           rowSelection={rowSelection}
           columns={palletColumns}
-          dataSource={[]}
+          dataSource={listPallet}
         />
       </Col>
     );
@@ -340,7 +352,7 @@ const Import = (props) => {
         </Col>
         <Col span={24}>
           <Row gutter={8}>
-            <Col span={12}>
+            <Col span={8}>
               <Button
                 block
                 className="h-100 w-100"
@@ -353,16 +365,31 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                Quét QR Code
+                Quét mã Pallet
               </Button>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
+              <Button
+                block
+                className="h-100 w-100"
+                type="primary"
+                onClick={onShowPopup}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                Tạo tem
+              </Button>
+            </Col>
+            <Col span={8}>
               <Button
                 block
                 className="h-100 w-100"
                 icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
                 type="primary"
-                onClick={onShowPopup}
+                onClick={prinTem}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -385,14 +412,14 @@ const Import = (props) => {
         </Col>
       </Row>
       <div className="report-history-invoice">
-        <TemPallet info={info} ref={componentRef1} />
+        <TemPallet listCheck={listCheck} ref={componentRef1} />
       </div>
       {visible && (
         <PopupQuetQrNhapKho
           visible={visible}
           setVisible={setVisible}
           setResData={setResData}
-          setInfo={setInfo}
+          setListCheck={setListCheck}
           setSelectedItem={setSelectedItem}
           setResult={setResult}
         />

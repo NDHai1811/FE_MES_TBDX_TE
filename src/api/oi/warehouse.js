@@ -44,6 +44,10 @@ export const importData = async (params) => {
   return await axios.post("/oi/warehouse/fg/import/save", params);
 };
 
+export const getListPallet = async () => {
+  return await axios.get("/oi/warehouse/fg/list-pallet");
+};
+
 export const getExportNvlLogs = async () => {
   return await axios.get("oi/warehouse/mlt/export/list");
 };

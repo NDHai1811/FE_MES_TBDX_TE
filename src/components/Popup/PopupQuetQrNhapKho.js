@@ -16,7 +16,7 @@ function PopupQuetQrNhapKho(props) {
     setVisible,
     setResData,
     setSelectedItem,
-    setInfo,
+    setListCheck,
     setResult,
   } = props;
 
@@ -166,7 +166,7 @@ function PopupQuetQrNhapKho(props) {
             so_luong: totalQuantity,
           },
         ]);
-        setInfo(res.data);
+        setListCheck([res.data]);
         setResult?.(res.data);
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));

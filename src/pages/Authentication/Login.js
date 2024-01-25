@@ -61,7 +61,7 @@ const Login = (props) => {
                 <img className="mb-3 w-25" src={logo} />
               </div>
               <h6 className="text-center text-primary mb-0">
-                CÔNG TY CỔ PHẦN BAO BÌ GIẤY THÁI BÌNH DƯƠNG XANH
+                CÔNG TY CỔ PHẦN THÁI BÌNH DƯƠNG XANH
               </h6>
               <div className="p-2 mt-3 text-center">
                 <Form layout="vertical" onFinish={onFinish}>
