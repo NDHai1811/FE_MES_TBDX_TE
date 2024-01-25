@@ -690,22 +690,22 @@ const Orders = () => {
         record,
         inputType:
           col.dataIndex === "cao" ||
-          col.dataIndex === "dai" ||
-          col.dataIndex === "price" ||
-          col.dataIndex === "rong"
+            col.dataIndex === "dai" ||
+            col.dataIndex === "price" ||
+            col.dataIndex === "rong"
             ? "number"
             : col.dataIndex === "ngay_dat_hang" ||
               col.dataIndex === "han_giao" ||
               col.dataIndex === "han_giao_sx"
-            ? "dateTime"
-            : col.dataIndex === "buyer_id" ||
-              col.dataIndex === "layout_id" ||
-              col.dataIndex === "layout_type" ||
-              col.dataIndex === "phan_loai_1" ||
-              col.dataIndex === "phan_loai_2" ||
-              col.dataIndex === "quy_cach_drc"
-            ? "select"
-            : "text",
+              ? "dateTime"
+              : col.dataIndex === "buyer_id" ||
+                col.dataIndex === "layout_id" ||
+                col.dataIndex === "layout_type" ||
+                col.dataIndex === "phan_loai_1" ||
+                col.dataIndex === "phan_loai_2" ||
+                col.dataIndex === "quy_cach_drc"
+                ? "select"
+                : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
@@ -846,7 +846,6 @@ const Orders = () => {
 
   const removeAccents = (str) => {
     if (str) {
-      // return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       return PL1s.find((e) => e.value === str)?.label;
     } else {
       return "";
@@ -856,13 +855,6 @@ const Orders = () => {
   const getBuyerList = async () => {
     const item = data.find((value) => value.key === editingKey);
     const res = await getBuyers();
-    // const filteredBuyers = res.filter(
-    //   (val) =>
-    //     val.customer_id.startsWith(item?.customer_id) &&
-    //     removeAccents(val.phan_loai_1)
-    //       .toLowerCase()
-    //       .endsWith(removeAccents(item?.phan_loai_1).toLowerCase())
-    // );
     setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
   };
 
@@ -1007,9 +999,6 @@ const Orders = () => {
         item?.han_giao_sx,
         COMMON_DATE_TABLE_FORMAT_REQUEST
       );
-      // !item?.ngay_dat_hang && delete row?.ngay_dat_hang;
-      // !item?.han_giao && delete row?.han_giao;
-      // !item?.han_giao_sx && delete row?.han_giao_sx;
     }
 
     if (typeof editingKey === "number") {

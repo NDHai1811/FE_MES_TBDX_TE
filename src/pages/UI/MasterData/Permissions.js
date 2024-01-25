@@ -1,29 +1,22 @@
 import {
-  DatePicker,
   Col,
   Row,
   Card,
   Table,
-  Tag,
-  Layout,
   Divider,
   Button,
   Form,
   Input,
-  theme,
   Select,
-  AutoComplete,
   Upload,
   message,
-  Checkbox,
-  Space,
   Modal,
   Spin,
   Popconfirm,
-  Badge,
+  Space,
 } from "antd";
 import { baseURL } from "../../../config";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   createPermissions,
   deletePermissions,

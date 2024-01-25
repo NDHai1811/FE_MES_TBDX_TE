@@ -71,7 +71,7 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">{detail.rong}</td>
               <td className="text-center">{detail.cao}</td>
               <td className="text-center">{detail.lo_sx}</td>
-              <td className="text-center"><b>{detail.san_luong_kh}</b></td>
+              <td className="text-center"><b>{detail.so_dao}</b></td>
             </tr>
             <tr>
               <td className="text-center" style={{ fontSize: '12px' }}>KHỔ</td>
@@ -88,7 +88,7 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">{detail.so_lop}</td>
             </tr>
             <tr>
-              <td colSpan={4} style={{ fontSize: '12px' }}>GHI CHÚ SẢN PHẨM</td>
+              <td colSpan={4} style={{ fontSize: '12px' }}>GHI CHÚ SÓNG</td>
               <td className="text-center" style={{ fontSize: '12px' }}>SỐ PALLET</td>
             </tr>
             <tr>
@@ -96,8 +96,10 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">{detail.lo_sx}</td>
             </tr>
             <tr>
-              <td className="text-center" colSpan={2} style={{ fontSize: '12px' }}>NHÓM MÁY</td>
-              <td className="text-center" colSpan={3}><b>{detail.nhom_may}</b></td>
+              <td colSpan={5} style={{ fontSize: '12px' }}>GHI CHÚ TBDX</td>
+            </tr>
+            <tr>
+              <td className="text-center" colSpan={5}><b>{detail.note_2}</b></td>
             </tr>
             <tr>
               <td className="text-center" style={{ fontSize: '12px' }}>NGÀY SX</td>
