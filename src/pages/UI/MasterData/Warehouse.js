@@ -214,6 +214,7 @@ const Warehouses = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -222,7 +223,7 @@ const Warehouses = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            className="custom-card"
+            className="custom-card scroll"
             title="Quản lý kho"
             extra={
               <Space>

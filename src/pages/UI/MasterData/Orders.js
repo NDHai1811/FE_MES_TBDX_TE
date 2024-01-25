@@ -1196,6 +1196,8 @@ const Orders = () => {
                         });
                         setPage(1);
                       }}
+                      suffixIcon={null}
+                      open={false}
                       tokenSeparators={[',']}
                       options={[]}
                     />
@@ -1388,6 +1390,7 @@ const Orders = () => {
                       placeholder="Nhập SIZE"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>

@@ -487,8 +487,21 @@ const Equipment1 = (props) => {
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">

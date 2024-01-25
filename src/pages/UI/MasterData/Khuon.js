@@ -291,6 +291,7 @@ const Khuon = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -300,7 +301,7 @@ const Khuon = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý khuôn"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

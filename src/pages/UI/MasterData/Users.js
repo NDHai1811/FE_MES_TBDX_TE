@@ -229,6 +229,7 @@ const Users = () => {
                       placeholder="Nhập tên nhân viên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -237,7 +238,7 @@ const Users = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            className="custom-card"
+            className="custom-card scroll"
             title="Quản lý tài khoản"
             extra={
               <Space>

@@ -216,6 +216,7 @@ const Errors = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -224,7 +225,7 @@ const Errors = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            className="custom-card"
+            className="custom-card scroll"
             title="Quản lý thông số sản phẩm"
             extra={
               <Space>

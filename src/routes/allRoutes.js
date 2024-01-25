@@ -57,6 +57,7 @@ import Buyer from "../pages/UI/Manufacture/Buyer";
 import Customer from "../pages/UI/MasterData/Customer";
 import WarehouseMLT from "../pages/UI/Warehouse/WarehouseMLT";
 import TaoTem from "../pages/UI/Manufacture/TaoTem";
+import Vehicle from "../pages/UI/MasterData/Vehicle";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -124,6 +125,7 @@ const authProtectedRoutes = [
   { path: ["/ui/manufacture/don-hang"], component: Orders },
   { path: ["/ui/manufacture/danh-sach-buyer"], component: Buyer },
   { path: ["/ui/master-data/customer"], component: Customer },
+  { path: ["/ui/master-data/vehicle"], component: Vehicle },
   {
     path: ["/ui/master-data/maintenance/create"],
     component: CreateMaintenance,

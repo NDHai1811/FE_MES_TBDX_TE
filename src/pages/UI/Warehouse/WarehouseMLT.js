@@ -443,7 +443,7 @@ const WarehouseMLT = (props) => {
           })}
           scroll={{
             x: "100vw",
-            y: "80vh",
+            y: window.innerHeight * 0.70,
           }}
           className="h-100"
           rowSelection={rowSelection}
@@ -492,12 +492,25 @@ const WarehouseMLT = (props) => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
@@ -573,102 +586,77 @@ const WarehouseMLT = (props) => {
                   </Form.Item>
                 </Form>
               </div>
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  onClick={btn_click}
-                  style={{ width: "80%" }}
-                >
-                  Truy vấn
-                </Button>
-              </div>
             </Card>
           </div>
         </Col>
         <Col span={20}>
-          <Row
-            style={{
-              paddingLeft: "4px",
-              paddingRight: "4px",
-              height: "100vh",
-              display: "contents",
-            }}
-            gutter={[8, 8]}
-          >
-            <Card bodyStyle={{ width: "100%", height: "100%", paddingTop: 0 }}>
-              <Tabs
-                defaultActiveKey="1"
-                onChange={(activeKey) => setCurrentTab(activeKey)}
-                items={tabsMenu}
-                tabBarExtraContent={
-                  currentTab === "1" ? (
-                    <Space>
-                      <Button
-                        type="primary"
-                        onClick={exportFile}
-                        loading={exportLoading}
-                      >
-                        Xuất phiếu nhập kho
-                      </Button>
-                      <Upload
-                        showUploadList={false}
-                        name="file"
-                        action={baseURL + "/api/upload-nhap-kho-nvl"}
-                        headers={{
-                          authorization: "authorization-text",
-                        }}
-                        onChange={(info) => {
-                          setLoading(true);
-                          if (info.file.status === "error") {
-                            error();
+          <Card style={{ height: '100%' }} className="custom-card scroll">
+            <Tabs
+              defaultActiveKey="1"
+              onChange={(activeKey) => setCurrentTab(activeKey)}
+              items={tabsMenu}
+              tabBarExtraContent={
+                currentTab === "1" ? (
+                  <Space>
+                    <Button
+                      type="primary"
+                      onClick={exportFile}
+                      loading={exportLoading}
+                    >
+                      Xuất phiếu nhập kho
+                    </Button>
+                    <Upload
+                      showUploadList={false}
+                      name="file"
+                      action={baseURL + "/api/upload-nhap-kho-nvl"}
+                      headers={{
+                        authorization: "authorization-text",
+                      }}
+                      onChange={(info) => {
+                        setLoading(true);
+                        if (info.file.status === "error") {
+                          error();
+                          setLoading(false);
+                        } else if (info.file.status === "done") {
+                          if (info.file.response.success === true) {
+                            getImportList();
+                            success();
                             setLoading(false);
-                          } else if (info.file.status === "done") {
-                            if (info.file.response.success === true) {
-                              getImportList();
-                              success();
-                              setLoading(false);
-                            } else {
-                              getImportList();
-                              message.error(info.file.response.message);
-                              setLoading(false);
-                            }
+                          } else {
+                            getImportList();
+                            message.error(info.file.response.message);
+                            setLoading(false);
                           }
-                        }}
-                      >
-                        <Button type="primary" loading={loading}>
-                          Upload excel
-                        </Button>
-                      </Upload>
-                      <Button type="primary" onClick={deleteRecord}>
-                        Xóa
+                        }
+                      }}
+                    >
+                      <Button type="primary" loading={loading}>
+                        Upload excel
                       </Button>
-                      <Button type="primary" onClick={onEdit}>
-                        Sửa
-                      </Button>
-                      <Button type="primary" onClick={onInsert}>
-                        Thêm
-                      </Button>
-                      <Button type="primary" onClick={handlePrint}>
-                        In tem NVL
-                      </Button>
-                      <div className="report-history-invoice">
-                        <TemNVL
-                          listCheck={listMaterialCheck}
-                          ref={componentRef1}
-                        />
-                      </div>
-                    </Space>
-                  ) : null
-                }
-              ></Tabs>
-            </Card>
-          </Row>
+                    </Upload>
+                    <Button type="primary" onClick={deleteRecord}>
+                      Xóa
+                    </Button>
+                    <Button type="primary" onClick={onEdit}>
+                      Sửa
+                    </Button>
+                    <Button type="primary" onClick={onInsert}>
+                      Thêm
+                    </Button>
+                    <Button type="primary" onClick={handlePrint}>
+                      In tem NVL
+                    </Button>
+                    <div className="report-history-invoice">
+                      <TemNVL
+                        listCheck={listMaterialCheck}
+                        ref={componentRef1}
+                      />
+                    </div>
+                  </Space>
+                ) : null
+              }
+            ></Tabs>
+          </Card>
         </Col>
       </Row>
       <Modal
@@ -695,7 +683,7 @@ const WarehouseMLT = (props) => {
                 label="Mã cuộn"
                 name="material_id"
                 className="mb-3"
-                // rules={[{ required: true }]}
+              // rules={[{ required: true }]}
               >
                 <Input placeholder="Nhập mã cuộn"></Input>
               </Form.Item>

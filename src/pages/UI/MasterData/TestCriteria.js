@@ -272,6 +272,7 @@ const TestCriteria = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -281,7 +282,7 @@ const TestCriteria = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý chỉ tiêu kiểm tra"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload
