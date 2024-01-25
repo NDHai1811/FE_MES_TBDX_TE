@@ -15,20 +15,11 @@ import {
   Tree,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { getThongSoMay } from "../../../api/ui/main";
 import { baseURL } from "../../../config";
 import { exportThongSoMay } from "../../../api/ui/export";
 import dayjs from "dayjs";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { getMachineParamLogs } from "../../../api/ui/machine";
+import "../style.scss";
 
 const dataChart = Array.from({ length: 12 }, (_, i) => ({
   time: `10:${String(i * 5).padStart(2, "0")}`,
@@ -851,10 +842,25 @@ const Equipment2 = (props) => {
   ];
   return (
     <>
-      <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>,
+              ]}
+            >
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
                   <Form.Item label="Công đoạn" className="mb-3">
@@ -866,7 +872,7 @@ const Equipment2 = (props) => {
                       // onSelect={onSelect}
                       // onCheck={onCheck}
                       treeData={itemsMenu}
-                      style={{ maxHeight: "80px", overflowY: "auto" }}
+                      // style={{ maxHeight: "80px", overflowY: "auto" }}
                     />
                   </Form.Item>
                 </Form>
@@ -980,22 +986,6 @@ const Equipment2 = (props) => {
                   </Form.Item>
                 </Form>
               </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
-              </div>
             </Card>
           </div>
         </Col>
@@ -1003,6 +993,7 @@ const Equipment2 = (props) => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            className="custom-card scroll"
             extra={
               <>
                 <Button

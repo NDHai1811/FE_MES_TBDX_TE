@@ -1126,25 +1126,28 @@ const Orders = () => {
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card scroll" actions={[
-              <div
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
-              </div>
-            ]}>
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>,
+              ]}
+            >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
                   style={{ margin: "0 5px" }}
                   layout="vertical"
-                // onFinish={btn_click}
+                  // onFinish={btn_click}
                 >
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
@@ -1177,7 +1180,7 @@ const Orders = () => {
                   <Form.Item label="MDH" className="mb-3">
                     <Select
                       mode="tags"
-                      style={{ width: '100%' }}
+                      style={{ width: "100%" }}
                       placeholder="Nhập mã đơn hàng"
                       onChange={(value) => {
                         setParams({
@@ -1187,7 +1190,7 @@ const Orders = () => {
                         });
                         setPage(1);
                       }}
-                      tokenSeparators={[',']}
+                      tokenSeparators={[","]}
                       options={[]}
                     />
                   </Form.Item>
@@ -1445,10 +1448,7 @@ const Orders = () => {
                     }
                   }}
                 >
-                  <Button
-                    type="primary"
-                    loading={loadingExport1}
-                  >
+                  <Button type="primary" loading={loadingExport1}>
                     Upload từ KHSX
                   </Button>
                 </Upload>
@@ -1512,7 +1512,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: window.innerHeight * 0.50,
+                  y: window.innerHeight * 0.5,
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)

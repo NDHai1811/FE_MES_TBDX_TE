@@ -408,6 +408,14 @@ const QuanLyKhuonFilm = () => {
             <Card
               style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button type="primary" style={{ width: "80%" }}>
+                    Truy vấn
+                  </Button>
+                </div>,
+              ]}
             >
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -421,7 +429,7 @@ const QuanLyKhuonFilm = () => {
                       // onSelect={onSelect}
                       // onCheck={onCheck}
                       treeData={itemsMenu}
-                      style={{ maxHeight: "80px", overflowY: "auto" }}
+                      // style={{ maxHeight: "80px", overflowY: "auto" }}
                     />
                   </Form.Item>
                 </Form>
@@ -508,24 +516,14 @@ const QuanLyKhuonFilm = () => {
                   </Form.Item>
                 </Form>
               </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button type="primary" style={{ width: "80%" }}>
-                  Truy vấn
-                </Button>
-              </div>
             </Card>
           </div>
         </Col>
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <>
                 <Button type="primary">Xuất excel</Button>

@@ -267,8 +267,9 @@ const Machine = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             title="Máy"
-            className="custom-card"
             extra={
               <Space>
                 <Upload

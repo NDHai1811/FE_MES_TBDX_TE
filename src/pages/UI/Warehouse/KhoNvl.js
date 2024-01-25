@@ -597,6 +597,18 @@ const KhoNvl = (props) => {
             <Card
               style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Tìm kiếm
+                  </Button>
+                </div>,
+              ]}
             >
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
@@ -645,28 +657,14 @@ const KhoNvl = (props) => {
                   </Form.Item>
                 </Form>
               </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  onClick={btn_click}
-                  style={{ width: "80%" }}
-                >
-                  Tìm kiếm
-                </Button>
-              </div>
             </Card>
           </div>
         </Col>
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <Space>
                 <Dropdown menu={{ items }}>
