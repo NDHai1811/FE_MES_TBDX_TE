@@ -13,6 +13,7 @@ import {
   Space,
   Spin,
   Tree,
+  Input,
 } from "antd";
 import "../style.scss";
 import {
@@ -20,6 +21,7 @@ import {
   getLines,
   getLoSanXuat,
   getOrders,
+  getUIItemMenu,
 } from "../../../api/ui/main";
 import {
   exportProduceHistory,
@@ -302,118 +304,14 @@ const LichSuSanXuat = (props) => {
   const [loSX, setLoSX] = useState([]);
   useEffect(() => {
     (async () => {
-      const res1 = await getCustomers();
-      setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
-      const res2 = await getOrders();
-      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })));
-      const res3 = await getLoSanXuat();
-      setLoSX(res3.data.map((e) => ({ label: e, value: e })));
+      const res1 = await getUIItemMenu();
+      setItemMenu(res1.data);
     })();
     btn_click();
   }, []);
 
-  const [dataTable1, setDataTable1] = useState([
-    {
-      chenh_lech: -200,
-      sl_dau_ra_kh: 1000,
-      sl_dau_ra_thuc_te_ok: 800,
-      sl_ng: 200,
-      sl_tem_vang: 0,
-      ty_le: "80%",
-    },
-  ]);
-  const [dataTable2, setDataTable2] = useState([
-    {
-      machine_id: "S01",
-      khach_hang: "SHG",
-      don_hang: "SBF",
-      lo_sx: "S2023112",
-      lot_id: "S20231120001",
-      quy_cach: "50x40x60",
-      sl_dau_vao_kh: "100",
-      sl_dau_ra_kh: "100",
-      thoi_gian_bat_dau: "20/11/2023",
-      thoi_gian_ket_thuc: "20/11/2023",
-      sl_dau_ra_hang_loat: "100",
-      sl_ok: "100",
-      sl_ng: "0",
-    },
-    {
-      machine_id: "S01",
-      khach_hang: "BKF",
-      don_hang: "SBF",
-      lo_sx: "S2023112",
-      lot_id: "S20231120001",
-      quy_cach: "50x40x60",
-      sl_dau_vao_kh: "100",
-      sl_dau_ra_kh: "100",
-      thoi_gian_bat_dau: "20/11/2023",
-      thoi_gian_ket_thuc: "20/11/2023",
-      sl_dau_ra_hang_loat: "100",
-      sl_ok: "100",
-      sl_ng: "0",
-    },
-    {
-      machine_id: "S01",
-      khach_hang: "SHB",
-      don_hang: "SBF",
-      lo_sx: "S2023112",
-      lot_id: "S20231120006",
-      quy_cach: "50x40x60",
-      sl_dau_vao_kh: "100",
-      sl_dau_ra_kh: "100",
-      thoi_gian_bat_dau: "20/11/2023",
-      thoi_gian_ket_thuc: "20/11/2023",
-      sl_dau_ra_hang_loat: "100",
-      sl_ok: "100",
-      sl_ng: "0",
-    },
-    {
-      machine_id: "S01",
-      khach_hang: "NKM",
-      don_hang: "SBF",
-      lo_sx: "S2023112",
-      lot_id: "S20231120007",
-      quy_cach: "50x40x60",
-      sl_dau_vao_kh: "100",
-      sl_dau_ra_kh: "100",
-      thoi_gian_bat_dau: "20/11/2023",
-      thoi_gian_ket_thuc: "20/11/2023",
-      sl_dau_ra_hang_loat: "100",
-      sl_ok: "100",
-      sl_ng: "0",
-    },
-    {
-      machine_id: "S01",
-      khach_hang: "SSC",
-      don_hang: "SBF",
-      lo_sx: "S2023112",
-      lot_id: "S20231120008",
-      quy_cach: "50x40x60",
-      sl_dau_vao_kh: "100",
-      sl_dau_ra_kh: "100",
-      thoi_gian_bat_dau: "20/11/2023",
-      thoi_gian_ket_thuc: "20/11/2023",
-      sl_dau_ra_hang_loat: "100",
-      sl_ok: "100",
-      sl_ng: "0",
-    },
-    {
-      machine_id: "S01",
-      khach_hang: "NHH",
-      don_hang: "SBF",
-      lo_sx: "S2023112",
-      lot_id: "S20231120010",
-      quy_cach: "50x70x80",
-      sl_dau_vao_kh: "100",
-      sl_dau_ra_kh: "100",
-      thoi_gian_bat_dau: "20/11/2023",
-      thoi_gian_ket_thuc: "20/11/2023",
-      sl_dau_ra_hang_loat: "100",
-      sl_ok: "100",
-      sl_ng: "0",
-    },
-  ]);
+  const [dataTable1, setDataTable1] = useState([]);
+  const [dataTable2, setDataTable2] = useState([]);
   const [dataTable3, setDataTable3] = useState([]);
 
   function btn_click() {
@@ -452,46 +350,7 @@ const LichSuSanXuat = (props) => {
     }
     setExportLoading2(false);
   };
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-  ];
+  const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
     const filteredKeys = selectedKeys.filter(
       (key) => !itemsMenu.some((e) => e.key === key)
@@ -500,12 +359,26 @@ const LichSuSanXuat = (props) => {
   };
   return (
     <React.Fragment>
-      <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -515,7 +388,7 @@ const LichSuSanXuat = (props) => {
                       checkable
                       onCheck={onCheck}
                       treeData={itemsMenu}
-                      // style={{ maxHeight: '80px', overflowY: 'auto' }}
+                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
                     />
                   </Form.Item>
                 </Form>
@@ -550,74 +423,45 @@ const LichSuSanXuat = (props) => {
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
                   <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          short_name: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập khách hàng"
-                      onChange={(value) =>
-                        setParams({ ...params, customer_id: value })
-                      }
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
-                      options={customers}
                     />
                   </Form.Item>
-                  <Form.Item label="Đơn hàng" className="mb-3">
+                  <Form.Item label="MĐH" className="mb-3">
                     <Select
                       allowClear
                       showSearch
                       onChange={(value) => {
-                        setParams({ ...params, order_id: value });
+                        setParams({ ...params, mdh: value });
                       }}
-                      placeholder="Nhập đơn hàng"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={orders}
+                      suffixIcon={null}
+                      mode="tags"
+                      placeholder="Nhập mã đơn hàng"
+                      options={[]}
                     />
                   </Form.Item>
                   <Form.Item label="Lô Sản xuất" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          lo_sx: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập lô sản xuất"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={loSX}
                     />
                   </Form.Item>
                 </Form>
-              </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
               </div>
             </Card>
           </div>
@@ -626,6 +470,7 @@ const LichSuSanXuat = (props) => {
           <Card
             style={{ height: "100%" }}
             title="Lịch sử sản xuất"
+            className="custom-card"
             extra={
               <Space>
                 <Button
@@ -650,6 +495,7 @@ const LichSuSanXuat = (props) => {
                 className="mb-3"
                 size="small"
                 bordered
+                locale={{emptyText:"Trống"}}
                 pagination={false}
                 columns={columns1}
                 dataSource={dataTable1}
@@ -658,10 +504,11 @@ const LichSuSanXuat = (props) => {
                 className="mb-3"
                 size="small"
                 bordered
+                locale={{emptyText:"Trống"}}
                 pagination={false}
                 columns={columns2}
                 scroll={{
-                  y: "20vh",
+                  y: window.innerHeight * 0.10,
                 }}
                 dataSource={dataTable2}
               />
@@ -671,7 +518,7 @@ const LichSuSanXuat = (props) => {
                 pagination={false}
                 scroll={{
                   x: "200vw",
-                  y: "50vh",
+                  y: window.innerHeight * 0.20,
                 }}
                 columns={columns3}
                 dataSource={dataTable3}

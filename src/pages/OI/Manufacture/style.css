@@ -7,7 +7,7 @@
 }
 
 @page {
-  size: a6;
+  size: a4 !important;
   margin-top: 22% !important;
   margin-left: 5% !important;
   margin-right: 5% !important;

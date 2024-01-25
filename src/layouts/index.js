@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 
@@ -44,7 +44,7 @@ const Layout = (props) => {
           <div>{props.children}</div>
         )
       ) : (
-        <div id="layout-wrapper" style={{ height: "100%", minHeight: "100vh" }}>
+        <div id="layout-wrapper" style={{ height: "100%"}}>
           <HeaderUI />
           <div className="content-below-header">{props.children}</div>
         </div>

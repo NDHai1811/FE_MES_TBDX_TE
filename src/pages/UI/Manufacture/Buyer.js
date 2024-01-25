@@ -408,13 +408,26 @@ const Buyer = () => {
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card scroll"
+            actions={[
+              <div
+                layout="vertical"
+              >
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            ]}>
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
                   style={{ margin: "0 15px" }}
                   layout="vertical"
-                  onFinish={btn_click}
+                  // onFinish={btn_click}
                 >
                   <Form.Item label="Mã buyer" className="mb-3">
                     <Input
@@ -433,15 +446,6 @@ const Buyer = () => {
                       }
                       placeholder="Nhập mã khách hàng"
                     />
-                  </Form.Item>
-                  <Form.Item style={{ textAlign: "center" }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      style={{ width: "80%" }}
-                    >
-                      Tìm kiếm
-                    </Button>
                   </Form.Item>
                 </Form>
               </div>
