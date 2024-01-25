@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Button, Select } from "antd";
+import { Row, Col, Table, Button, Select, Card, Tabs } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -86,6 +86,37 @@ const importColumns = [
     title: "Thời gian nhập kho",
     dataIndex: "thoi_gian_nhap",
     key: "thoi_gian_nhap",
+    align: "center",
+    render: (value) => value || "-",
+  },
+];
+
+const palletColumns = [
+  {
+    title: "STT",
+    dataIndex: "stt",
+    key: "stt",
+    align: "center",
+    render: (value, record, index) => index + 1,
+  },
+  {
+    title: "Mã tem",
+    dataIndex: "pallet_id",
+    key: "pallet_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Số lượng",
+    dataIndex: "so_luong",
+    key: "so_luong",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Mã khách hàng",
+    dataIndex: "ma_khach_hang",
+    key: "ma_khach_hang",
     align: "center",
     render: (value) => value || "-",
   },
@@ -194,6 +225,7 @@ const Import = (props) => {
   const [resData, setResData] = useState({
     locator_id: "",
   });
+  const [listCheck, setListCheck] = useState([]);
   const [result, setResult] = useState("");
 
   useEffect(() => {
@@ -208,6 +240,82 @@ const Import = (props) => {
   const onShowPopup = () => {
     setVisible(true);
   };
+
+  const rowSelection = {
+    selectedRowKeys: listCheck,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys);
+    },
+  };
+
+  const renderImportWarehouse = () => {
+    return (
+      <Col span={24}>
+        <Table
+          scroll={{
+            x: "calc(700px + 50%)",
+            y: 300,
+          }}
+          rowClassName={(record, index) =>
+            record.status === 1
+              ? "table-row-yellow"
+              : record.status === 2
+              ? "table-row-grey"
+              : ""
+          }
+          pagination={false}
+          bordered
+          className="mb-4"
+          columns={importColumns}
+          dataSource={logs}
+          // onRow={(record) => {
+          //   return {
+          //     onClick: () => onSelectItem(record),
+          //   };
+          // }}
+        />
+      </Col>
+    );
+  };
+
+  const renderPallets = () => {
+    return (
+      <Col span={24}>
+        <Table
+          scroll={{
+            x: "calc(700px + 50%)",
+            y: 300,
+          }}
+          rowClassName={(record, index) =>
+            record.status === 1
+              ? "table-row-yellow"
+              : record.status === 2
+              ? "table-row-grey"
+              : ""
+          }
+          pagination={false}
+          bordered
+          className="mb-4"
+          rowSelection={rowSelection}
+          columns={palletColumns}
+          dataSource={[]}
+        />
+      </Col>
+    );
+  };
+
+  const items = [
+    {
+      key: 1,
+      label: `Lịch sử nhập kho`,
+      children: renderImportWarehouse(),
+    },
+    {
+      key: 2,
+      label: `Danh sách pallet`,
+      children: renderPallets(),
+    },
+  ];
 
   return (
     <React.Fragment>
@@ -267,29 +375,13 @@ const Import = (props) => {
           </Row>
         </Col>
         <Col span={24}>
-          <Table
-            scroll={{
-              x: "calc(700px + 50%)",
-              y: 300,
-            }}
-            rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : ""
-            }
-            pagination={false}
-            bordered
-            className="mb-4"
-            columns={importColumns}
-            dataSource={logs}
-            // onRow={(record) => {
-            //   return {
-            //     onClick: () => onSelectItem(record),
-            //   };
-            // }}
-          />
+          <Card bodyStyle={{ padding: 12 }}>
+            <Tabs
+              defaultActiveKey={1}
+              items={items}
+              destroyInactiveTabPane={true}
+            />
+          </Card>
         </Col>
       </Row>
       <div className="report-history-invoice">

@@ -22,7 +22,7 @@ import {
 import { baseURL } from "../../../config";
 import { useReactToPrint } from "react-to-print";
 import React, { useState, useEffect, useRef } from "react";
-import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
+import { getCustomers, getLoSanXuat, getOrders, getUIItemMenu } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
   exportKHSX,
@@ -258,12 +258,8 @@ const KeHoachSanXuat = () => {
 
   useEffect(() => {
     (async () => {
-      const res1 = await getCustomers();
-      setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
-      const res2 = await getOrders();
-      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })));
-      const res3 = await getLoSanXuat();
-      setLoSX(res3.data.map((e) => ({ label: e, value: e })));
+      const res1 = await getUIItemMenu();
+      setItemMenu(res1.data);
     })();
   }, []);
 
@@ -336,56 +332,7 @@ const KeHoachSanXuat = () => {
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-    {
-      title: "Xả lót",
-      key: "33",
-      children: [
-        {
-          title: "Xả lót",
-          key: "XL01",
-        },
-      ],
-    },
-  ];
+  const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
     const filteredKeys = selectedKeys.filter(
       (key) => !itemsMenu.some((e) => e.key === key)
@@ -520,115 +467,14 @@ const KeHoachSanXuat = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "100%" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]} type="flex">
         <Col span={4}>
-          <div className="slide-bar">
-            <Card
-              style={{ height: "100%" }}
-              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-            >
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Divider>Công đoạn</Divider>
-                  <Form.Item className="mb-3">
-                    <Tree
-                      checkable
-                      onCheck={onCheck}
-                      treeData={itemsMenu}
-                      // style={{ maxHeight: '80px', overflowY: 'auto' }}
-                    />
-                  </Form.Item>
-                </Form>
-              </div>
-              <Divider>Thời gian truy vấn</Divider>
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, start_date: value })
-                      }
-                      value={params.start_date}
-                    />
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Kết thúc"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, end_date: value })
-                      }
-                      value={params.end_date}
-                    />
-                  </Space>
-                </Form>
-              </div>
-              <Divider>Điều kiện truy vấn</Divider>
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập khách hàng"
-                      onChange={(value) =>
-                        setParams({ ...params, customer_id: value })
-                      }
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
-                      options={customers}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Đơn hàng" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      onChange={(value) => {
-                        setParams({ ...params, order_id: value });
-                      }}
-                      placeholder="Nhập đơn hàng"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={orders}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Lô Sản xuất" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập lô sản xuất"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={loSX}
-                    />
-                  </Form.Item>
-                </Form>
-              </div>
-
+          <Card
+            style={{ paddingBottom: 10 }}
+            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+            className="custom-card scroll"
+            actions={[
               <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
                 layout="vertical"
               >
                 <Button
@@ -639,12 +485,96 @@ const KeHoachSanXuat = () => {
                   Truy vấn
                 </Button>
               </div>
-            </Card>
-          </div>
+            ]}
+          >
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Divider>Công đoạn</Divider>
+                <Form.Item className="mb-3">
+                  <Tree
+                    checkable
+                    onCheck={onCheck}
+                    treeData={itemsMenu}
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+            <Divider>Thời gian truy vấn</Divider>
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Bắt đầu"
+                    style={{ width: "100%" }}
+                    onChange={(value) =>
+                      setParams({ ...params, start_date: value })
+                    }
+                    value={params.start_date}
+                  />
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Kết thúc"
+                    style={{ width: "100%" }}
+                    onChange={(value) =>
+                      setParams({ ...params, end_date: value })
+                    }
+                    value={params.end_date}
+                  />
+                </Space>
+              </Form>
+            </div>
+            <Divider>Điều kiện truy vấn</Divider>
+            <div className="mb-3">
+              <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form.Item label="Khách hàng" className="mb-3">
+                  <Input
+                    allowClear
+                    onChange={(e) => {
+                      setParams({
+                        ...params,
+                        short_name: e.target.value,
+                        page: 1,
+                      });
+                    }}
+                    placeholder="Nhập mã khách hàng"
+                  />
+                </Form.Item>
+                <Form.Item label="MĐH" className="mb-3">
+                  <Select
+                    mode="tags"
+                    allowClear
+                    showSearch
+                    suffixIcon={null}
+                    onChange={(value) => {
+                      setParams({ ...params, mdh: value });
+                    }}
+                    placeholder="Nhập mã đơn hàng"
+                    options={[]}
+                  />
+                </Form.Item>
+                <Form.Item label="Lô Sản xuất" className="mb-3">
+                  <Input
+                    allowClear
+                    onChange={(e) => {
+                      setParams({
+                        ...params,
+                        lo_sx: e.target.value,
+                        page: 1,
+                      });
+                    }}
+                    placeholder="Nhập lô sản xuất"
+                  />
+                </Form.Item>
+              </Form>
+            </div>
+
+
+          </Card>
         </Col>
         <Col span={20}>
           <Card
-            style={{ height: "100%" }}
             title="Kế hoạch sản xuất"
             extra={
               <Space>
@@ -711,6 +641,8 @@ const KeHoachSanXuat = () => {
                 </div>
               </Space>
             }
+            style={{ height: '100%' }}
+            className="custom-card"
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
@@ -720,7 +652,7 @@ const KeHoachSanXuat = () => {
                   pagination={false}
                   scroll={{
                     x: "300vw",
-                    y: "70vh",
+                    y: window.innerHeight * 0.55,
                   }}
                   components={{
                     body: {

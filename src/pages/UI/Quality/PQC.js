@@ -17,7 +17,7 @@ import {
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { Pie, DualAxes, Line } from "@ant-design/plots";
-import { getLines } from "../../../api/ui/main";
+import { getLines, getUIItemMenu } from "../../../api/ui/main";
 import dayjs from "dayjs";
 import {
   exportPQC,
@@ -49,29 +49,8 @@ const QualityPQC = (props) => {
           return { ...e, label: e.name, value: e.id };
         })
       );
-      // const res2 = await getProducts();
-      //     setListIdProducts(res2.data.map(e=>{
-      //         return {...e, label:e.id, value:e.id}
-      //     }));
-      // const res3 = await getLoSanXuat();
-      //     setListLoSX(res3.data.map(e=>{
-      //         return {...e, label:e, value:e}
-      //     }));
-      // const res4 = await getStaffs();
-      //     setListStaffs(res4.data.map(e=>{
-      //         return {...e, label:e.name, value:e.id}
-      //     }))
-
-      // const res5 = await getCustomers();
-      // setListCustomers(
-      //   res5.data.map((e) => {
-      //     return { ...e, label: e.name, value: e.id };
-      //   })
-      // );
-      // const res6 = await getErrors();
-      //     setListErrors(res6.data.map(e=>{
-      //         return {...e, label:e.noi_dung, value:e.id}
-      //     }));
+      const res2 = await getUIItemMenu();
+      setItemMenu(res2.data);
     })();
     btn_click();
   }, []);
@@ -114,7 +93,7 @@ const QualityPQC = (props) => {
 
   const configPieChart = {
     data: dataPieChart,
-    height: 200,
+    height: 100,
     angleField: "value",
     colorField: "name",
     radius: 0.5,
@@ -145,7 +124,7 @@ const QualityPQC = (props) => {
   };
   const configLineChart = {
     data: dataLineChart,
-    height: 200,
+    height: 100,
     xField: "date",
     yField: "value",
     seriesField: "error",
@@ -505,55 +484,36 @@ const QualityPQC = (props) => {
     },
   ]);
 
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-  ];
+  const [itemsMenu, setItemMenu] = useState([]);
+  const onCheck = (selectedKeys, e) => {
+    const filteredKeys = selectedKeys.filter(
+      (key) => !itemsMenu.some((e) => e.key === key)
+    );
+    setParams({ ...params, machine: filteredKeys });
+  };
   return (
     <React.Fragment>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "100vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -561,13 +521,8 @@ const QualityPQC = (props) => {
                   <Form.Item className="mb-3">
                     <Tree
                       checkable
-                      defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                      defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                      defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                      // onSelect={onSelect}
-                      // onCheck={onCheck}
+                      onCheck={onCheck}
                       treeData={itemsMenu}
-                      style={{ maxHeight: "80px", overflowY: "auto" }}
                     />
                   </Form.Item>
                 </Form>
@@ -705,48 +660,16 @@ const QualityPQC = (props) => {
                   </Form.Item>
                 </Form>
               </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
-              </div>
             </Card>
           </div>
         </Col>
-
         <Col span={20}>
           <Row gutter={[8, 8]}>
-            {/* <Col span={24}>
-              <Card
-                title="Tóm tắt chất lượng"
-                style={{ height: "100%", padding: "0px" }}
-                bodyStyle={{ padding: 12 }}
-              >
-                <Table
-                  bordered
-                  size="small"
-                  columns={summaryTable}
-                  dataSource={summaryData}
-                  pagination={false}
-                />
-              </Card>
-            </Col> */}
             <Col span={16}>
               <Card
                 title="Biểu đồ xu hướng lỗi"
                 style={{ height: "100%", padding: "0px" }}
-                bodyStyle={{ padding: 12 }}
+                bodyStyle={{ padding: 12, height: 100 }}
               >
                 <Line {...configLineChart} />
               </Card>
@@ -755,7 +678,7 @@ const QualityPQC = (props) => {
               <Card
                 title="5 lỗi công đoạn"
                 style={{ height: "100%", padding: "0px" }}
-                bodyStyle={{ padding: 12 }}
+                bodyStyle={{ padding: 12, height: 100 }}
               >
                 <Pie {...configPieChart} />
               </Card>
@@ -796,7 +719,7 @@ const QualityPQC = (props) => {
                     pagination={false}
                     scroll={{
                       x: "120vw",
-                      y: "50vh",
+                      y: window.innerHeight * 0.35,
                     }}
                   />
                 </Spin>

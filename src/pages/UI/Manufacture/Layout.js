@@ -712,12 +712,26 @@ const Layout = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
@@ -751,22 +765,6 @@ const Layout = () => {
                   </Form.Item>
                 </Form>
               </div>
-
-              <div
-                style={{
-                  padding: "10px",
-                  textAlign: "center",
-                }}
-                layout="vertical"
-              >
-                <Button
-                  type="primary"
-                  style={{ width: "80%" }}
-                  onClick={btn_click}
-                >
-                  Truy vấn
-                </Button>
-              </div>
             </Card>
           </div>
         </Col>
@@ -774,6 +772,7 @@ const Layout = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý thông tin layout"
+            className="custom-card"
             extra={
               <Space>
                 <Upload
@@ -820,9 +819,10 @@ const Layout = () => {
                 <Table
                   size="small"
                   bordered
-                  pagination={true}
+                  pagination={false}
                   scroll={{
                     x: "280vw",
+                    y: window.innerHeight * 0.50,
                   }}
                   components={{
                     body: {
