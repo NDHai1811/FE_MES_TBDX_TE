@@ -22,12 +22,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { createStampFromOrder, getOrderList, getTems, updateTem } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { useReactToPrint } from "react-to-print";
-import TemIn from "../../OI/Manufacture/TemIn";
+import TemPallet from "../../../pages/OI/Warehouse/TemPallet"
 import dayjs from "dayjs";
 import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
+import { getTemPallet } from "../../../api/ui/warehouse";
 
 const EditableCell = ({
     editing,
@@ -134,7 +135,7 @@ const TaoTon = () => {
 
     const loadListTable = async () => {
         setLoading(true);
-        const res = await getTems();
+        const res = await getTemPallet();
         setData(res.map(e => ({ ...e, key: e.id })));
         setLoading(false);
     };
@@ -177,8 +178,12 @@ const TaoTon = () => {
     };
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRows, selectedRowKeys);
-            setListCheck(selectedRows);
+            const arr = selectedRows.map((value) => {
+                if (value.losxpallet) {
+                    return value.losxpallet
+                }
+            })
+            setListCheck(arr);
         },
     };
     const mergedColumns = col_detailTable.map((col) => {
@@ -329,7 +334,6 @@ const TaoTon = () => {
                                     bordered
                                     scroll={{
                                         y: "70vh",
-                                        x: "120vw"
                                     }}
                                     components={{
                                         body: {
@@ -347,7 +351,7 @@ const TaoTon = () => {
                 </Col>
             </Row>
             <div className="report-history-invoice">
-                <TemIn listCheck={listCheck} ref={componentRef1} />
+                <TemPallet listCheck={listCheck} ref={componentRef1} />
             </div>
             <Modal open={openModal} onCancel={() => setOpenModal(false)} title="Tạo tem từ đơn hàng" width={1000}
                 okText={'Tạo tem'}
