@@ -965,7 +965,7 @@ const Orders = () => {
     (async () => {
       loadListTable(params);
     })();
-  }, [params.page, params.pageSize]);
+  }, [params]);
 
   const [messageApi, contextHolder] = message.useMessage();
 

@@ -28,3 +28,13 @@ export async function getWarehouseFGExportList(params) {
   const res = await axios.get("/ui/warehouse/fg/export/list", { params });
   return res.data;
 }
+
+export async function getTemPallet(params) {
+  const res = await axios.get("/ui/warehouse/list-pallet", { params });
+  return res.data;
+}
+
+export async function updateWarehouseFGExport(params) {
+  const res = await axios.post("/ui/warehouse/fg/export/update", params);
+  return res.data;
+}

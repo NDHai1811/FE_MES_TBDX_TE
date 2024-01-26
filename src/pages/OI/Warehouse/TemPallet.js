@@ -86,15 +86,14 @@ const PrintTemplate = ({ info }) => {
 };
 export default class TemPallet extends React.Component {
   render() {
-    let printingPages = [];
     const { listCheck } = this.props;
-    console.log(listCheck);
+    let printingPages = [];
     for (const info of listCheck) {
-      for (let i = 0; i < 3; i++) {
-        const tempTemplate = <PrintTemplate info={info} />;
-        printingPages.push(tempTemplate);
-      }
-      return <div>{printingPages}</div>;
+      const tempTemplate = <PrintTemplate info={info} />;
+      printingPages.push(tempTemplate);
+      printingPages.push(tempTemplate);
+      printingPages.push(tempTemplate);
     }
+    return <div>{printingPages}</div>;
   }
 }
