@@ -442,6 +442,7 @@ const LichSuSanXuat = (props) => {
                       onChange={(value) => {
                         setParams({ ...params, mdh: value });
                       }}
+                      open={false}
                       suffixIcon={null}
                       mode="tags"
                       placeholder="Nhập mã đơn hàng"

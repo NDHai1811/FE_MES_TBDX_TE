@@ -121,10 +121,10 @@ const items = [
         label: "Danh sách công đoạn",
         key: "master-data/cong-doan",
       },
-      {
-        label: "Khách hàng",
-        key: "master-data/customer",
-      },
+      // {
+      //   label: "Khách hàng",
+      //   key: "master-data/customer",
+      // },
       {
         label: "Máy và NVL",
         children: [
@@ -203,6 +203,10 @@ const items = [
       {
         label: "Bảo trì bảo dưỡng",
         key: "master-data/maintenance",
+      },
+      {
+        label: "Quản lý xe",
+        key: "master-data/vehicle",
       },
     ],
     permission: "master",

@@ -417,7 +417,7 @@ const TaoKeHoachSanXuat = () => {
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () => {
         setExportLoading(true);
-        const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date});
+        const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
         if (res.success) {
             window.location.href = baseURL + res.data;
         }
@@ -447,8 +447,8 @@ const TaoKeHoachSanXuat = () => {
                                         <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => {
                                             setPlanParams({ ...planParams, machine_id: value });
                                             setOrderParams({ ...orderParams, machine_id: value });
-                                        }} 
-                                        optionFilterProp="label"/>
+                                        }}
+                                            optionFilterProp="label" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={7}>
@@ -526,12 +526,17 @@ const TaoKeHoachSanXuat = () => {
                                 label="MDH"
                                 className="mb-3"
                             >
-                                <Input
+                                <Select
+                                    mode="tags"
                                     allowClear
-                                    onChange={(e) =>
-                                        setOrderParams({ ...orderParams, mdh: e.target.value })
-                                    }
-                                    placeholder="Nhập MDH"
+                                    showSearch
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, mdh: value });
+                                    }}
+                                    open={false}
+                                    placeholder="Nhập mã đơn hàng"
+                                    options={[]}
                                 />
                             </Form.Item>
                         </Col>

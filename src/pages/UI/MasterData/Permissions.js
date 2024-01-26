@@ -198,6 +198,7 @@ const Permissions = () => {
                       placeholder="Nhập mã"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -207,7 +208,7 @@ const Permissions = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý quyền"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

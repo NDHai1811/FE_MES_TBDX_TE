@@ -409,10 +409,7 @@ const TaoTem = () => {
     }
     useEffect(() => {
         openModal && searchOrder()
-    }, [openModal]);
-    useEffect(() => {
-        console.log(orderParams);
-    }, [orderParams])
+    }, [openModal, orderParams]);
     return (
         <>
             {contextHolder}
@@ -559,12 +556,17 @@ const TaoTem = () => {
                                 label="MDH"
                                 className="mb-3"
                             >
-                                <Input
+                                <Select
+                                    mode="tags"
                                     allowClear
-                                    onChange={(e) =>
-                                        setOrderParams({ ...orderParams, mdh: e.target.value })
-                                    }
-                                    placeholder="Nhập MDH"
+                                    showSearch
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, mdh: value });
+                                    }}
+                                    open={false}
+                                    placeholder="Nhập mã đơn hàng"
+                                    options={[]}
                                 />
                             </Form.Item>
                         </Col>
@@ -625,7 +627,6 @@ const TaoTem = () => {
                         </Col>
                     </Row>
                 </Form>
-                <Button type="primary" className="mb-1" onClick={searchOrder}>Tìm kiếm</Button>
                 <Table size='small' bordered
                     loading={loadingOrders}
                     pagination={false}

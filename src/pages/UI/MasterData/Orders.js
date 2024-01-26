@@ -1190,7 +1190,9 @@ const Orders = () => {
                         });
                         setPage(1);
                       }}
-                      tokenSeparators={[","]}
+                      suffixIcon={null}
+                      open={false}
+                      tokenSeparators={[',']}
                       options={[]}
                     />
                   </Form.Item>
@@ -1407,6 +1409,7 @@ const Orders = () => {
                       placeholder="Nhập ghi chú TBDX"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>

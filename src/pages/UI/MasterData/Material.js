@@ -465,6 +465,7 @@ const Materials = () => {
                       }
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -473,7 +474,7 @@ const Materials = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            className="custom-card"
+            className="custom-card scroll"
             title="Quản lý nguyên vật liệu"
             extra={
               <Space>

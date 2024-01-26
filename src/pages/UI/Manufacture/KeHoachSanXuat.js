@@ -470,7 +470,6 @@ const KeHoachSanXuat = () => {
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]} type="flex">
         <Col span={4}>
           <Card
-            style={{ paddingBottom: 10 }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
             className="custom-card scroll"
             actions={[
@@ -550,6 +549,7 @@ const KeHoachSanXuat = () => {
                     onChange={(value) => {
                       setParams({ ...params, mdh: value });
                     }}
+                    open={false}
                     placeholder="Nhập mã đơn hàng"
                     options={[]}
                   />

@@ -237,6 +237,7 @@ const ErrorMachines = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -246,7 +247,7 @@ const ErrorMachines = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý thông số sản phẩm"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

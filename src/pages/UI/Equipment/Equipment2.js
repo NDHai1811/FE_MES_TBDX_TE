@@ -15,6 +15,7 @@ import {
   Tree,
 } from "antd";
 import React, { useEffect, useState } from "react";
+import { getThongSoMay, getUIItemMenu } from "../../../api/ui/main";
 import { baseURL } from "../../../config";
 import { exportThongSoMay } from "../../../api/ui/export";
 import dayjs from "dayjs";
@@ -475,23 +476,6 @@ const Equipment2 = (props) => {
     ca_sx: "",
     date: [dayjs(), dayjs()],
   });
-  // useEffect(() => {
-  //   (async () => {
-  //     const res4 = await getStaffs();
-  //     setListStaffs(
-  //       res4.data.map((e) => {
-  //         return { ...e, label: e.name, value: e.id };
-  //       })
-  //     );
-  //     const res5 = await getMachineOfLine();
-  //     setListMachines(
-  //       res5.data.map((e) => {
-  //         return { ...e, label: e.name, value: e.code };
-  //       })
-  //     );
-  //   })();
-  // }, []);
-
   async function btn_click() {
     setLoSX();
     setLoading(false);
@@ -516,6 +500,10 @@ const Equipment2 = (props) => {
   }
 
   useEffect(() => {
+    (async () => {
+      const res1 = await getUIItemMenu();
+      setItemMenu(res1.data);
+    })();
     btn_click();
   }, []);
   const [loading, setLoading] = useState(false);
@@ -768,89 +756,25 @@ const Equipment2 = (props) => {
   const onClickRow = async (record) => {
     setLoSX(record.lo_sx);
   };
-  // useEffect(() => {
-  //   if (loSX) {
-  //     (async () => {
-  //       const res = await getThongSoMay({ ...params, lo_sx: loSX });
-  //       if (res.success) {
-  //         setData(
-  //           res.data.map((e) => {
-  //             let dataIf = e.data_if;
-  //             Object.keys(dataIf ?? {}).forEach(function (key, index) {
-  //               dataIf[key] = { is_if: true, value: dataIf[key] };
-  //             });
-  //             let dataInput = e.data_input;
-  //             Object.keys(dataInput ?? {}).forEach(function (key, index) {
-  //               dataInput[key] = { is_if: false, value: dataInput[key] };
-  //             });
-  //             return { ...e, ...dataIf, ...dataInput };
-  //           })
-  //         );
-  //       }
-  //     })();
-  //   }
-  // }, [loSX]);
-
-  const renderCard = (item, index) => {
-    return (
-      <div key={index} className="mb-3">
-        <Checkbox>
-          <span style={{ color: "black", fontSize: 16 }}>{item.name}</span>
-        </Checkbox>
-      </div>
+  const [itemsMenu, setItemMenu] = useState([]);
+  const onCheck = (selectedKeys, e) => {
+    const filteredKeys = selectedKeys.filter(
+      (key) => !itemsMenu.some((e) => e.key === key)
     );
+    setParams({ ...params, machine: filteredKeys });
   };
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-  ];
   return (
     <>
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
-              bodyStyle={{ paddingInline: 0 }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
               className="custom-card scroll"
               actions={[
-                <div layout="vertical">
+                <div
+                  layout="vertical"
+                >
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
@@ -858,21 +782,17 @@ const Equipment2 = (props) => {
                   >
                     Truy vấn
                   </Button>
-                </div>,
+                </div>
               ]}
             >
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Công đoạn" className="mb-3">
+                  <Divider>Công đoạn</Divider>
+                  <Form.Item className="mb-3">
                     <Tree
                       checkable
-                      defaultExpandedKeys={["0-0-0", "0-0-1"]}
-                      defaultSelectedKeys={["0-0-0", "0-0-1"]}
-                      defaultCheckedKeys={["0-0-0", "0-0-1"]}
-                      // onSelect={onSelect}
-                      // onCheck={onCheck}
+                      onCheck={onCheck}
                       treeData={itemsMenu}
-                      // style={{ maxHeight: "80px", overflowY: "auto" }}
                     />
                   </Form.Item>
                 </Form>
@@ -992,6 +912,7 @@ const Equipment2 = (props) => {
 
         <Col span={20}>
           <Card
+            title="Thông số máy"
             style={{ height: "100%" }}
             className="custom-card scroll"
             extra={

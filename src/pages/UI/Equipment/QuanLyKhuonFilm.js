@@ -402,19 +402,24 @@ const QuanLyKhuonFilm = () => {
   ];
   return (
     <>
-      <Row style={{ padding: "8px" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
               className="custom-card scroll"
               actions={[
-                <div layout="vertical">
-                  <Button type="primary" style={{ width: "80%" }}>
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    // onClick={btn_click}
+                  >
                     Truy vấn
                   </Button>
-                </div>,
+                </div>
               ]}
             >
               <div className="mb-3">
@@ -533,11 +538,13 @@ const QuanLyKhuonFilm = () => {
               </>
             }
           >
-            <Table columns={columns} dataSource={data} bordered />
+            <Table columns={columns} dataSource={data} bordered pagination={false}/>
             <Table
               columns={columnsTable}
               dataSource={dataTable}
               bordered
+              scroll={{x: '100%'}}
+              pagination={false}
               className="mt-5"
             />
           </Card>

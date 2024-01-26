@@ -178,7 +178,7 @@ const Maintenance = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            className="custom-card"
+            className="custom-card scroll"
             title="Bảo trì bảo dưỡng"
             extra={
               <Space>

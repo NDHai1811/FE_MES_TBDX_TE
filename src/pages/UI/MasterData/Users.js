@@ -229,6 +229,7 @@ const Users = () => {
                       placeholder="Nhập tên nhân viên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>

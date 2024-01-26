@@ -231,6 +231,7 @@ const Roles = () => {
                       placeholder="Nhập tên bộ phận"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -240,7 +241,7 @@ const Roles = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý bộ phận"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload

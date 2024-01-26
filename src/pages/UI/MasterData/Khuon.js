@@ -291,6 +291,7 @@ const Khuon = () => {
                       placeholder="Nhập tên"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>

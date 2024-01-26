@@ -82,9 +82,16 @@ const Customer = () => {
   };
   const columns = [
     {
+      title: "Tên viết tắt",
+      dataIndex: "short_name",
+      key: "short_name",
+      align: "center",
+      editable: true,
+    },
+    {
       title: "Mã KH",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "customer_id",
+      key: "customer_id",
       align: "center",
       editable: true,
     },
@@ -92,13 +99,6 @@ const Customer = () => {
       title: "Tên KH",
       dataIndex: "name",
       key: "name",
-      align: "center",
-      editable: true,
-    },
-    {
-      title: "Tên viết tắt",
-      dataIndex: "short_name",
-      key: "short_name",
       align: "center",
       editable: true,
     },
@@ -249,6 +249,14 @@ const Customer = () => {
     },
   };
   const [exportLoading, setExportLoading] = useState(false);
+    const exportFile = async () => {
+        setExportLoading(true);
+        const res = await exportCustomer(params);
+        if (res.success) {
+            window.location.href = baseURL + res.data;
+        }
+        setExportLoading(false);
+    };
   const [exportLoading1, setExportLoading1] = useState(false);
   const onChange = (value, dataIndex) => {
     const items = data.map((val) => {
@@ -354,7 +362,7 @@ const Customer = () => {
             ]}>
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
+                <Form style={{ margin: "0 15px" }} layout="vertical" onFinish={btn_click}>
                   <Form.Item label={"Mã KH"} className="mb-3">
                     <Input
                       placeholder={"Nhập mã KH"}
@@ -371,6 +379,7 @@ const Customer = () => {
                       }
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -382,41 +391,48 @@ const Customer = () => {
             title="Quản lý khách hàng"
             extra={
               <Space>
-                {/* <Upload
-                    showUploadList={false}
-                    name="file"
-                    action={baseURL + "/api/customer/import"}
-                    headers={{
-                      authorization: "authorization-text",
-                    }}
-                    onChange={(info) => {
-                      setExportLoading1(true);
-                      if (info.file.status === "error") {
-                        error();
+                <Upload
+                  showUploadList={false}
+                  name="files"
+                  action={baseURL + "/api/customer/import"}
+                  headers={{
+                    authorization: "authorization-text",
+                  }}
+                  onChange={(info) => {
+                    setExportLoading1(true);
+                    if (info.file.status === "error") {
+                      error();
+                      setExportLoading1(false);
+                    } else if (info.file.status === "done") {
+                      if (info.file.response.success === true) {
+                        loadListTable();
+                        success();
                         setExportLoading1(false);
-                      } else if (info.file.status === "done") {
-                        if (info.file.response.success === true) {
-                          loadListTable();
-                          success();
-                          setExportLoading1(false);
-                        } else {
-                          loadListTable();
-                          message.error(info.file.response.message);
-                          setExportLoading1(false);
-                        }
+                      } else {
+                        loadListTable();
+                        message.error(info.file.response.message);
+                        setExportLoading1(false);
                       }
-                    }}
-                  >
-                    <Button type="primary" loading={exportLoading1}>
-                      Upload excel
-                    </Button>
-                  </Upload> */}
+                    }
+                  }}
+                >
+                  <Button type="primary" loading={exportLoading1}>
+                    Upload excel
+                  </Button>
+                </Upload>
+                <Button
+                  type="primary"
+                  onClick={exportFile}
+                  loading={exportLoading}
+                >
+                  Export Excel
+                </Button>
                 <Button type="primary" onClick={onInsert}>
                   Thêm
                 </Button>
               </Space>
             }
-            className="custom-card"
+            className="custom-card scroll"
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>

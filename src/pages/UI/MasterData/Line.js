@@ -209,6 +209,7 @@ const Line = () => {
                       placeholder="Nhập mã"
                     />
                   </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -218,7 +219,7 @@ const Line = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý công đoạn"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload
