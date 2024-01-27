@@ -8,14 +8,20 @@
 
 @page {
   size: a4 !important;
-  margin-top: 22% !important;
-  margin-left: 5% !important;
-  margin-right: 5% !important;
+  margin-top: 18% !important;
+  margin-left: 4% !important;
+  margin-right: 4% !important;
+  scale: 140% !important;
 }
 
 @media print {
   .no-print {
     display: none;
+  }
+
+  body {
+    zoom: 135%;
+    background-color: #fff;
   }
 
   b {
