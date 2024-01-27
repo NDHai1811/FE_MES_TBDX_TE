@@ -204,10 +204,10 @@ const items = [
         label: "Bảo trì bảo dưỡng",
         key: "master-data/maintenance",
       },
-      {
-        label: "Quản lý xe",
-        key: "master-data/vehicle",
-      },
+      // {
+      //   label: "Quản lý xe",
+      //   key: "master-data/vehicle",
+      // },
     ],
     permission: "master",
   },
