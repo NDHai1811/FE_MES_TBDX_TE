@@ -266,7 +266,7 @@ const TaoTem = () => {
 
     const handlePrint = async () => {
         print();
-        setListCheck([])
+        // setListCheck([])
     };
     const onChange = (value, dataIndex) => {
         const items = data.map((val) => {
