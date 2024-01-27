@@ -27,7 +27,7 @@ import {
 import "../style.scss";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { getWarehouseFGExportList } from "../../../api/ui/warehouse";
+import { getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 
 const EditableCell = ({
   editing,
@@ -254,7 +254,7 @@ const WarehouseExportPlan = () => {
         if (listCheck.length > 0) {
           row.ids = listCheck;
         }
-        await updateBuyers(row);
+        await updateWarehouseFGExport(row);
         setData(newData);
         setEditingKey("");
       } else {
@@ -357,25 +357,13 @@ const WarehouseExportPlan = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
-              actions={[
-                <div
-                  layout="vertical"
-                >
-                  <Button
-                    type="primary"
-                    style={{ width: "80%" }}
-                    onClick={btn_click}
-                  >
-                    Truy vấn
-                  </Button>
-                </div>
-              ]}
             >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
@@ -411,11 +399,15 @@ const WarehouseExportPlan = () => {
                       placeholder="Nhập mã quản lý"
                     />
                   </Form.Item>
-                  <Button
-                    hidden
-                    htmlType="submit"
-                  >
-                  </Button>
+                  <Form.Item style={{ textAlign: "center" }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "80%" }}
+                    >
+                      Tìm kiếm
+                    </Button>
+                  </Form.Item>
                 </Form>
               </div>
             </Card>
@@ -425,6 +417,7 @@ const WarehouseExportPlan = () => {
           <Card
             style={{ height: "100%" }}
             title="Kế hoạch xuất kho"
+            bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
             extra={
               <Space>
@@ -481,7 +474,7 @@ const WarehouseExportPlan = () => {
                   bordered
                   pagination={{ position: ["bottomRight"] }}
                   scroll={{
-                    y: window.innerHeight*0.55,
+                    y: "80vh",
                   }}
                   components={{
                     body: {
