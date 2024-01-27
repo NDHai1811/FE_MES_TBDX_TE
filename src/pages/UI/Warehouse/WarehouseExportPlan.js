@@ -13,6 +13,8 @@ import {
   Spin,
   Popconfirm,
   Typography,
+  Select,
+  InputNumber,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -21,6 +23,8 @@ import {
   createOrder,
   deleteBuyers,
   exportOrders,
+  getUsers,
+  getVehicles,
   updateBuyers,
   updateOrder,
 } from "../../../api";
@@ -37,8 +41,32 @@ const EditableCell = ({
   record,
   index,
   children,
+  onChange,
+  onSelect,
+  options,
   ...restProps
 }) => {
+  let inputNode;
+  switch (inputType) {
+    case "number":
+      inputNode = <InputNumber />;
+      break;
+    case "select":
+      inputNode = (
+        <Select
+          value={record?.[dataIndex]}
+          options={options}
+          onChange={(value) => onSelect(value, dataIndex)}
+          bordered
+          showSearch
+          popupMatchSelectWidth={options.length > 0 ? 200 : 0}
+        />
+      );
+      break;
+    default:
+      inputNode = <Input />;
+  }
+  const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
     <td {...restProps}>
       {editing ? (
@@ -49,7 +77,7 @@ const EditableCell = ({
           }}
           initialValue={record?.[dataIndex]}
         >
-          <Input />
+          {inputNode}
         </Form.Item>
       ) : (
         children
@@ -82,6 +110,8 @@ const WarehouseExportPlan = () => {
     "so_xe",
     "nguoi_xuat",
   ]);
+  const [listVehicles, setListVehicles] = useState([]);
+  const [listUsers, setListUsers] = useState([]);
   const isEditing = (record) => record.key === editingKey;
 
   const hasEditColumn = (value) => {
@@ -130,6 +160,11 @@ const WarehouseExportPlan = () => {
       key: "tai_xe",
       align: "center",
       editable: hasEditColumn("tai_xe"),
+      render: (value)=>{
+        const item = listVehicles.find(e=>e.user1 === value);
+        return item?.driver?.name
+      },
+      width: '15%'
     },
     {
       title: "Số xe",
@@ -137,6 +172,7 @@ const WarehouseExportPlan = () => {
       key: "so_xe",
       align: "center",
       editable: hasEditColumn("so_xe"),
+      width: '15%'
     },
     {
       title: "Người xuất",
@@ -144,6 +180,11 @@ const WarehouseExportPlan = () => {
       key: "nguoi_xuat",
       align: "center",
       editable: hasEditColumn("nguoi_xuat"),
+      render: (value)=>{
+        const item = listUsers.find(e=>e.id == value);
+        return item?.name
+      },
+      width: '15%'
     },
     {
       title: "Hành động",
@@ -254,13 +295,17 @@ const WarehouseExportPlan = () => {
         if (listCheck.length > 0) {
           row.ids = listCheck;
         }
-        await updateWarehouseFGExport(row);
-        setData(newData);
+        var res = await updateWarehouseFGExport(row);
+        if(res){
+          loadListTable();
+        }
         setEditingKey("");
       } else {
-        await createBuyers(row);
+        // await createBuyers(row);
         const items = [row, ...data.filter((val) => val.key !== key)];
-        setData(items);
+        if(res){
+          loadListTable();
+        }
         setEditingKey("");
       }
       form.resetFields();
@@ -280,15 +325,48 @@ const WarehouseExportPlan = () => {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        inputType:
+          col.dataIndex === "tai_xe" ||
+            col.dataIndex === "so_xe" ||
+            col.dataIndex === "nguoi_xuat"
+            ? "select"
+            : "text",
+        options: options(col.dataIndex),
+        onSelect:
+          col.dataIndex === "tai_xe" ||
+            col.dataIndex === "so_xe"
+            ? onSelectDriverVehicle
+            : onSelect,
       }),
     };
   });
+  const options = (dataIndex) => {
+    let filteredOptions = [];
+    switch (dataIndex) {
+      case "tai_xe":
+        filteredOptions = listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }));
+        break;
+      case "so_xe":
+        filteredOptions = listVehicles.map(e => ({ ...e, value: e?.id, label: e?.id }));
+        break;
+      case "nguoi_xuat":
+        filteredOptions = listUsers.map(e => ({ ...e, value: e?.id, label: e?.name }));
+        break;
+      default:
+        break;
+    }
+    return filteredOptions;
+  };
 
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     (async () => {
       loadListTable(params);
+      const res1 = await getVehicles();
+      setListVehicles(res1);
+      const res2 = await getUsers();
+      setListUsers(res2);
     })();
   }, []);
 
@@ -321,24 +399,6 @@ const WarehouseExportPlan = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    if (isEdit) {
-      const res = await updateOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    } else {
-      const res = await createOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    }
-  };
-
   const exportFile = async () => {
     setExportLoading(true);
     const res = await exportOrders(params);
@@ -353,6 +413,33 @@ const WarehouseExportPlan = () => {
       setListCheck(selectedRowKeys);
     },
   };
+
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    setData(items);
+  };
+  const onSelectDriverVehicle = (value, dataIndex) => {
+    const items = data.map((e) => {
+      if (e.key === editingKey) {
+        var target = null;
+        if (dataIndex === 'tai_xe') {
+          target = listVehicles.find(e=>e.user1 === value);
+        } else {
+          target = listVehicles.find(e=>e.id === value);
+        }
+        form.setFieldsValue({ ...e, so_xe: target?.id, tai_xe: target?.user1})
+        return { ...e, so_xe: target?.id, tai_xe: target?.user1}
+      } else {
+        return e;
+      }
+    });
+    setData(items)
+  }
 
   return (
     <>
@@ -474,7 +561,7 @@ const WarehouseExportPlan = () => {
                   bordered
                   pagination={{ position: ["bottomRight"] }}
                   scroll={{
-                    y: "80vh",
+                    y: window.innerHeight * 0.55,
                   }}
                   components={{
                     body: {

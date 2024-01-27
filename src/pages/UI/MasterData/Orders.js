@@ -1127,7 +1127,6 @@ const Orders = () => {
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
               bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
               actions={[

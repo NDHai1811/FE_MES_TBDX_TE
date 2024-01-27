@@ -69,3 +69,9 @@ export const saveExportsNVL = async (params) => {
 export const getWarehouseTpLogs = async () => {
   return await axios.get("oi/warehouse/fg/import/logs");
 };
+export const getWarehouseFGExportLogs = async () => {
+  return await axios.get("oi/warehouse/fg/export/logs");
+};
+export const exportPallet = async (params) => {
+  return await axios.post("oi/warehouse/fg/export/handle-export-pallet", params);
+};
