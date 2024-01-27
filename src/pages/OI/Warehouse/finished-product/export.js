@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Row, Col, Table, Button, Modal, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { Row, Col, Table, Button, Modal, Select, Input, Form } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -9,30 +9,7 @@ import { warehousExportTPData } from "../mock-data";
 import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-
-const columnDetail = [
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Pallet",
-    dataIndex: "pallet",
-    key: "pallet",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số lượng xuất",
-    dataIndex: "sl_xuat",
-    key: "sl_xuat",
-    align: "center",
-    render: (value) => value || "-",
-  },
-];
+import { exportPallet, getWarehouseFGExportLogs } from "../../../../api/oi/warehouse";
 
 const exportColumns = [
   {
@@ -44,29 +21,22 @@ const exportColumns = [
   },
   {
     title: "Thời gian xuất KH",
-    dataIndex: "time",
-    key: "time",
+    dataIndex: "thoi_gian_xuat",
+    key: "thoi_gian_xuat",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
   },
   {
     title: "Mã tem (pallet)",
-    dataIndex: "tem_id",
-    key: "tem_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã lot",
-    dataIndex: "lot_id",
-    key: "lot_id",
+    dataIndex: "pallet_id",
+    key: "pallet_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -97,21 +67,14 @@ const options = [
   },
 ];
 
-const Import = (props) => {
+const Export = (props) => {
   document.title = "Kho thành phẩm";
   const { line } = useParams();
   const history = useHistory();
-  const [selectedItem, setSelectedItem] = useState([
-    {
-      so_pallet: "T300/3",
-      so_mql: "10",
-      so_luong: "150",
-      vi_tri: "A01",
-    },
-  ]);
-  const [isScan, setIsScan] = useState(false);
+  const [selectedItem, setSelectedItem] = useState();
+  const [overall, setOverall] = useState([]);
   const [visible, setVisible] = useState(false);
-
+  const [form] = Form.useForm();
   const column2 = [
     {
       title: "Kho",
@@ -158,25 +121,105 @@ const Import = (props) => {
     },
   ];
 
-  const onShowPopup = () => {
-    setVisible(true);
-  };
+  const columnDetail = [
+    {
+      title: "Vị trí",
+      dataIndex: "locator_id",
+      key: "locator_id",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Pallet",
+      dataIndex: "pallet_id",
+      key: "pallet_id",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số lượng xuất",
+      dataIndex: "so_luong",
+      key: "so_luong",
+      align: "center",
+      render: (value) => value || "-",
+      onHeaderCell: (column) => {
+        return {
+          onClick: () => {
+            selectedItem && setVisible(true);
+          },
+          style: {
+            cursor: 'pointer'
+          },
+        };
+      },
+    },
+  ];
+
+  const lsxColumns = [
+    {
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "MĐH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "so_luong",
+      key: "so_luong",
+      align: "center",
+      render: (value, record, index) =>
+        <>
+          <Form.Item name={[index, "lo_sx"]} noStyle hidden><Input /></Form.Item>
+          <Form.Item name={[index, "so_luong"]} noStyle><Input /></Form.Item>
+        </>
+      ,
+    },
+  ]
 
   const onChangeLine = (value) => {
     history.push("/warehouse/kho-tp/" + value);
   };
-  const [currentLot, setCurrentLot] = useState([
-    {
-      soPalletNhapTrongNgay: 0,
-      soPalletXuatTrongNgay: 0,
-      soPalletTonTrongKho: 0,
-    },
-  ]);
 
   const onSelectItem = (val) => {
-    setSelectedItem([val]);
+    setSelectedItem(val);
+    form.setFieldsValue(val?.lo_sx);
   };
 
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    loadData()
+  }, []);
+
+  const loadData = async () => {
+    var res = await getWarehouseFGExportLogs();
+    setData(res.data);
+    setSelectedItem();
+  }
+  const onFinish = async (values) => {
+    const params = {pallet_id: selectedItem?.pallet_id, lo_sx: values}
+    var res = await exportPallet(params);
+    if(res.success){
+      setVisible(false);
+      form.resetFields();
+      loadData();
+    }
+  }
   return (
     <React.Fragment>
       <Row className="mt-3" gutter={[4, 12]}>
@@ -186,7 +229,7 @@ const Import = (props) => {
             bordered
             className="mb-1"
             columns={column2}
-            dataSource={currentLot}
+            dataSource={overall}
           />
         </Col>
         <Col span={24}>
@@ -194,11 +237,12 @@ const Import = (props) => {
             pagination={false}
             bordered
             className="mb-1"
+            locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
-            dataSource={selectedItem}
+            dataSource={selectedItem ? [selectedItem] : []}
           />
         </Col>
-        <Col span={24}>
+        {/* <Col span={24}>
           <Row gutter={8}>
             <Col span={12}>
               <Button
@@ -233,25 +277,17 @@ const Import = (props) => {
               </Button>
             </Col>
           </Row>
-        </Col>
+        </Col> */}
         <Col span={24}>
           <Table
-            scroll={{
-              x: "calc(700px + 50%)",
-              y: 300,
-            }}
             rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
-                ? "table-row-grey"
-                : ""
+              'no-hover ' + (record?.pallet_id === selectedItem?.pallet_id ? "table-row-green" : "")
             }
             pagination={false}
             bordered
             className="mb-4"
             columns={exportColumns}
-            dataSource={warehousExportTPData}
+            dataSource={data}
             onRow={(record) => {
               return {
                 onClick: () => onSelectItem(record),
@@ -261,25 +297,34 @@ const Import = (props) => {
         </Col>
       </Row>
       {visible && (
-        <PopupQuetQrNhapKho visible={visible} setVisible={setVisible} />
-      )}
-      {isScan && (
         <Modal
-          title="Quét QR"
-          open={isScan}
-          onCancel={() => setIsScan(false)}
-          footer={null}
+          title="Danh sách lô cần xuất"
+          open={visible}
+          onCancel={() => setVisible(false)}
+          okText={"Lưu"}
+          onOk={() => form.submit()}
+          width={600}
         >
-          <ScanQR
-            isScan={isScan}
-            onResult={(res) => {
-              setIsScan(false);
-            }}
-          />
+          <Form form={form} onFinish={onFinish}>
+            <Table
+              rowClassName={(record, index) =>
+                record.status === 1
+                  ? "table-row-yellow"
+                  : record.status === 2
+                    ? "table-row-grey"
+                    : ""
+              }
+              pagination={false}
+              bordered
+              className="mb-4"
+              columns={lsxColumns}
+              dataSource={selectedItem?.lo_sx ?? []}
+            />
+          </Form>
         </Modal>
       )}
     </React.Fragment>
   );
 };
 
-export default Import;
+export default Export;
