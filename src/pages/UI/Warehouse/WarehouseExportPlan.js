@@ -19,14 +19,9 @@ import {
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
 import {
-  createBuyers,
-  createOrder,
   deleteBuyers,
-  exportOrders,
   getUsers,
   getVehicles,
-  updateBuyers,
-  updateOrder,
 } from "../../../api";
 import "../style.scss";
 import dayjs from "dayjs";
@@ -400,12 +395,12 @@ const WarehouseExportPlan = () => {
   };
 
   const exportFile = async () => {
-    setExportLoading(true);
-    const res = await exportOrders(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading(false);
+    // setExportLoading(true);
+    // const res = await exportOrders(params);
+    // if (res.success) {
+    //   window.location.href = baseURL + res.data;
+    // }
+    // setExportLoading(false);
   };
 
   const rowSelection = {

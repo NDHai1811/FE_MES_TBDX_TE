@@ -228,6 +228,7 @@ const Export = (props) => {
             pagination={false}
             bordered
             className="mb-1"
+            locale={{ emptyText: 'Trống' }}
             columns={column2}
             dataSource={overall}
           />
@@ -285,6 +286,7 @@ const Export = (props) => {
             }
             pagination={false}
             bordered
+            scroll={{y: '30vh'}}
             className="mb-4"
             columns={exportColumns}
             dataSource={data}
