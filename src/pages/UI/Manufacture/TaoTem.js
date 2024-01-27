@@ -67,13 +67,16 @@ const TaoTem = () => {
     const [loadingExport, setLoadingExport] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editingKey, setEditingKey] = useState("");
-    const [orderParams, setOrderParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 50 });
     const componentRef1 = useRef();
+    const [totalPage, setTotalPage] = useState(1);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(50);
     const isEditing = (record) => record.key === editingKey;
     const onUpdate = async () => {
         const item = data.find((val) => val.key === editingKey);
         const row = await form.validateFields();
-        const res = await updateTem({...item, ...row});
+        const res = await updateTem({ ...item, ...row });
         if (res) {
             form.resetFields();
             loadListTable();
@@ -205,7 +208,7 @@ const TaoTem = () => {
                             Lưu
                         </Typography.Link>
                         {/* <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}> */}
-                            <a onClick={cancel}>Hủy</a>
+                        <a onClick={cancel}>Hủy</a>
                         {/* </Popconfirm> */}
                     </span>
                 ) : (
@@ -306,6 +309,7 @@ const TaoTem = () => {
         setLoadingOrders(true);
         const res = await getOrders(orderParams);
         setOrders(res.data);
+        setTotalPage(res.totalPage);
         setLoadingOrders(false);
     }
     const [listCustomers, setListCustomers] = useState([]);
@@ -498,13 +502,13 @@ const TaoTem = () => {
             <div className="report-history-invoice">
                 <TemIn listCheck={listCheck} ref={componentRef1} />
             </div>
-            <Modal open={openModal} onCancel={() => setOpenModal(false)} title="Tạo tem từ đơn hàng" width={1000}
+            <Modal open={openModal} onCancel={() => setOpenModal(false)} title="Tạo tem từ đơn hàng" width={1200}
                 okText={'Tạo tem'}
                 onOk={() => createStamp()}
             >
                 <Form layout="vertical">
                     <Row gutter={[8, 8]}>
-                        <Col span={4}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Máy"
                                 className="mb-3"
@@ -517,7 +521,6 @@ const TaoTem = () => {
                                     onChange={(value) => {
                                         setOrderParams({ ...orderParams, machine_id: value })
                                     }
-
                                     }
                                     filterOption={(input, option) =>
                                         (option?.label ?? "")
@@ -528,7 +531,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
@@ -538,8 +541,10 @@ const TaoTem = () => {
                                     showSearch
                                     placeholder="Chọn khách hàng"
                                     style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setOrderParams({ ...orderParams, short_name: value })
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, short_name: value, page: 1 });
+                                        setPage(1);
+                                    }
                                     }
                                     filterOption={(input, option) =>
                                         (option?.label ?? "")
@@ -551,7 +556,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={6}>
                             <Form.Item
                                 label="MDH"
                                 className="mb-3"
@@ -562,7 +567,8 @@ const TaoTem = () => {
                                     showSearch
                                     suffixIcon={null}
                                     onChange={(value) => {
-                                        setOrderParams({ ...orderParams, mdh: value });
+                                        setOrderParams({ ...orderParams, mdh: value, page: 1 });
+                                        setPage(1);
                                     }}
                                     open={false}
                                     placeholder="Nhập mã đơn hàng"
@@ -570,39 +576,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
-                            <Form.Item
-                                label="Bắt đầu"
-                                className="mb-3"
-                            >
-                                <DatePicker
-                                    allowClear={false}
-                                    placeholder="Bắt đầu"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setOrderParams({ ...orderParams, start_date: value })
-                                    }
-                                    value={orderParams.start_date}
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                            <Form.Item
-                                label="Kết thúc"
-                                className="mb-3"
-                            >
-                                <DatePicker
-                                    allowClear={false}
-                                    placeholder="Kết thúc"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setOrderParams({ ...orderParams, end_date: value })
-                                    }
-                                    value={orderParams.end_date}
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={4}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Nhân viên sản xuất"
                                 className="mb-3"
@@ -629,7 +603,18 @@ const TaoTem = () => {
                 </Form>
                 <Table size='small' bordered
                     loading={loadingOrders}
-                    pagination={false}
+                    pagination={{
+                        current: page,
+                        size: "default",
+                        total: totalPage,
+                        pageSize: 50,
+                        showSizeChanger: true,
+                        onChange: (page, pageSize) => {
+                            setPage(page);
+                            setPageSize(pageSize);
+                            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+                        },
+                    }}
                     scroll={
                         {
                             x: '130vw',
