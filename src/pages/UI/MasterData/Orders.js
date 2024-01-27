@@ -287,6 +287,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       width: "1%",
+      fixed: "left",
     },
     {
       title: "SL",
@@ -296,6 +297,7 @@ const Orders = () => {
       width: "1.2%",
       editable: true,
       checked: true,
+      fixed: "left",
     },
     {
       title: "Đơn vị tính",
@@ -1146,7 +1148,7 @@ const Orders = () => {
                 <Form
                   style={{ margin: "0 5px" }}
                   layout="vertical"
-                  // onFinish={btn_click}
+                // onFinish={btn_click}
                 >
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
