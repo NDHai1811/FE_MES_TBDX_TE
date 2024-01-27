@@ -1394,6 +1394,17 @@ const Orders = () => {
                       value={params.han_giao}
                     />
                   </Form.Item>
+                  <Form.Item label="Đợt" className="mb-3">
+                    <Input
+                      allowClear={false}
+                      placeholder="Đợt"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, dot: value.target.value })
+                      }
+                      value={params.dot}
+                    />
+                  </Form.Item>
                   <Form.Item label="Ghi chú TBDX" className="mb-3">
                     <Input
                       allowClear
