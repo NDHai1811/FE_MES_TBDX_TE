@@ -405,11 +405,10 @@ const Buyer = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
               bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
               actions={[
