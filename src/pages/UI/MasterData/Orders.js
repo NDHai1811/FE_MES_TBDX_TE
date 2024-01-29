@@ -967,7 +967,7 @@ const Orders = () => {
     (async () => {
       loadListTable(params);
     })();
-  }, [params]);
+  }, [params.page, params.pageSize]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -1148,7 +1148,7 @@ const Orders = () => {
                 <Form
                   style={{ margin: "0 5px" }}
                   layout="vertical"
-                // onFinish={btn_click}
+                  onFinish={btn_click}
                 >
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
