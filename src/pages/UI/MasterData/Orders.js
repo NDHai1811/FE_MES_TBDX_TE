@@ -1496,20 +1496,6 @@ const Orders = () => {
                       placeholder="Nhập SIZE"
                     />
                   </Form.Item>
-                  <Form.Item label="Đợt" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          dot: e.target.value,
-                          page: 1,
-                        });
-                        setPage(1);
-                      }}
-                      placeholder="Nhập đợt"
-                    />
-                  </Form.Item>
                   <Form.Item label="Ngày giao hàng" className="mb-3">
                     <DatePicker
                       allowClear={false}
