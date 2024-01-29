@@ -169,11 +169,11 @@ const InDan = (props) => {
   const ws = useRef(null);
 
   const reloadData = async () => {
-    // const resData = await getListLotDetail();
-    // setData(resData);
-    // if (resData?.[0]?.status === 1) {
-    //   setSelectedLot(resData?.[0]);
-    // }
+    const resData = await getListLotDetail();
+    setData(resData);
+    if (resData?.[0]?.status === 1) {
+      setSelectedLot(resData?.[0]);
+    }
     getOverAllDetail();
   };
   const overallColumns = [
@@ -326,7 +326,8 @@ const InDan = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lo_sx: result, machine_id: machine_id })
+    const lo_sx = JSON.parse(result).lo_sx;
+    scanQrCode({ lo_sx: lo_sx, machine_id: machine_id })
       .then((response)=>response.success && reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
     setIsOpenQRScanner(false);

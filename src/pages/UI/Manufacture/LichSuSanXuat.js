@@ -98,8 +98,8 @@ const columns2 = [
   },
   {
     title: "Dán",
-    dataIndex: "31",
-    key: "31",
+    dataIndex: "32",
+    key: "32",
     align: "center",
     render: (value) => value ?? 0,
   },
@@ -363,7 +363,7 @@ const LichSuSanXuat = (props) => {
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%" }}
+              style={{ height: "100%", marginBottom: 10 }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
               className="custom-card scroll"
               actions={[
@@ -471,7 +471,7 @@ const LichSuSanXuat = (props) => {
           <Card
             style={{ height: "100%" }}
             title="Lịch sử sản xuất"
-            className="custom-card"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Button

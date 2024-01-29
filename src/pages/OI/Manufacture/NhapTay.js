@@ -188,6 +188,7 @@ const NhapTay = (props) => {
 
   const onShowPopup = () => {
     setVisible(true);
+    setValue(lotCurrent?.san_luong);
   };
 
   const closePopup = () => {
@@ -348,23 +349,12 @@ const NhapTay = (props) => {
       .finally(() => setLoading(false));
   };
 
-  const getListLotDetail = async () => {
-    const resData = {
-      machine_id,
-      start_date: params.start_date,
-      end_date: params.end_date,
-    };
-    const res = await getLotByMachine(resData);
-    setLoading(true);
-    return res.data;
-  };
-
   const onChangeLine = (value) => {
     window.location.href = ("/manufacture/" + value);
   };
 
   const onScan = async (result) => {
-    const lo_sx = JSON.parse(result).lo_sx;
+    const lo_sx = JSON.parse(result)?.lo_sx;
     manualScan({ lo_sx: lo_sx, machine_id: machine_id })
       .then(() => { reloadData(lo_sx); handleCloseMdl() })
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
@@ -443,6 +433,7 @@ const NhapTay = (props) => {
   const openMdlPrint = () => {
     if (typeof (lotCurrent) != 'undefined') {
       setVisiblePrint(true);
+      setQuantity(lotCurrent?.san_luong);
     } else {
       message.info('Chưa chọn lô in tem');
     }
@@ -584,7 +575,7 @@ const NhapTay = (props) => {
           onOk={onConfirm}
         >
           <InputNumber
-            defaultValue={lotCurrent?.san_luong}
+            value={value}
             placeholder="Nhập sản lượng đầu ra"
             onChange={onChangeValue}
             style={{ width: "100%" }}
@@ -599,7 +590,7 @@ const NhapTay = (props) => {
           onOk={onConfirmPrint}
         >
           <InputNumber
-            defaultValue={lotCurrent?.san_luong}
+            value={quantity}
             max={lotCurrent?.san_luong}
             placeholder="Nhập sản lượng trên tem"
             onChange={onChangeQuantity}
