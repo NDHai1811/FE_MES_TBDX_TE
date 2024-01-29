@@ -30,7 +30,7 @@ import {
   splitOrders,
   updateOrder,
 } from "../../../api";
-import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined, CopyOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
@@ -200,6 +200,9 @@ const Orders = () => {
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isOpenMdl, setIsOpenMdl] = useState(false);
+  const [rowUpdate, setRowUpdate] = useState({});
+  const [listParams, setListParams] = useState([]);
   const [inputData, setInputData] = useState([
     {
       so_luong: 0,
@@ -207,7 +210,90 @@ const Orders = () => {
       xuong_giao: "",
     },
   ]);
-
+  const optionChecks = [
+    {
+      label: 'Dài',
+      value: 'dai',
+    },
+    {
+      label: 'Rộng',
+      value: 'rong',
+    },
+    {
+      label: 'Cao',
+      value: 'cao',
+    },
+    {
+      label: 'Khổ',
+      value: 'kho',
+    },
+    {
+      label: 'Khổ tổng',
+      value: 'kho_tong',
+    },
+    {
+      label: 'Dài tấm',
+      value: 'dai_tam',
+    },
+    {
+      label: 'Số ra',
+      value: 'so_ra',
+    },
+    {
+      label: 'Đơn vị',
+      value: 'unit',
+    },
+    {
+      label: 'Quy cách DRC',
+      value: 'quy_cach_drc',
+    },
+    {
+      label: 'Buyer',
+      value: 'buyer_id',
+    },
+    {
+      label: 'Tốc độ',
+      value: 'toc_do',
+    },
+    {
+      label: 'Thời gian đổi model',
+      value: 'tg_doi_model',
+    },
+    {
+      label: 'Kích thước chuẩn',
+      value: 'kich_thuoc_chuan',
+    },
+    {
+      label: 'Phân loại 1',
+      value: 'phan_loai_1',
+    },
+    {
+      label: 'Phân loại 2',
+      value: 'phan_loai_2',
+    },
+    {
+      label: 'Số dao',
+      value: 'so_dao',
+    },
+    {
+      label: 'Ghi chú sóng',
+      value: 'note_3',
+    },
+    {
+      label: 'Ngày giao SX',
+      value: 'han_giao_sx',
+    },
+    {
+      label: 'Số mét tới',
+      value: 'so_met_toi',
+    },
+  ];
+  const checkAll = optionChecks.length === listParams.length;
+  const indeterminate = listParams.length > 0 && listParams.length < optionChecks.length;
+  const onCheckAllChange = (e) => {
+    const arr = optionChecks.map((value) => value.value);
+    setListParams(e.target.checked ? arr : []);
+  };
   const showInput = () => {
     setInputData([
       ...inputData,
@@ -817,6 +903,23 @@ const Orders = () => {
     ]);
   };
 
+  const handleOkMdl = async () => {
+    rowUpdate.listParams = listParams;
+    const res = await updateOrder(rowUpdate);
+    if (res) {
+      form.resetFields();
+      loadListTable(params);
+      setEditingKey("");
+      if (listCheck.length > 0) {
+        setListCheck([]);
+      }
+      if (listParams.length > 0) {
+        setListParams([]);
+      }
+    }
+    setIsOpenMdl(false);
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);
     setInputData([
@@ -826,6 +929,10 @@ const Orders = () => {
         xuong_giao: "",
       },
     ]);
+  };
+
+  const handleCancelMdl = () => {
+    setIsOpenMdl(false);
   };
 
   useEffect(() => {
@@ -1015,16 +1122,19 @@ const Orders = () => {
       row.id = editingKey;
       if (listCheck.length > 0) {
         row.ids = listCheck;
+        setRowUpdate(row);
+        setListParams([]);
+        setIsOpenMdl(true);
       }
-      const res = await updateOrder(row);
-      if (res) {
-        form.resetFields();
-        loadListTable(params);
-        setEditingKey("");
-        if (listCheck.length > 0) {
-          setListCheck([]);
-        }
-      }
+      // const res = await updateOrder(row);
+      // if (res) {
+      //   form.resetFields();
+      //   loadListTable(params);
+      //   setEditingKey("");
+      //   if (listCheck.length > 0) {
+      //     setListCheck([]);
+      //   }
+      // }
     }
   };
 
@@ -1385,6 +1495,20 @@ const Orders = () => {
                       placeholder="Nhập SIZE"
                     />
                   </Form.Item>
+                  <Form.Item label="Đợt" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          dot: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập đợt"
+                    />
+                  </Form.Item>
                   <Form.Item label="Ngày giao hàng" className="mb-3">
                     <DatePicker
                       allowClear={false}
@@ -1539,6 +1663,37 @@ const Orders = () => {
           Thêm dòng
         </Button>
         {inputData.map(renderInputData)}
+      </Modal>
+      <Modal
+        title="Chọn thông tin cần coppy"
+        open={isOpenMdl}
+        onOk={handleOkMdl}
+        onCancel={handleCancelMdl}
+        okText="Lưu"
+        width={400}
+      >
+        <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+          Chọn tất cả
+        </Checkbox>
+        <Checkbox.Group
+          style={{
+            width: '100%',
+          }}
+          value={listParams}
+          onChange={(values) => setListParams(values)}
+        >
+          <Row>
+            {
+              optionChecks.map(option =>
+              (
+                <Col span={24}>
+                  <Checkbox value={option.value} >{option.label}</Checkbox>
+                </Col>
+              )
+              )
+            }
+          </Row>
+        </Checkbox.Group>
       </Modal>
     </>
   );
