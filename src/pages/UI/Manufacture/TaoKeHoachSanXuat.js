@@ -277,6 +277,12 @@ const TaoKeHoachSanXuat = () => {
             width: '5%'
         },
         {
+            title: 'Ghi chú TBDX',
+            dataIndex: 'note_2',
+            key: 'note_2',
+            align: 'center',
+        },
+        {
             title: 'Mã Layout',
             dataIndex: 'layout_id',
             key: 'layout_id',
@@ -286,12 +292,6 @@ const TaoKeHoachSanXuat = () => {
             title: 'Ghi chú khách',
             dataIndex: 'note_1',
             key: 'note_1',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú TBDX',
-            dataIndex: 'note_2',
-            key: 'note_2',
             align: 'center',
         },
         {
