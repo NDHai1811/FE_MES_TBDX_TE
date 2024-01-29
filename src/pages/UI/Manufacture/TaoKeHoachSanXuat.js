@@ -58,11 +58,14 @@ const TaoKeHoachSanXuat = () => {
         setLoadingPlans(false);
     };
 
+    const [loadingBtn, setLoadingBtn] = useState(false);
     const onFinish = async (values) => {
+        setLoadingBtn(true);
         const res = await createProductPlan({ data: previewPlan });
         if (res.success) {
             window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
         }
+        setLoadingBtn(false);
     };
 
     const insertOrder = async () => {
@@ -430,7 +433,7 @@ const TaoKeHoachSanXuat = () => {
                     <Card
                         style={{ height: "100%" }}
                         title="Tạo kế hoạch sản xuất"
-                        extra={<Button type="primary" onClick={() => form.submit()}>Tạo KHSX</Button>}
+                        extra={<Button type="primary" onClick={() => form.submit()} loading={loadingBtn}>Tạo KHSX</Button>}
                     >
                         <Form
                             layout="vertical"
