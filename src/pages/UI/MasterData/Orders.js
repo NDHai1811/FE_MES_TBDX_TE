@@ -1610,6 +1610,7 @@ const Orders = () => {
                 <Button type="primary" onClick={onAdd}>
                   Thêm đơn hàng
                 </Button>
+                <Button type="primary" onClick={() => exportFile()} loading={exportLoading} className="w-100">Tải file excel</Button>
               </Space>
             }
           >
