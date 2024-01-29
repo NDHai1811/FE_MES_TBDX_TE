@@ -72,6 +72,11 @@ const TaoTem = () => {
     const [totalPage, setTotalPage] = useState(1);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(50);
+    const [params, setParams] = useState({ show: 'new' });
+    const optionsDisplay = [
+        { value: 'new', label: 'Mới' },
+        { value: 'all', label: 'Tất cả' },
+    ]
     const isEditing = (record) => record.key === editingKey;
     const onUpdate = async () => {
         const item = data.find((val) => val.key === editingKey);
@@ -239,7 +244,7 @@ const TaoTem = () => {
 
     const loadListTable = async () => {
         setLoading(true);
-        const res = await getTems();
+        const res = await getTems(params);
         setData(res.map(e => ({ ...e, key: e.id })));
         setLoading(false);
     };
@@ -417,11 +422,92 @@ const TaoTem = () => {
     return (
         <>
             {contextHolder}
-            <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-                <Col span={24}>
+            <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+                <Col span={4}>
+                    <div className="slide-bar">
+                        <Card
+                            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+                            className="custom-card scroll"
+                            actions={[
+                                <div
+                                    layout="vertical"
+                                >
+                                    <Button
+                                        type="primary"
+                                        style={{ width: "80%" }}
+                                        onClick={loadListTable}
+                                    >
+                                        Truy vấn
+                                    </Button>
+                                </div>
+                            ]}
+                        >
+                            <Divider>Điều kiện truy vấn</Divider>
+                            <div className="mb-3">
+                                <Form style={{ margin: "0 15px" }} layout="vertical" onFinish={loadListTable}>
+                                    <Form.Item label="Hiển thị" className="mb-3">
+                                        <Select
+                                            options={optionsDisplay}
+                                            onChange={(value) => {
+                                                setParams({
+                                                    ...params,
+                                                    show: value,
+                                                    page: 1,
+                                                });
+                                            }}
+                                            value={params.show}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="Lô sản xuất" className="mb-3">
+                                        <Input
+                                            allowClear
+                                            onChange={(e) => {
+                                                setParams({
+                                                    ...params,
+                                                    lo_sx: e.target.value,
+                                                    page: 1,
+                                                });
+                                            }}
+                                            placeholder="Nhập lô sản xuất"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="MĐH" className="mb-3">
+                                        <Select
+                                            allowClear
+                                            showSearch
+                                            onChange={(value) => {
+                                                setParams({ ...params, mdh: value });
+                                            }}
+                                            open={false}
+                                            suffixIcon={null}
+                                            mode="tags"
+                                            placeholder="Nhập mã đơn hàng"
+                                            options={[]}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="MQL" className="mb-3">
+                                        <Input
+                                            allowClear
+                                            onChange={(e) => {
+                                                setParams({
+                                                    ...params,
+                                                    mql: e.target.value,
+                                                    page: 1,
+                                                });
+                                            }}
+                                            placeholder="Nhập mã quản lý"
+                                        />
+                                    </Form.Item>
+                                    <Button hidden htmlType="submit"></Button>
+                                </Form>
+                            </div>
+                        </Card>
+                    </div>
+                </Col>
+                <Col span={20}>
                     <Card
-                        style={{ height: "100%" }}
                         title="Quản lý tạo tem"
+                        className="custom-card scroll"
                         extra={
                             <Space>
                                 <Button
