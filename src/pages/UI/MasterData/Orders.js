@@ -1125,16 +1125,17 @@ const Orders = () => {
         setRowUpdate(row);
         setListParams([]);
         setIsOpenMdl(true);
+      } else {
+        const res = await updateOrder(row);
+        if (res) {
+          form.resetFields();
+          loadListTable(params);
+          setEditingKey("");
+          if (listCheck.length > 0) {
+            setListCheck([]);
+          }
+        }
       }
-      // const res = await updateOrder(row);
-      // if (res) {
-      //   form.resetFields();
-      //   loadListTable(params);
-      //   setEditingKey("");
-      //   if (listCheck.length > 0) {
-      //     setListCheck([]);
-      //   }
-      // }
     }
   };
 
