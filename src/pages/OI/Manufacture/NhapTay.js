@@ -164,7 +164,7 @@ const NhapTay = (props) => {
   });
   // const [machineOptions, setMachineOptions] = useState([]);
   const [quantity, setQuantity] = useState();
-  const [visiblePrint, setVisiblePrint] = useState();
+  const [visiblePrint, setVisiblePrint] = useState(false);
   const [isPrint, setIsPrint] = useState(false);
   const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
@@ -188,7 +188,7 @@ const NhapTay = (props) => {
 
   const onShowPopup = () => {
     setVisible(true);
-    setValue(lotCurrent?.san_luong);
+    setValue(lotCurrent?.san_luong ? lotCurrent?.san_luong : lotCurrent?.san_luong_kh);
   };
 
   const closePopup = () => {
@@ -357,7 +357,7 @@ const NhapTay = (props) => {
     const lo_sx = JSON.parse(result)?.lo_sx;
     manualScan({ lo_sx: lo_sx, machine_id: machine_id })
       .then(() => { reloadData(lo_sx); handleCloseMdl() })
-      .catch((err) => console.log("Quét mã qr thất bại: ", err));
+      .catch((err) => {console.log("Quét mã qr thất bại: ", err); handleCloseMdl();});
   };
 
   const rowClassName = (record, index) => {
