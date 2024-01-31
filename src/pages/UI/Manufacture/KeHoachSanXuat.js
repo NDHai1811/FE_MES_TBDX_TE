@@ -652,7 +652,7 @@ const KeHoachSanXuat = () => {
                   pagination={false}
                   scroll={{
                     x: "300vw",
-                    y: window.innerHeight * 0.55,
+                    y: window.innerHeight * 0.6,
                   }}
                   components={{
                     body: {

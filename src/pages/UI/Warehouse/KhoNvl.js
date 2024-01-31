@@ -704,7 +704,7 @@ const KhoNvl = (props) => {
                 pagination={false}
                 scroll={{
                   x: "130vw",
-                  y: "80vh",
+                  y: "70vh",
                 }}
                 columns={table1}
                 dataSource={dataTable1}

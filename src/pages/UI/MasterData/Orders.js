@@ -280,6 +280,10 @@ const Orders = () => {
       value: 'note_3',
     },
     {
+      label: 'Ghi chú TBDX',
+      value: 'note_2',
+    },
+    {
       label: 'Ngày giao SX',
       value: 'han_giao_sx',
     },
@@ -727,16 +731,18 @@ const Orders = () => {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Typography.Link
+            <Button
               onClick={() => onUpdate(record)}
+              size="small"
+              type="primary"
               style={{
-                marginRight: 8,
+                marginRight: 5,
               }}
             >
               Lưu
-            </Typography.Link>
+            </Button>
             <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-              <a>Hủy</a>
+              <Button size="small" type="primary" danger >Hủy</Button>
             </Popconfirm>
           </span>
         ) : (
