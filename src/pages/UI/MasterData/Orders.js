@@ -11,9 +11,7 @@ import {
   message,
   Space,
   DatePicker,
-  Spin,
   Popconfirm,
-  Typography,
   InputNumber,
   Select,
   Modal,
@@ -291,6 +289,14 @@ const Orders = () => {
       label: 'Số mét tới',
       value: 'so_met_toi',
     },
+    {
+      label: 'Mã layout',
+      value: 'layout_id',
+    },
+    {
+      label: 'Chia máy + P8',
+      value: 'layout_type',
+    }
   ];
   const checkAll = optionChecks.length === listParams.length;
   const indeterminate = listParams.length > 0 && listParams.length < optionChecks.length;
@@ -869,12 +875,6 @@ const Orders = () => {
   const content = (
     <Checkbox.Group
       style={{ width: "100%" }}
-      // options={mergedColumns
-      //   .filter((col) => col.key !== "action")
-      //   .map((col) => ({
-      //     label: col.title,
-      //     value: col.key,
-      //   }))}
       defaultValue={mergedColumns
         .filter((col) => col.key !== "action")
         .map((col) => col.key)}
@@ -1314,20 +1314,6 @@ const Orders = () => {
                       options={[]}
                     />
                   </Form.Item>
-                  {/* <Form.Item label="MDH" className="mb-3">
-                      <Input
-                        allowClear
-                        onChange={(e) => {
-                          setParams({
-                            ...params,
-                            mdh: e.target.value,
-                            page: 1,
-                          });
-                          setPage(1);
-                        }}
-                        placeholder="Nhập MDH"
-                      />
-                    </Form.Item> */}
                   <Form.Item label="L" className="mb-3">
                     <Input
                       allowClear
@@ -1580,9 +1566,6 @@ const Orders = () => {
                     }
                   }}
                 >
-                  <Button type="primary" loading={loadingExport1}>
-                    Upload từ KHSX
-                  </Button>
                 </Upload>
                 <Upload
                   showUploadList={false}

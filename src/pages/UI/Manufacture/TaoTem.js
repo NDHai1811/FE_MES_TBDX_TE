@@ -212,9 +212,7 @@ const TaoTem = () => {
                         >
                             Lưu
                         </Typography.Link>
-                        {/* <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}> */}
                         <a onClick={cancel}>Hủy</a>
-                        {/* </Popconfirm> */}
                     </span>
                 ) : (
                     <span>

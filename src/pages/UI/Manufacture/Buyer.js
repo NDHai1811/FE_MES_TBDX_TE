@@ -428,7 +428,7 @@ const Buyer = () => {
                 <Form
                   style={{ margin: "0 15px" }}
                   layout="vertical"
-                  // onFinish={btn_click}
+                // onFinish={btn_click}
                 >
                   <Form.Item label="Mã buyer" className="mb-3">
                     <Input
@@ -494,15 +494,8 @@ const Buyer = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                >
-                  Export Excel
-                </Button>
                 <Button type="primary" onClick={onAdd}>
-                  Insert
+                  Thêm buyer
                 </Button>
               </Space>
             }
