@@ -116,7 +116,7 @@ const Import = (props) => {
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{}]);
   const [currentScan, setCurrentScan] = useState({
     material_id: "",
     so_kg: "",
@@ -184,7 +184,7 @@ const Import = (props) => {
 
   const getOverAll = () => {
     getWarehouseOverall()
-      .then((res) => setOverall(res.data))
+      .then((res) => setOverall([res.data]))
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
 
@@ -209,7 +209,8 @@ const Import = (props) => {
             size="small"
             className="mb-1 custom-table"
             columns={column2}
-            dataSource={[overall]}
+            locale={{emptyText:'Trống'}}
+            dataSource={overall}
           />
         </Col>
         <Col span={24}>
@@ -218,6 +219,7 @@ const Import = (props) => {
             bordered
             size="small"
             className="mb-1 custom-table"
+            locale={{emptyText:'Trống'}}
             columns={columnDetail}
             dataSource={currentScan ? [currentScan] : []}
           />
@@ -267,6 +269,7 @@ const Import = (props) => {
                 ? "table-row-grey"
                 : ""
             }
+            size="small"
             pagination={false}
             bordered
             className="mb-4"
