@@ -9,7 +9,7 @@ import { warehousExportTPData } from "../mock-data";
 import ScanQR from "../../../../components/Scanner";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { exportPallet, getWarehouseFGExportLogs } from "../../../../api/oi/warehouse";
+import { exportPallet, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
 
 const exportColumns = [
   {
@@ -72,7 +72,7 @@ const Export = (props) => {
   const { line } = useParams();
   const history = useHistory();
   const [selectedItem, setSelectedItem] = useState();
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{}]);
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
   const column2 = [
@@ -209,6 +209,8 @@ const Export = (props) => {
   const loadData = async () => {
     var res = await getWarehouseFGExportLogs();
     setData(res.data);
+    var res2 = await getWarehouseFGOverall();
+    setOverall([res2.data])
     setSelectedItem();
   }
   const onFinish = async (values) => {
@@ -227,6 +229,7 @@ const Export = (props) => {
           <Table
             pagination={false}
             bordered
+            size="small"
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
             columns={column2}
@@ -237,6 +240,7 @@ const Export = (props) => {
           <Table
             pagination={false}
             bordered
+            size="small"
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
@@ -288,6 +292,7 @@ const Export = (props) => {
             bordered
             scroll={{y: '30vh'}}
             className="mb-4"
+            size="small"
             columns={exportColumns}
             dataSource={data}
             onRow={(record) => {

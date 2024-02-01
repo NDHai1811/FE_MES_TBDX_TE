@@ -140,7 +140,7 @@ const Import = (props) => {
   const history = useHistory();
   const componentRef1 = useRef();
   const [logs, setLogs] = useState([]);
-  const [warehouseOverall, setWarehouseOverall] = useState([]);
+  const [warehouseOverall, setWarehouseOverall] = useState([{}]);
   const [listPallet, setListPallet] = useState([]);
   const [selectedItem, setSelectedItem] = useState([
     {
@@ -280,6 +280,7 @@ const Import = (props) => {
                 ? "table-row-grey"
                 : ""
           }
+          size="small"
           pagination={false}
           bordered
           className="mb-4"
@@ -305,6 +306,7 @@ const Import = (props) => {
                 ? "table-row-grey"
                 : ""
           }
+          size="small"
           pagination={false}
           bordered
           className="mb-4"
@@ -337,7 +339,9 @@ const Import = (props) => {
             pagination={false}
             bordered
             className="mb-1"
+            size="small"
             columns={column2}
+            locale={{ emptyText: 'Trống' }}
             dataSource={warehouseOverall}
           />
         </Col>
@@ -346,7 +350,9 @@ const Import = (props) => {
             pagination={false}
             bordered
             className="mb-1"
+            size="small"
             columns={columnDetail}
+            locale={{ emptyText: 'Trống' }}
             dataSource={selectedItem}
           />
         </Col>

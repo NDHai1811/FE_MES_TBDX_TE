@@ -9,7 +9,10 @@ import {
     Select,
     Modal,
     message,
-    Input
+    Input,
+    InputNumber,
+    Typography,
+    Popconfirm
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
@@ -26,6 +29,7 @@ import dayjs from "dayjs";
 import { getOrders } from "../../../api";
 import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
+import { EditOutlined } from "@ant-design/icons";
 
 const TaoKeHoachSanXuat = () => {
     const [listCustomers, setListCustomers] = useState([]);
@@ -148,6 +152,19 @@ const TaoKeHoachSanXuat = () => {
         }
 
     }
+    const onUpdate = async () => {
+        const row = await form.validateFields();
+        const item = data.find((val) => val.key === editingKey);
+    };
+    const onChange = (value, dataIndex) => {
+        const items = data.map((val) => {
+            if (val.key === editingKey) {
+                val[dataIndex] = value;
+            }
+            return { ...val };
+        });
+        value.isValid() && setData(items);
+    };
     const columnKHSX = [
         {
             title: 'Thứ tự',
@@ -155,7 +172,6 @@ const TaoKeHoachSanXuat = () => {
             key: 'thu_tu_uu_tien',
             align: 'center',
             fixed: 'left',
-            width: '10%',
         },
         {
             title: 'Khách hàng',
@@ -163,63 +179,55 @@ const TaoKeHoachSanXuat = () => {
             key: 'khach_hang',
             align: 'center',
             fixed: 'left',
-            width: '20%',
         },
         {
             title: 'Lô sản xuất',
             dataIndex: 'lo_sx',
             key: 'lo_sx',
             align: 'center',
-            width: '20%',
         },
         {
             title: 'MDH',
             dataIndex: 'mdh',
             key: 'mdh',
             align: 'center',
-            width: '20%',
         },
         {
             title: 'MQL',
             dataIndex: 'mql',
             key: 'mql',
             align: 'center',
-            width: '10%',
         },
         {
             title: 'Kích thước',
             dataIndex: 'kich_thuoc',
             key: 'kich_thuoc',
             align: 'center',
-            width: '20%',
         },
         {
             title: 'Khổ tổng',
             dataIndex: 'kho_tong',
             key: 'kho_tong',
             align: 'center',
-            width: '20%',
         },
         {
             title: 'Số lượng',
             dataIndex: 'sl_kh',
             key: 'sl_kh',
             align: 'center',
-            width: '20%',
+            editable: true
         },
         {
             title: 'Thời gian bắt đầu',
             dataIndex: 'thoi_gian_bat_dau',
             key: 'thoi_gian_bat_dau',
             align: 'center',
-            width: '25%',
         },
         {
             title: 'Thời gian kết thúc',
             dataIndex: 'thoi_gian_ket_thuc',
             key: 'thoi_gian_ket_thuc',
             align: 'center',
-            width: '25%',
         },
     ]
     const col_detailTable = [
@@ -426,6 +434,122 @@ const TaoKeHoachSanXuat = () => {
         }
         setExportLoading(false);
     };
+
+    const EditableCell = ({
+        editing,
+        dataIndex,
+        title,
+        inputType,
+        record,
+        index,
+        children,
+        onChange,
+        onSelect,
+        options,
+        ...restProps
+    }) => {
+        let inputNode;
+        switch (inputType) {
+            case "number":
+                inputNode = <InputNumber />;
+                break;
+            case "select":
+                inputNode = (
+                    <Select
+                        value={record?.[dataIndex]}
+                        options={options}
+                        onChange={(value) => onSelect(value, dataIndex)}
+                        bordered
+                        showSearch
+                    />
+                );
+                break;
+            default:
+                inputNode = <Input />;
+        }
+        return (
+            <td {...restProps}>
+                {editing ? (
+                    <Form.Item
+                        name={dataIndex}
+                        style={{
+                            margin: 0,
+                        }}
+                        initialValue={record?.[dataIndex]}
+                    >
+                        {inputNode}
+                    </Form.Item>
+                ) : (
+                    children
+                )}
+            </td>
+        );
+    };
+    const [editingKey, setEditingKey] = useState("");
+    const isEditing = (record) => record.key === editingKey;
+    const mergedColumns = [...columnKHSX, 
+        {
+            title: "Tác vụ",
+            dataIndex: "action",
+            key: "action",
+            align: "center",
+            fixed: "right",
+            render: (_, record) => {
+                const editable = isEditing(record);
+                return editable ? (
+                    <span>
+                        <Typography.Link
+                            onClick={() => onUpdate(record)}
+                            style={{
+                                marginRight: 8,
+                            }}
+                        >
+                            Lưu
+                        </Typography.Link>
+                        <a onClick={cancel}>Hủy</a>
+                    </span>
+                ) : (
+                    <span>
+                        <EditOutlined
+                            style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+                            disabled={editingKey !== ""}
+                            onClick={() => edit(record)}
+                        />
+                    </span>
+                );
+            },
+        }
+    ].map((col) => {
+        if (!col.editable) {
+            return col;
+        }
+        return {
+            ...col,
+            onCell: (record) => ({
+                record,
+                inputType: "text",
+                dataIndex: col.dataIndex,
+                title: col.title,
+                editing: isEditing(record),
+                onChange,
+            }),
+        };
+    });
+    const edit = (record) => {
+        form.setFieldsValue({
+            ...record,
+        });
+        setEditingKey(record.key);
+    };
+
+    const cancel = () => {
+        if (typeof editingKey === "number") {
+            const newData = [...data];
+            newData.shift();
+            setData(newData);
+        }
+        setEditingKey("");
+    };
     return (
         <>
             <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
@@ -437,7 +561,6 @@ const TaoKeHoachSanXuat = () => {
                     >
                         <Form
                             layout="vertical"
-                            form={form}
                             onFinish={onFinish}
                         >
                             <Row gutter={[8, 8]}>
@@ -480,15 +603,18 @@ const TaoKeHoachSanXuat = () => {
                                 </Col>
                             </Row>
                         </Form>
-                        <Table size='small' bordered
-                            pagination={false}
-                            columns={columnKHSX}
-                            scroll={
-                                {
-                                    y: '80vh'
-                                }
-                            }
-                            dataSource={previewPlan} />
+                        <Form form={form}>
+                            <Table size='small' bordered
+                                pagination={false}
+                                columns={planParams?.machine_id?.includes('P') ? mergedColumns : columnKHSX}
+                                components={{
+                                    body: {
+                                        cell: EditableCell,
+                                    },
+                                }}
+                                dataSource={previewPlan.map((e, index)=>({...e, key: index}))} 
+                            />
+                        </Form>
                     </Card >
                 </Col >
             </Row >
@@ -591,7 +717,7 @@ const TaoKeHoachSanXuat = () => {
                     columns={col_detailTable}
                     dataSource={data.map(e => ({ ...e, key: e.id }))} />
             </Modal>
-            <Modal
+            {/* <Modal
                 title={'Danh sách lô sản xuất'}
                 open={openMdlPlan}
                 onCancel={() => setOpenMdlPlan(false)}
@@ -670,7 +796,7 @@ const TaoKeHoachSanXuat = () => {
                     rowSelection={rowSelection}
                     columns={col_detailTable_plan}
                     dataSource={listPlan.map(e => ({ ...e, key: e.id }))} />
-            </Modal>
+            </Modal> */}
         </>
     );
 };
