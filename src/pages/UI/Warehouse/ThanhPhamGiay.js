@@ -606,11 +606,7 @@ const ThanhPhamGiay = (props) => {
             className="custom-card scroll"
             extra={
               <Space>
-                <Dropdown menu={{ items }}>
-                  <Button type="primary" loading={exportLoading1}>
-                    Nhập từ excel
-                  </Button>
-                </Dropdown>
+               
                 <Button
                   type="primary"
                   loading={exportLoading}

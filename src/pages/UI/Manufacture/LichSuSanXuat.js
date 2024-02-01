@@ -106,7 +106,7 @@ const columns3 = [
     dataIndex: "index",
     key: "index",
     align: "center",
-    width: "2%",
+    width: "1.5%",
     render: (value, record, index) => index + 1,
   },
   {
@@ -114,14 +114,14 @@ const columns3 = [
     dataIndex: "ngay_sx",
     key: "ngay_sx",
     align: "center",
-    width: "4%",
+    width: "3.5%",
   },
   {
     title: "Công đoạn",
     dataIndex: "line",
     key: "line",
     align: "center",
-    width: "4%",
+    width: "3%",
     render: (value) => value?.name,
   },
   {
@@ -129,20 +129,28 @@ const columns3 = [
     dataIndex: "machine_id",
     key: "machine_id",
     align: "center",
-    width: "4%",
+    width: "2%",
   },
   {
     title: "Khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width: "10%",
+    width: "6%",
   },
   {
-    title: "Đơn hàng",
+    title: "MDH",
     dataIndex: "mdh",
     key: "mdh",
     align: "center",
+    width: "4%",
+  },
+  {
+    title: "MQL",
+    dataIndex: "mql",
+    key: "mql",
+    align: "center",
+    width: "2%",
   },
   {
     title: "Lô sản xuất",
@@ -443,6 +451,32 @@ const LichSuSanXuat = (props) => {
                         });
                       }}
                       placeholder="Nhập lô sản xuất"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Máy" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          machine_id: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập máy"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Quy cách" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          quy_cach: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập quy cách"
                     />
                   </Form.Item>
                 </Form>
