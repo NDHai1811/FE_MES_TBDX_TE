@@ -21,7 +21,7 @@ const columns1 = [
     key: "lo_sx",
     align: "center",
     render: (value) => value || "-",
-    width:'7%'
+    width: '7%'
   },
   {
     title: "Mã KH",
@@ -43,7 +43,7 @@ const columns1 = [
     key: "don_hang",
     align: "center",
     render: (value) => value || "-",
-    width:'7%'
+    width: '7%'
   },
   {
     title: "MQL",
@@ -51,7 +51,7 @@ const columns1 = [
     key: "mql",
     align: "center",
     render: (value) => value || "-",
-    width:'4%'
+    width: '4%'
   },
   {
     title: "Số lớp",
@@ -59,7 +59,7 @@ const columns1 = [
     key: "so_lop",
     align: "center",
     render: (value) => value || "-",
-    width:'4%'
+    width: '4%'
   },
   {
     title: "Khổ tổng",
@@ -67,7 +67,7 @@ const columns1 = [
     key: "kho_tong",
     align: "center",
     render: (value) => value || "-",
-    width:'6%'
+    width: '6%'
   },
   {
     title: "Dài tấm",
@@ -75,7 +75,7 @@ const columns1 = [
     key: "dai_tam",
     align: "center",
     render: (value) => value || "-",
-    width:'6%'
+    width: '6%'
   },
   {
     title: "Số lượng",
@@ -106,8 +106,8 @@ const Mapping = () => {
   const [selectedItem, setSelectedItem] = useState([]);
   const [tableColumns, setTableColumns] = useState(columns1);
 
-  useEffect(()=>{
-    setParams({...params, machine_id: machine_id})
+  useEffect(() => {
+    setParams({ ...params, machine_id: machine_id })
   }, [machine_id])
   useEffect(() => {
     if (machine_id) {
@@ -191,10 +191,10 @@ const Mapping = () => {
   ];
 
   const onShowPopup = async () => {
-    // const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
-    // if (res.success) {
-    selectedItem && setVisible(true);
-    // }
+    const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
+    if (res.success) {
+      selectedItem && setVisible(true);
+    }
   };
 
   const onShowPopupParameter = async () => {

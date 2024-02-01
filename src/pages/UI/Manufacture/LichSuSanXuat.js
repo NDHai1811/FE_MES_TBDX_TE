@@ -17,10 +17,6 @@ import {
 } from "antd";
 import "../style.scss";
 import {
-  getCustomers,
-  getLines,
-  getLoSanXuat,
-  getOrders,
   getUIItemMenu,
 } from "../../../api/ui/main";
 import {
@@ -137,10 +133,11 @@ const columns3 = [
   },
   {
     title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
+    dataIndex: "short_name",
+    key: "short_name",
     align: "center",
     width: "10%",
+    render: (value, item) => item?.plan?.order?.short_name,
   },
   {
     title: "Đơn hàng",
@@ -479,7 +476,7 @@ const LichSuSanXuat = (props) => {
                   onClick={reportProduceHistory}
                   loading={exportLoading2}
                 >
-                  Báo cáo truy vấn
+                  Xuất báo cáo
                 </Button>
                 <Button
                   type="primary"
@@ -496,7 +493,7 @@ const LichSuSanXuat = (props) => {
                 className="mb-3"
                 size="small"
                 bordered
-                locale={{emptyText:"Trống"}}
+                locale={{ emptyText: "Trống" }}
                 pagination={false}
                 columns={columns1}
                 dataSource={dataTable1}
@@ -505,7 +502,7 @@ const LichSuSanXuat = (props) => {
                 className="mb-3"
                 size="small"
                 bordered
-                locale={{emptyText:"Trống"}}
+                locale={{ emptyText: "Trống" }}
                 pagination={false}
                 columns={columns2}
                 scroll={{
@@ -519,7 +516,7 @@ const LichSuSanXuat = (props) => {
                 pagination={false}
                 scroll={{
                   x: "200vw",
-                  y: window.innerHeight * 0.20,
+                  y: window.innerHeight * 0.30,
                 }}
                 columns={columns3}
                 dataSource={dataTable3}

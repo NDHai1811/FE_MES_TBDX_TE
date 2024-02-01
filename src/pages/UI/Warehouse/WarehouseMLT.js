@@ -215,20 +215,6 @@ const WarehouseMLT = (props) => {
   };
 
   const columns = [
-    // {
-    //   title: "Chọn",
-    //   dataIndex: "name1",
-    //   key: "name1",
-    //   align: "center",
-    //   width: "4%",
-    //   render: (value, item, index) => (
-    //     <Checkbox
-    //       value={item.material_id}
-    //       onChange={onChangeChecbox}
-    //       checked={listCheck.includes(item.material_id) ? true : false}
-    //     ></Checkbox>
-    //   ),
-    // },
     {
       title: "Mã cuộn TBDX",
       dataIndex: "material_id",
@@ -258,12 +244,14 @@ const WarehouseMLT = (props) => {
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
+      width: '6%'
     },
     {
       title: "Loại giấy",
       dataIndex: "loai_giay",
       key: "loai_giay",
       align: "center",
+      width: '8%'
     },
     {
       title: "FSC",
@@ -271,6 +259,7 @@ const WarehouseMLT = (props) => {
       key: "fsc",
       align: "center",
       render: (value, item, index) => (value === 1 ? "X" : ""),
+      width: '5%'
     },
     {
       title: "Khổ giấy",
@@ -442,8 +431,7 @@ const WarehouseMLT = (props) => {
             return { ...e, key: e.id };
           })}
           scroll={{
-            x: "100vw",
-            y: window.innerHeight * 0.70,
+            y: window.innerHeight * 0.60,
           }}
           className="h-100"
           rowSelection={rowSelection}
@@ -515,7 +503,6 @@ const WarehouseMLT = (props) => {
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                   <Space direction="vertical" style={{ width: "100%" }}>
                     <DatePicker
                       allowClear={false}
