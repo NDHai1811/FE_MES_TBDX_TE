@@ -329,7 +329,6 @@ const Export = (props) => {
             pagination={false}
             bordered
             className="mb-4"
-            size="small"
             columns={exportColumns}
             dataSource={logs}
             onRow={(record) => {
