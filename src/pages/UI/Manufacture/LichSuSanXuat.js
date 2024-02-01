@@ -133,16 +133,15 @@ const columns3 = [
   },
   {
     title: "Khách hàng",
-    dataIndex: "short_name",
-    key: "short_name",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
     align: "center",
     width: "10%",
-    render: (value, item) => item?.plan?.order?.short_name,
   },
   {
     title: "Đơn hàng",
-    dataIndex: "order_id",
-    key: "order_id",
+    dataIndex: "mdh",
+    key: "mdh",
     align: "center",
   },
   {
@@ -150,13 +149,6 @@ const columns3 = [
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-  },
-  {
-    title: "Lot sản xuất",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    width: "5%",
   },
   {
     title: "Mã layout",
@@ -296,9 +288,6 @@ const LichSuSanXuat = (props) => {
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  const [customers, setCustomers] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [loSX, setLoSX] = useState([]);
   useEffect(() => {
     (async () => {
       const res1 = await getUIItemMenu();
@@ -341,7 +330,6 @@ const LichSuSanXuat = (props) => {
   const reportProduceHistory = async () => {
     setExportLoading2(true);
     const res = await exportReportProduceHistory(params);
-    console.log(res.data);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -385,7 +373,6 @@ const LichSuSanXuat = (props) => {
                       checkable
                       onCheck={onCheck}
                       treeData={itemsMenu}
-                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
                     />
                   </Form.Item>
                 </Form>
@@ -393,7 +380,6 @@ const LichSuSanXuat = (props) => {
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                   <Space direction="vertical" style={{ width: "100%" }}>
                     <DatePicker
                       allowClear={false}
