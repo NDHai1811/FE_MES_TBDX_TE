@@ -561,6 +561,7 @@ const TaoKeHoachSanXuat = () => {
                     >
                         <Form
                             layout="vertical"
+                            form={form}
                             onFinish={onFinish}
                         >
                             <Row gutter={[8, 8]}>
@@ -603,7 +604,7 @@ const TaoKeHoachSanXuat = () => {
                                 </Col>
                             </Row>
                         </Form>
-                        <Form form={form}>
+                        <Form>
                             <Table size='small' bordered
                                 pagination={false}
                                 columns={planParams?.machine_id?.includes('P') ? mergedColumns : columnKHSX}
