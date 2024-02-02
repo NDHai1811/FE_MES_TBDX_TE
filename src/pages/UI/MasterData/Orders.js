@@ -129,54 +129,67 @@ const PL2s = [
   {
     label: "Thùng 1 mảnh",
     value: "thung-1-manh",
+    phan_loai_1: 'thung'
   },
   {
     label: "Thùng 2 mảnh",
     value: "thung-2-manh",
+    phan_loai_1: 'thung'
   },
   {
     label: "Thùng 4 mảnh",
     value: "thung-4-manh",
+    phan_loai_1: 'thung'
   },
   {
     label: "Thùng thường",
     value: "thung-thuong",
+    phan_loai_1: 'inner'
   },
   {
     label: "Thùng bế",
     value: "thung-be",
+    phan_loai_1: 'thung'
   },
   {
     label: "Thùng 1 nắp",
     value: "thung-1-nap",
+    phan_loai_1: 'thung'
   },
   {
     label: "Cánh chồm",
     value: "canh-chom",
+    phan_loai_1: 'thung'
   },
   {
     label: "Pad U",
     value: "pad-u",
+    phan_loai_1: 'pad'
   },
   {
     label: "Pad Z, rãnh",
     value: "pad-z-ranh",
+    phan_loai_1: 'pad'
   },
   {
     label: "Giấy tấm không tề",
     value: "giay-tam-khong-te",
+    phan_loai_1: 'pad'
   },
   {
     label: "Giấy tấm có tề 1 mảnh (DxR)",
     value: "giay-tam-co-te-1-manh-dxr",
+    phan_loai_1: 'pad'
   },
   {
     label: "Giấy tấm có tề 1 mảnh (DxRxC)",
     value: "giay-tam-co-te-1-manh-dxrxc",
+    phan_loai_1: 'pad'
   },
   {
     label: "Giấy tấm có tề 2 mảnh (DxRxC)",
     value: "giay-tam-co-te-2-manh-dxrxc",
+    phan_loai_1: 'pad'
   },
 ];
 const Orders = () => {
@@ -840,7 +853,7 @@ const Orders = () => {
         filteredOptions = PL1s;
         break;
       case "phan_loai_2":
-        filteredOptions = PL2s;
+        filteredOptions = PL2s.filter(e=>e?.phan_loai_1 === record?.phan_loai_1);
         break;
       default:
         var options = record?.customer_specifications ?? [];
@@ -947,11 +960,11 @@ const Orders = () => {
     getDRCs();
   }, []);
 
-  useEffect(() => {
-    if (editingKey) {
-      getBuyerList();
-    }
-  }, [editingKey]);
+  // useEffect(() => {
+  //   if (editingKey) {
+  //     getBuyerList();
+  //   }
+  // }, [editingKey]);
 
   const rowSelection = {
     selectedRowKeys: listCheck,
@@ -981,9 +994,9 @@ const Orders = () => {
       }
       return { ...val };
     });
-    if (dataIndex === "phan_loai_1") {
-      getBuyerList();
-    }
+    // if (dataIndex === "phan_loai_1") {
+    //   getBuyerList();
+    // }
     setData(items);
   };
 
