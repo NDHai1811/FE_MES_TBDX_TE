@@ -106,7 +106,7 @@ const columns3 = [
     dataIndex: "index",
     key: "index",
     align: "center",
-    width: "2%",
+    width: "1.5%",
     render: (value, record, index) => index + 1,
   },
   {
@@ -114,14 +114,14 @@ const columns3 = [
     dataIndex: "ngay_sx",
     key: "ngay_sx",
     align: "center",
-    width: "4%",
+    width: "3.5%",
   },
   {
     title: "Công đoạn",
     dataIndex: "line",
     key: "line",
     align: "center",
-    width: "4%",
+    width: "3%",
     render: (value) => value?.name,
   },
   {
@@ -129,34 +129,34 @@ const columns3 = [
     dataIndex: "machine_id",
     key: "machine_id",
     align: "center",
-    width: "4%",
+    width: "2%",
   },
   {
     title: "Khách hàng",
-    dataIndex: "short_name",
-    key: "short_name",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
     align: "center",
-    width: "10%",
-    render: (value, item) => item?.plan?.order?.short_name,
+    width: "6%",
   },
   {
-    title: "Đơn hàng",
-    dataIndex: "order_id",
-    key: "order_id",
+    title: "MDH",
+    dataIndex: "mdh",
+    key: "mdh",
     align: "center",
+    width: "4%",
+  },
+  {
+    title: "MQL",
+    dataIndex: "mql",
+    key: "mql",
+    align: "center",
+    width: "2%",
   },
   {
     title: "Lô sản xuất",
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-  },
-  {
-    title: "Lot sản xuất",
-    dataIndex: "lot_id",
-    key: "lot_id",
-    align: "center",
-    width: "5%",
   },
   {
     title: "Mã layout",
@@ -296,9 +296,6 @@ const LichSuSanXuat = (props) => {
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  const [customers, setCustomers] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [loSX, setLoSX] = useState([]);
   useEffect(() => {
     (async () => {
       const res1 = await getUIItemMenu();
@@ -341,7 +338,6 @@ const LichSuSanXuat = (props) => {
   const reportProduceHistory = async () => {
     setExportLoading2(true);
     const res = await exportReportProduceHistory(params);
-    console.log(res.data);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -385,7 +381,6 @@ const LichSuSanXuat = (props) => {
                       checkable
                       onCheck={onCheck}
                       treeData={itemsMenu}
-                    // style={{ maxHeight: '80px', overflowY: 'auto' }}
                     />
                   </Form.Item>
                 </Form>
@@ -393,7 +388,6 @@ const LichSuSanXuat = (props) => {
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                   <Space direction="vertical" style={{ width: "100%" }}>
                     <DatePicker
                       allowClear={false}
@@ -457,6 +451,32 @@ const LichSuSanXuat = (props) => {
                         });
                       }}
                       placeholder="Nhập lô sản xuất"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Máy" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          machine_id: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập máy"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Quy cách" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          quy_cach: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập quy cách"
                     />
                   </Form.Item>
                 </Form>
