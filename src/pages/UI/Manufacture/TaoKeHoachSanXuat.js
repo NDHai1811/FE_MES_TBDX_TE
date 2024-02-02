@@ -46,6 +46,7 @@ const TaoKeHoachSanXuat = () => {
     const [openMdlOrder, setOpenMdlOrder] = useState(false);
     const [openMdlPlan, setOpenMdlPlan] = useState(false);
     const [listPlan, setListPlan] = useState([]);
+    const [formUpdate] = Form.useForm();
 
     const loadListOrders = async () => {
         setLoadingOrders(true);
@@ -153,7 +154,7 @@ const TaoKeHoachSanXuat = () => {
 
     }
     const onUpdate = async () => {
-        const row = await form.validateFields();
+        const row = await formUpdate.validateFields();
         const item = data.find((val) => val.key === editingKey);
     };
     const onChange = (value, dataIndex) => {
@@ -604,7 +605,7 @@ const TaoKeHoachSanXuat = () => {
                                 </Col>
                             </Row>
                         </Form>
-                        <Form>
+                        <Form form={formUpdate}>
                             <Table size='small' bordered
                                 pagination={false}
                                 columns={planParams?.machine_id?.includes('P') ? mergedColumns : columnKHSX}
