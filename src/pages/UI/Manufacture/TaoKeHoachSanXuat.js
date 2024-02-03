@@ -9,11 +9,17 @@ import {
     Select,
     Modal,
     message,
+    Input,
+    InputNumber,
+    Typography,
+    Popconfirm
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
 import {
     createProductPlan,
+    exportKHSX,
+    exportPreviewPlan,
     getListProductPlan,
     getOrderList,
     handleOrder,
@@ -22,6 +28,8 @@ import {
 import dayjs from "dayjs";
 import { getOrders } from "../../../api";
 import { getMachineList } from "../../../api/ui/machine";
+import { baseURL } from "../../../config";
+import { EditOutlined } from "@ant-design/icons";
 
 const TaoKeHoachSanXuat = () => {
     const [listCustomers, setListCustomers] = useState([]);
@@ -38,6 +46,7 @@ const TaoKeHoachSanXuat = () => {
     const [openMdlOrder, setOpenMdlOrder] = useState(false);
     const [openMdlPlan, setOpenMdlPlan] = useState(false);
     const [listPlan, setListPlan] = useState([]);
+    const [formUpdate] = Form.useForm();
 
     const loadListOrders = async () => {
         setLoadingOrders(true);
@@ -54,11 +63,14 @@ const TaoKeHoachSanXuat = () => {
         setLoadingPlans(false);
     };
 
+    const [loadingBtn, setLoadingBtn] = useState(false);
     const onFinish = async (values) => {
+        setLoadingBtn(true);
         const res = await createProductPlan({ data: previewPlan });
         if (res.success) {
             window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
         }
+        setLoadingBtn(false);
     };
 
     const insertOrder = async () => {
@@ -81,12 +93,12 @@ const TaoKeHoachSanXuat = () => {
         }
         setLoadingPlans(true)
         const res = await handleOrder(inp);
-        if(res.success){
+        if (res.success) {
             setPreviewPlan(res.data);
             setOpenMdlOrder(false);
             setLoadingPlans(false);
         }
-        
+
 
     };
     const insertLSX = async () => {
@@ -109,7 +121,7 @@ const TaoKeHoachSanXuat = () => {
         }
         setLoadingPlans(true)
         const res = await handlePlan(inp);
-        if(res.success){
+        if (res.success) {
             setPreviewPlan(res.data);
             setOpenMdlPlan(false);
             setLoadingPlans(false);
@@ -121,168 +133,177 @@ const TaoKeHoachSanXuat = () => {
             const res1 = await getMachineList();
             setListMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.name_input })))
+            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
         })();
     }, []);
 
     const openModal = async () => {
         if (!planParams.machine_id) {
             message.info('Chưa chọn máy');
-        }else{
+        } else {
             // if (planParams.machine_id == 'S01') {
-                setData([]);
-                setOpenMdlOrder(true);
-                loadListOrders();
+            setData([]);
+            setOpenMdlOrder(true);
+            loadListOrders();
             // } else {
             //     setListPlan([]);
             //     setOpenMdlPlan(true);
             //     loadListPlans();
             // }
         }
-        
+
     }
+    const onUpdate = async () => {
+        const row = await formUpdate.validateFields();
+        const item = data.find((val) => val.key === editingKey);
+    };
+    const onChange = (value, dataIndex) => {
+        const items = data.map((val) => {
+            if (val.key === editingKey) {
+                val[dataIndex] = value;
+            }
+            return { ...val };
+        });
+        value.isValid() && setData(items);
+    };
     const columnKHSX = [
         {
-            title: 'Thứ tự ưu tiên',
+            title: 'Thứ tự',
             dataIndex: 'thu_tu_uu_tien',
             key: 'thu_tu_uu_tien',
             align: 'center',
             fixed: 'left',
-            width: '20%',
-        },
-        {
-            title: 'Lô sản xuất',
-            dataIndex: 'lo_sx',
-            key: 'lo_sx',
-            align: 'center',
-            width: '20%',
-        },
-        {
-            title: 'MDH',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-            width: '40%',
-        },
-        {
-            title: 'Khổ tổng',
-            dataIndex: 'kho_tong',
-            key: 'kho_tong',
-            align: 'center',
-            width: '40%',
-        },
-        {
-            title: 'MQL',
-            dataIndex: 'mql',
-            key: 'mql',
-            align: 'center',
-            width: '40%',
-        },
-        {
-            title: 'Số lượng',
-            dataIndex: 'sl_kh',
-            key: 'sl_kh',
-            align: 'center',
-            width: '20%',
-        },
-        {
-            title: 'Thời gian bắt đầu',
-            dataIndex: 'thoi_gian_bat_dau',
-            key: 'thoi_gian_bat_dau',
-            align: 'center',
-            width: '25%',
-        },
-        {
-            title: 'Thời gian kết thúc',
-            dataIndex: 'thoi_gian_ket_thuc',
-            key: 'thoi_gian_ket_thuc',
-            align: 'center',
-            width: '25%',
-        },
-    ]
-    const col_detailTable = [
-        {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
-            align: 'center',
-        },
-        {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dat_hang',
-            key: 'ngay_dat_hang',
-            align: 'center',
         },
         {
             title: 'Khách hàng',
             dataIndex: 'khach_hang',
             key: 'khach_hang',
             align: 'center',
+            fixed: 'left',
         },
         {
-            title: 'Mã đơn hàng',
+            title: 'Lô sản xuất',
+            dataIndex: 'lo_sx',
+            key: 'lo_sx',
+            align: 'center',
+        },
+        {
+            title: 'MDH',
             dataIndex: 'mdh',
             key: 'mdh',
             align: 'center',
         },
         {
-            title: 'Đơn hàng',
-            dataIndex: 'order',
-            key: 'order',
-            align: 'center',
-        },
-        {
-            title: 'Mã quản lý',
+            title: 'MQL',
             dataIndex: 'mql',
             key: 'mql',
             align: 'center',
+        },
+        {
+            title: 'Kích thước',
+            dataIndex: 'kich_thuoc',
+            key: 'kich_thuoc',
+            align: 'center',
+        },
+        {
+            title: 'Khổ tổng',
+            dataIndex: 'kho_tong',
+            key: 'kho_tong',
+            align: 'center',
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'sl_kh',
+            key: 'sl_kh',
+            align: 'center',
+            editable: true
+        },
+        {
+            title: 'Thời gian bắt đầu',
+            dataIndex: 'thoi_gian_bat_dau',
+            key: 'thoi_gian_bat_dau',
+            align: 'center',
+        },
+        {
+            title: 'Thời gian kết thúc',
+            dataIndex: 'thoi_gian_ket_thuc',
+            key: 'thoi_gian_ket_thuc',
+            align: 'center',
+        },
+    ]
+    const col_detailTable = [
+        {
+            title: 'Hạn giao SX',
+            dataIndex: 'han_giao_sx',
+            key: 'han_giao_sx',
+            align: 'center',
+            width: '6%'
+        },
+        {
+            title: 'Khách hàng',
+            dataIndex: 'khach_hang',
+            key: 'khach_hang',
+            align: 'center',
+            width: '10%'
+        },
+        {
+            title: 'MDH',
+            dataIndex: 'mdh',
+            key: 'mdh',
+            align: 'center',
+            width: '5%'
+        },
+        {
+            title: 'MQL',
+            dataIndex: 'mql',
+            key: 'mql',
+            align: 'center',
+            width: '3%'
         },
         {
             title: 'Dài',
             dataIndex: 'dai',
             key: 'dai',
             align: 'center',
+            width: '3%'
         },
         {
             title: 'Rộng',
             dataIndex: 'rong',
             key: 'rong',
             align: 'center',
+            width: '3%'
         },
         {
             title: 'Cao',
             dataIndex: 'cao',
             key: 'cao',
             align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
+            width: '3%'
         },
         {
             title: 'Số lượng',
             dataIndex: 'sl',
             key: 'sl',
             align: 'center',
+            width: '5%'
         },
         {
-            title: 'Size',
-            dataIndex: 'size',
-            key: 'size',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú 1',
-            dataIndex: 'note_1',
-            key: 'note_1',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú 2',
+            title: 'Ghi chú TBDX',
             dataIndex: 'note_2',
             key: 'note_2',
+            align: 'center',
+        },
+        {
+            title: 'Mã Layout',
+            dataIndex: 'layout_id',
+            key: 'layout_id',
+            align: 'center',
+        },
+        {
+            title: 'Ghi chú khách',
+            dataIndex: 'note_1',
+            key: 'note_1',
             align: 'center',
         },
         {
@@ -301,9 +322,9 @@ const TaoKeHoachSanXuat = () => {
             fixed: 'left'
         },
         {
-            title: 'Hạn giao',
-            dataIndex: 'han_giao',
-            key: 'han_giao',
+            title: 'Hạn giao SX',
+            dataIndex: 'han_giao_sx',
+            key: 'han_giao_sx',
             align: 'center',
         },
         {
@@ -393,7 +414,7 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
-            if(orderParams.machine_id){
+            if (orderParams.machine_id) {
                 loadListOrders();
             }
         })()
@@ -401,9 +422,135 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
+            console.log(lsxParams);
             loadListPlans();
         })()
-    }, [lsxParams])
+    }, [lsxParams]);
+    const [exportLoading, setExportLoading] = useState(false);
+    const exportFile = async () => {
+        setExportLoading(true);
+        const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
+        if (res.success) {
+            window.location.href = baseURL + res.data;
+        }
+        setExportLoading(false);
+    };
+
+    const EditableCell = ({
+        editing,
+        dataIndex,
+        title,
+        inputType,
+        record,
+        index,
+        children,
+        onChange,
+        onSelect,
+        options,
+        ...restProps
+    }) => {
+        let inputNode;
+        switch (inputType) {
+            case "number":
+                inputNode = <InputNumber />;
+                break;
+            case "select":
+                inputNode = (
+                    <Select
+                        value={record?.[dataIndex]}
+                        options={options}
+                        onChange={(value) => onSelect(value, dataIndex)}
+                        bordered
+                        showSearch
+                    />
+                );
+                break;
+            default:
+                inputNode = <Input />;
+        }
+        return (
+            <td {...restProps}>
+                {editing ? (
+                    <Form.Item
+                        name={dataIndex}
+                        style={{
+                            margin: 0,
+                        }}
+                        initialValue={record?.[dataIndex]}
+                    >
+                        {inputNode}
+                    </Form.Item>
+                ) : (
+                    children
+                )}
+            </td>
+        );
+    };
+    const [editingKey, setEditingKey] = useState("");
+    const isEditing = (record) => record.key === editingKey;
+    const mergedColumns = [...columnKHSX, 
+        {
+            title: "Tác vụ",
+            dataIndex: "action",
+            key: "action",
+            align: "center",
+            fixed: "right",
+            render: (_, record) => {
+                const editable = isEditing(record);
+                return editable ? (
+                    <span>
+                        <Typography.Link
+                            onClick={() => onUpdate(record)}
+                            style={{
+                                marginRight: 8,
+                            }}
+                        >
+                            Lưu
+                        </Typography.Link>
+                        <a onClick={cancel}>Hủy</a>
+                    </span>
+                ) : (
+                    <span>
+                        <EditOutlined
+                            style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+                            disabled={editingKey !== ""}
+                            onClick={() => edit(record)}
+                        />
+                    </span>
+                );
+            },
+        }
+    ].map((col) => {
+        if (!col.editable) {
+            return col;
+        }
+        return {
+            ...col,
+            onCell: (record) => ({
+                record,
+                inputType: "text",
+                dataIndex: col.dataIndex,
+                title: col.title,
+                editing: isEditing(record),
+                onChange,
+            }),
+        };
+    });
+    const edit = (record) => {
+        form.setFieldsValue({
+            ...record,
+        });
+        setEditingKey(record.key);
+    };
+
+    const cancel = () => {
+        if (typeof editingKey === "number") {
+            const newData = [...data];
+            newData.shift();
+            setData(newData);
+        }
+        setEditingKey("");
+    };
     return (
         <>
             <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
@@ -411,14 +558,14 @@ const TaoKeHoachSanXuat = () => {
                     <Card
                         style={{ height: "100%" }}
                         title="Tạo kế hoạch sản xuất"
-                        extra={<Button type="primary" onClick={() => form.submit()}>Tạo KHSX</Button>}
+                        extra={<Button type="primary" onClick={() => form.submit()} loading={loadingBtn}>Tạo KHSX</Button>}
                     >
                         <Form
                             layout="vertical"
                             form={form}
                             onFinish={onFinish}
                         >
-                            <Row gutter={[16, 16]}>
+                            <Row gutter={[8, 8]}>
                                 <Col span={7}>
                                     <Form.Item
                                         label="Chọn máy"
@@ -428,7 +575,8 @@ const TaoKeHoachSanXuat = () => {
                                         <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => {
                                             setPlanParams({ ...planParams, machine_id: value });
                                             setOrderParams({ ...orderParams, machine_id: value });
-                                        }} />
+                                        }}
+                                            optionFilterProp="label" />
                                     </Form.Item>
                                 </Col>
                                 <Col span={7}>
@@ -450,19 +598,25 @@ const TaoKeHoachSanXuat = () => {
                                     </Form.Item>
                                 </Col>
                                 <Col span={4} style={{ marginTop: '30px' }}>
-                                    <Button type="primary" onClick={() => openModal()}>Chọn danh sách</Button>
+                                    <Button type="primary" onClick={() => openModal()} className="w-100">Chọn danh sách</Button>
+                                </Col>
+                                <Col span={4} style={{ marginTop: '30px' }}>
+                                    <Button type="primary" onClick={() => exportFile()} loading={exportLoading} className="w-100">Tải file excel</Button>
                                 </Col>
                             </Row>
                         </Form>
-                        <Table size='small' bordered
-                            pagination={false}
-                            columns={columnKHSX}
-                            scroll={
-                                {
-                                    y: '80vh'
-                                }
-                            }
-                            dataSource={previewPlan} />
+                        <Form form={formUpdate}>
+                            <Table size='small' bordered
+                                pagination={false}
+                                columns={planParams?.machine_id?.includes('P') ? mergedColumns : columnKHSX}
+                                components={{
+                                    body: {
+                                        cell: EditableCell,
+                                    },
+                                }}
+                                dataSource={previewPlan.map((e, index)=>({...e, key: index}))} 
+                            />
+                        </Form>
                     </Card >
                 </Col >
             </Row >
@@ -475,7 +629,7 @@ const TaoKeHoachSanXuat = () => {
             >
                 <Form layout="vertical">
                     <Row gutter={[16, 16]}>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
@@ -486,7 +640,7 @@ const TaoKeHoachSanXuat = () => {
                                     placeholder="Chọn khách hàng"
                                     style={{ width: "100%" }}
                                     onChange={(value) =>
-                                        setOrderParams({ ...orderParams, customer_id: value })
+                                        setOrderParams({ ...orderParams, short_name: value })
                                     }
                                     filterOption={(input, option) =>
                                         (option?.label ?? "")
@@ -498,7 +652,26 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
+                            <Form.Item
+                                label="MDH"
+                                className="mb-3"
+                            >
+                                <Select
+                                    mode="tags"
+                                    allowClear
+                                    showSearch
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, mdh: value });
+                                    }}
+                                    open={false}
+                                    placeholder="Nhập mã đơn hàng"
+                                    options={[]}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
                             <Form.Item
                                 label="Bắt đầu"
                                 className="mb-3"
@@ -514,7 +687,7 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Form.Item
                                 label="Kết thúc"
                                 className="mb-3"
@@ -546,7 +719,7 @@ const TaoKeHoachSanXuat = () => {
                     columns={col_detailTable}
                     dataSource={data.map(e => ({ ...e, key: e.id }))} />
             </Modal>
-            <Modal
+            {/* <Modal
                 title={'Danh sách lô sản xuất'}
                 open={openMdlPlan}
                 onCancel={() => setOpenMdlPlan(false)}
@@ -568,11 +741,11 @@ const TaoKeHoachSanXuat = () => {
                                     onChange={(value) =>
                                         setLSXParams({ ...lsxParams, customer_id: value })
                                     }
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? "")
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
-                                    }
+                                    // filterOption={(input, option) =>
+                                    //     (option?.label ?? "")
+                                    //         .toLowerCase()
+                                    //         .includes(input.toLowerCase())
+                                    // }
                                     popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
                                     options={listCustomers}
                                 />
@@ -625,7 +798,7 @@ const TaoKeHoachSanXuat = () => {
                     rowSelection={rowSelection}
                     columns={col_detailTable_plan}
                     dataSource={listPlan.map(e => ({ ...e, key: e.id }))} />
-            </Modal>
+            </Modal> */}
         </>
     );
 };

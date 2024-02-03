@@ -16,7 +16,7 @@ function PopupQuetQrNhapKho(props) {
     setVisible,
     setResData,
     setSelectedItem,
-    setInfo,
+    setListCheck,
     setResult,
   } = props;
 
@@ -72,25 +72,29 @@ function PopupQuetQrNhapKho(props) {
 
   useEffect(() => {
     if (currentResult) {
-      const isExisted = data?.some((val) => val?.lo_sx === currentResult);
+      const result = JSON.parse(currentResult);
+      const isExisted = data?.some((val) => val?.lo_sx === result.lo_sx);
       if (!isExisted) {
-        getQuantity();
+        setData((prevData) => [
+          ...prevData,
+          { lo_sx: result.lo_sx, so_luong: result.so_luong },
+        ]);
       }
     }
   }, [currentResult]);
 
-  const getQuantity = () => {
-    getQuantityLot({ lo_sx: currentResult })
-      .then((res) => {
-        if (res.data?.lo_sx) {
-          setData((prevData) => [
-            ...prevData,
-            { lo_sx: res.data.lo_sx, so_luong: res.data.so_luong },
-          ]);
-        }
-      })
-      .catch((err) => console.log("Lấy thông tin số lượng thất bại: ", err));
-  };
+  // const getQuantity = () => {
+  //   getQuantityLot({ lo_sx: currentResult })
+  //     .then((res) => {
+  //       if (res.data?.lo_sx) {
+  //         setData((prevData) => [
+  //           ...prevData,
+  //           { lo_sx: res.data.lo_sx, so_luong: res.data.so_luong },
+  //         ]);
+  //       }
+  //     })
+  //     .catch((err) => console.log("Lấy thông tin số lượng thất bại: ", err));
+  // };
 
   const getSuggestList = () => {
     getSuggestPallet()
@@ -141,13 +145,16 @@ function PopupQuetQrNhapKho(props) {
 
   const sendResult = () => {
     const totalQuantity = data.reduce((sum, val) => sum + val.so_luong, 0);
-    const lotIds = data.map((val) => val.lo_sx);
+    const arr = [];
+    data.forEach((val) => {
+      arr.push({ lo_sx: val.lo_sx, so_luong: val.so_luong });
+    });
 
     const resData = {
       pallet_id: palletId,
       number_of_lot: data.length,
       so_luong: totalQuantity,
-      lo_sx: lotIds,
+      inp_arr: arr,
     };
 
     sendStorePallet(resData)
@@ -159,7 +166,7 @@ function PopupQuetQrNhapKho(props) {
             so_luong: totalQuantity,
           },
         ]);
-        setInfo(res.data);
+        setListCheck([res.data]);
         setResult?.(res.data);
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));

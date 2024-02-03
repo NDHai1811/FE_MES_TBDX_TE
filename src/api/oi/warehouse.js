@@ -24,6 +24,10 @@ export const getWarehouseOverall = async () => {
   return await axios.get("oi/warehouse/mlt/import/overall");
 };
 
+export const getWarehouseFGOverall = async () => {
+  return await axios.get("oi/warehouse/fg/overall");
+};
+
 export const getSuggestPallet = async () => {
   return await axios.get("/oi/warehouse/fg/suggest-pallet");
 };
@@ -38,6 +42,10 @@ export const sendStorePallet = async (params) => {
 
 export const importData = async (params) => {
   return await axios.post("/oi/warehouse/fg/import/save", params);
+};
+
+export const getListPallet = async () => {
+  return await axios.get("/oi/warehouse/fg/list-pallet");
 };
 
 export const getExportNvlLogs = async () => {
@@ -60,4 +68,10 @@ export const saveExportsNVL = async (params) => {
 
 export const getWarehouseTpLogs = async () => {
   return await axios.get("oi/warehouse/fg/import/logs");
+};
+export const getWarehouseFGExportLogs = async () => {
+  return await axios.get("oi/warehouse/fg/export/logs");
+};
+export const exportPallet = async (params) => {
+  return await axios.post("oi/warehouse/fg/export/handle-export-pallet", params);
 };

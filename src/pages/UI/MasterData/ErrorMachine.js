@@ -75,7 +75,7 @@ const ErrorMachines = () => {
   const formFields = [
     {
       key: "id",
-      hidden: true
+      hidden: true,
     },
     {
       title: "Mã lỗi ",
@@ -200,51 +200,54 @@ const ErrorMachines = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
               >
-                <Form.Item label="Công đoạn" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, line: e.target.value })
-                    }
-                    placeholder="Nhập mã"
-                  />
-                </Form.Item>
-                <Form.Item label="Mã lỗi" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, code: e.target.value })
-                    }
-                    placeholder="Nhập tên"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+                Tìm kiếm
+              </Button>
+            ]}>
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
+                >
+                  <Form.Item label="Công đoạn" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, line: e.target.value })
+                      }
+                      placeholder="Nhập mã"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã lỗi" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, code: e.target.value })
+                      }
+                      placeholder="Nhập tên"
+                    />
+                  </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Quản lý thông số sản phẩm"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload
@@ -318,9 +321,13 @@ const ErrorMachines = () => {
               <Table
                 size="small"
                 bordered
-                pagination={{ position: ["topRight", "bottomRight"] }}
+                pagination={true}
                 columns={col_detailTable}
-                dataSource={data.map(e=>({...e, key: e.id}))}
+                scroll={{
+                  x: "100%",
+                  y: window.innerHeight*0.57,
+                }}
+                dataSource={data.map((e) => ({ ...e, key: e.id }))}
                 rowSelection={rowSelection}
               />
             </Spin>

@@ -263,9 +263,7 @@ const QCByMachine = (props) => {
   };
 
   const onClickRow = (event, record) => {
-    if (!record.phan_dinh) {
       setSelectedRow(record);
-    }
   };
 
   useEffect(() => {

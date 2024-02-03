@@ -287,247 +287,239 @@ const KhoNvl = (props) => {
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
 
-  const dataTable1 = [{
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.1',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1001',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1200',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '600',
-    dau_song: 'sC',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.2',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1123',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1500',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '800',
-    dau_song: 'sB',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '700',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.3',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1021',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1600',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '700',
-    dau_song: 'sC',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '900',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.11',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1222',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '2000',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '1000',
-    dau_song: 'lC',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '1000',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.22',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1112',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1900',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '900',
-    dau_song: 'lC',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '1000',
-    so_ngay_ton: '2',
-
-  }, {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.34',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-2991',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1600',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '1000',
-    dau_song: 'sB',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.12',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-2321',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1200',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '600',
-    dau_song: 'F',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.22',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1230',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1200',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '600',
-    dau_song: 'sB',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.15',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1104',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1200',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '600',
-    dau_song: 'lC',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.17',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-2003',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1200',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '600',
-    dau_song: 'sB',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  },
-  {
-    kho: 'Nguyên vật liệu',
-    khu_vuc: 'C11',
-    vi_tri: 'C11.11',
-    ngay: '10/12/2023',
-    ten_ncc: 'Minh Hưng',
-    ma_cuon_ncc: '23-1123',
-    khach_hang: 'AN PHUOC GROUP',
-    loai_giay: 'MH',
-    kho_giay: '150',
-    dinh_luong: '130',
-    tg_nhap: '10/12/2023',
-    sl_nhap: '1200',
-    nguoi_nhap: 'Trần Văn Quý',
-    ngay_xuat: '11/12/2023',
-    sl_xuat: '600',
-    dau_song: 'F',
-    nguoi_xuat: 'Trần Văn Quý',
-    sl_ton: '600',
-    so_ngay_ton: '2',
-
-  }];
+  const dataTable1 = [
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.1",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1001",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.2",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1123",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1500",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "800",
+      dau_song: "sB",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "700",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.3",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1021",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1600",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "700",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "900",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.11",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1222",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "2000",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "1000",
+      dau_song: "lC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1000",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.22",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1112",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1900",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "900",
+      dau_song: "lC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1000",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.34",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-2991",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1600",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "1000",
+      dau_song: "sB",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.12",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-2321",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "F",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.22",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1230",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sB",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.15",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1104",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "lC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.17",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-2003",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sB",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+    {
+      kho: "Nguyên vật liệu",
+      khu_vuc: "C11",
+      vi_tri: "C11.11",
+      ngay: "10/12/2023",
+      ten_ncc: "Minh Hưng",
+      ma_cuon_ncc: "23-1123",
+      khach_hang: "AN PHUOC GROUP",
+      loai_giay: "MH",
+      kho_giay: "150",
+      dinh_luong: "130",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "F",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
+    },
+  ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
@@ -601,91 +593,87 @@ const KhoNvl = (props) => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
-                    }
-                    value={params.date[0]}
-                    format={COMMON_DATE_FORMAT}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
-                    }
-                    value={params.date[1]}
-                    format={COMMON_DATE_FORMAT}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Vị trí" className="mb-3">
-                  <Input placeholder="Nhập mã vị trí" />
-                </Form.Item>
-                <Form.Item label="Mã cuộn TBDX" className="mb-3">
-                  <Input placeholder="Nhập mã cuộn TBDX" />
-                </Form.Item>
-                <Form.Item label="Tên NCC" className="mb-3">
-                  <Input placeholder="Nhập tên NCC" />
-                </Form.Item>
-                <Form.Item label="Mã cuộn NCC" className="mb-3">
-                  <Input placeholder="Nhập mã cuộn NCC" />
-                </Form.Item>
-                <Form.Item label="Loại giấy" className="mb-3">
-                  <Input placeholder="Nhập loại giấy" />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Tìm kiếm
+                  </Button>
+                </div>,
+              ]}
             >
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
-              >
-                Tìm kiếm
-              </Button>
-            </div>
-          </Card>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [value, params.date[1]] })
+                      }
+                      value={params.date[0]}
+                      format={COMMON_DATE_FORMAT}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [params.date[0], value] })
+                      }
+                      value={params.date[1]}
+                      format={COMMON_DATE_FORMAT}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Vị trí" className="mb-3">
+                    <Input placeholder="Nhập mã vị trí" />
+                  </Form.Item>
+                  <Form.Item label="Mã cuộn TBDX" className="mb-3">
+                    <Input placeholder="Nhập mã cuộn TBDX" />
+                  </Form.Item>
+                  <Form.Item label="Tên NCC" className="mb-3">
+                    <Input placeholder="Nhập tên NCC" />
+                  </Form.Item>
+                  <Form.Item label="Mã cuộn NCC" className="mb-3">
+                    <Input placeholder="Nhập mã cuộn NCC" />
+                  </Form.Item>
+                  <Form.Item label="Loại giấy" className="mb-3">
+                    <Input placeholder="Nhập loại giấy" />
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <Space>
-                <Dropdown menu={{ items }}>
-                  <Button type="primary" loading={exportLoading1}>
-                    Nhập từ excel
-                  </Button>
-                </Dropdown>
+                
                 <Button
                   type="primary"
                   loading={exportLoading}
                   onClick={exportFile}
                 >
-                  Xuất kết quả
+                  Xuất excel
                 </Button>
               </Space>
             }
@@ -712,7 +700,7 @@ const KhoNvl = (props) => {
                 pagination={false}
                 scroll={{
                   x: "130vw",
-                  y: "80vh",
+                  y: "70vh",
                 }}
                 columns={table1}
                 dataSource={dataTable1}

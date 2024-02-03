@@ -23,7 +23,14 @@ import "../style.scss";
 import { baseURL } from "../../../config";
 import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
-import { createWarehouseImport, deleteWarehouseImport, exportWarehouseTicket, getListPlanMaterialExport, getListPlanMaterialImport, updateWarehouseImport } from "../../../api/ui/warehouse";
+import {
+  createWarehouseImport,
+  deleteWarehouseImport,
+  exportWarehouseTicket,
+  getListPlanMaterialExport,
+  getListPlanMaterialImport,
+  updateWarehouseImport,
+} from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
 
 const { TabPane } = Tabs;
@@ -160,7 +167,10 @@ const WarehouseMLT = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [importList, setImportList] = useState([]);
   const [exportList, setExportList] = useState([]);
@@ -205,20 +215,6 @@ const WarehouseMLT = (props) => {
   };
 
   const columns = [
-    // {
-    //   title: "Chọn",
-    //   dataIndex: "name1",
-    //   key: "name1",
-    //   align: "center",
-    //   width: "4%",
-    //   render: (value, item, index) => (
-    //     <Checkbox
-    //       value={item.material_id}
-    //       onChange={onChangeChecbox}
-    //       checked={listCheck.includes(item.material_id) ? true : false}
-    //     ></Checkbox>
-    //   ),
-    // },
     {
       title: "Mã cuộn TBDX",
       dataIndex: "material_id",
@@ -248,12 +244,14 @@ const WarehouseMLT = (props) => {
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
+      width: '6%'
     },
     {
       title: "Loại giấy",
       dataIndex: "loai_giay",
       key: "loai_giay",
       align: "center",
+      width: '8%'
     },
     {
       title: "FSC",
@@ -261,6 +259,7 @@ const WarehouseMLT = (props) => {
       key: "fsc",
       align: "center",
       render: (value, item, index) => (value === 1 ? "X" : ""),
+      width: '5%'
     },
     {
       title: "Khổ giấy",
@@ -343,9 +342,9 @@ const WarehouseMLT = (props) => {
   useEffect(() => {
     (async () => {
       if (currentTab === "1") {
-        getImportList()
+        getImportList();
       } else {
-        getExportList()
+        getExportList();
       }
     })();
   }, [currentTab]);
@@ -428,17 +427,18 @@ const WarehouseMLT = (props) => {
         <Table
           bordered
           columns={columns}
-          dataSource={importList.map(e => { return { ...e, key: e.id } })}
+          dataSource={importList.map((e) => {
+            return { ...e, key: e.id };
+          })}
           scroll={{
-            x: "100vw",
-            y: "80vh",
+            y: window.innerHeight * 0.60,
           }}
           className="h-100"
           rowSelection={rowSelection}
           pagination={false}
           size="small"
-        />
-      ]
+        />,
+      ],
     },
     {
       key: "2",
@@ -450,25 +450,28 @@ const WarehouseMLT = (props) => {
           dataSource={exportList}
           scroll={{
             x: "100vw",
-            y: "80vh",
+            y: "50vh",
           }}
           className="h-100"
           pagination={false}
           size="small"
-        />
-      ]
-    }
+        />,
+      ],
+    },
   ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
     var material_ids = [];
-    importList.forEach(e => {
+    importList.forEach((e) => {
       if (listCheck.includes(e.id)) {
-        material_ids.push(e.material_id)
+        material_ids.push(e.material_id);
       }
-    })
-    const res = await exportWarehouseTicket({ ...params, material_ids: material_ids });
+    });
+    const res = await exportWarehouseTicket({
+      ...params,
+      material_ids: material_ids,
+    });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -477,109 +480,105 @@ const WarehouseMLT = (props) => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, start_date: value })
-                    }
-                    value={params.start_date}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, end_date: value })
-                    }
-                    value={params.end_date}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item
-                  label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
-                  className="mb-3"
+          <div className="slide-bar">
+            <Card
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
                 >
-                  <Input
-                    placeholder={
-                      currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
-                    }
-                    onChange={(e) =>
-                      setParams({ ...params, material_id: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={
-                      currentTab === "1" ? "Nhập mã cuộn NCC" : "Nhập mã vật tư"
-                    }
-                    onChange={(e) =>
-                      setParams({ ...params, ma_cuon_ncc: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={
-                      currentTab === "1"
-                        ? "Nhập loại giấy"
-                        : "Nhập mã cuộn TBDX"
-                    }
-                    onChange={(e) =>
-                      setParams({ ...params, loai_giay: e.target.value })
-                    }
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
-              >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, start_date: value })
+                      }
+                      value={params.start_date}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, end_date: value })
+                      }
+                      value={params.end_date}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item
+                    label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={
+                        currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
+                      }
+                      onChange={(e) =>
+                        setParams({ ...params, material_id: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={
+                        currentTab === "1"
+                          ? "Nhập mã cuộn NCC"
+                          : "Nhập mã vật tư"
+                      }
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_ncc: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={
+                        currentTab === "1"
+                          ? "Nhập loại giấy"
+                          : "Nhập mã cuộn TBDX"
+                      }
+                      onChange={(e) =>
+                        setParams({ ...params, loai_giay: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
-          <Row
-            style={{ paddingLeft: "4px", paddingRight: "4px", height: "100vh", display: 'contents' }}
-            gutter={[8, 8]}
-          >
-            <Card
-              bodyStyle={{ width: "100%", height: '100%', paddingTop: 0 }}
-            ><Tabs
+          <Card style={{ height: '100%' }} className="custom-card scroll">
+            <Tabs
               defaultActiveKey="1"
               onChange={(activeKey) => setCurrentTab(activeKey)}
               items={tabsMenu}
@@ -643,10 +642,8 @@ const WarehouseMLT = (props) => {
                   </Space>
                 ) : null
               }
-            >
-              </Tabs>
-            </Card>
-          </Row>
+            ></Tabs>
+          </Card>
         </Col>
       </Row>
       <Modal

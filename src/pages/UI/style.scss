@@ -27,8 +27,8 @@
   border-bottom-color: #fff;
 }
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 12px;
+  height: 12px;
 }
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 1px #b9b9b9;
@@ -58,3 +58,10 @@
 .ant-checkbox-wrapper.ant-checkbox-group-item {
   width: 12%;
 }
+
+// .slide-bar {
+//   position: fixed;
+//   width: 16.2%;
+//   z-index: 1000;
+//   height: 100%;
+// }

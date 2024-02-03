@@ -24,6 +24,7 @@ import { exportWarehouse } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
+import "../style.scss";
 
 const dataDualAxes = Array.from({ length: 18 }, (_, i) => ({
   time: `F01.${i + 1}`,
@@ -268,205 +269,195 @@ const ThanhPhamGiay = (props) => {
 
   const dataTable1 = [
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.01',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.01',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '133/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1200',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '600',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '600',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.01",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.01",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "133/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.02',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.02',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '143/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1800',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '600',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '1200',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.02",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.02",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "143/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1800",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1200",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.03',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.03',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '32/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '800',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '600',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '200',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.03",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.03",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "32/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "800",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "200",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.04',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.04',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '142/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '400',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '100',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '300',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.04",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.04",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "142/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "400",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "100",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "300",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.05',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.05',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '111/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1700',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '700',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '1000',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.05",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.05",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "111/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1700",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "700",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1000",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.12',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.08',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '127/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1900',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '700',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '1200',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.12",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.08",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "127/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1900",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "700",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1200",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.22',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.09',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '112/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '2000',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '600',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '1400',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.22",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.09",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "112/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "2000",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1400",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.30',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.10',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '33/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1700',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '700',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '1000',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.30",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.10",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "33/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1700",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "700",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "1000",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.21',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.13',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '155/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1200',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '600',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '600',
-      so_ngay_ton: '2',
-  
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.21",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.13",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "155/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
     },
     {
-      kho: 'Kho thành phẩm',
-      khu_vuc: 'F01',
-      vi_tri: 'F01.12',
-      ngay: '10/12/2023',
-      pallet_id: 'pl231211.15',
-      lot_id: '231211001',
-      khach_hang: 'CÔNG TY AN PHÁT',
-      don_hang: '233/12',
-      tg_nhap: '10/12/2023',
-      sl_nhap: '1200',
-      nguoi_nhap: 'Trần Văn Quý',
-      ngay_xuat: '11/12/2023',
-      sl_xuat: '600',
-      dau_song: 'sC',
-      nguoi_xuat: 'Trần Văn Quý',
-      sl_ton: '600',
-      so_ngay_ton: '2',
+      kho: "Kho thành phẩm",
+      khu_vuc: "F01",
+      vi_tri: "F01.12",
+      ngay: "10/12/2023",
+      pallet_id: "pl231211.15",
+      lot_id: "231211001",
+      khach_hang: "CÔNG TY AN PHÁT",
+      don_hang: "233/12",
+      tg_nhap: "10/12/2023",
+      sl_nhap: "1200",
+      nguoi_nhap: "Trần Văn Quý",
+      ngay_xuat: "11/12/2023",
+      sl_xuat: "600",
+      dau_song: "sC",
+      nguoi_xuat: "Trần Văn Quý",
+      sl_ton: "600",
+      so_ngay_ton: "2",
     },
-
   ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
@@ -541,85 +532,81 @@ const ThanhPhamGiay = (props) => {
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
-                    }
-                    value={params.date[0]}
-                    format={COMMON_DATE_FORMAT}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
-                    }
-                    value={params.date[1]}
-                    format={COMMON_DATE_FORMAT}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Vị trí" className="mb-3">
-                  <Input placeholder="Nhập mã vị trí" />
-                </Form.Item>
-                <Form.Item label="Mã tem (pallet)" className="mb-3">
-                  <Input placeholder="Nhập mã tem (pallet)" />
-                </Form.Item>
-                <Form.Item label="Số Lot" className="mb-3">
-                  <Input placeholder="Nhập số lot" />
-                </Form.Item>
-                <Form.Item label="Tên khách hàng" className="mb-3">
-                  <Input placeholder="Nhập tên kh" />
-                </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
-                  <Input placeholder="Nhập đơn hàng" />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Tìm kiếm
+                  </Button>
+                </div>,
+              ]}
             >
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
-              >
-                Tìm kiếm
-              </Button>
-            </div>
-          </Card>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [value, params.date[1]] })
+                      }
+                      value={params.date[0]}
+                      format={COMMON_DATE_FORMAT}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [params.date[0], value] })
+                      }
+                      value={params.date[1]}
+                      format={COMMON_DATE_FORMAT}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Vị trí" className="mb-3">
+                    <Input placeholder="Nhập mã vị trí" />
+                  </Form.Item>
+                  <Form.Item label="Mã tem (pallet)" className="mb-3">
+                    <Input placeholder="Nhập mã tem (pallet)" />
+                  </Form.Item>
+                  <Form.Item label="Số Lot" className="mb-3">
+                    <Input placeholder="Nhập số lot" />
+                  </Form.Item>
+                  <Form.Item label="Tên khách hàng" className="mb-3">
+                    <Input placeholder="Nhập tên kh" />
+                  </Form.Item>
+                  <Form.Item label="Đơn hàng" className="mb-3">
+                    <Input placeholder="Nhập đơn hàng" />
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <Space>
-                <Dropdown menu={{ items }}>
-                  <Button type="primary" loading={exportLoading1}>
-                    Nhập từ excel
-                  </Button>
-                </Dropdown>
+               
                 <Button
                   type="primary"
                   loading={exportLoading}

@@ -23,22 +23,22 @@ const PrintTemplate = ({ info }) => {
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr style={{ lineHeight: '120px!important' }}>
               <td colSpan={3}>
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between" style={{ height: '120px!important' }}>
                   <QRCode
                     style={{ marginRight: "5px" }}
                     value={info[0]?.pallet_id}
                     bordered={false}
-                    size={80}
+                    size={120}
                     type="svg"
                   />
                   <div className="flex-column">
                     <h3
                       style={{
                         marginLeft: "8px",
-                        fontSize: "24px",
-                        marginTop: "18px",
+                        fontSize: '32px',
+                        marginTop: '38px'
                       }}
                     >
                       TEM GỘP
@@ -47,7 +47,7 @@ const PrintTemplate = ({ info }) => {
                   <div className="flex-column">
                     <img
                       src={logolight}
-                      width={70}
+                      width={110}
                       style={{
                         marginRight: "10px",
                         marginLeft: "10px",
@@ -58,21 +58,23 @@ const PrintTemplate = ({ info }) => {
                 </div>
               </td>
             </tr>
-            <tr>
-              <td colSpan={3}>Khách hàng: {info[0]?.khach_hang}</td>
+            <tr style={{ lineHeight: '25px' }}>
+              <td colSpan={3}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang} {info[0]?.customer_id}</b></td>
             </tr>
-            <tr>
-              <td className="text-center">Mã quản lý</td>
-              <td className="text-center">Mã quản lý</td>
+            <tr style={{ lineHeight: '20px' }}>
+              <td className="text-center">MDH</td>
+              <td className="text-center">MQL</td>
               <td className="text-center">Số lượng</td>
             </tr>
             {info.map(function (detail) {
               return (
-                <tr>
-                  <td className="text-center">{detail.mdh}</td>
-                  <td className="text-center">{detail.mql}</td>
-                  <td className="text-center">{detail.so_luong}</td>
-                </tr>
+                <>
+                  <tr style={{ lineHeight: '20px' }}>
+                    <td className="text-center">{detail.mdh}</td>
+                    <td className="text-center">{detail.mql}</td>
+                    <td className="text-center">{detail.so_luong}</td>
+                  </tr>
+                </>
               );
             })}
           </tbody>
@@ -84,12 +86,14 @@ const PrintTemplate = ({ info }) => {
 };
 export default class TemPallet extends React.Component {
   render() {
+    const { listCheck } = this.props;
     let printingPages = [];
-    const { info } = this.props;
-    // for (const detail of listCheck) {
-    const tempTemplate = <PrintTemplate info={info} />;
-    printingPages.push(tempTemplate);
-    // }
+    for (const info of listCheck) {
+      const tempTemplate = <PrintTemplate info={info} />;
+      printingPages.push(tempTemplate);
+      printingPages.push(tempTemplate);
+      printingPages.push(tempTemplate);
+    }
     return <div>{printingPages}</div>;
   }
 }

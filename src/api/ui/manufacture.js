@@ -46,6 +46,11 @@ export async function getBuyers(params) {
     return res.data;
 }
 
+export async function getTems(params) {
+    const res = await axios.get("/ui/manufacture/tem/list", {params});
+    return res.data;
+}
+
 export async function getListLayout(params) {
     const res = await axios.get('ui/manufacture/layout/list', { params });
     return res.data;
@@ -68,5 +73,23 @@ export async function getOrderList(params) {
 
 export async function exportKHSX(params) {
     const res = await axios.get("ui/manufacture/production-plan/export", {params});
+    return res;
+}
+
+export async function exportKHXaLot(params) {
+    const res = await axios.get("ui/manufacture/production-plan/export-xa-lot", {params});
+    return res;
+}
+
+export async function exportPreviewPlan(params) {
+    const res = await axios.post("ui/manufacture/production-plan/export-preview-plan", params);
+    return res;
+}
+export async function createStampFromOrder(params) {
+    const res = await axios.post("ui/manufacture/create-stamp-from-order", params);
+    return res;
+}
+export async function updateTem(params) {
+    const res = await axios.post("ui/manufacture/tem/update", params);
     return res;
 }

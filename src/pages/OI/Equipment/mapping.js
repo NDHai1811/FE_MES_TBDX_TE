@@ -21,6 +21,7 @@ const columns1 = [
     key: "lo_sx",
     align: "center",
     render: (value) => value || "-",
+    width: '7%'
   },
   {
     title: "Mã KH",
@@ -29,24 +30,57 @@ const columns1 = [
     align: "center",
     render: (value) => value || "-",
   },
+  // {
+  //   title: "Mã layout",
+  //   dataIndex: "layout_id",
+  //   key: "layout_id",
+  //   align: "center",
+  //   render: (value) => value || "-",
+  // },
   {
-    title: "Mã layout",
-    dataIndex: "layout_id",
-    key: "layout_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Đơn hàng",
+    title: "MDH",
     dataIndex: "don_hang",
     key: "don_hang",
     align: "center",
     render: (value) => value || "-",
+    width: '7%'
   },
   {
-    title: "Mã QL",
+    title: "MQL",
     dataIndex: "mql",
     key: "mql",
+    align: "center",
+    render: (value) => value || "-",
+    width: '4%'
+  },
+  {
+    title: "Số lớp",
+    dataIndex: "so_lop",
+    key: "so_lop",
+    align: "center",
+    render: (value) => value || "-",
+    width: '4%'
+  },
+  {
+    title: "Khổ tổng",
+    dataIndex: "kho_tong",
+    key: "kho_tong",
+    align: "center",
+    render: (value) => value || "-",
+    width: '6%'
+  },
+  {
+    title: "Dài tấm",
+    dataIndex: "dai_tam",
+    key: "dai_tam",
+    align: "center",
+    render: (value) => value || "-",
+    width: '6%'
+  },
+  {
+    title: "Số lượng",
+    dataIndex: "so_luong",
+    key: "so_luong",
     align: "center",
     render: (value) => value || "-",
   },
@@ -72,8 +106,8 @@ const Mapping = () => {
   const [selectedItem, setSelectedItem] = useState([]);
   const [tableColumns, setTableColumns] = useState(columns1);
 
-  useEffect(()=>{
-    setParams({...params, machine_id: machine_id})
+  useEffect(() => {
+    setParams({ ...params, machine_id: machine_id })
   }, [machine_id])
   useEffect(() => {
     if (machine_id) {
@@ -157,10 +191,10 @@ const Mapping = () => {
   ];
 
   const onShowPopup = async () => {
-    // const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
-    // if (res.success) {
-    selectedItem && setVisible(true);
-    // }
+    const res = await getEquipmentMappingList({ lo_sx: selectedItem[0].lo_sx });
+    if (res.success) {
+      selectedItem && setVisible(true);
+    }
   };
 
   const onShowPopupParameter = async () => {
@@ -229,7 +263,7 @@ const Mapping = () => {
           pagination={false}
           bordered={true}
           scroll={{
-            x: "calc(700px + 50%)",
+            x: "calc(700px + 100%)",
             y: 300,
           }}
           columns={tableColumns}

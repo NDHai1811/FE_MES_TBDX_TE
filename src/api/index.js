@@ -609,6 +609,32 @@ export async function deleteCustomer(params){
   const res = await axios.delete('/customer/delete', {params});
   return res.data;
 }
+export async function exportCustomer(params){
+  const res = await axios.get('/customer/export', {params});
+  return res;
+}
+
+//Vehicles
+export async function getVehicles(params){
+  const res = await axios.get('/vehicles/list', {params});
+  return res.data;
+}
+export async function createVehicles(params){
+  const res = await axios.post('/vehicles/create', params);
+  return res.data;
+}
+export async function updateVehicles(params){
+  const res = await axios.patch('/vehicles/update', params);
+  return res.data;
+}
+export async function deleteVehicles(params){
+  const res = await axios.delete('/vehicles/delete', {params});
+  return res.data;
+}
+export async function exportVehicles(params){
+  const res = await axios.get('/vehicles/export', {params});
+  return res;
+}
 
 export async function getTem(params){
   const res = await axios.get('/intem', {params});

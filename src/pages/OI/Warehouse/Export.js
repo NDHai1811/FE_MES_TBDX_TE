@@ -123,7 +123,7 @@ const Export = (props) => {
   );
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{}]);
   const [locaion, setLocaion] = useState("");
   const [messageApi, contextHolder] = message.useMessage();
   const messageAlert = (content, type = "error") => {
@@ -268,6 +268,7 @@ const Export = (props) => {
             className="mb-1 custom-table"
             size="small"
             columns={column2}
+            locale={{emptyText:'Trống'}}
             dataSource={overall}
           />
         </Col>
@@ -324,10 +325,10 @@ const Export = (props) => {
                 ? "no-hover " + "table-row-green"
                 : "table-row-light";
             }}
+            size="small"
             pagination={false}
             bordered
             className="mb-4"
-            size="small"
             columns={exportColumns}
             dataSource={logs}
             onRow={(record) => {

@@ -32,17 +32,20 @@ import {
 } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { getMachines } from "../../../api/oi/equipment";
 
-const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
-const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
 
 const columns = [
   {
     title: "Lô SX",
     dataIndex: "lo_sx",
     key: "lo_sx",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MDH",
+    dataIndex: "mdh",
+    key: "mdh",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -54,26 +57,40 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
+    title: "Số lớp",
+    dataIndex: "so_lop",
+    key: "so_lop",
     align: "center",
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Sản lượng kế hoạch",
+    title: "Khổ tổng",
+    dataIndex: "kho_tong",
+    key: "kho_tong",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Dài tấm",
+    dataIndex: "dai_tam",
+    key: "dai_tam",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "SL kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
   },
   {
-    title: "Sản lượng đầu ra",
+    title: "SL đầu ra",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
   },
   {
-    title: "Sản lượng đạt",
+    title: "SL đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
@@ -84,13 +101,6 @@ const columns = [
     key: "phan_dinh",
     align: "center",
     render: (value) => (value === 1 ? "OK" : "-"),
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
   },
 ];
 
@@ -114,8 +124,8 @@ const Manufacture1 = (props) => {
     },
     {
       title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
-      key: "san_luong",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
       align: "center",
       render: (value) => value,
     },
@@ -144,16 +154,13 @@ const Manufacture1 = (props) => {
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  // const [machineOptions, setMachineOptions] = useState([]);
-  const {machineOptions = []} = props
+  const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
-  const [deviceID, setDeviceID] = useState(
-    "e9aba8d0-85da-11ee-8392-a51389126dc6"
-  );
+  const [listTem, setListTem] = useState([])
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -162,11 +169,6 @@ const Manufacture1 = (props) => {
   const ws = useRef(null);
 
   const reloadData = async () => {
-    // const resData = await getListLotDetail();
-    // setData(resData);
-    // if (resData?.[0]?.status === 1) {
-    //   setSelectedLot(resData?.[0]);
-    // }
     getOverAllDetail();
   };
   const overallColumns = [
@@ -211,25 +213,15 @@ const Manufacture1 = (props) => {
     },
   ];
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     (async () => {
-  //       if (machine_id) {
-  //         reloadData();
-  //       }
-  //     })();
-  //   }
-  // }, [machine_id, machineOptions, loadData]);
-
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     var target = machineOptions.find((e) => e.value === machine_id);
-  //     if (!target) {
-  //       target = machineOptions[0];
-  //     }
-  //     history.push("/manufacture/" + target.value);
-  //   }
-  // }, [machineOptions]);
+  useEffect(() => {
+    if (machineOptions.length > 0) {
+      (async () => {
+        if (machine_id) {
+          reloadData();
+        }
+      })();
+    }
+  }, [machine_id, machineOptions, loadData]);
 
   useEffect(() => {
     if (isScan === 1) {
@@ -239,18 +231,11 @@ const Manufacture1 = (props) => {
     }
   }, [isScan]);
 
-  useEffect(() => {
-    getListMachine();
-    // (async ()=>{
-    //   var res = await getTem();
-    //   setListCheck(res)
-    // })()
-  }, []);
 
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    const loadDataRescursive = async (params,machine_id) => {
+    const loadDataRescursive = async (params, machine_id) => {
       console.log(params, machine_id);
       if (!machine_id) return;
       const res = await getLotByMachine(params);
@@ -262,23 +247,16 @@ const Manufacture1 = (props) => {
       }
       if (res.success) {
         if (window.location.href.indexOf("manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
+          timeout = setTimeout(function () {
+            loadDataRescursive(params, machine_id);
+          }, 5000);
       }
     };
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
   }, [params.start_date, params.end_date, params.machine_id]);
-  
-  const getListMachine = () => {
-    // getMachines()
-    //   .then((res) => {
-    //     setMachineOptions(res.data);
-    //     window.localStorage.setItem('machines', JSON.stringify(res.data));
-    //   })
-    //   .catch((err) => console.log("Get list machine error: ", err));
-  };
+
+
 
   const getOverAllDetail = () => {
     setLoading(true);
@@ -321,11 +299,9 @@ const Manufacture1 = (props) => {
     }
     return "";
   };
-  useEffect(() => {
-    if (listCheck.length > 0) {
-      if (machine_id) {
-        setParams({ ...params, machine_id })
-      }
+
+  const handlePrint = async () => {
+    if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
       } else if (machine_id == "P06" || machine_id == "P15") {
@@ -333,17 +309,8 @@ const Manufacture1 = (props) => {
       } else if (machine_id == "D05" || machine_id == "D06") {
         printDan();
       }
-      (async () => {
-        reloadData();
-      })();
-    }
-    setListCheck([]);
-  }, [listCheck.length]);
-
-  const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
-      setListCheck(res.data);
+      setListCheck([]);
+      setListTem([]);
     }
   };
 
@@ -362,76 +329,22 @@ const Manufacture1 = (props) => {
     setIsScan(2);
   };
 
-  const connectWebsocket = (deviceId, resData) => {
-    const entityId = deviceId;
-    ws.current = new WebSocket(url);
-    ws.current.onopen = function () {
-      const object = {
-        tsSubCmds: [
-          {
-            entityType: "DEVICE",
-            entityId: entityId,
-            scope: "LATEST_TELEMETRY",
-            keys: "Pre_Counter,Error_Counter",
-            cmdId: 10,
-          },
-        ],
-        historyCmds: [],
-        attrSubCmds: [],
-      };
-      const data = JSON.stringify(object);
-      ws.current.send(data);
-    };
-
-    ws.current.onmessage = async function (event) {
-      if (resData[0]?.status !== 1) {
-        return 0;
-      }
-      const receivedMsg = JSON.parse(event.data);
-      const Pre_Counter = receivedMsg.data?.Pre_Counter
-        ? parseInt(receivedMsg.data?.Pre_Counter[0][1])
-        : 0;
-      const Error_Counter = receivedMsg.data?.Error_Counter
-        ? parseInt(receivedMsg.data.Error_Counter[0][1])
-        : 0;
-      let san_luong = parseInt(resData[0]?.san_luong);
-      let sl_ok = parseInt(resData[0]?.sl_ok);
-      let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
-      if (Pre_Counter > 0) {
-        san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
-        if (Error_Counter) {
-          sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
-        }
-        sl_ok = parseInt(san_luong - sl_ng);
-        if (
-          sl_ok >= resData[0]?.dinh_muc ||
-          resData[0]?.sl_ok - Pre_Counter > 10
-        ) {
-          reloadData();
-        } else {
-          const new_data = resData.map((value, index) => {
-            if (index === 0) {
-              value.san_luong = isNaN(san_luong) ? 0 : san_luong;
-              value.sl_ok = isNaN(sl_ok) ? 0 : sl_ok;
-              return value;
-            } else {
-              return value;
-            }
-          });
-
-          setData(new_data);
-          setSelectedLot(new_data[0]);
-        }
-      }
-    };
-  };
-
   const onChangeStartDate = (value) => {
     setParams({ ...params, start_date: value });
   };
 
   const onChangeEndDate = (value) => {
     setParams({ ...params, end_date: value });
+  };
+
+
+  const rowSelection = {
+    selectedRowKeys: listCheck,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys)
+      setListTem(selectedRows);
+    },
+
   };
 
   return (
@@ -488,16 +401,7 @@ const Manufacture1 = (props) => {
                 onChange={onChangeEndDate}
               />
             </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={() => setIsScan(1)}
-                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-              />
-            </Col>
-            <Col span={3}>
+            <Col span={6}>
               <Button
                 size="medium"
                 type="primary"
@@ -506,9 +410,9 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
-                <TemIn listCheck={listCheck} ref={componentRef2} />
-                <TemDan listCheck={listCheck} ref={componentRef3} />
+                <Tem listCheck={listTem} ref={componentRef1} />
+                <TemIn listCheck={listTem} ref={componentRef2} />
+                <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
             </Col>
           </Row>
@@ -525,6 +429,7 @@ const Manufacture1 = (props) => {
               pagination={false}
               bordered
               columns={columns}
+              rowSelection={rowSelection}
               dataSource={data.map((e, index) => ({ ...e, key: index }))}
             />
           </Col>

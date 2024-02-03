@@ -122,9 +122,7 @@ const columnTable = [
     key: "da_xu_ly",
     render: (record) => {
       return record ? (
-        <Tag color="#87d068">
-          Đã hoàn thành
-        </Tag>
+        <Tag color="#87d068">Đã hoàn thành</Tag>
       ) : (
         <Tag color="#87d068">Đã hoàn thành</Tag>
       );
@@ -260,9 +258,7 @@ const column = [
   },
 ];
 
-const dataTable = [
-
-]
+const dataTable = [];
 
 const errorTable = [
   {
@@ -347,7 +343,6 @@ const Equipment1 = (props) => {
     //         return { ...e, label: e.name, value: e.id };
     //       })
     //     );
-
     //     const res5 = await getCustomers();
     //     setListCustomers(
     //       res5.data.map((e) => {
@@ -386,7 +381,7 @@ const Equipment1 = (props) => {
   }
 
   useEffect(() => {
-    btn_click()
+    btn_click();
   }, []);
 
   useEffect(() => {
@@ -490,137 +485,140 @@ const Equipment1 = (props) => {
     <>
       <Row style={{ padding: "8px" }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Thời gian truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                <Space direction="vertical" style={{ width: "100%" }}>
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Bắt đầu"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [value, params.date[1]] })
-                    }
-                    value={params.date[0]}
-                  />
-                  <DatePicker
-                    allowClear={false}
-                    placeholder="Kết thúc"
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      setParams({ ...params, date: [params.date[0], value] })
-                    }
-                    value={params.date[1]}
-                  />
-                </Space>
-              </Form>
-            </div>
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập máy"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Mã lỗi" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    onChange={(value) => {
-                      setParams({ ...params, ten_sp: value });
-                    }}
-                    placeholder="Nhập mã lỗi"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={[]}
-                  />
-                </Form.Item>
-                <Form.Item label="Tên lỗi" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập tên lỗi"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Nguyên nhân" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập nguyên nhân"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={listLoSX}
-                  />
-                </Form.Item>
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder="Nhập khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, khach_hang: value })
-                    }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={listCustomers}
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>,
+              ]}
             >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
-              >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+              <Divider>Thời gian truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [value, params.date[1]] })
+                      }
+                      value={params.date[0]}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, date: [params.date[0], value] })
+                      }
+                      value={params.date[1]}
+                    />
+                  </Space>
+                </Form>
+              </div>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Máy" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập máy"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã lỗi" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, ten_sp: value });
+                      }}
+                      placeholder="Nhập mã lỗi"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={[]}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tên lỗi" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập tên lỗi"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Nguyên nhân" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập nguyên nhân"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      onChange={(value) =>
+                        setParams({ ...params, lo_sx: value })
+                      }
+                      options={listLoSX}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Nhập khách hàng"
+                      onChange={(value) =>
+                        setParams({ ...params, khach_hang: value })
+                      }
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={listCustomers}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Row gutter={[8, 8]}>

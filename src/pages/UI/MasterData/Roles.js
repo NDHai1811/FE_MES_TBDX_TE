@@ -57,7 +57,7 @@ const Roles = () => {
       dataIndex: "parent",
       key: "parent",
       align: "center",
-      render: (value) => value?.name
+      render: (value) => value?.name,
     },
     {
       title: "Quyền",
@@ -87,7 +87,7 @@ const Roles = () => {
       title: "Thuộc bộ phận",
       key: "parent_id",
       select: {
-        options: options.map(e=>({value: e.id, label: e.name})),
+        options: options.map((e) => ({ value: e.id, label: e.name })),
       },
     },
     {
@@ -104,7 +104,6 @@ const Roles = () => {
     loadListTable(params);
   }
 
-  
   const loadListTable = async (params) => {
     setLoading(true);
     setData(await getRolesTree(params));
@@ -174,7 +173,7 @@ const Roles = () => {
       console.log(result);
       form.setFieldsValue({
         ...result,
-        permissions: (result?.permissions??[]).map((e) => e.id),
+        permissions: (result?.permissions ?? []).map((e) => e.id),
       });
       setOpenMdl(true);
     }
@@ -204,42 +203,45 @@ const Roles = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
               >
-                <Form.Item label="Tên" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, name: e.target.value })
-                    }
-                    placeholder="Nhập mã"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+                Tìm kiếm
+              </Button>
+            ]}>
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
+                >
+                  <Form.Item label="Tên" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, name: e.target.value })
+                      }
+                      placeholder="Nhập tên bộ phận"
+                    />
+                  </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Quản lý bộ phận"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload
@@ -313,10 +315,10 @@ const Roles = () => {
               <Table
                 size="small"
                 bordered
-                pagination={{ position: ["topRight", "bottomRight"] }}
+                pagination={true}
                 scroll={{
                   x: "100%",
-                  y: "80vh",
+                  y: window.innerHeight*0.57,
                 }}
                 columns={col_detailTable}
                 dataSource={data}

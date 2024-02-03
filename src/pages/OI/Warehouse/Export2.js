@@ -117,7 +117,7 @@ const Export2 = (props) => {
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{}]);
   const [currentScan, setCurrentScan] = useState(
     {
       material_id: "",
@@ -211,6 +211,7 @@ const Export2 = (props) => {
             bordered
             size="small"
             className="mb-1 custom-table"
+            locale={{emptyText:'Trống'}}
             columns={column2}
             dataSource={[overall]}
           />
@@ -255,6 +256,7 @@ const Export2 = (props) => {
                 ? "table-row-grey"
                 : ""
             }
+            size="small"
             pagination={false}
             bordered
             className="mb-4"

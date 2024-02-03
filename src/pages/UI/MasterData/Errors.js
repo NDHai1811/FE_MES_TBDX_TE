@@ -179,50 +179,53 @@ const Errors = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
+              <Button
+                type="primary"
+                onClick={btn_click}
+                style={{ width: "80%" }}
               >
-                <Form.Item label="Mã" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                    placeholder="Nhập mã"
-                  />
-                </Form.Item>
-                <Form.Item label="Tên" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, name: e.target.value })
-                    }
-                    placeholder="Nhập tên"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+                Tìm kiếm
+              </Button>
+            ]}>
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
+                >
+                  <Form.Item label="Mã" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, id: e.target.value })
+                      }
+                      placeholder="Nhập mã"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tên" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, name: e.target.value })
+                      }
+                      placeholder="Nhập tên"
+                    />
+                  </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            className="custom-card scroll"
             title="Quản lý thông số sản phẩm"
             extra={
               <Space>
@@ -297,7 +300,7 @@ const Errors = () => {
               <Table
                 size="small"
                 bordered
-                pagination={{ position: ["topRight", "bottomRight"] }}
+                pagination={true}
                 columns={col_detailTable}
                 dataSource={data}
                 rowSelection={rowSelection}

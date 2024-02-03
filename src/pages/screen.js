@@ -119,7 +119,7 @@ const Screen = (props) => {
               <div className="text-center mt-2">
                 <img className="mb-3 w-25" src={logo} />
                 <Title level={4}>
-                  CÔNG TY CỔ PHẦN BAO BÌ GIẤY THÁI BÌNH DƯƠNG XANH
+                  CÔNG TY CỔ PHẦN THÁI BÌNH DƯƠNG XANH
                 </Title>
               </div>
               <div className="p-2 mt-3">

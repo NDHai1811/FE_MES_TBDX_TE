@@ -29,20 +29,20 @@ const PrintTemplate = ({ detail }) => {
           <tbody>
             <tr>
               <td colSpan={5}>
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between" style={{ margin: '0px' }}>
                   <QRCode
-                      style={{ marginRight: "5px" }}
-                      value={detail.lo_sx}
-                      bordered={false}
-                      size={80}
-                      type="svg"
-                    />
+                    style={{ marginRight: "5px" }}
+                    value={detail.lo_sx}
+                    bordered={false}
+                    size={120}
+                    type="svg"
+                  />
                   <div className="flex-column">
-                    <h3 style={{ marginLeft: "8px",fontSize:'28px',marginTop:'18px' }}>TEM TỔ DỢN SÓNG</h3>
+                    <h3 style={{ fontSize: '32px', marginTop: '28px' }}>TEM DỢN SÓNG</h3>
                     {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                   </div>
                   <div className="flex-column">
-                    <img src={logolight} width={70} style={{ marginRight: "10px",marginLeft:'10px',marginTop:'10px' }}/>
+                    <img src={logolight} width={120} style={{ marginRight: "5px", marginLeft: '5px', marginTop: '0px' }} />
                     {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                   </div>
                   {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
@@ -50,35 +50,35 @@ const PrintTemplate = ({ detail }) => {
               </td>
             </tr>
             <tr>
-              <td className="text-center" colSpan={2}>Khách hàng</td>
-              <td className="text-center" colSpan={2}>Đơn hàng</td>
-              <td className="text-center">Lô sx</td>
+              <td className="text-center" colSpan={2} style={{ fontSize: '12px' }}>KHÁCH HÀNG</td>
+              <td className="text-center" colSpan={2} style={{ fontSize: '12px' }}>ĐƠN HÀNG</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>LÔ SX</td>
             </tr>
             <tr>
               <td className="text-center" colSpan={2}><b>{detail.khach_hang}</b></td>
-              <td className="text-center" colSpan={2}><b>{detail.order_id}</b></td>
+              <td className="text-center" colSpan={2}><b>{detail.mdh}</b></td>
               <td>{detail.lo_sx}</td>
             </tr>
             <tr>
-              <td className="text-center">Dài</td>
-              <td className="text-center">Rộng</td>
-              <td className="text-center">Cao</td>
-              <td className="text-center">Lot</td>
-              <td className="text-center">Số lượng:</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>DÀI</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>RỘNG</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>CAO</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>LOT</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>SỐ LƯỢNG</td>
             </tr>
             <tr>
-              <td className="text-center">{detail.dai}</td>
+              <td className="text-center" >{detail.dai}</td>
               <td className="text-center">{detail.rong}</td>
               <td className="text-center">{detail.cao}</td>
-              <td className="text-center">{detail.lot_id}</td>
-              <td className="text-center"><b>{detail.so_luong}</b></td>
+              <td className="text-center">{detail.lo_sx}</td>
+              <td className="text-center"><b>{detail.so_dao}</b></td>
             </tr>
             <tr>
-              <td className="text-center">Khổ</td>
-              <td className="text-center">Dài</td>
-              <td className="text-center">Số dao</td>
-              <td className="text-center">Xả</td>
-              <td className="text-center">Số lớp</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>KHỔ</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>DÀI</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>SỐ DAO</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>XẢ</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>SỐ LỚP</td>
             </tr>
             <tr>
               <td className="text-center">{detail.kho}</td>
@@ -88,22 +88,24 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">{detail.so_lop}</td>
             </tr>
             <tr>
-              <td className="text-center" colSpan={4}>Ghi chú sản phẩm</td>
-              <td className="text-center">Số pallet</td>
+              <td colSpan={4} style={{ fontSize: '12px' }}>GHI CHÚ SÓNG</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>SỐ PALLET</td>
             </tr>
             <tr>
-              <td colSpan={4}>Không có</td>
-              <td className="text-center"></td>
+              <td colSpan={4}>{detail.note_3}</td>
+              <td className="text-center">{detail.lo_sx}</td>
             </tr>
             <tr>
-              <td className="text-center" colSpan={2}>Nhóm máy</td>
-              <td className="text-center" colSpan={3}><b>{detail.nhom_may}</b></td>
+              <td colSpan={5} style={{ fontSize: '12px' }}>GHI CHÚ TBDX</td>
             </tr>
             <tr>
-              <td className="text-center">Ngày sản xuất</td>
-              <td className="text-center" colSpan={2}>{detail.ngay_sx}</td>
-              <td className="text-center">Ca sản xuất</td>
-              <td>{detail.ca_sx}</td>
+              <td className="text-center" colSpan={5}><b>{detail.note_2}</b></td>
+            </tr>
+            <tr>
+              <td className="text-center" style={{ fontSize: '12px' }}>NGÀY SX</td>
+              <td className="text-center" style={{ fontSize: '12px' }} colSpan={2}>{detail.thoi_gian_bat_dau}</td>
+              <td className="text-center" style={{ fontSize: '12px' }}>CA SX</td>
+              <td style={{ fontSize: '12px' }}>{detail.ca_sx}</td>
             </tr>
           </tbody>
         </table>
@@ -116,13 +118,10 @@ export default class Tem extends React.Component {
   render() {
     let printingPages = [];
     const { listCheck } = this.props;
-    // for (const detail of listCheck) {
     listCheck.forEach((detail, index) => {
       const tempTemplate = <PrintTemplate detail={detail} key={index} />;
       printingPages.push(tempTemplate);
     });
-
-    // }
     return <div>{printingPages}</div>;
   }
 }

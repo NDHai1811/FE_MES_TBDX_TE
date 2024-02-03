@@ -31,13 +31,13 @@ const PrintTemplate = ({ detail }) => {
                                 <div className="d-flex justify-content-between" style={{ marginBottom: '15px' }}>
                                     <QRCode
                                         style={{ marginRight: "5px" }}
-                                        value={detail.qr_code}
+                                        value={detail.lo_sx}
                                         bordered={false}
                                         size={120}
                                         type="svg"
                                     />
                                     <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ DÁN</h3>
+                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ IN</h3>
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     <div className="flex-column">
@@ -109,22 +109,12 @@ const PrintTemplate = ({ detail }) => {
         </div>
     );
 };
-export default class TemIn extends React.Component {
+export default class NewTem extends React.Component {
     render() {
         let printingPages = [];
         const { listCheck } = this.props;
         // for (const detail of listCheck) {
-        const listTem = [];
         listCheck.forEach((detail, index) => {
-            if (detail.sl_tem && detail.sl_tem > 0) {
-                for (let i = 0; i < detail.sl_tem; i++) {
-                    listTem.push(detail);
-                }
-            } else {
-                listTem.push(detail);
-            }
-        });
-        listTem.forEach((detail, index) => {
             const tempTemplate = <PrintTemplate detail={detail} key={index} />;
             printingPages.push(tempTemplate);
         });

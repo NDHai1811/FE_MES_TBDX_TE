@@ -21,7 +21,7 @@ import {
   Spin,
   Popconfirm,
   InputNumber,
-  Typography
+  Typography,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useRef, useEffect } from "react";
@@ -82,9 +82,16 @@ const Customer = () => {
   };
   const columns = [
     {
+      title: "Tên viết tắt",
+      dataIndex: "short_name",
+      key: "short_name",
+      align: "center",
+      editable: true,
+    },
+    {
       title: "Mã KH",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "customer_id",
+      key: "customer_id",
       align: "center",
       editable: true,
     },
@@ -92,13 +99,6 @@ const Customer = () => {
       title: "Tên KH",
       dataIndex: "name",
       key: "name",
-      align: "center",
-      editable: true,
-    },
-    {
-      title: "Tên viết tắt",
-      dataIndex: "short_name",
-      key: "short_name",
       align: "center",
       editable: true,
     },
@@ -153,7 +153,6 @@ const Customer = () => {
     {
       title: "Mã KH",
       key: "id",
-
     },
     {
       title: "Tên KH",
@@ -246,10 +245,18 @@ const Customer = () => {
   const [form] = Form.useForm();
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys)
+      setListCheck(selectedRowKeys);
     },
   };
   const [exportLoading, setExportLoading] = useState(false);
+    const exportFile = async () => {
+        setExportLoading(true);
+        const res = await exportCustomer(params);
+        if (res.success) {
+            window.location.href = baseURL + res.data;
+        }
+        setExportLoading(false);
+    };
   const [exportLoading1, setExportLoading1] = useState(false);
   const onChange = (value, dataIndex) => {
     const items = data.map((val) => {
@@ -334,103 +341,98 @@ const Customer = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: []
-      })
+        options: [],
+      }),
     };
   });
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item
-                  label={"Mã KH"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập mã KH"}
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={"Tên KH"}
-                  className="mb-3"
-                >
-                  <Input
-                    placeholder={"Nhập tên KH"}
-                    onChange={(e) =>
-                      setParams({ ...params, name: e.target.value })
-                    }
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
-            >
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
               <Button
                 type="primary"
                 onClick={btn_click}
                 style={{ width: "80%" }}
               >
-                Truy vấn
+                Tìm kiếm
               </Button>
-            </div>
-          </Card>
+            ]}>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical" onFinish={btn_click}>
+                  <Form.Item label={"Mã KH"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập mã KH"}
+                      onChange={(e) =>
+                        setParams({ ...params, id: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item label={"Tên KH"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập tên KH"}
+                      onChange={(e) =>
+                        setParams({ ...params, name: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý nguyên vật liệu"
+            title="Quản lý khách hàng"
             extra={
               <Space>
-                {/* <Upload
-                    showUploadList={false}
-                    name="file"
-                    action={baseURL + "/api/customer/import"}
-                    headers={{
-                      authorization: "authorization-text",
-                    }}
-                    onChange={(info) => {
-                      setExportLoading1(true);
-                      if (info.file.status === "error") {
-                        error();
+                <Upload
+                  showUploadList={false}
+                  name="files"
+                  action={baseURL + "/api/customer/import"}
+                  headers={{
+                    authorization: "authorization-text",
+                  }}
+                  onChange={(info) => {
+                    setExportLoading1(true);
+                    if (info.file.status === "error") {
+                      error();
+                      setExportLoading1(false);
+                    } else if (info.file.status === "done") {
+                      if (info.file.response.success === true) {
+                        loadListTable();
+                        success();
                         setExportLoading1(false);
-                      } else if (info.file.status === "done") {
-                        if (info.file.response.success === true) {
-                          loadListTable();
-                          success();
-                          setExportLoading1(false);
-                        } else {
-                          loadListTable();
-                          message.error(info.file.response.message);
-                          setExportLoading1(false);
-                        }
+                      } else {
+                        loadListTable();
+                        message.error(info.file.response.message);
+                        setExportLoading1(false);
                       }
-                    }}
-                  >
-                    <Button type="primary" loading={exportLoading1}>
-                      Upload excel
-                    </Button>
-                  </Upload> */}
+                    }
+                  }}
+                >
+                  <Button type="primary" loading={exportLoading1}>
+                    Upload excel
+                  </Button>
+                </Upload>
+                <Button
+                  type="primary"
+                  onClick={exportFile}
+                  loading={exportLoading}
+                >
+                  Export Excel
+                </Button>
                 <Button type="primary" onClick={onInsert}>
                   Thêm
                 </Button>
               </Space>
             }
+            className="custom-card scroll"
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>

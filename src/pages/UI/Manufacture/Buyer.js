@@ -27,6 +27,7 @@ import {
 import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import "../style.scss";
 
 const EditableCell = ({
   editing,
@@ -404,50 +405,59 @@ const Buyer = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
-              >
-                <Form.Item label="Mã buyer" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
-                    }
-                    placeholder="Nhập mã buyer"
-                  />
-                </Form.Item>
-                <Form.Item label="Mã khách hàng" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, customer_id: e.target.value })
-                    }
-                    placeholder="Nhập mã khách hàng"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card
+              bodyStyle={{ padding: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div layout="vertical">
                   <Button
                     type="primary"
-                    htmlType="submit"
                     style={{ width: "80%" }}
+                    onClick={btn_click}
                   >
-                    Tìm kiếm
+                    Truy vấn
                   </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+                </div>,
+              ]}
+            >
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                // onFinish={btn_click}
+                >
+                  <Form.Item label="Mã buyer" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, id: e.target.value })
+                      }
+                      placeholder="Nhập mã buyer"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_id: e.target.value })
+                      }
+                      placeholder="Nhập mã khách hàng"
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             title="Quản lý Buyer"
             extra={
               <Space>
@@ -484,15 +494,8 @@ const Buyer = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                >
-                  Export Excel
-                </Button>
                 <Button type="primary" onClick={onAdd}>
-                  Insert
+                  Thêm buyer
                 </Button>
               </Space>
             }
@@ -505,7 +508,7 @@ const Buyer = () => {
                   pagination={{ position: ["bottomRight"] }}
                   scroll={{
                     x: "130vw",
-                    y: "80vh",
+                    y: "50vh",
                   }}
                   components={{
                     body: {

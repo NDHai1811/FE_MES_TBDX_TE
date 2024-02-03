@@ -10,6 +10,7 @@ import {
   Modal,
   Select,
   InputNumber,
+  message,
 } from "antd";
 import "../style.scss";
 import {
@@ -102,7 +103,7 @@ const columns = [
 ];
 
 const InDan = (props) => {
-  document.title = "Sản xuất máy In";
+  document.title = "Sản xuất máy tự động";
   const { machine_id } = useParams();
   const currentColumns = [
     {
@@ -169,11 +170,11 @@ const InDan = (props) => {
   const ws = useRef(null);
 
   const reloadData = async () => {
-    // const resData = await getListLotDetail();
-    // setData(resData);
-    // if (resData?.[0]?.status === 1) {
-    //   setSelectedLot(resData?.[0]);
-    // }
+    const resData = await getListLotDetail();
+    setData(resData);
+    if (resData?.[0]?.status === 1) {
+      setSelectedLot(resData?.[0]);
+    }
     getOverAllDetail();
   };
   const overallColumns = [
@@ -326,9 +327,12 @@ const InDan = (props) => {
   };
 
   const onScan = async (result) => {
-    scanQrCode({ lot_id: result, machine_id: machine_id })
-      .then(reloadData())
+    const lo_sx = JSON.parse(result).lo_sx;
+    scanQrCode({ lo_sx: lo_sx, machine_id: machine_id })
+      .then((response)=>response.success && reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
+    setIsOpenQRScanner(false);
+    setIsScan(2)
   };
 
   const rowClassName = (record, index) => {
@@ -459,6 +463,30 @@ const InDan = (props) => {
     setParams({ ...params, end_date: value });
   };
 
+  const [visiblePrint, setVisiblePrint] = useState();
+  const [quantity, setQuantity] = useState();
+  const openMdlPrint = () => {
+    if (typeof (selectedLot) != 'undefined') {
+      setVisiblePrint(true);
+      setQuantity(selectedLot?.san_luong);
+    } else {
+      message.info('Chưa chọn lô in tem');
+    }
+  }
+
+  const onConfirmPrint = async () => {
+    // var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
+    if (selectedLot.so_luong < quantity) {
+      message.error('Số lượng nhập vượt quá số lượng thực tế');
+    } else {
+      const res = { ...selectedLot, so_luong: quantity };
+      setListCheck([res]);
+      setSelectedLot();
+      setQuantity("");
+      setVisiblePrint(false);
+    }
+  };
+
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -493,8 +521,9 @@ const InDan = (props) => {
               width: "100%",
             }}
           >
-            <Col span={9}>
+            <Col span={7}>
               <DatePicker
+                allowClear={false}
                 placeholder="Từ ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -502,8 +531,9 @@ const InDan = (props) => {
                 onChange={onChangeStartDate}
               />
             </Col>
-            <Col span={9}>
+            <Col span={7}>
               <DatePicker
+                allowClear={false}
                 placeholder="Đến ngày"
                 style={{ width: "100%" }}
                 format={COMMON_DATE_FORMAT}
@@ -533,6 +563,16 @@ const InDan = (props) => {
                 <TemIn listCheck={listCheck} ref={componentRef2} />
                 <TemDan listCheck={listCheck} ref={componentRef3} />
               </div>
+            </Col>
+            <Col span={3}>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                onClick={openMdlPrint}
+              >
+                IN TEM
+              </Button>
             </Col>
           </Row>
           <Col span={24}>
@@ -566,6 +606,22 @@ const InDan = (props) => {
               onScan(res);
               setIsOpenQRScanner(false);
             }}
+          />
+        </Modal>
+      )}
+      {visiblePrint && (
+        <Modal
+          title="Số lượng trên tem"
+          open={visiblePrint}
+          onCancel={()=>setVisiblePrint(false)}
+          onOk={onConfirmPrint}
+        >
+          <InputNumber
+            value={quantity}
+            max={selectedLot?.san_luong}
+            placeholder="Nhập sản lượng trên tem"
+            onChange={setQuantity}
+            style={{ width: "100%" }}
           />
         </Modal>
       )}

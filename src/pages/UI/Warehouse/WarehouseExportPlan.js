@@ -13,21 +13,20 @@ import {
   Spin,
   Popconfirm,
   Typography,
+  Select,
+  InputNumber,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
 import {
-  createBuyers,
-  createOrder,
   deleteBuyers,
-  exportOrders,
-  updateBuyers,
-  updateOrder,
+  getUsers,
+  getVehicles,
 } from "../../../api";
-import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
+import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { getWarehouseFGExportList } from "../../../api/ui/warehouse";
+import { getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 
 const EditableCell = ({
   editing,
@@ -37,8 +36,32 @@ const EditableCell = ({
   record,
   index,
   children,
+  onChange,
+  onSelect,
+  options,
   ...restProps
 }) => {
+  let inputNode;
+  switch (inputType) {
+    case "number":
+      inputNode = <InputNumber />;
+      break;
+    case "select":
+      inputNode = (
+        <Select
+          value={record?.[dataIndex]}
+          options={options}
+          onChange={(value) => onSelect(value, dataIndex)}
+          bordered
+          showSearch
+          popupMatchSelectWidth={options.length > 0 ? 200 : 0}
+        />
+      );
+      break;
+    default:
+      inputNode = <Input />;
+  }
+  const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
     <td {...restProps}>
       {editing ? (
@@ -49,7 +72,7 @@ const EditableCell = ({
           }}
           initialValue={record?.[dataIndex]}
         >
-          <Input />
+          {inputNode}
         </Form.Item>
       ) : (
         children
@@ -82,6 +105,8 @@ const WarehouseExportPlan = () => {
     "so_xe",
     "nguoi_xuat",
   ]);
+  const [listVehicles, setListVehicles] = useState([]);
+  const [listUsers, setListUsers] = useState([]);
   const isEditing = (record) => record.key === editingKey;
 
   const hasEditColumn = (value) => {
@@ -95,14 +120,13 @@ const WarehouseExportPlan = () => {
       key: "ngay_xuat",
       align: "center",
       fixed: "left",
-      editable: hasEditColumn("ngay_xuat"),
+      render: (value, item) => dayjs(value).format('DD/MM/YYYY')
     },
     {
       title: "Mã khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
-      editable: hasEditColumn("customer_id"),
     },
     {
       title: "Mã đơn hàng",
@@ -131,6 +155,11 @@ const WarehouseExportPlan = () => {
       key: "tai_xe",
       align: "center",
       editable: hasEditColumn("tai_xe"),
+      render: (value)=>{
+        const item = listVehicles.find(e=>e.user1 === value);
+        return item?.driver?.name
+      },
+      width: '15%'
     },
     {
       title: "Số xe",
@@ -138,6 +167,7 @@ const WarehouseExportPlan = () => {
       key: "so_xe",
       align: "center",
       editable: hasEditColumn("so_xe"),
+      width: '15%'
     },
     {
       title: "Người xuất",
@@ -145,6 +175,11 @@ const WarehouseExportPlan = () => {
       key: "nguoi_xuat",
       align: "center",
       editable: hasEditColumn("nguoi_xuat"),
+      render: (value)=>{
+        const item = listUsers.find(e=>e.id == value);
+        return item?.name
+      },
+      width: '15%'
     },
     {
       title: "Hành động",
@@ -251,13 +286,21 @@ const WarehouseExportPlan = () => {
           ...row,
           key: row.id,
         });
-        await updateBuyers(row);
-        setData(newData);
+        row.id = editingKey;
+        if (listCheck.length > 0) {
+          row.ids = listCheck;
+        }
+        var res = await updateWarehouseFGExport(row);
+        if(res){
+          loadListTable();
+        }
         setEditingKey("");
       } else {
-        await createBuyers(row);
+        // await createBuyers(row);
         const items = [row, ...data.filter((val) => val.key !== key)];
-        setData(items);
+        if(res){
+          loadListTable();
+        }
         setEditingKey("");
       }
       form.resetFields();
@@ -277,15 +320,48 @@ const WarehouseExportPlan = () => {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
+        inputType:
+          col.dataIndex === "tai_xe" ||
+            col.dataIndex === "so_xe" ||
+            col.dataIndex === "nguoi_xuat"
+            ? "select"
+            : "text",
+        options: options(col.dataIndex),
+        onSelect:
+          col.dataIndex === "tai_xe" ||
+            col.dataIndex === "so_xe"
+            ? onSelectDriverVehicle
+            : onSelect,
       }),
     };
   });
+  const options = (dataIndex) => {
+    let filteredOptions = [];
+    switch (dataIndex) {
+      case "tai_xe":
+        filteredOptions = listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }));
+        break;
+      case "so_xe":
+        filteredOptions = listVehicles.map(e => ({ ...e, value: e?.id, label: e?.id }));
+        break;
+      case "nguoi_xuat":
+        filteredOptions = listUsers.map(e => ({ ...e, value: e?.id, label: e?.name }));
+        break;
+      default:
+        break;
+    }
+    return filteredOptions;
+  };
 
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     (async () => {
       loadListTable(params);
+      const res1 = await getVehicles();
+      setListVehicles(res1);
+      const res2 = await getUsers();
+      setListUsers(res2);
     })();
   }, []);
 
@@ -318,31 +394,13 @@ const WarehouseExportPlan = () => {
     });
   };
 
-  const onFinish = async (values) => {
-    if (isEdit) {
-      const res = await updateOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    } else {
-      const res = await createOrder(values);
-      if (res) {
-        form.resetFields();
-        setOpenMdl(false);
-        loadListTable(params);
-      }
-    }
-  };
-
   const exportFile = async () => {
-    setExportLoading(true);
-    const res = await exportOrders(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading(false);
+    // setExportLoading(true);
+    // const res = await exportOrders(params);
+    // if (res.success) {
+    //   window.location.href = baseURL + res.data;
+    // }
+    // setExportLoading(false);
   };
 
   const rowSelection = {
@@ -351,63 +409,98 @@ const WarehouseExportPlan = () => {
     },
   };
 
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    setData(items);
+  };
+  const onSelectDriverVehicle = (value, dataIndex) => {
+    const items = data.map((e) => {
+      if (e.key === editingKey) {
+        var target = null;
+        if (dataIndex === 'tai_xe') {
+          target = listVehicles.find(e=>e.user1 === value);
+        } else {
+          target = listVehicles.find(e=>e.id === value);
+        }
+        form.setFieldsValue({ ...e, so_xe: target?.id, tai_xe: target?.user1})
+        return { ...e, so_xe: target?.id, tai_xe: target?.user1}
+      } else {
+        return e;
+      }
+    });
+    setData(items)
+  }
+
   return (
     <>
       {contextHolder}
       <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }}>
-            <Divider>Tìm kiếm</Divider>
-            <div className="mb-3">
-              <Form
-                style={{ margin: "0 15px" }}
-                layout="vertical"
-                onFinish={btn_click}
-              >
-                <Form.Item label="Mã khách hàng" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, customer_id: e.target.value })
-                    }
-                    placeholder="Nhập mã khách hàng"
-                  />
-                </Form.Item>
-                <Form.Item label="Mã đơn hàng" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, mdh: e.target.value })
-                    }
-                    placeholder="Nhập mã đơn hàng"
-                  />
-                </Form.Item>
-                <Form.Item label="Mã quản lý" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, mql: e.target.value })
-                    }
-                    placeholder="Nhập mã quản lý"
-                  />
-                </Form.Item>
-                <Form.Item style={{ textAlign: "center" }}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{ width: "80%" }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </Form.Item>
-              </Form>
-            </div>
-          </Card>
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
+              className="custom-card scroll"
+            >
+              <Divider>Tìm kiếm</Divider>
+              <div className="mb-3">
+                <Form
+                  style={{ margin: "0 15px" }}
+                  layout="vertical"
+                  onFinish={btn_click}
+                >
+                  <Form.Item label="Mã khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_id: e.target.value })
+                      }
+                      placeholder="Nhập mã khách hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã đơn hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mdh: e.target.value })
+                      }
+                      placeholder="Nhập mã đơn hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã quản lý" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, mql: e.target.value })
+                      }
+                      placeholder="Nhập mã quản lý"
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ textAlign: "center" }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      style={{ width: "80%" }}
+                    >
+                      Tìm kiếm
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Kế hoạch xuất kho"
+            bodyStyle={{ paddingBottom: 0 }}
+            className="custom-card scroll"
             extra={
               <Space>
                 <Upload
@@ -463,7 +556,7 @@ const WarehouseExportPlan = () => {
                   bordered
                   pagination={{ position: ["bottomRight"] }}
                   scroll={{
-                    y: "80vh",
+                    y: window.innerHeight * 0.55,
                   }}
                   components={{
                     body: {

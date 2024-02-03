@@ -35,3 +35,17 @@
         border-collapse: collapse;
     }
 }
+
+.ant-card-actions{
+    position: 'sticky';
+    bottom: 0;
+}
+.slide-bar{
+    height: 100%;
+}
+.custom-card .ant-card-body{
+    height: calc(100vh * 0.78);
+}
+.custom-card.scroll .ant-card-body{
+    overflow: auto;
+}

@@ -90,33 +90,36 @@ function PopupNhapKhoNvl(props) {
   const getData = () => {
     getScanList({ material_id: currentData })
       .then((res) => {
-        if (res.data.length > 1) {
-          const items = data?.map((val) => {
-            if (val.material_id === currentData) {
-              val.status = 1;
-            }
-            return {
-              ...val,
-            };
-          });
-          setData(
-            data?.length > 0
-              ? items
-              : res.data?.map((val) => {
-                  if (val.material_id === currentData) {
-                    val.status = 1;
-                  }
-                  return {
-                    ...val,
-                  };
-                })
-          );
-        } else if (res.data.length === 1) {
-          window.localStorage.setItem(
-            "ScanNhapNvl",
-            JSON.stringify(res.data?.map((val) => ({ ...val, status: 1 })))
-          );
-          handleCancel();
+        // if (res.data.length > 1) {
+        //   const items = data?.map((val) => {
+        //     if (val.material_id === currentData) {
+        //       val.status = 1;
+        //     }
+        //     return {
+        //       ...val,
+        //     };
+        //   });
+        //   setData(
+        //     data?.length > 0
+        //       ? items
+        //       : res.data?.map((val) => {
+        //           if (val.material_id === currentData) {
+        //             val.status = 1;
+        //           }
+        //           return {
+        //             ...val,
+        //           };
+        //         })
+        //   );
+        // } else if (res.data.length === 1) {
+        //   window.localStorage.setItem(
+        //     "ScanNhapNvl",
+        //     JSON.stringify(res.data?.map((val) => ({ ...val, status: 1 })))
+        //   );
+        //   handleCancel();
+        // }
+        if(res.success){
+          setData(oldData => [...oldData,res.data] );
         }
         setCurrentScan(data.find((e) => e.material_id === currentData));
       })

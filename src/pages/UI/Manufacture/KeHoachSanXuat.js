@@ -20,20 +20,23 @@ import {
   Typography,
 } from "antd";
 import { baseURL } from "../../../config";
-import React, { useState, useEffect } from "react";
-import { getCustomers, getLoSanXuat, getOrders } from "../../../api/ui/main";
+import { useReactToPrint } from "react-to-print";
+import React, { useState, useEffect, useRef } from "react";
+import { getCustomers, getLoSanXuat, getOrders, getUIItemMenu } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
   exportKHSX,
+  exportKHXaLot,
   getListProductPlan,
-  storeProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
-import {
-  useHistory,
-} from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import TemXaLot from "./TemXaLot";
 
 const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
@@ -41,11 +44,17 @@ const KeHoachSanXuat = () => {
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [machines, setMachines] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loSX, setLoSX] = useState([]);
+  const [listCheck, setListCheck] = useState([]);
+  const [listPrint, setListPrint] = useState([]);
+  const componentRef1 = useRef();
   const col_detailTable = [
     {
       title: "STT",
@@ -53,120 +62,83 @@ const KeHoachSanXuat = () => {
       key: "stt",
       render: (value, item, index) => index + 1,
       align: "center",
-      width: '2%'
+      width: "1.5%",
     },
     {
       title: "Thứ tự ưu tiên",
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: '2%'
+      width: "1.8%",
+      editable: true,
     },
     {
       title: "Lô sx",
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
+      width: "3%",
     },
     {
       title: "Máy sx",
       dataIndex: "machine_id",
       key: "machine_id",
       align: "center",
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "ngay_dat_hang",
-      key: "ngay_dat_hang",
-      align: "center",
-      width: '5%'
+      width: "2%",
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
-      width: '10%'
+      width: "4%",
     },
     {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
+      width: "3%",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      width: "1.5%",
     },
     {
       title: "L",
       dataIndex: "dai",
       key: "dai",
       align: "center",
+      width: "1.5%",
     },
     {
       title: "W",
       dataIndex: "rong",
       key: "rong",
       align: "center",
+      width: "1.5%",
     },
     {
       title: "H",
       dataIndex: "cao",
       key: "cao",
       align: "center",
+      width: "1.5%",
     },
     {
-      title: "Số lượng kế hoạch",
+      title: "Số lượng",
       dataIndex: "sl_kh",
       key: "sl_kh",
       align: "center",
+      width: "2.5%",
     },
     {
-      title: "Số m tới",
-      dataIndex: "so_m_toi",
-      key: "so_m_toi",
-      align: "center",
-    },
-    {
-      title: "Ngày sản xuất",
-      dataIndex: "ngay_sx",
-      key: "ngay_sx",
-      align: "center",
-      width: '5%'
-    },
-    {
-      title: "Ngày giao hàng",
-      dataIndex: "ngay_giao_hang",
-      key: "ngay_giao_hang",
-      align: "center",
-      width: '5%'
-    },
-    {
-      title: "Ghi chú",
-      dataIndex: "ghi_chu",
-      key: "ghi_chu",
-      align: "center",
-      editable: true
-    },
-    {
-      title: "Mã quản lý",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-    },
-    {
-      title: "Số lớp",
-      dataIndex: "so_lop",
-      key: "so_lop",
-      align: "center",
-    },
-    {
-      title: "Kho",
+      title: "Khổ",
       dataIndex: "kho",
       key: "kho",
-      align: "center",
-    },
-    {
-      title: "SL thực tế",
-      dataIndex: "sl_thuc_te",
-      key: "sl_thuc_te",
       align: "center",
     },
     {
@@ -174,11 +146,33 @@ const KeHoachSanXuat = () => {
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       align: "center",
+      width: "8%",
     },
     {
-      title: "PAD",
-      dataIndex: "pad",
-      key: "pad",
+      title: "Thời gian bắt đầu",
+      dataIndex: "thoi_gian_bat_dau",
+      key: "thoi_gian_bat_dau",
+      align: "center",
+      width: "5%",
+    },
+    {
+      title: "Thời gian kết thúc",
+      dataIndex: "thoi_gian_ket_thuc",
+      key: "thoi_gian_ket_thuc",
+      align: "center",
+      width: "5%",
+    },
+    {
+      title: "Ngày giao hàng",
+      dataIndex: "ngay_giao_hang",
+      key: "ngay_giao_hang",
+      align: "center",
+      width: "5%",
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "ghi_chu",
+      key: "ghi_chu",
       align: "center",
     },
     {
@@ -188,27 +182,9 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Số dao kế hoạch",
-      dataIndex: "so_dao_kh",
-      key: "so_dao_kh",
-      align: "center",
-    },
-    {
-      title: "Dải tấm",
+      title: "Dài tấm",
       dataIndex: "dai_tam",
       key: "dai_tam",
-      align: "center",
-    },
-    {
-      title: "Nhóm máy",
-      dataIndex: "nhom_may",
-      key: "nhom_may",
-      align: "center",
-    },
-    {
-      title: "Số thân",
-      dataIndex: "so_than",
-      key: "so_than",
       align: "center",
     },
     {
@@ -218,15 +194,9 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Film",
-      dataIndex: "film_id",
-      key: "film_id",
-      align: "center",
-    },
-    {
-      title: "Khuôn",
-      dataIndex: "khuon_id",
-      key: "khuon_id",
+      title: "SL thực tế",
+      dataIndex: "sl_thuc_te",
+      key: "sl_thuc_te",
       align: "center",
     },
     {
@@ -236,6 +206,7 @@ const KeHoachSanXuat = () => {
       checked: true,
       align: "center",
       fixed: "right",
+      width: "2%",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -283,16 +254,12 @@ const KeHoachSanXuat = () => {
 
   useEffect(() => {
     btn_click();
-  }, [])
+  }, []);
 
   useEffect(() => {
     (async () => {
-      const res1 = await getCustomers();
-      setCustomers(res1.data.map((e) => ({ label: e.name, value: e.id })));
-      const res2 = await getOrders();
-      setOrders(res2.data.map((e) => ({ label: e.id, value: e.id })))
-      const res3 = await getLoSanXuat();
-      setLoSX(res3.data.map((e) => ({ label: e, value: e })))
+      const res1 = await getUIItemMenu();
+      setItemMenu(res1.data);
     })();
   }, []);
 
@@ -300,7 +267,7 @@ const KeHoachSanXuat = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
-    setData(res.map(e=>({...e, key: e.id})));
+    setData(res.map((e) => ({ ...e, key: e.id })));
     setLoading(false);
   };
 
@@ -323,7 +290,7 @@ const KeHoachSanXuat = () => {
   const onUpdate = async () => {
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
-    const res = await updateProductPlan({...item, ...row});
+    const res = await updateProductPlan({ ...item, ...row });
     if (res) {
       form.resetFields();
       loadListTable();
@@ -331,8 +298,18 @@ const KeHoachSanXuat = () => {
     }
   };
   const onDetele = async (record) => {
+    console.log(record);
     await deleteRecordProductPlan({ id: record.id });
     loadListTable();
+  };
+  const deleteRecord = async () => {
+    if (listCheck.length > 0) {
+      const res = await deleteRecordProductPlan(listCheck);
+      setListCheck([]);
+      loadListTable(params);
+    } else {
+      message.info("Chưa chọn bản ghi cần xóa");
+    }
   };
   const edit = (record) => {
     form.setFieldsValue({
@@ -355,59 +332,31 @@ const KeHoachSanXuat = () => {
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-  ];
+  const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
-    const filteredKeys = selectedKeys.filter(key => !itemsMenu.some(e => e.key === key));
+    const filteredKeys = selectedKeys.filter(
+      (key) => !itemsMenu.some((e) => e.key === key)
+    );
     setParams({ ...params, machine: filteredKeys });
-  }
+  };
 
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportKHSX(params);
+    const res = await exportKHSX({ ...params, plan_ids: listCheck });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
+  };
+  const [exportLoadingXL, setExportLoadingXL] = useState(false);
+  const exportFileXL = async () => {
+    setExportLoadingXL(true);
+    const res = await exportKHXaLot({ ...params, plan_ids: listCheck });
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoadingXL(false);
   };
   const EditableCell = ({
     editing,
@@ -461,6 +410,13 @@ const KeHoachSanXuat = () => {
   };
   const isEditing = (record) => record.key === editingKey;
   const [editingKey, setEditingKey] = useState("");
+  const print = useReactToPrint({
+    content: () => componentRef1.current,
+  });
+  const handlePrint = async () => {
+    print();
+    setListCheck([]);
+  };
   const mergedColumns = col_detailTable.map((col) => {
     if (!col.editable) {
       return col;
@@ -475,15 +431,15 @@ const KeHoachSanXuat = () => {
         editing: isEditing(record),
         onChange,
         onSelect,
-        options: options(col.dataIndex)
-      })
+        options: options(col.dataIndex),
+      }),
     };
   });
   const options = (dataIndex) => {
-    var record = data.find(e => e.id === editingKey);
+    var record = data.find((e) => e.id === editingKey);
     let filteredOptions = [];
     return filteredOptions;
-  }
+  };
   const onChange = (value, dataIndex) => {
     const items = data.map((val) => {
       if (val.key === editingKey) {
@@ -502,14 +458,33 @@ const KeHoachSanXuat = () => {
     });
     setData(items);
   };
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListPrint(selectedRows);
+      setListCheck(selectedRowKeys);
+    },
+  };
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]} type="flex">
         <Col span={4}>
           <Card
-            style={{ height: "100%" }}
             bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+            className="custom-card scroll"
+            actions={[
+              <div
+                layout="vertical"
+              >
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            ]}
           >
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -519,7 +494,6 @@ const KeHoachSanXuat = () => {
                     checkable
                     onCheck={onCheck}
                     treeData={itemsMenu}
-                  // style={{ maxHeight: '80px', overflowY: 'auto' }}
                   />
                 </Form.Item>
               </Form>
@@ -554,78 +528,53 @@ const KeHoachSanXuat = () => {
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
                 <Form.Item label="Khách hàng" className="mb-3">
-                  <Select
+                  <Input
                     allowClear
-                    showSearch
-                    placeholder="Nhập khách hàng"
-                    onChange={(value) =>
-                      setParams({ ...params, customer_id: value })
-                    }
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    popupMatchSelectWidth={customers.length > 0 ? 400 : 0}
-                    options={customers}
+                    onChange={(e) => {
+                      setParams({
+                        ...params,
+                        short_name: e.target.value,
+                        page: 1,
+                      });
+                    }}
+                    placeholder="Nhập mã khách hàng"
                   />
                 </Form.Item>
-                <Form.Item label="Đơn hàng" className="mb-3">
+                <Form.Item label="MĐH" className="mb-3">
                   <Select
+                    mode="tags"
                     allowClear
                     showSearch
+                    suffixIcon={null}
                     onChange={(value) => {
-                      setParams({ ...params, order_id: value });
+                      setParams({ ...params, mdh: value });
                     }}
-                    placeholder="Nhập đơn hàng"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={orders}
+                    open={false}
+                    placeholder="Nhập mã đơn hàng"
+                    options={[]}
                   />
                 </Form.Item>
                 <Form.Item label="Lô Sản xuất" className="mb-3">
-                  <Select
+                  <Input
                     allowClear
-                    showSearch
+                    onChange={(e) => {
+                      setParams({
+                        ...params,
+                        lo_sx: e.target.value,
+                        page: 1,
+                      });
+                    }}
                     placeholder="Nhập lô sản xuất"
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    onChange={(value) => setParams({ ...params, lo_sx: value })}
-                    options={loSX}
                   />
                 </Form.Item>
               </Form>
             </div>
 
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
-            >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
-              >
-                Truy vấn
-              </Button>
-            </div>
+
           </Card>
         </Col>
         <Col span={20}>
           <Card
-            style={{ height: "100%" }}
             title="Kế hoạch sản xuất"
             extra={
               <Space>
@@ -634,12 +583,19 @@ const KeHoachSanXuat = () => {
                   onClick={exportFile}
                   loading={exportLoading}
                 >
-                  Xuất file KHSX
+                  KHSX Sóng
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={exportFileXL}
+                  loading={exportLoadingXL}
+                >
+                  KHSX Xả Lot
                 </Button>
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/upload-ke-hoach-san-xuat"}
+                  action={baseURL + "/api/manufacture/production-plan/import"}
                   headers={{
                     authorization: "authorization-text",
                   }}
@@ -661,38 +617,53 @@ const KeHoachSanXuat = () => {
                     }
                   }}
                 >
-                  <Button
-                    type="primary"
-                    loading={loadingExport}
-                  >
+                  <Button type="primary" loading={loadingExport}>
                     Upload Excel
                   </Button>
                 </Upload>
                 <Button type="primary" onClick={insertRecord}>
                   Tạo kế hoạch
                 </Button>
+                <Button type="primary" onClick={deleteRecord}>
+                  Xoá
+                </Button>
+
+                <Button
+                  size="medium"
+                  type="primary"
+                  style={{ width: "100%" }}
+                  onClick={handlePrint}
+                >
+                  In tem xả lot
+                </Button>
+                <div className="report-history-invoice">
+                  <TemXaLot listCheck={listPrint} ref={componentRef1} />
+                </div>
               </Space>
             }
+            style={{ height: '100%' }}
+            className="custom-card"
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
-              <Table
-                size="small"
-                bordered
-                pagination={false}
-                scroll={{
-                  x: "200vw",
-                  y: "80vh",
-                }}
-                components={{
-                  body: {
-                    cell: EditableCell,
-                  },
-                }}
-                rowClassName="editable-row"
-                columns={mergedColumns}
-                dataSource={data}
-              />
+                <Table
+                  size="small"
+                  bordered
+                  pagination={false}
+                  scroll={{
+                    x: "300vw",
+                    y: window.innerHeight * 0.6,
+                  }}
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  rowSelection={rowSelection}
+                  rowClassName="editable-row"
+                  columns={mergedColumns}
+                  dataSource={data}
+                />
               </Form>
             </Spin>
           </Card>

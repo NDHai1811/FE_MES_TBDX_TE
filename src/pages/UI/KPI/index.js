@@ -60,23 +60,29 @@ const KPI = (props) => {
     []
   );
 
-  const [dataChartTiLeNgOQC, setDataChartTiLeNgOQC] = useState([5, 5, 5, 5, 5, 5, 5].map((_, i)=>{
-    return {
-      date: dayjs('2023-12-05').add(i, 'days').format("D/M"),
-      value: Math.floor(Math.random() * 6),
-      type: "TL NG OQC",
-    }
-  }));
-  const [dataChartTiLeVanHanhThietBi, setDataChartTiLeVanHanhThietBi] = useState([5, 5, 5, 5, 5, 5, 5].map((_, i)=>{
-    return {
-      date: dayjs('2023-12-05').add(i, 'days').format("D/M"),
-      value: Math.floor(Math.random() * (80 - 50)) + 50,
-      type: "TL NG OQC",
-    }
-  }));
+  const [dataChartTiLeNgOQC, setDataChartTiLeNgOQC] = useState(
+    [5, 5, 5, 5, 5, 5, 5].map((_, i) => {
+      return {
+        date: dayjs("2023-12-05").add(i, "days").format("D/M"),
+        value: Math.floor(Math.random() * 6),
+        type: "TL NG OQC",
+      };
+    })
+  );
+  const [dataChartTiLeVanHanhThietBi, setDataChartTiLeVanHanhThietBi] =
+    useState(
+      [5, 5, 5, 5, 5, 5, 5].map((_, i) => {
+        return {
+          date: dayjs("2023-12-05").add(i, "days").format("D/M"),
+          value: Math.floor(Math.random() * (80 - 50)) + 50,
+          type: "TL NG OQC",
+        };
+      })
+    );
   const [dataChartTiLeDatThang, setDataChartTiLeDatThang] = useState([]);
   const [dataChartNgayTon, setDataChartNgayTon] = useState([]);
-  const [dataChartTiLeGiaoHangDungHan, setDataChartTiLeGiaoHangDungHan] = useState([]);
+  const [dataChartTiLeGiaoHangDungHan, setDataChartTiLeGiaoHangDungHan] =
+    useState([]);
   const [dataChartTiLeLoiCongDoan, setDataChartTiLeLoiCongDoan] = useState([]);
   const [dataChartLeadTime, setDataChartLeadTime] = useState([]);
 
@@ -159,7 +165,7 @@ const KPI = (props) => {
     xAxis: {
       label: {
         autoHide: false,
-        rotate: 0.7
+        rotate: 0.7,
       },
     },
     yAxis: {
@@ -179,7 +185,7 @@ const KPI = (props) => {
     xAxis: {
       label: {
         autoHide: false,
-        rotate: 0.8
+        rotate: 0.8,
       },
     },
     yAxis: {
@@ -199,7 +205,7 @@ const KPI = (props) => {
     xAxis: {
       label: {
         autoHide: false,
-        rotate: 0.7
+        rotate: 0.7,
       },
     },
     yAxis: {
@@ -342,7 +348,6 @@ const KPI = (props) => {
     //   });
     //   console.log(data);
     //   setDataTable(data);
-
     //   let list1 = [];
     //   Object.keys(res.data.ti_le_sx.data ?? {}).map((key, index) => {
     //     list1.push({
@@ -478,59 +483,61 @@ const KPI = (props) => {
           height: "100vh",
         }}
       >
-        <Col span={3}>
-          <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
-            <Divider>Thời gian truy vấn</Divider>
-            <Row style={{ margin: "0 15px" }}>
-              <Col span={24}>
-                <Form.Item name="start_date">
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
-                      value={params.start_date}
-                      onChange={(value) =>
-                        setParams({
-                          ...params,
-                          start_date: value,
-                        })
-                      }
-                    />
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Kết thúc"
-                      style={{ width: "100%" }}
-                      value={params.end_date}
-                      onChange={(value) =>
-                        setParams({
-                          ...params,
-                          end_date: value,
-                        })
-                      }
-                    />
-                  </Space>
-                </Form.Item>
-              </Col>
-            </Row>
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
-            >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
+        <Col span={4}>
+          <div className="slide-bar">
+            <Card style={{ height: "100%" }} bodyStyle={{ paddingInline: 0 }}>
+              <Divider>Thời gian truy vấn</Divider>
+              <Row style={{ margin: "0 15px" }}>
+                <Col span={24}>
+                  <Form.Item name="start_date">
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <DatePicker
+                        allowClear={false}
+                        placeholder="Bắt đầu"
+                        style={{ width: "100%" }}
+                        value={params.start_date}
+                        onChange={(value) =>
+                          setParams({
+                            ...params,
+                            start_date: value,
+                          })
+                        }
+                      />
+                      <DatePicker
+                        allowClear={false}
+                        placeholder="Kết thúc"
+                        style={{ width: "100%" }}
+                        value={params.end_date}
+                        onChange={(value) =>
+                          setParams({
+                            ...params,
+                            end_date: value,
+                          })
+                        }
+                      />
+                    </Space>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <div
+                style={{
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+                layout="vertical"
               >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+              </div>
+            </Card>
+          </div>
         </Col>
-        <Col span={21}>
+        <Col span={20}>
           <Row gutter={[8, 8]}>
             {/* <Row gutter={[8, 8]}> */}
             <Col span={6}>

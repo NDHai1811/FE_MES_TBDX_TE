@@ -5,6 +5,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import logolight from "../assets/images/logo.jpg";
 import { useProfile } from "../components/hooks/UserHooks";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import './layoutStyle.scss';
 
 const items = [
   {
@@ -120,10 +121,10 @@ const items = [
         label: "Danh sách công đoạn",
         key: "master-data/cong-doan",
       },
-      {
-        label: "Khách hàng",
-        key: "master-data/customer",
-      },
+      // {
+      //   label: "Khách hàng",
+      //   key: "master-data/customer",
+      // },
       {
         label: "Máy và NVL",
         children: [
@@ -131,10 +132,10 @@ const items = [
             label: "Danh sách máy",
             key: "master-data/may",
           },
-          {
-            label: "Spec sản phẩm",
-            key: "master-data/spec-product",
-          },
+          // {
+          //   label: "Spec sản phẩm",
+          //   key: "master-data/spec-product",
+          // },
           {
             label: "Nguyên vật liệu",
             key: "master-data/material",
@@ -144,10 +145,10 @@ const items = [
             label: "Khuôn",
             key: "master-data/khuon",
           },
-          {
-            label: "JIG",
-            key: "master-data/jig",
-          },
+          // {
+          //   label: "JIG",
+          //   key: "master-data/jig",
+          // },
         ],
       },
 
@@ -203,6 +204,10 @@ const items = [
         label: "Bảo trì bảo dưỡng",
         key: "master-data/maintenance",
       },
+      // {
+      //   label: "Quản lý xe",
+      //   key: "master-data/vehicle",
+      // },
     ],
     permission: "master",
   },
@@ -249,6 +254,7 @@ const HeaderUI = () => {
           paddingTop: "3px",
           paddingBottom: "3px",
         }}
+        className="fixed-header"
       >
         <Row style={{ alignItems: "center" }}>
           <Col span={4}>

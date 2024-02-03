@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 
@@ -28,7 +28,10 @@ const Layout = (props) => {
             <Header />
             <div
               className="main-content"
-              style={{ paddingInline: "0.5em", minHeight: "100%" }}
+              style={{
+                paddingInline: "0.5em",
+                minHeight: "100%",
+              }}
             >
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <UserCard />
@@ -41,9 +44,9 @@ const Layout = (props) => {
           <div>{props.children}</div>
         )
       ) : (
-        <div id="layout-wrapper" style={{ height: "100%", minHeight: "100vh" }}>
+        <div id="layout-wrapper" style={{ height: "100%"}}>
           <HeaderUI />
-          <div>{props.children}</div>
+          <div className="content-below-header">{props.children}</div>
         </div>
       )}
     </React.Fragment>

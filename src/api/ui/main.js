@@ -45,6 +45,10 @@ export async function getCaSanXuats(params) {
   const res = await axios.get("ui/ca-san-xuat-s");
   return res;
 }
+export async function getUIItemMenu(params) {
+  const res = await axios.get("ui/item-menu");
+  return res;
+}
 //Lỗi QC
 export async function getErrors(params) {
   const res = await axios.get("ui/errors");

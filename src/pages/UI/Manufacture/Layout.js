@@ -19,10 +19,15 @@ import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
 import { getListLayout } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
-import { DeleteOutlined, EditOutlined, PrinterOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PrinterOutlined,
+} from "@ant-design/icons";
 import { createLayouts, deleteLayouts, updateLayouts } from "../../../api";
 import TemLayout from "./TemLayout";
 import { useReactToPrint } from "react-to-print";
+import "../style.scss";
 
 const EditableCell = ({
   editing,
@@ -144,8 +149,19 @@ const Layout = () => {
       setData(newData);
     }
   };
-  const qr_arr = ['ma_film_1', 'ma_film_2', 'ma_film_3', 'ma_film_4', 'ma_film_5',
-    'ma_muc_1', 'ma_muc_2', 'ma_muc_3', 'ma_muc_4', 'ma_muc_5', 'ma_khuon'];
+  const qr_arr = [
+    "ma_film_1",
+    "ma_film_2",
+    "ma_film_3",
+    "ma_film_4",
+    "ma_film_5",
+    "ma_muc_1",
+    "ma_muc_2",
+    "ma_muc_3",
+    "ma_muc_4",
+    "ma_muc_5",
+    "ma_khuon",
+  ];
   const printQR = (record) => {
     const arr = [];
     for (const [key, value] of Object.entries(record)) {
@@ -154,8 +170,7 @@ const Layout = () => {
       }
     }
     setListCheck(arr);
-
-  }
+  };
   const col_detailTable = [
     {
       title: "Mã khách hàng",
@@ -492,7 +507,7 @@ const Layout = () => {
       dataIndex: "action",
       align: "center",
       fixed: "right",
-      width: '2.5%',
+      width: "2.5%",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -697,66 +712,66 @@ const Layout = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
-          <Card
-            style={{ height: "100%" }}
-            bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-          >
-            <Divider>Điều kiện truy vấn</Divider>
-            <div className="mb-3">
-              <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Form.Item label="Máy" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, machine_id: e.target.value })
-                    }
-                    placeholder="Nhập máy"
-                  />
-                </Form.Item>
-                <Form.Item label="Khách hàng" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, customer_id: e.target.value })
-                    }
-                    placeholder="Nhập khách hàng"
-                  />
-                </Form.Item>
-                <Form.Item label="Mã layout" className="mb-3">
-                  <Input
-                    allowClear
-                    onChange={(e) =>
-                      setParams({ ...params, layout_id: e.target.value })
-                    }
-                    placeholder="Nhập mã layout"
-                  />
-                </Form.Item>
-              </Form>
-            </div>
-
-            <div
-              style={{
-                padding: "10px",
-                textAlign: "center",
-              }}
-              layout="vertical"
+          <div className="slide-bar">
+            <Card
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
-              <Button
-                type="primary"
-                style={{ width: "80%" }}
-                onClick={btn_click}
-              >
-                Truy vấn
-              </Button>
-            </div>
-          </Card>
+              <Divider>Điều kiện truy vấn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item label="Máy" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, machine_id: e.target.value })
+                      }
+                      placeholder="Nhập máy"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_id: e.target.value })
+                      }
+                      placeholder="Nhập khách hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã layout" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, layout_id: e.target.value })
+                      }
+                      placeholder="Nhập mã layout"
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
+            </Card>
+          </div>
         </Col>
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
             title="Quản lý thông tin layout"
+            className="custom-card"
             extra={
               <Space>
                 <Upload
@@ -803,9 +818,10 @@ const Layout = () => {
                 <Table
                   size="small"
                   bordered
-                  pagination={true}
+                  pagination={false}
                   scroll={{
                     x: "280vw",
+                    y: window.innerHeight * 0.50,
                   }}
                   components={{
                     body: {
