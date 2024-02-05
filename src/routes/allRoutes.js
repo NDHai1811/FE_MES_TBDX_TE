@@ -22,7 +22,6 @@ import UIKPI from "../pages/UI/KPI";
 import WarehouseExportPlan from "../pages/UI/Warehouse/WarehouseExportPlan";
 import ThanhPhamGiay from "../pages/UI/Warehouse/ThanhPhamGiay";
 import KhoNVL from "../pages/UI/Warehouse/KhoNvl";
-import DBTinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 import DBHieuSuatThietBi from "../pages/DB/HieuSuatThietBi";
 import DBCanhBaoBatThuong from "../pages/DB/CanhBaoBatThuong";
 import DBGiaoDienDaChieu from "../pages/DB/GiaoDienDaChieu";
@@ -59,6 +58,7 @@ import WarehouseMLT from "../pages/UI/Warehouse/WarehouseMLT";
 import TaoTem from "../pages/UI/Manufacture/TaoTem";
 import Vehicle from "../pages/UI/MasterData/Vehicle";
 import TaoTon from "../pages/UI/Warehouse/TaoTon";
+import TinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -147,7 +147,7 @@ const publicRoutes = [
     path: ["/dashboard-slide", "/dashboard-slide/:screen"],
     component: DashBoard,
   },
-  { path: ["/dashboard/tinh-hinh-san-xuat"], component: DBTinhHinhSanXuat },
+  { path: ["/dashboard/tinh-hinh-san-xuat"], component: TinhHinhSanXuat },
   { path: ["/dashboard/hieu-suat-thiet-bi"], component: DBHieuSuatThietBi },
   { path: ["/dashboard/canh-bao-bat-thuong"], component: DBCanhBaoBatThuong },
   { path: ["/dashboard/giao-dien-da-chieu"], component: DBGiaoDienDaChieu },

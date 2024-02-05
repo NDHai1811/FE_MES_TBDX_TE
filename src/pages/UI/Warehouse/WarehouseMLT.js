@@ -221,22 +221,11 @@ const WarehouseMLT = (props) => {
       key: "material_id",
       align: "center",
     },
-    {
-      title: "Mã vật tư",
-      dataIndex: "ma_vat_tu",
-      key: "ma_vat_tu",
-      align: "center",
-    },
+    
     {
       title: "Tên nhà cung cấp",
       dataIndex: "ten_ncc",
       key: "ten_ncc",
-      align: "center",
-    },
-    {
-      title: "Mã cuộn nhà cung cấp",
-      dataIndex: "ma_cuon_ncc",
-      key: "ma_cuon_ncc",
       align: "center",
     },
     {
@@ -272,6 +261,31 @@ const WarehouseMLT = (props) => {
       dataIndex: "dinh_luong",
       key: "dinh_luong",
       align: "center",
+    },
+    {
+      title: "Mã vật tư",
+      dataIndex: "ma_vat_tu",
+      key: "ma_vat_tu",
+      align: "center",
+    },
+    {
+      title: "Mã cuộn nhà cung cấp",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+    },
+    {
+      title: "Mã cuộn nhà cung cấp",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+    },
+    {
+      title: "Ngày nhập",
+      dataIndex: "created_at",
+      key: "created_at",
+      align: "center",
+      render: (value, item, index) => (value === 1 ? "X" : ""),
     },
     {
       title: "IQC OK/NG",
