@@ -35,11 +35,42 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getMachines } from "../../../api/oi/equipment";
 
-const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
-const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
-
 const columns = [
+  {
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MDH",
+    dataIndex: "mdh",
+    key: "mdh",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MQL",
+    dataIndex: "mql",
+    key: "mql",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "SL đầu ra",
+    dataIndex: "sl_dau_ra_hang_loat",
+    key: "sl_dau_ra_hang_loat",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
   {
     title: "Lô SX",
     dataIndex: "lo_sx",
@@ -48,20 +79,13 @@ const columns = [
     render: (value, record, index) => value || "-",
   },
   {
-    title: "Sản lượng kế hoạch",
+    title: "SL kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
   },
   {
-    title: "Sản lượng đầu ra",
-    dataIndex: "sl_dau_ra_hang_loat",
-    key: "sl_dau_ra_hang_loat",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sản lượng đạt",
+    title: "SL đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
@@ -81,27 +105,6 @@ const columns = [
     align: "center",
     render: (value) => value || "-",
   },
-  {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
 ];
 
 const NhapTay = (props) => {
@@ -116,14 +119,14 @@ const NhapTay = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "Sản lượng kế hoạch",
+      title: "SL kế hoạch",
       dataIndex: "dinh_muc",
       key: "dinh_muc",
       align: "center",
       render: (value) => value || "-",
     },
     {
-      title: "Sản lượng đầu ra",
+      title: "SL đầu ra",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
@@ -138,7 +141,7 @@ const NhapTay = (props) => {
       },
     },
     {
-      title: "Sản lượng đạt",
+      title: "SL đạt",
       dataIndex: "sl_ok",
       key: "sl_ok",
       align: "center",
@@ -205,8 +208,8 @@ const NhapTay = (props) => {
 
   const reloadData = async (lo_sx = null) => {
     const resData = await manualList(params);
-    const tableData = resData.data.map((e, index)=>({...e, key: index}));
-    tableData.sort(function(x, y){ return x?.lo_sx === lo_sx ? -1 : y?.lo_sx === lo_sx ? 1 : 0; })
+    const tableData = resData.data.map((e, index) => ({ ...e, key: index }));
+    tableData.sort(function (x, y) { return x?.lo_sx === lo_sx ? -1 : y?.lo_sx === lo_sx ? 1 : 0; })
     setData(tableData);
     const target = tableData.find(e => e?.lo_sx === lo_sx);
     setLotCurrent(target);
@@ -235,7 +238,7 @@ const NhapTay = (props) => {
       align: "center",
     },
     {
-      title: "Sản lượng ca",
+      title: "SL ca",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
@@ -357,7 +360,7 @@ const NhapTay = (props) => {
     const lo_sx = JSON.parse(result)?.lo_sx;
     manualScan({ lo_sx: lo_sx, machine_id: machine_id })
       .then(() => { reloadData(lo_sx); handleCloseMdl() })
-      .catch((err) => {console.log("Quét mã qr thất bại: ", err); handleCloseMdl();});
+      .catch((err) => { console.log("Quét mã qr thất bại: ", err); handleCloseMdl(); });
   };
 
   const rowClassName = (record, index) => {
@@ -523,13 +526,14 @@ const NhapTay = (props) => {
                 style={{ width: "100%" }}
                 onClick={openMdlPrint}
               >
-                IN TEM
+                IN
               </Button>
             </Col>
           </Row>
           <Col span={24}>
             <Table
               scroll={{
+                x: "calc(700px + 50%)",
                 y: 300,
               }}
               size="small"
