@@ -467,7 +467,7 @@ const TaoKeHoachSanXuat = () => {
     };
     return (
         <>
-            <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+            <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
                 <Col span={24}>
                     <Card
                         style={{ height: "100%" }}

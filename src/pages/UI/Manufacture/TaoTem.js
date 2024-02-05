@@ -76,7 +76,7 @@ const TaoTem = () => {
     const optionsDisplay = [
         { value: 'new', label: 'Mới' },
         { value: 'all', label: 'Tất cả' },
-    ]
+    ];
     const isEditing = (record) => record.key === editingKey;
     const onUpdate = async () => {
         const item = data.find((val) => val.key === editingKey);
@@ -454,6 +454,21 @@ const TaoTem = () => {
                                                 });
                                             }}
                                             value={params.show}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="Máy" className="mb-3">
+                                        <Select
+                                            options={listMachines}
+                                            onChange={(value) => {
+                                                setParams({
+                                                    ...params,
+                                                    machine_id: value,
+                                                    page: 1,
+                                                });
+                                            }}
+                                            showSearch
+                                            optionFilterProp="label"
+                                            value={params.machine_id}
                                         />
                                     </Form.Item>
                                     <Form.Item label="Lô sản xuất" className="mb-3">
