@@ -202,7 +202,7 @@ const Mapping = () => {
       machine_id,
       lo_sx: selectedItem?.[0]?.lo_sx,
     });
-    if (res.data) {
+    if (res.data && res.data.success) {
       setIsShowPopup(true);
     }
   };

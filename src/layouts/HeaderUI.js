@@ -32,6 +32,10 @@ const items = [
         label: "Lịch sử sản xuất",
         key: "manufacture/lich-su-san-xuat",
       },
+      {
+        label: "Tạo tem",
+        key: "manufacture/tao-tem",
+      },
     ],
 
     permission: "ui-sx",
