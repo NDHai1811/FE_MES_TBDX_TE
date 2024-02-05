@@ -71,7 +71,7 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">{detail.rong}</td>
               <td className="text-center">{detail.cao}</td>
               <td className="text-center">{detail.lo_sx}</td>
-              <td className="text-center"><b>{detail.so_dao}</b></td>
+              <td className="text-center"><b>{detail.sl_kh}</b></td>
             </tr>
             <tr>
               <td className="text-center" style={{ fontSize: '12px' }}>KHỔ</td>

@@ -275,17 +275,11 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Mã cuộn nhà cung cấp",
-      dataIndex: "ma_cuon_ncc",
-      key: "ma_cuon_ncc",
-      align: "center",
-    },
-    {
       title: "Ngày nhập",
       dataIndex: "created_at",
       key: "created_at",
       align: "center",
-      render: (value, item, index) => (value === 1 ? "X" : ""),
+      render: (value, item, index) => dayjs(value).format('DD-MM-YYYY'),
     },
     {
       title: "IQC OK/NG",

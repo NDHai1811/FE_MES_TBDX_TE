@@ -63,12 +63,12 @@ function PopupQuetQr(props) {
 
         if (emptyKey === "vi_tri") {
           // if (result === checkData[index]?.vi_tri) {
-          console.log(data);
-          const isLocation = checkData?.some((val) => val?.vi_tri === result);
+          const isLocation = checkData?.some((val) => val?.vi_tri === result && val.isDone === false);
+          console.log(checkData, isLocation, result);
           if (isLocation) {
             val.vi_tri = result;
           } else {
-            messageAlert("Mã vị trí không đúng, Vui lòng quét lại");
+            message.info("Mã vị trí không đúng, Vui lòng quét lại");
           }
         } else if (emptyKey === lastedEmptyKey) {
           const itemByIndex = data.find((it, itIndex) => itIndex === index);

@@ -303,6 +303,10 @@ const Orders = () => {
       value: 'so_met_toi',
     },
     {
+      label: 'Đợt',
+      value: 'dot',
+    },
+    {
       label: 'Mã layout',
       value: 'layout_id',
     },
@@ -853,7 +857,7 @@ const Orders = () => {
         filteredOptions = PL1s;
         break;
       case "phan_loai_2":
-        filteredOptions = PL2s.filter(e=>e?.phan_loai_1 === record?.phan_loai_1);
+        filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1);
         break;
       default:
         var options = record?.customer_specifications ?? [];
