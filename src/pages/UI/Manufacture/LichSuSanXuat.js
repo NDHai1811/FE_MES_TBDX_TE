@@ -331,7 +331,7 @@ const LichSuSanXuat = (props) => {
                       onChange={(e) => {
                         setParams({
                           ...params,
-                          short_name: e.target.value,
+                          customer_id: e.target.value,
                           page: 1,
                         });
                       }}
@@ -365,19 +365,6 @@ const LichSuSanXuat = (props) => {
                       placeholder="Nhập lô sản xuất"
                     />
                   </Form.Item>
-                  <Form.Item label="Máy" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          machine_id: e.target.value,
-                          page: 1,
-                        });
-                      }}
-                      placeholder="Nhập máy"
-                    />
-                  </Form.Item>
                   <Form.Item label="Quy cách" className="mb-3">
                     <Input
                       allowClear
@@ -403,13 +390,13 @@ const LichSuSanXuat = (props) => {
             className="custom-card scroll"
             extra={
               <Space>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={reportProduceHistory}
                   loading={exportLoading2}
                 >
                   Xuất báo cáo
-                </Button>
+                </Button> */}
                 <Button
                   type="primary"
                   onClick={exportFile}

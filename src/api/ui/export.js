@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function exportProduceHistory(params) {
-  const res = await axios.get("/export/produce/history", { params });
+  const res = await axios.get("/ui/export/produce/history", { params });
   return res;
 }
 
