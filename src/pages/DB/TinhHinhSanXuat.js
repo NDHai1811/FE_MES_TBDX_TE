@@ -139,7 +139,7 @@ const TinhHinhSanXuat = () => {
         {({ ref, onRequest, onExit }) => (
           <Layout
             ref={ref}
-            style={{ height: "100vh", backgroundColor: "#e3eaf0" }}
+            style={{ height: "100vh"}}
           >
             <Row
               className="w-100"
