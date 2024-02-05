@@ -83,6 +83,7 @@ const EditableCell = ({
 const TaoTem = () => {
     document.title = "Tạo tem sản xuất";
     const [listCheck, setListCheck] = useState([]);
+    const [listTem, setListTem] = useState([]);
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [orders, setOrders] = useState([])
@@ -232,7 +233,7 @@ const TaoTem = () => {
             align: "center",
             editable: true,
             width: '12%',
-            render: (value)=>listUsers.find(e=>value == e?.value)?.label
+            render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
             title: "Tác vụ",
@@ -336,10 +337,15 @@ const TaoTem = () => {
     };
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRows, selectedRowKeys);
-            setListCheck(selectedRows);
+            setListCheck(selectedRowKeys);
         },
     };
+    useEffect(() => {
+        setListTem([...data].filter(e => listCheck.includes(e.key)).map(e => {
+            console.log({ ...e, nhan_vien_sx: listUsers.find(user => user?.value == e?.nhan_vien_sx)?.label });
+            return { ...e, nhan_vien_sx: listUsers.find(user => user?.value == e?.nhan_vien_sx)?.label };
+        }));
+    }, [listCheck, data])
     const mergedColumns = col_detailTable.map((col) => {
         if (!col.editable) {
             return col;
@@ -652,7 +658,7 @@ const TaoTem = () => {
                 </Col>
             </Row>
             <div className="report-history-invoice">
-                <TemIn listCheck={listCheck} ref={componentRef1} />
+                <TemIn listCheck={listTem} ref={componentRef1} />
             </div>
             <Modal open={openModal} onCancel={() => setOpenModal(false)} title="Tạo tem từ đơn hàng" width={1200}
                 okText={'Tạo tem'}
