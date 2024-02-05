@@ -136,9 +136,8 @@ const TinhHinhSanXuat = () => {
   return (
     <React.Fragment>
       {/* <ReactFullscreen> */}
-        {({ ref, onRequest, onExit }) => (
+        {/* {({ ref, onRequest, onExit }) => ( */}
           <Layout
-            ref={ref}
             style={{ height: "100vh", backgroundColor: "#e3eaf0" }}
           >
             <Row
@@ -165,7 +164,7 @@ const TinhHinhSanXuat = () => {
                 TÌNH HÌNH SẢN XUẤT
               </div>
               <div>
-                {isFullCreen ? (
+                {/* {isFullCreen ? (
                   <FullscreenExitOutlined
                     style={{ fontSize: "30px" }}
                     onClick={() => {
@@ -181,7 +180,7 @@ const TinhHinhSanXuat = () => {
                       setIsFullScreen(true);
                     }}
                   />
-                )}
+                )} */}
                 <Link to={"/screen"} style={{ margin: "auto 0" }}>
                   <CloseOutlined
                     className="text-white"
@@ -207,7 +206,7 @@ const TinhHinhSanXuat = () => {
               </Col>
             </Row>
           </Layout>
-        )}
+        {/* )} */}
       {/* </ReactFullscreen> */}
     </React.Fragment>
   );
