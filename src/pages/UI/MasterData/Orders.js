@@ -311,7 +311,7 @@ const Orders = () => {
       value: 'layout_type',
     }
   ];
-  const checkAll = optionChecks.length === listParams.length;
+  const checkAll = listParams.length > 0 ? optionChecks.length === listParams.length : false;
   const indeterminate = listParams.length > 0 && listParams.length < optionChecks.length;
   const onCheckAllChange = (e) => {
     const arr = optionChecks.map((value) => value.value);

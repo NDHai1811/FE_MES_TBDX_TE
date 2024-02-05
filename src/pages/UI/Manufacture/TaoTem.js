@@ -466,6 +466,7 @@ const TaoTem = () => {
                                                     page: 1,
                                                 });
                                             }}
+                                            allowClear
                                             showSearch
                                             optionFilterProp="label"
                                             value={params.machine_id}
