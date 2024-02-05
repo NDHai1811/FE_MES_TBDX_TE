@@ -16,6 +16,7 @@ import {
     DatePicker,
     Popconfirm,
     Typography,
+    InputNumber,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
@@ -37,8 +38,29 @@ const EditableCell = ({
     record,
     index,
     children,
+    onSelect,
+    options,
     ...restProps
 }) => {
+    let inputNode;
+    switch (inputType) {
+        case "number":
+            inputNode = <InputNumber />;
+            break;
+        case "select":
+            inputNode = (
+                <Select
+                    value={record?.[dataIndex]}
+                    options={options}
+                    onChange={(value) => onSelect(value, dataIndex)}
+                    bordered
+                    showSearch
+                />
+            );
+            break;
+        default:
+            inputNode = <Input />;
+    }
     return (
         <td {...restProps}>
             {editing ? (
@@ -49,7 +71,7 @@ const EditableCell = ({
                     }}
                     initialValue={record?.[dataIndex]}
                 >
-                    <Input />
+                    {inputNode}
                 </Form.Item>
             ) : (
                 children
@@ -81,6 +103,7 @@ const TaoTem = () => {
     const onUpdate = async () => {
         const item = data.find((val) => val.key === editingKey);
         const row = await form.validateFields();
+        console.log({ ...item, ...row });
         const res = await updateTem({ ...item, ...row });
         if (res) {
             form.resetFields();
@@ -91,7 +114,20 @@ const TaoTem = () => {
             // }
         }
     };
+    const onSelect = (value, dataIndex) => {
+        const items = data.map((val) => {
+            if (val.key === editingKey) {
+                val[dataIndex] = value;
+            }
+            return { ...val };
+        });
+        // if (dataIndex === "phan_loai_1") {
+        //   getBuyerList();
+        // }
+        setData(items);
+    };
     const cancel = () => {
+        loadListTable();
         setEditingKey("");
     };
     const edit = (record) => {
@@ -144,6 +180,7 @@ const TaoTem = () => {
             dataIndex: "so_luong",
             key: "so_luong",
             align: "center",
+            editable: true,
         },
         {
             title: "GMO",
@@ -186,12 +223,16 @@ const TaoTem = () => {
             dataIndex: "machine_id",
             key: "machine_id",
             align: "center",
+            editable: true,
         },
         {
             title: "Nhân viên sản xuất",
             dataIndex: "nhan_vien_sx",
             key: "nhan_vien_sx",
             align: "center",
+            editable: true,
+            width: '12%',
+            render: (value)=>listUsers.find(e=>value == e?.value)?.label
         },
         {
             title: "Tác vụ",
@@ -232,11 +273,11 @@ const TaoTem = () => {
         (async () => {
             loadListTable();
             const res1 = await getMachineList();
-            setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
+            setListMachines(res1.data.map((e) => ({ ...e, label: e.id, value: e.id })));
             const res2 = await getCustomers();
             setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })));
             const res3 = await getUsers();
-            setListUsers(res3.map((e) => ({ ...e, label: e.name, value: e.username })));
+            setListUsers(res3.map((e) => ({ ...e, label: e.name, value: e.id })));
         })();
     }, []);
 
@@ -264,6 +305,16 @@ const TaoTem = () => {
     const options = (dataIndex) => {
         var record = data.find(e => e.id === editingKey);
         let filteredOptions = [];
+        switch (dataIndex) {
+            case 'nhan_vien_sx':
+                filteredOptions = listUsers;
+                break;
+            case 'machine_id':
+                filteredOptions = listMachines;
+                break;
+            default:
+                break;
+        }
         return filteredOptions;
     }
     const print = useReactToPrint({
@@ -297,9 +348,10 @@ const TaoTem = () => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: "text",
+                inputType: (col.dataIndex === "nhan_vien_sx" || col.dataIndex === "machine_id") ? 'select' : "text",
                 dataIndex: col.dataIndex,
                 title: col.title,
+                onSelect,
                 editing: isEditing(record),
                 options: options(col.dataIndex)
             })
