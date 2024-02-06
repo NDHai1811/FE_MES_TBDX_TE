@@ -134,14 +134,14 @@ const TaoKeHoachSanXuat = () => {
         const items = [...previewPlan].map((val) => {
             console.log(val.key === editingKey);
             if (val.key === editingKey) {
-                return {...val, ...row};
+                return { ...val, ...row };
             }
             return { ...val };
         });
         setPreviewPlan(items);
         setEditingKey()
     };
-    useEffect(()=>{
+    useEffect(() => {
         console.log(editingKey);
     }, [editingKey])
     const onChange = (value, dataIndex) => {
@@ -274,6 +274,13 @@ const TaoKeHoachSanXuat = () => {
             title: 'Số lượng',
             dataIndex: 'sl',
             key: 'sl',
+            align: 'center',
+            width: '5%'
+        },
+        {
+            title: 'Khổ',
+            dataIndex: 'kho',
+            key: 'kho',
             align: 'center',
             width: '5%'
         },
