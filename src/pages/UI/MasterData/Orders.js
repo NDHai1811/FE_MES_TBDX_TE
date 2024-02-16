@@ -28,7 +28,7 @@ import {
   splitOrders,
   updateOrder,
 } from "../../../api";
-import { DeleteOutlined, EditOutlined, LinkOutlined, CopyOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
@@ -200,6 +200,7 @@ const Orders = () => {
     pageSize: 10,
   });
   const [editingKey, setEditingKey] = useState("");
+  const [isSidebar, setIsSidebar] = useState(true);
   const [splitKey, setSplitKey] = useState("");
   const [data, setData] = useState([]);
   const isEditing = (record) => record.key === editingKey;
@@ -1259,12 +1260,13 @@ const Orders = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
-        <Col span={4}>
+      <div style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)', display: 'flex' }}>
+        <div className={isSidebar ? 'ant-col ant-col-4 px-1' : 'ant-col-0'}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ padding: 0 }}
-              className="custom-card scroll"
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0, height: 'calc(100vh - 145px)' }}
+              className="custom-card"
               actions={[
                 <div layout="vertical">
                   <Button
@@ -1278,7 +1280,7 @@ const Orders = () => {
               ]}
             >
               <Divider>Tìm kiếm</Divider>
-              <div className="mb-3">
+              <div className="mb-3 custom-card" style={{ height: 'calc(100% - 60px)', overflow: 'auto' }} >
                 <Form
                   style={{ margin: "0 5px" }}
                   layout="vertical"
@@ -1546,12 +1548,12 @@ const Orders = () => {
               </div>
             </Card>
           </div>
-        </Col>
-        <Col span={20}>
+        </div>
+        <div className='w-100 overflow-auto px-1'>
           <Card
-            style={{ height: "100%" }}
-            title="Quản lý đơn hàng"
-            bodyStyle={{ paddingBottom: 0 }}
+            style={{ display: 'block', height: "100%", overflow: 'hidden' }}
+            title={<><Button type="default" onClick={() => setIsSidebar(!isSidebar)} size="small" icon={isSidebar ? <LeftOutlined /> : <RightOutlined />}></Button><span style={{ fontSize: '16px', marginLeft: '6px' }}>Quản lý đơn hàng</span></>}
+            bodyStyle={{ overflow: 'hidden', height: '100%' }}
             className="custom-card scroll"
             extra={
               <Space>
@@ -1645,7 +1647,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: window.innerHeight * 0.5,
+                  y: "62vh",
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)
@@ -1654,8 +1656,8 @@ const Orders = () => {
               />
             </Form>
           </Card>
-        </Col>
-      </Row>
+        </div>
+      </div>
       <Modal
         title="Tách đơn hàng"
         open={isModalVisible}

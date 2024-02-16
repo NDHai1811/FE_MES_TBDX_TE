@@ -405,22 +405,23 @@ const Buyer = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)', overflow: 'hidden' }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ padding: 0 }}
+              style={{ height: '100%' }}
+              bodyStyle={{ padding: 0, height: 'calc(100% - 60px)' }}
               className="custom-card scroll"
               actions={[
-                <div layout="vertical">
-                  <Button
-                    type="primary"
-                    style={{ width: "80%" }}
-                    onClick={btn_click}
-                  >
-                    Truy vấn
-                  </Button>
-                </div>,
+
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+
               ]}
             >
               <Divider>Tìm kiếm</Divider>
@@ -456,7 +457,7 @@ const Buyer = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            bodyStyle={{ paddingBottom: 0 }}
+            bodyStyle={{ paddingBottom: 0, height: '100%' }}
             className="custom-card scroll"
             title="Quản lý Buyer"
             extra={
@@ -501,14 +502,14 @@ const Buyer = () => {
             }
           >
             <Spin spinning={loading}>
-              <Form form={form} component={false}>
+              <Form form={form} component={false} style={{ height: '100%' }}>
                 <Table
                   size="small"
                   bordered
-                  pagination={{ position: ["bottomRight"] }}
+                  pagination={{ position: ["bottomRight"], size: "default", }}
                   scroll={{
-                    x: "130vw",
-                    y: "50vh",
+                    x: "240vw",
+                    y: "64vh",
                   }}
                   components={{
                     body: {
