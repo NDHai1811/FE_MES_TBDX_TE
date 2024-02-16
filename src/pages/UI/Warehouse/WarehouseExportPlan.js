@@ -27,6 +27,7 @@ import "../style.scss";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -435,7 +436,7 @@ const WarehouseExportPlan = () => {
     });
     setData(items)
   }
-
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -508,7 +509,7 @@ const WarehouseExportPlan = () => {
                   name="files"
                   action={baseURL + "/api/upload-ke-hoach-xuat-kho"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

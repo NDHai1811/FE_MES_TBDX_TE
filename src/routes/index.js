@@ -2,7 +2,7 @@ import React from "react";
 import { Switch, Route } from "react-router-dom";
 
 //Layouts
-import VerticalLayout from "../layouts/index";
+
 //routes
 import { authProtectedRoutes, publicRoutes } from "./allRoutes";
 import { AuthProtected, AccessRoute } from "./AuthProtected";
@@ -13,7 +13,7 @@ const Index = () => {
   return (
     <React.Fragment>
       <Switch>
-        <Route path={availablePublicRoutesPaths}>
+        <Route path={availablePublicRoutesPaths.flat()}>
           <Switch>
             {publicRoutes.map((route, idx) => (
               <Route
@@ -26,20 +26,19 @@ const Index = () => {
           </Switch>
         </Route>
 
-        <Route path={availableAuthRoutesPath}>
+        <Route path={availableAuthRoutesPath.flat()}>
           <AuthProtected>
-            <VerticalLayout>
-              <Switch>
-                {authProtectedRoutes.map((route, idx) => (
-                  <AccessRoute
-                    path={route.path}
-                    component={route.component}
-                    key={idx}
-                    exact={true}
-                  />
-                ))}
-              </Switch>
-            </VerticalLayout>
+            <Switch>
+              {authProtectedRoutes.map((route, idx) => (
+                <AccessRoute
+                  path={route.path}
+                  component={route.component}
+                  key={idx}
+                  exact={true}
+                  permission={route.permission}
+                />
+              ))}
+            </Switch>
           </AuthProtected>
         </Route>
       </Switch>

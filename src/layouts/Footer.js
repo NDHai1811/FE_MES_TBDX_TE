@@ -22,40 +22,43 @@ const Footer = () => {
     {
       label: "Sản xuất",
       icon: <ControlOutlined />,
-      key: "manufacture",
-      permission: "oi-sx",
+      key: "/oi/manufacture",
+      permission: "oi-manufacture",
     },
     {
       label: "Chất lượng",
       icon: <StarOutlined />,
-      key: "quality/sx",
-      permission: "oi-cl",
+      key: "/oi/quality/qc",
+      permission: "oi-quality-cl",
+    },
+    {
+      label: "Chất lượng (SX)",
+      icon: <StarOutlined />,
+      key: "/oi/quality/sx",
+      permission: "oi-quality-sx",
     },
     {
       label: "Thiết bị",
       icon: <ToolOutlined />,
-      key: "equipment",
-      permission: "oi-tb",
+      key: "/oi/equipment",
+      permission: "oi-equipment",
     },
     {
-      label: "Kho",
+      label: "Kho NVL",
       icon: <AppstoreOutlined />,
-      key: "warehouse",
-      permission: "oi-kho",
+      key: "/oi/warehouse/kho-nvl",
+      permission: "oi-warehouse-nvl",
+    },
+    {
+      label: "Kho TP",
+      icon: <AppstoreOutlined />,
+      key: "/oi/warehouse/kho-tp",
+      permission: "oi-warehouse-tp",
     },
   ];
-  const location = useLocation();
-  const [screen, setScreen] = useState("");
-  const [selectedItem, setSelectedItem] = useState();
-  useEffect(() => {
-    setScreen(location.pathname.split("/")[1]);
-    var current = items.find((scr) => scr.key.split("/").includes(screen));
-    // console.log(current);
-    setSelectedItem(current);
-  }, [location]);
   const history = useHistory();
   const onChangeScreen = (key) => {
-    history.push("/" + key);
+    history.push(key);
   };
 
   return (
@@ -76,7 +79,7 @@ const Footer = () => {
       >
         {items.map((e) => {
           if (
-            (userProfile?.permission ?? []).includes("*") ||
+            userProfile?.username === 'admin' ||
             (userProfile?.permission ?? []).includes(e.permission)
           )
             return (
@@ -86,7 +89,7 @@ const Footer = () => {
                   alignItems: "center",
                   display: "flex",
                   cursor: "pointer",
-                  opacity: e?.key === selectedItem?.key ? 1 : 0.5,
+                  opacity: window.location.pathname.includes(e.key) ? 1 : 0.5,
                 }}
                 onClick={() => onChangeScreen(e.key)}
               >

@@ -7,6 +7,7 @@ import { withRouter, Link } from "react-router-dom";
 import logo from "../assets/images/logo.jpg";
 import { useProfile } from "../components/hooks/UserHooks";
 import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
+import { authProtectedRoutes } from "../routes/allRoutes";
 
 const Screen = (props) => {
   document.title = "Danh sách các màn"
@@ -37,28 +38,33 @@ const Screen = (props) => {
   const listOI = [
     {
       title: "Sản xuất",
-      link: "/manufacture",
-      permission: "oi-sx",
+      link: "/oi/manufacture",
+      permission: "oi-manufacture",
     },
     {
       title: "Chất lượng",
-      link: "/quality/sx",
-      permission: "oi-cl",
+      link: "/oi/quality/sx",
+      permission: "oi-quality-sx",
+    },
+    {
+      title: "Chất lượng",
+      link: "/oi/quality/qc",
+      permission: "oi-quality-cl",
     },
     {
       title: "Thiết bị",
-      link: "/equipment",
-      permission: "oi-tb",
+      link: "/oi/equipment",
+      permission: "oi-equipment",
     },
     {
       title: `Kho TP`,
-      link: `/warehouse/kho-tp/nhap`,
-      permission: "kho-tp",
+      link: `/oi/warehouse/kho-tp/nhap`,
+      permission: "oi-warehouse-tp",
     },
     {
       title: `Kho NVL`,
-      link: `/warehouse/kho-nvl/nhap`,
-      permission: "kho-nvl",
+      link: `/oi/warehouse/kho-nvl/nhap`,
+      permission: "oi-warehouse-nvl",
     },
   ];
   const listUI = [
@@ -89,20 +95,25 @@ const Screen = (props) => {
     },
     {
       title: "Master Data",
-      link: "/ui/master-data/cong-doan",
+      link: "/ui/master-data/san-xuat/cong-doan",
       permission: "ui-master-data",
     },
   ];
   const permissionOI = (listOI ?? []).filter(
     (e) =>
-      (userProfile?.permission ?? []).includes("*") ||
-      (userProfile?.permission ?? []).includes(e.permission) || (e.permission === 'oi-kho' && is_warehouse)
+    userProfile.username === 'admin' || 
+    (userProfile?.permission ?? []).includes("*") ||
+    (userProfile?.permission ?? []).includes(e.permission) || (e.permission === 'oi-kho' && is_warehouse)
   );
-  const permissionUI = (listUI ?? []).filter(
-    (e) =>
-      (userProfile?.permission ?? []).includes("*") ||
-      (userProfile?.permission ?? []).includes(e.permission)
-  );
+  const permissionUI = [];
+  const availableUI = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && (userProfile?.username === 'admin' || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, title: e?.label, link: e.path, permission: e.permission }));
+  const uiKeys = [{title: 'Sản xuất', key: 'manufacture'}, {title: 'Chất lượng', key: 'quality'}, {title: 'Thiết bị', key: 'equipment'}, {title: 'Kho', key: 'warehouse'}, {title: 'KPI', key: 'kpi'}, {title: 'Master Data', key: 'master-data'}];
+  uiKeys.forEach(e=>{
+    const routes = availableUI.filter(r=>r.path.includes(e.key));
+    if(routes.length > 0){
+      permissionUI.push({title: e.title, link: routes[0].link, permission: routes[0].permission})
+    }
+  });
 
   const logout = () => {
     window.location.href = "/logout";

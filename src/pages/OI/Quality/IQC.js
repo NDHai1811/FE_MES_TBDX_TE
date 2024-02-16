@@ -50,11 +50,11 @@ const IQC = (props) => {
   useEffect(() => {
     if (!line_id && lineOptions.length > 0) {
       const item = lineOptions[0];
-      history.push('/quality/qc/' + item?.value);
+      history.push('/oi/quality/qc/' + item?.value);
     }
   }, [line_id, lineOptions])
   const onChangeLine = (value) => {
-    history.push('/quality/qc/' + value)
+    history.push('/oi/quality/qc/' + value)
   }
   const overallColumns = [
     {

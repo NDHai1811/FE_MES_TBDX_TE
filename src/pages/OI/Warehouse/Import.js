@@ -128,7 +128,7 @@ const Import = (props) => {
   };
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/kho-nvl/" + value);
+    history.push("/oi/warehouse/kho-nvl/" + value);
   };
 
   const column2 = [

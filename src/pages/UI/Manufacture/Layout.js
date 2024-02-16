@@ -28,6 +28,7 @@ import { createLayouts, deleteLayouts, updateLayouts } from "../../../api";
 import TemLayout from "./TemLayout";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -60,7 +61,7 @@ const EditableCell = ({
 
 const Layout = () => {
   const componentRef1 = useRef();
-  const [listCustomers, setListCustomers] = useState([]);
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
@@ -779,7 +780,7 @@ const Layout = () => {
                   name="files"
                   action={baseURL + "/api/upload-layout"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

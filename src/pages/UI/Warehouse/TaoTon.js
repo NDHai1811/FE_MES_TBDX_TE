@@ -29,6 +29,7 @@ import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
 import { getTemPallet } from "../../../api/ui/warehouse";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
     editing,
@@ -273,7 +274,8 @@ const TaoTon = () => {
     }, [openModal]);
     useEffect(() => {
         console.log(orderParams);
-    }, [orderParams])
+    }, [orderParams]);
+    const { userProfile } = useProfile();
     return (
         <>
             {contextHolder}
@@ -296,7 +298,7 @@ const TaoTon = () => {
                                     name="files"
                                     action={baseURL + "/api/upload-ton-kho"}
                                     headers={{
-                                        authorization: "authorization-text",
+                                        authorization: "Bearer " + userProfile.token,
                                     }}
                                     onChange={(info) => {
                                         setLoadingExport(true);

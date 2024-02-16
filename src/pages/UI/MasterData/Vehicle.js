@@ -37,6 +37,7 @@ import {
     updateUsers,
     updateVehicles,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Vehicle = () => {
     document.title = "Quản lý xe";
@@ -273,6 +274,7 @@ const Vehicle = () => {
             setListCheck(selectedRowKeys);
         },
     };
+    const { userProfile } = useProfile();
     return (
         <>
             {contextHolder}
@@ -322,7 +324,7 @@ const Vehicle = () => {
                                     name="files"
                                     action={baseURL + "/api/vehicles/import"}
                                     headers={{
-                                        authorization: "authorization-text",
+                                        authorization: "Bearer " + userProfile.token,
                                     }}
                                     onChange={(info) => {
                                         setLoadingExport(true);

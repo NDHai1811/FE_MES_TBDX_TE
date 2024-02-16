@@ -30,6 +30,7 @@ import {
   getLine,
   updateLine,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Line = () => {
   document.title = "Quản lý công đoạn";
@@ -178,6 +179,7 @@ const Line = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -227,7 +229,7 @@ const Line = () => {
                   name="files"
                   action={baseURL + "/api/cong-doan/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

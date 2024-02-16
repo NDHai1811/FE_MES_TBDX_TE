@@ -18,9 +18,9 @@ const Quality = (props) => {
   );
   useEffect(()=>{
     if(qcPermission.length > 0){
-      history.push('/quality/qc');
+      history.push('/oi/quality/qc');
     }else{
-      history.push('/quality/sx');
+      history.push('/oi/quality/sx');
     }
   }, []);
 

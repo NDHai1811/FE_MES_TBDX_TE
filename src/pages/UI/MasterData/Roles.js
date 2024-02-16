@@ -34,6 +34,7 @@ import {
   getRolesTree,
   getRolesList,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Roles = () => {
   document.title = "Quản lý bộ phận";
@@ -200,6 +201,7 @@ const Roles = () => {
       setListCheck(selectedRows);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -249,7 +251,7 @@ const Roles = () => {
                   name="files"
                   action={baseURL + "/api/roles/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -356,7 +358,9 @@ const Roles = () => {
                       {!e.isTrueFalse ? (
                         e.select ? (
                           <Select
+                            optionFilterProp="label"
                             allowClear
+                            maxTagCount={3}
                             mode={e.select.mode}
                             options={e.select.options}
                           />

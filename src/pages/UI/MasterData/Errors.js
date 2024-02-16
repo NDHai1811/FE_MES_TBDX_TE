@@ -30,6 +30,7 @@ import {
   getErrors,
   updateErrors,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Errors = () => {
   document.title = "Quản lý lỗi";
@@ -176,6 +177,7 @@ const Errors = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -234,7 +236,7 @@ const Errors = () => {
                   name="files"
                   action={baseURL + "/api/errors/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

@@ -37,10 +37,12 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import TemXaLot from "./TemXaLot";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
   const history = useHistory();
+  const { userProfile } = useProfile();
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
@@ -576,6 +578,7 @@ const KeHoachSanXuat = () => {
         <Col span={20}>
           <Card
             title="Kế hoạch sản xuất"
+            className="custom-card scroll"
             extra={
               <Space>
                 <Button
@@ -597,7 +600,7 @@ const KeHoachSanXuat = () => {
                   name="files"
                   action={baseURL + "/api/manufacture/production-plan/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

@@ -36,7 +36,7 @@ const Manufacture = () => {
       if (!target) {
         target = machineOptions[0];
       }
-      history.push("/manufacture/" + target.value);
+      history.push("/oi/manufacture/" + target.value);
       var iot_machine = [];
       (machineOptions).forEach(element => {
         if(element?.is_iot){

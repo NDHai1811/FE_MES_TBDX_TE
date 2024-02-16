@@ -24,9 +24,12 @@ import {
   getPermissions,
   updatePermissions,
 } from "../../../api";
+import { authProtectedRoutes } from "../../../routes/allRoutes";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Permissions = () => {
   document.title = "Quản lý quyền";
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -50,6 +53,12 @@ const Permissions = () => {
       title: "Slug",
       dataIndex: "slug",
       key: "slug",
+      align: "center",
+    },
+    {
+      title: "Link",
+      dataIndex: "link",
+      key: "link",
       align: "center",
     },
   ];
@@ -167,6 +176,15 @@ const Permissions = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const handleSelectAll = (value) => {
+    if (value && value.length && value.includes("all")) {
+      if (value.length === authProtectedRoutes.map(r => r.path).flat().length + 1) {
+        return [];
+      }
+      return [...authProtectedRoutes.map(r => r.path).flat()];
+    }
+    return value;
+  }
   return (
     <>
       {contextHolder}
@@ -216,7 +234,7 @@ const Permissions = () => {
                   name="files"
                   action={baseURL + "/api/permissions/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -307,7 +325,7 @@ const Permissions = () => {
           form={form}
           onFinish={onFinish}
         >
-          <Row gutter={[16, 16]}>
+          <Row gutter={[16, 8]}>
             {formFields.map((e) => {
               if (e.key !== "select" && e.key !== "stt")
                 return (
@@ -324,6 +342,7 @@ const Permissions = () => {
                           <Select
                             mode={e.select.mode}
                             options={e.select.options}
+
                           />
                         ) : (
                           <Input
@@ -340,14 +359,35 @@ const Permissions = () => {
                   </Col>
                 );
             })}
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Col span={24}>
+              <Form.Item
+                name={'link'}
+                className="mb-3"
+                label={'Link'}
+                getValueFromEvent={handleSelectAll}
+              >
+              <Select
+                mode={'multiple'}
+                showSearch
+                allowClear
+                maxTagCount={5}
+                // options={authProtectedRoutes.map(r => r.path).flat().map(e => ({ value: e, label: e }))}
+              >
+                <Select.Option value="all">---Chọn tất cả---</Select.Option>
+                {authProtectedRoutes.map(r => r.path).flat().map(e => (
+                  <Select.Option value={e}>{e}</Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Form.Item className="mb-0">
+          <Button type="primary" htmlType="submit">
+            Lưu lại
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal >
     </>
   );
 };

@@ -113,7 +113,7 @@ const Equipment = (props) => {
       if(!target){
         target = machines[0];
       }
-      history.push('/equipment/' + target.value);
+      history.push('/oi/equipment/' + target.value);
     }
   }, [machines])
 
@@ -131,7 +131,7 @@ const Equipment = (props) => {
   ];
   const onChangeLine = (value) => {
     console.log(value);
-    history.push("/equipment/" + value);
+    history.push("/oi/equipment/" + value);
     setMachine(value);
   };
   return (

@@ -32,6 +32,7 @@ import {
   getUsers,
   updateUsers,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Users = () => {
   document.title = "Quản lý tài khoản";
@@ -198,6 +199,7 @@ const Users = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -247,7 +249,7 @@ const Users = () => {
                   name="files"
                   action={baseURL + "/api/users/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

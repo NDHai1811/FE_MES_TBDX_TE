@@ -37,6 +37,7 @@ import { useReactToPrint } from "react-to-print";
 import { exportWarehouseTicket } from "../../../api/ui/warehouse";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Materials = () => {
   document.title = "Quản lý nguyên vật liệu";
@@ -423,6 +424,7 @@ const Materials = () => {
       }),
     };
   });
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -490,7 +492,7 @@ const Materials = () => {
                   name="file"
                   action={baseURL + "/api/upload-nhap-kho-nvl"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setExportLoading1(true);

@@ -32,6 +32,7 @@ import {
   updateWarehouseImport,
 } from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const { TabPane } = Tabs;
 
@@ -485,6 +486,7 @@ const WarehouseMLT = (props) => {
     }
     setExportLoading(false);
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -605,7 +607,7 @@ const WarehouseMLT = (props) => {
                       name="file"
                       action={baseURL + "/api/upload-nhap-kho-nvl"}
                       headers={{
-                        authorization: "authorization-text",
+                        authorization: "Bearer " + userProfile.token,
                       }}
                       onChange={(info) => {
                         setLoading(true);

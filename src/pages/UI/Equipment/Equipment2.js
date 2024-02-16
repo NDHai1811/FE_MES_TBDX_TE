@@ -26,7 +26,6 @@ const dataChart = Array.from({ length: 12 }, (_, i) => ({
   time: `10:${String(i * 5).padStart(2, "0")}`,
   value: Math.floor(Math.random() * 400),
 }));
-console.log(dataChart);
 
 const cards = [
   {

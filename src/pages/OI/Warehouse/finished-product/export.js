@@ -192,7 +192,7 @@ const Export = (props) => {
   ]
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/kho-tp/" + value);
+    history.push("/oi/warehouse/kho-tp/" + value);
   };
 
   const onSelectItem = (val) => {

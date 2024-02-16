@@ -225,7 +225,7 @@ const Import = (props) => {
   ];
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/kho-tp/" + value);
+    history.push("/oi/warehouse/kho-tp/" + value);
   };
 
   const [isScan, setIsScan] = useState(false);

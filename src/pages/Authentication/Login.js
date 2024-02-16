@@ -20,19 +20,15 @@ const Login = (props) => {
     localStorage.removeItem("authUser");
   }, []);
   const dispatch = useDispatch();
-  const { error } = useSelector((state) => ({
-    error: state.Login.error,
-  }));
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       dispatch(resetLoginFlag());
     }, 4000);
-  }, [dispatch, error]);
+  }, [dispatch]);
   const onFinish = async (values) => {
     dispatch(loginUser(values, props.history, setLoading));
   };
-  const { Title } = Typography;
   document.title = "Đăng nhập";
   return (
     <React.Fragment>
@@ -81,9 +77,6 @@ const Login = (props) => {
                     <Input.Password
                       placeholder="Mật khẩu"
                       prefix={<LockOutlined className="site-form-item-icon" />}
-                      iconRender={(visible) =>
-                        visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                      }
                       rules={[
                         {
                           message: "Cần nhập mật khẩu",
@@ -92,7 +85,7 @@ const Login = (props) => {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item className="mb-4" name="password">
+                  <Form.Item className="mb-4">
                     <Button
                       className=""
                       type="primary"

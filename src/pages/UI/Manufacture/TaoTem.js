@@ -29,6 +29,7 @@ import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
     editing,
@@ -82,6 +83,7 @@ const EditableCell = ({
 
 const TaoTem = () => {
     document.title = "Tạo tem sản xuất";
+    const { userProfile } = useProfile();
     const [listCheck, setListCheck] = useState([]);
     const [listTem, setListTem] = useState([]);
     const [form] = Form.useForm();
@@ -602,7 +604,7 @@ const TaoTem = () => {
                                     name="files"
                                     action={baseURL + "/api/upload-tem"}
                                     headers={{
-                                        authorization: "authorization-text",
+                                        authorization: "Bearer " + userProfile.token,
                                     }}
                                     onChange={(info) => {
                                         setLoadingExport(true);
