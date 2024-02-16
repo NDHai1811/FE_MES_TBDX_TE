@@ -59,7 +59,7 @@ import TaoTem from "../pages/UI/Manufacture/TaoTem";
 import Vehicle from "../pages/UI/MasterData/Vehicle";
 import TaoTon from "../pages/UI/Warehouse/TaoTon";
 import TinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
-import EmptyPage from "../pages/emptyPage";
+import EmptyPage from "../pages/EmptyPage";
 
 const authProtectedRoutes = [
   // Authentication Page

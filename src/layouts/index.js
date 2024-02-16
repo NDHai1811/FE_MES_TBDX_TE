@@ -21,33 +21,30 @@ const Layout = (props) => {
           </div>
         </div>
       )}
-      {!window.location.pathname.toLocaleLowerCase().includes("/ui") ? (
-        !window.location.pathname.toLocaleLowerCase().includes("/dashboard") &&
-        !window.location.pathname.toLocaleLowerCase().includes("/screen") ? (
-          <div id="layout-wrapper" style={{ height: "100%" }}>
-            <Header />
-            <div
-              className="main-content"
-              style={{
-                paddingInline: "0.5em",
-                minHeight: "100%",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <UserCard />
-              </div>
-              <div style={{ marginBottom: 60 }}>{props.children}</div>
+      {window.location.pathname.toLocaleLowerCase().includes("/oi/") ? (
+        <div id="layout-wrapper" style={{ height: "100%" }}>
+          <Header />
+          <div
+            className="main-content"
+            style={{
+              paddingInline: "0.5em",
+              minHeight: "100%",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <UserCard />
             </div>
-            <Footer />
+            <div style={{ marginBottom: 60 }}>{props.children}</div>
           </div>
-        ) : (
-          <div>{props.children}</div>
-        )
-      ) : (
-        <div id="layout-wrapper" style={{ height: "100%"}}>
+          <Footer />
+        </div>
+      ) : window.location.pathname.toLocaleLowerCase().includes("/ui/") ? (
+        <div id="layout-wrapper" style={{ height: "100%" }}>
           <HeaderUI />
           <div className="content-below-header">{props.children}</div>
         </div>
+      ) : (
+        <div>{props.children}</div>
       )}
     </React.Fragment>
   );
