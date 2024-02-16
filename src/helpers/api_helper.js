@@ -7,7 +7,6 @@ axios.defaults.baseURL = api.API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // content type
-console.log(typeof localStorage.getItem("authUser"));
 const token = JSON.parse(localStorage.getItem("authUser"))?.token;
 axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 

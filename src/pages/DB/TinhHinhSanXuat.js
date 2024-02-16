@@ -193,13 +193,13 @@ const TinhHinhSanXuat = () => {
                 </Link>
               </div>
             </Row>
-            <Row style={{ padding: "15px", height: "100%" }} gutter={[8, 8]}>
+            <Row style={{ padding: "15px", height: "100%" }}>
               <Col span={24} style={{ height: "100%" }}>
                 <Table
                   className="mt-3 table-db"
                   bordered
                   pagination={false}
-                  scroll={{ x: "100%", y: "100vh" }}
+                  scroll={{ x: "100%", y: "100%" }}
                   columns={colTable}
                   dataSource={dataTable}
                 />

@@ -353,7 +353,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.6%",
+      width: "2%",
     },
     {
       title: "L",
@@ -1261,7 +1261,7 @@ const Orders = () => {
   return (
     <>
       {contextHolder}
-      <div style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)', display: 'flex' }}>
+      <div style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 60px)', display: 'flex' }}>
         <div className={isSidebar ? 'ant-col ant-col-4 px-1' : 'ant-col-0'}>
           <div className="slide-bar">
             <Card
@@ -1553,9 +1553,7 @@ const Orders = () => {
         <div className='w-100 overflow-auto px-1'>
           <Card
             style={{ display: 'block', height: "100%", overflow: 'hidden' }}
-            title={<><Button type="default" onClick={() => setIsSidebar(!isSidebar)} size="small" icon={isSidebar ? <LeftOutlined /> : <RightOutlined />}></Button><span style={{ fontSize: '16px', marginLeft: '6px' }}>Quản lý đơn hàng</span></>}
-            bodyStyle={{ overflow: 'hidden', height: '100%' }}
-            className="custom-card scroll"
+            title={<><Button type="text" onClick={() => setIsSidebar(!isSidebar)} size="small" icon={isSidebar ? <LeftOutlined /> : <RightOutlined />}></Button><span style={{ fontSize: '16px', marginLeft: '6px' }}>Quản lý đơn hàng</span></>}
             extra={
               <Space>
                 <Popover content={content} title="Ẩn/Hiện cột" trigger="click">
@@ -1631,7 +1629,7 @@ const Orders = () => {
                 bordered
                 pagination={{
                   current: page,
-                  size: "default",
+                  size: "small",
                   total: totalPage,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
@@ -1648,7 +1646,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: "62vh",
+                  y: "50vh",
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)

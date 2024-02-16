@@ -44,7 +44,7 @@
     height: 100%;
 }
 .custom-card .ant-card-body{
-    height: calc(100vh * 0.78);
+    height: calc(100vh - 140px);
 }
 .custom-card.scroll .ant-card-body{
     overflow: auto;
