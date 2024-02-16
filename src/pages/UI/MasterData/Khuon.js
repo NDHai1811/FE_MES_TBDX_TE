@@ -31,6 +31,7 @@ import {
   getKhuon,
   updateKhuon,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Khuon = () => {
   document.title = "Quản lý khuôn";
@@ -251,6 +252,7 @@ const Khuon = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -309,7 +311,7 @@ const Khuon = () => {
                   name="files"
                   action={baseURL + "/api/khuon/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

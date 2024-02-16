@@ -30,6 +30,7 @@ import {
   getSpecProduct,
   updateSpecProduct,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const SpecProduct = () => {
   document.title = "Quản lý thông số sản phẩm";
@@ -397,6 +398,7 @@ const SpecProduct = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -455,7 +457,7 @@ const SpecProduct = () => {
                   name="files"
                   action={baseURL + "/api/spec-product/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

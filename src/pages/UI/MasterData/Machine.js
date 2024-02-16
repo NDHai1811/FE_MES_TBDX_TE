@@ -30,6 +30,7 @@ import {
   createMachine,
   deleteMachines,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Machine = () => {
   document.title = "Quản lý máy";
@@ -219,6 +220,7 @@ const Machine = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -278,7 +280,7 @@ const Machine = () => {
                   name="files"
                   action={baseURL + "/api/machines/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

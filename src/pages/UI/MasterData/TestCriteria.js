@@ -30,6 +30,7 @@ import {
   getTestCriteria,
   updateTestCriteria,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const TestCriteria = () => {
   document.title = "Quản lý chỉ tiêu kiểm tra";
@@ -232,6 +233,7 @@ const TestCriteria = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -290,7 +292,7 @@ const TestCriteria = () => {
                   name="files"
                   action={baseURL + "/api/test_criteria/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

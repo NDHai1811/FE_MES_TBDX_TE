@@ -31,9 +31,11 @@ import {
   getCells,
   updateCell,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Cells = () => {
   document.title = "Quản lý kho";
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -254,7 +256,7 @@ const Cells = () => {
                   name="files"
                   action={baseURL + "/api/cells/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

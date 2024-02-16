@@ -10,20 +10,14 @@ import Export from "./Export";
 import Export2 from "./Export2";
 
 const Warehouse = (props) => {
-  document.title = "Kho";
+  document.title = "Kho NVL";
   const { line } = useParams();
   const history = useHistory();
-
-  const userPermissions = JSON.parse(window.localStorage.getItem("authUser"));
-  const isRawMaterialWarehouse = userPermissions.permission.includes("kho-nvl");
-
-  useEffect(() => {
-    if (!line) {
-      history.push(
-        `/warehouse/${isRawMaterialWarehouse ? "kho-nvl" : "kho-tp"}/nhap`
-      );
+  useEffect(()=>{
+    if(!line){
+      history.push('/oi/warehouse/kho-nvl/nhap');
     }
-  }, [line]);
+  })
   return (
     <React.Fragment>
       {line === "nhap" && <Import />}

@@ -38,7 +38,7 @@ const QCByMachine = (props) => {
   const [data, setData] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState({machine: [machine_id], start_date: dayjs(), end_date: dayjs()});
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{}]);
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
@@ -292,6 +292,11 @@ const QCByMachine = (props) => {
   }
   useEffect(() => {
     if (machine_id) {
+      setParams({...params, machine: [machine_id]})
+    }
+  }, [machine_id]);
+  useEffect(() => {
+    if (params.machine) {
       getData();
     }
   }, [params]);
@@ -301,12 +306,12 @@ const QCByMachine = (props) => {
       if (!target) {
         target = machineOptions[0];
       }
-        history.push("/quality/sx/" + target.value);
+        history.push("/oi/quality/sx/" + target.value);
     }
   }, [machineOptions]);
   const onChangeLine = (value) => {
     setParams({...params, machine: value ? [value] : []})
-      history.push("/quality/sx/" + value);
+      history.push("/oi/quality/sx/" + value);
   };
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();

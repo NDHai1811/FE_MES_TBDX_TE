@@ -28,6 +28,7 @@ import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "../style.scss";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -60,6 +61,7 @@ const EditableCell = ({
 
 const Buyer = () => {
   document.title = "Quản lý Buyer";
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -467,7 +469,7 @@ const Buyer = () => {
                   name="files"
                   action={baseURL + "/api/upload-buyer"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

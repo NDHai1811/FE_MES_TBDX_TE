@@ -37,9 +37,11 @@ import { useReactToPrint } from "react-to-print";
 import { exportWarehouseTicket } from "../../../api/ui/warehouse";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Customer = () => {
   document.title = "Quản lý khách hàng";
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -396,7 +398,7 @@ const Customer = () => {
                   name="files"
                   action={baseURL + "/api/customer/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setExportLoading1(true);

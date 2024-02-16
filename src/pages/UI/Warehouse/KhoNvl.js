@@ -283,7 +283,7 @@ const itemsMenu = [
 ];
 
 const KhoNvl = (props) => {
-  document.title = "UI - Quản lý thành phẩm giấy";
+  document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
 

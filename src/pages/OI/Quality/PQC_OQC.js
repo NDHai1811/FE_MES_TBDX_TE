@@ -50,7 +50,7 @@ const PQC_OQC = (props) => {
   useEffect(()=>{
     if(!line_id && lineOptions.length > 0){
       const item = lineOptions[0];
-      history.push('/quality/qc/'+item?.value);
+      history.push('/oi/quality/qc/'+item?.value);
     }else if(line_id && lineOptions.length > 0){
       const item = lineOptions.find(e=>e.value === line_id);
       setParams({...params, machine: item?.machine})
@@ -340,7 +340,7 @@ const PQC_OQC = (props) => {
   }, [params]);
 
   const onChangeLine = (value) => {
-    history.push("/quality/qc/" + value);
+    history.push("/oi/quality/qc/" + value);
     const item = lineOptions.find(e=>e.value === value);
     setParams({...params, machine: item?.machine});
   };

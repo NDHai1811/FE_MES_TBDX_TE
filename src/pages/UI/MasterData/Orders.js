@@ -39,6 +39,7 @@ import {
   getListLayout,
 } from "../../../api/ui/manufacture";
 import "../style.scss";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -902,7 +903,7 @@ const Orders = () => {
         {mergedColumns
           .filter((col) => col.key !== "action")
           .map((col) => (
-            <Col span={4}>
+            <Col span={4} key={col.key}>
               <Checkbox value={col.dataIndex}>{col.title}</Checkbox>
             </Col>
           ))}
@@ -1256,7 +1257,7 @@ const Orders = () => {
     });
     setInputData(items);
   };
-
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -1591,7 +1592,7 @@ const Orders = () => {
                   name="files"
                   action={baseURL + "/api/orders/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -1691,9 +1692,9 @@ const Orders = () => {
         >
           <Row>
             {
-              optionChecks.map(option =>
+              optionChecks.map((option, index) =>
               (
-                <Col span={24}>
+                <Col span={24} key={index}>
                   <Checkbox value={option.value} >{option.label}</Checkbox>
                 </Col>
               )

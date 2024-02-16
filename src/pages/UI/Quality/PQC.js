@@ -14,6 +14,7 @@ import {
   message,
   Popconfirm,
   Tree,
+  Input,
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { Pie, DualAxes, Line } from "@ant-design/plots";
@@ -40,7 +41,7 @@ const QualityPQC = (props) => {
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
   const [listNameProducts, setListNameProducts] = useState([]);
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
   useEffect(() => {
     (async () => {
       const res1 = await getLines();
@@ -536,18 +537,18 @@ const QualityPQC = (props) => {
                       placeholder="Bắt đầu"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [value, params.date[1]] })
+                        setParams({ ...params, start_date: value })
                       }
-                      value={params.date[0]}
+                      value={params.start_date}
                     />
                     <DatePicker
                       allowClear={false}
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [params.date[0], value] })
+                        setParams({ ...params, end_date: value })
                       }
-                      value={params.date[1]}
+                      value={params.end_date}
                     />
                   </Space>
                 </Form>
@@ -555,106 +556,57 @@ const QualityPQC = (props) => {
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Máy" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập máy"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
-                    />
-                  </Form.Item>
                   <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          customer_id: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập khách hàng"
-                      onChange={(value) =>
-                        setParams({ ...params, khach_hang: value })
-                      }
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listCustomers}
                     />
                   </Form.Item>
-                  <Form.Item label="Đơn hàng" className="mb-3">
+                  <Form.Item label="MĐH" className="mb-3">
                     <Select
                       allowClear
                       showSearch
                       onChange={(value) => {
-                        setParams({ ...params, ten_sp: value });
+                        setParams({ ...params, mdh: value });
                       }}
-                      placeholder="Nhập đơn hàng"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listNameProducts}
+                      open={false}
+                      suffixIcon={null}
+                      mode="tags"
+                      placeholder="Nhập mã đơn hàng"
+                      options={[]}
                     />
                   </Form.Item>
-                  <Form.Item label="Lô Sản xuất" className="mb-3">
-                    <Select
+                  <Form.Item label="Lô sản xuất" className="mb-3">
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          lo_sx: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập lô sản xuất"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
                     />
                   </Form.Item>
                   <Form.Item label="Quy cách" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          quy_cach: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập quy cách"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Lỗi" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập lỗi"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
                     />
                   </Form.Item>
                 </Form>
