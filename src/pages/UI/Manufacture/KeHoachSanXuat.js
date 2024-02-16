@@ -645,7 +645,6 @@ const KeHoachSanXuat = () => {
               </Space>
             }
             style={{ height: '100%' }}
-            className="custom-card"
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
