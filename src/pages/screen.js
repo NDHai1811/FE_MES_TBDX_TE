@@ -138,10 +138,10 @@ const Screen = (props) => {
                   {dashboard.length > 0 && (
                     <Divider style={{ margin: 0 }}>DASHBOARD</Divider>
                   )}
-                  {(dashboard ?? []).map((e) => {
+                  {(dashboard ?? []).map((e, index) => {
                     // if((userProfile.permission??[]).includes('*') || (userProfile.permission??[]).includes(e.permission)){
                     return (
-                      <Col span={12}>
+                      <Col span={12} key={index}>
                         <Link to={e.link}>
                           <Button type="primary" className="w-100">
                             {e.title}
@@ -156,10 +156,10 @@ const Screen = (props) => {
                   {permissionOI.length > 0 && (
                     <Divider style={{ margin: 0 }}>OI</Divider>
                   )}
-                  {(permissionOI ?? []).map((e) => {
+                  {(permissionOI ?? []).map((e, index) => {
                     // if((userProfile.permission??[]).includes('*') || (userProfile.permission??[]).includes(e.permission)){
                     return (
-                      <Col span={12}>
+                      <Col span={12} key={index}>
                         <Link to={e.link}>
                           <Button type="primary" className="w-100">
                             {e.title}
@@ -174,10 +174,10 @@ const Screen = (props) => {
                   {permissionUI.length > 0 && (
                     <Divider style={{ margin: 0 }}>UI</Divider>
                   )}
-                  {(permissionUI ?? []).map((e) => {
+                  {(permissionUI ?? []).map((e, index) => {
                     // if((userProfile.permission??[]).includes('*') || (userProfile.permission??[]).includes(e.permission)){
                     return (
-                      <Col span={12}>
+                      <Col span={12} key={index}>
                         <Link to={e.link}>
                           <Button type="primary" className="w-100">
                             {e.title}
