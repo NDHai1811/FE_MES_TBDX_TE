@@ -39,13 +39,10 @@ const PrintTemplate = ({ detail }) => {
                                     />
                                     <div className="flex-column">
                                         <h3 style={{ marginLeft: "8px", fontSize: '38px', marginTop: '38px' }}>TEM XẢ LÓT</h3>
-                                        {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     <div className="flex-column">
                                         <img src={logolight} width={110} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
-                                        {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
-                                    {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
                                 </div>
                             </td>
                         </tr>

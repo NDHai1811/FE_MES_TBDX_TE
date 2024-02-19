@@ -27,13 +27,9 @@ import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
-import {
-  COMMON_DATE_FORMAT,
-  COMMON_DATE_FORMAT_REQUEST,
-} from "../../../commons/constants";
+import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { getMachines } from "../../../api/oi/equipment";
 
 const token =
   "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
@@ -152,8 +148,7 @@ const InDan = (props) => {
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  // const [machineOptions, setMachineOptions] = useState([]);
-  const {machineOptions = []} = props
+  const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
@@ -219,26 +214,6 @@ const InDan = (props) => {
     },
   ];
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     (async () => {
-  //       if (machine_id) {
-  //         reloadData();
-  //       }
-  //     })();
-  //   }
-  // }, [machine_id, machineOptions, loadData]);
-
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     var target = machineOptions.find((e) => e.value === machine_id);
-  //     if (!target) {
-  //       target = machineOptions[0];
-  //     }
-  //     history.push("/manufacture/" + target.value);
-  //   }
-  // }, [machineOptions]);
-
   useEffect(() => {
     if (isScan === 1) {
       setIsOpenQRScanner(true);
@@ -247,19 +222,10 @@ const InDan = (props) => {
     }
   }, [isScan]);
 
-  useEffect(() => {
-    getListMachine();
-    // (async ()=>{
-    //   var res = await getTem();
-    //   setListCheck(res)
-    // })()
-  }, []);
-
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    const loadDataRescursive = async (params,machine_id) => {
-      console.log(params, machine_id);
+    const loadDataRescursive = async (params, machine_id) => {
       if (!machine_id) return;
       const res = await getLotByMachine(params);
       setData(res.data);
@@ -270,15 +236,15 @@ const InDan = (props) => {
       }
       if (res.success) {
         if (window.location.href.indexOf("manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
+          timeout = setTimeout(function () {
+            loadDataRescursive(params, machine_id);
+          }, 5000);
       }
     };
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
   }, [params.start_date, params.end_date, params.machine_id]);
-  
+
   const loadDataRescursive = async (params, machine_id) => {
     console.log(params, machine_id);
     if (!machine_id) return;
@@ -291,19 +257,10 @@ const InDan = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-      timeout = setTimeout(function () {
-        loadDataRescursive(params, machine_id);
-      }, 5000);
+        timeout = setTimeout(function () {
+          loadDataRescursive(params, machine_id);
+        }, 5000);
     }
-  };
-
-  const getListMachine = () => {
-    // getMachines()
-    //   .then((res) => {
-    //     setMachineOptions(res.data);
-    //     window.localStorage.setItem('machines', JSON.stringify(res.data));
-    //   })
-    //   .catch((err) => console.log("Get list machine error: ", err));
   };
 
   const getOverAllDetail = () => {
@@ -329,7 +286,7 @@ const InDan = (props) => {
   const onScan = async (result) => {
     const lo_sx = JSON.parse(result).lo_sx;
     scanQrCode({ lo_sx: lo_sx, machine_id: machine_id })
-      .then((response)=>response.success && reloadData())
+      .then((response) => response.success && reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
     setIsOpenQRScanner(false);
     setIsScan(2)
@@ -352,8 +309,8 @@ const InDan = (props) => {
   };
   useEffect(() => {
     if (listCheck.length > 0) {
-      if(machine_id){
-        setParams({...params, machine_id})
+      if (machine_id) {
+        setParams({ ...params, machine_id })
       }
       if (machine_id === "S01") {
         print();
@@ -613,7 +570,7 @@ const InDan = (props) => {
         <Modal
           title="Số lượng trên tem"
           open={visiblePrint}
-          onCancel={()=>setVisiblePrint(false)}
+          onCancel={() => setVisiblePrint(false)}
           onOk={onConfirmPrint}
         >
           <InputNumber

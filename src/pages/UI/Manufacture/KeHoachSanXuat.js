@@ -12,7 +12,6 @@ import {
   Upload,
   message,
   Space,
-  Modal,
   Spin,
   Tree,
   InputNumber,
@@ -22,7 +21,7 @@ import {
 import { baseURL } from "../../../config";
 import { useReactToPrint } from "react-to-print";
 import React, { useState, useEffect, useRef } from "react";
-import { getCustomers, getLoSanXuat, getOrders, getUIItemMenu } from "../../../api/ui/main";
+import { getUIItemMenu } from "../../../api/ui/main";
 import {
   deleteRecordProductPlan,
   exportKHSX,
@@ -43,17 +42,11 @@ const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
   const history = useHistory();
   const { userProfile } = useProfile();
-  const [openMdlEdit, setOpenMdlEdit] = useState(false);
-  const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
   const [form] = Form.useForm();
   const [params, setParams] = useState({
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  const [machines, setMachines] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [loSX, setLoSX] = useState([]);
   const [listCheck, setListCheck] = useState([]);
   const [listPrint, setListPrint] = useState([]);
   const componentRef1 = useRef();
@@ -503,7 +496,6 @@ const KeHoachSanXuat = () => {
             <Divider>Thời gian truy vấn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
                 <Space direction="vertical" style={{ width: "100%" }}>
                   <DatePicker
                     allowClear={false}
@@ -571,8 +563,6 @@ const KeHoachSanXuat = () => {
                 </Form.Item>
               </Form>
             </div>
-
-
           </Card>
         </Col>
         <Col span={20}>

@@ -5,7 +5,6 @@ import {
   Row,
   Card,
   Table,
-  Layout,
   Divider,
   Button,
   Form,
@@ -116,14 +115,6 @@ const columns3 = [
     align: "center",
     width: "6%",
   },
-  // {
-  //   title: "Công đoạn",
-  //   dataIndex: "line",
-  //   key: "line",
-  //   align: "center",
-  //   width: "3%",
-  //   render: (value) => value?.name,
-  // },
   {
     title: "Máy",
     dataIndex: "machine_id",

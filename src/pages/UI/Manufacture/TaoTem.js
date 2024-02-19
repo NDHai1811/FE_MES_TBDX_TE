@@ -13,18 +13,15 @@ import {
     Spin,
     Modal,
     Select,
-    DatePicker,
-    Popconfirm,
     Typography,
     InputNumber,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
-import { createStampFromOrder, getOrderList, getTems, updateTem } from "../../../api/ui/manufacture";
+import { createStampFromOrder, getTems, updateTem } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { useReactToPrint } from "react-to-print";
 import TemIn from "../../OI/Manufacture/TemIn";
-import dayjs from "dayjs";
 import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
@@ -124,9 +121,6 @@ const TaoTem = () => {
             }
             return { ...val };
         });
-        // if (dataIndex === "phan_loai_1") {
-        //   getBuyerList();
-        // }
         setData(items);
     };
     const cancel = () => {

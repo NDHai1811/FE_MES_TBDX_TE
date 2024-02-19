@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+import { PrinterOutlined } from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -9,7 +9,6 @@ import {
   DatePicker,
   Modal,
   Select,
-  InputNumber,
 } from "antd";
 import "../style.scss";
 import {
@@ -19,7 +18,6 @@ import {
 import {
   getOverAll,
   getLotByMachine,
-  getInfoTem,
   scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
@@ -28,7 +26,6 @@ import TemIn from "./TemIn";
 import TemDan from "./TemDan";
 import {
   COMMON_DATE_FORMAT,
-  COMMON_DATE_FORMAT_REQUEST,
 } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
