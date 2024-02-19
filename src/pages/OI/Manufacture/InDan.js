@@ -323,7 +323,7 @@ const InDan = (props) => {
   };
 
   const onChangeLine = (value) => {
-    window.location.href = ("/manufacture/" + value);
+    window.location.href = ("/oi/manufacture/" + value);
   };
 
   const onScan = async (result) => {
