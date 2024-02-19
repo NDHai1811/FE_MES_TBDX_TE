@@ -631,7 +631,7 @@ const WarehouseMLT = (props) => {
                         Upload excel
                       </Button>
                     </Upload>
-                    <Button type="primary" onClick={deleteRecord}>
+                    {/* <Button type="primary" onClick={deleteRecord}>
                       Xóa
                     </Button>
                     <Button type="primary" onClick={onEdit}>
@@ -639,7 +639,7 @@ const WarehouseMLT = (props) => {
                     </Button>
                     <Button type="primary" onClick={onInsert}>
                       Thêm
-                    </Button>
+                    </Button> */}
                     <Button type="primary" onClick={handlePrint}>
                       In tem NVL
                     </Button>

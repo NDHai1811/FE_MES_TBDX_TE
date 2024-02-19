@@ -216,6 +216,10 @@ const Orders = () => {
   const [isOpenMdl, setIsOpenMdl] = useState(false);
   const [rowUpdate, setRowUpdate] = useState({});
   const [listParams, setListParams] = useState([]);
+  const [loadingExport, setLoadingExport] = useState(false);
+  const [loadingExport1, setLoadingExport1] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
   const [inputData, setInputData] = useState([
     {
       so_luong: 0,
@@ -966,25 +970,11 @@ const Orders = () => {
     getDRCs();
   }, []);
 
-  // useEffect(() => {
-  //   if (editingKey) {
-  //     getBuyerList();
-  //   }
-  // }, [editingKey]);
-
   const rowSelection = {
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
-  };
-
-  const removeAccents = (str) => {
-    if (str) {
-      return PL1s.find((e) => e.value === str)?.label;
-    } else {
-      return "";
-    }
   };
 
   const getBuyerList = async () => {
@@ -1000,17 +990,20 @@ const Orders = () => {
       }
       return { ...val };
     });
-    // if (dataIndex === "phan_loai_1") {
-    //   getBuyerList();
-    // }
     setData(items);
   };
 
   const getLayouts = async () => {
     const res = await getListLayout();
-    setLayouts(
-      res.map((val) => ({ label: val.layout_id, value: val.layout_id }))
-    );
+    const check_arr = [];
+    const result = [];
+    res.map((val) => {
+      if (!check_arr.includes(val.layout_id)) {
+        check_arr.push(val.layout_id);
+        result.push({ label: val.layout_id, value: val.layout_id });
+      }
+    })
+    setLayouts(result);
   };
 
   const getDRCs = async () => {
@@ -1170,10 +1163,6 @@ const Orders = () => {
     message.success('Xoá thành công');
   };
 
-  const [loadingExport, setLoadingExport] = useState(false);
-  const [loadingExport1, setLoadingExport1] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
     const res = await exportOrders(params);
@@ -1513,8 +1502,10 @@ const Orders = () => {
                       allowClear={false}
                       placeholder="Ngày giao hàng"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, han_giao: value })
+                      onChange={(value) => {
+                        setParams({ ...params, han_giao: value, page: 1, })
+                        setPage(1);
+                      }
                       }
                       value={params.han_giao}
                     />
@@ -1524,8 +1515,10 @@ const Orders = () => {
                       allowClear={false}
                       placeholder="Đợt"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, dot: value.target.value })
+                      onChange={(value) => {
+                        setParams({ ...params, dot: value.target.value, page: 1, });
+                        setPage(1);
+                      }
                       }
                       value={params.dot}
                     />
@@ -1648,7 +1641,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: "62vh",
+                  y: "58vh",
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)
