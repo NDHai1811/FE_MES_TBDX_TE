@@ -27,6 +27,7 @@ import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { findDOMNode } from "react-dom";
 
 const EditableCell = ({
     editing,
@@ -124,7 +125,6 @@ const TaoTem = () => {
         setData(items);
     };
     const cancel = () => {
-        loadListTable();
         setEditingKey("");
     };
     const edit = (record) => {
@@ -471,6 +471,24 @@ const TaoTem = () => {
     useEffect(() => {
         openModal && searchOrder()
     }, [openModal, orderParams]);
+    const tableRef = useRef();
+    const header = findDOMNode(tableRef.current)?.getElementsByClassName('ant-table-header')[0];
+    const headerHeight = useRef(0);
+    headerHeight.current = header?.offsetHeight ?? 0;
+    useEffect(() => {
+        const handleWindowResize = () => {
+            const header = findDOMNode(tableRef.current)?.getElementsByClassName('ant-table-header')[0];
+            console.log(header?.offsetHeight);
+            headerHeight.current = (header?.offsetHeight ?? 0);
+        };
+        window.addEventListener('resize', handleWindowResize);
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    });
+    useEffect(()=>{
+        console.log(headerHeight.current);
+    }, [headerHeight.current])
     return (
         <>
             {contextHolder}
@@ -631,11 +649,12 @@ const TaoTem = () => {
                         <Spin spinning={loading}>
                             <Form form={form} component={false}>
                                 <Table
+                                    ref={tableRef}
                                     pagination={false}
                                     size="small"
                                     bordered
                                     scroll={{
-                                        y: "70vh",
+                                        y: (453 - headerHeight.current - 8) + 'px',
                                         x: "120vw"
                                     }}
                                     components={{
