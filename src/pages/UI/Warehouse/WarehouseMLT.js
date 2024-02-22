@@ -6,7 +6,6 @@ import {
   Table,
   Modal,
   Card,
-  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -16,7 +15,6 @@ import {
   Col,
   Row,
   Space,
-  Tree,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
@@ -222,7 +220,7 @@ const WarehouseMLT = (props) => {
       key: "material_id",
       align: "center",
     },
-    
+
     {
       title: "Tên nhà cung cấp",
       dataIndex: "ten_ncc",
@@ -230,11 +228,10 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Số kg",
-      dataIndex: "so_kg",
-      key: "so_kg",
+      title: "Mã cuộn nhà cung cấp",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
       align: "center",
-      width: '6%'
     },
     {
       title: "Loại giấy",
@@ -270,10 +267,11 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Mã cuộn nhà cung cấp",
-      dataIndex: "ma_cuon_ncc",
-      key: "ma_cuon_ncc",
+      title: "Số kg",
+      dataIndex: "so_kg",
+      key: "so_kg",
       align: "center",
+      width: '6%'
     },
     {
       title: "Ngày nhập",

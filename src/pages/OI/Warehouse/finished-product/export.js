@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Button, Modal, Select, Input, Form } from "antd";
+import { Row, Col, Table, Modal, Select, Input, Form } from "antd";
 import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { warehousExportTPData } from "../mock-data";
-import ScanQR from "../../../../components/Scanner";
-import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import { exportPallet, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
 
 const exportColumns = [

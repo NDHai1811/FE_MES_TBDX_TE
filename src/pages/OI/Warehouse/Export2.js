@@ -5,9 +5,8 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { getExportsNVL, getTablesNvl } from "../../../api/oi/warehouse";
-import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
+import { QrcodeOutlined } from "@ant-design/icons";
+import { getExportsNVL } from "../../../api/oi/warehouse";
 import PopupInTemKhoNvl from "../../../components/Popup/PopupInTemKhoNvl";
 import { getWarehouseOverall } from "../../../api/oi/warehouse";
 import PopupXuatKhoNvl from "../../../components/Popup/PopupXuatKho";
