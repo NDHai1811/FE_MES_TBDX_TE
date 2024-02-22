@@ -471,12 +471,14 @@ const WarehouseMLT = (props) => {
   ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
-    // setExportLoading(true);
-    // const res = await exportWarehouseTicket({note_ids: listCheckReceipt});
-    // if (res.success) {
-    //   window.location.href = baseURL + res.data;
-    // }
-    // setExportLoading(false);
+    setExportLoading(true);
+    if (listCheckReceipt.length) {
+      const res = await exportWarehouseTicket({ id: listCheckReceipt[0] });
+      if (res.success) {
+        window.location.href = baseURL + res.data;
+      }
+    }
+    setExportLoading(false);
   };
   const { userProfile } = useProfile();
   const [openExportModal, setOpenExportModal] = useState(false);
@@ -528,13 +530,15 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
   ];
-  useEffect(()=>{
+  useEffect(() => {
     getReceiptNote()
   }, [openExportModal]);
   const rowSelectionReceipt = {
     onChange: (selectedRowKeys, selectedRows) => {
+      console.log(selectedRowKeys, selectedRows);
       setListCheckReceipt(selectedRowKeys);
     },
+    type: 'radio',
   };
   return (
     <>
@@ -803,8 +807,8 @@ const WarehouseMLT = (props) => {
         </Form>
       </Modal>
       <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
-      onOk={exportFile}
-      okText={"Tải xuống"}>
+        onOk={exportFile}
+        okText={"Tải xuống"}>
         <Table
           bordered
           columns={receiptNoteColumns}
