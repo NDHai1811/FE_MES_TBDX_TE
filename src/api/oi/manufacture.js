@@ -88,3 +88,6 @@ export async function manualList(params){
 export async function manualPrintStamp(params){
   return await axios.post("/oi/manufacture/manual/print", params);
 }
+export async function startStopProduce(params){
+  return await axios.post("/oi/manufacture/start-stop-produce", params);
+}

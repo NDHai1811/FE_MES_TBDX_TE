@@ -189,6 +189,10 @@ function PopupQuetQr(props) {
     setVisible(false);
   };
 
+  useEffect(()=>{
+    console.log(data);
+  }, [data])
+
   return (
     <div>
       {contextHolder}

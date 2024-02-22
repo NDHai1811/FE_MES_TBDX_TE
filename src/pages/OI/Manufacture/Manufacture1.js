@@ -21,6 +21,7 @@ import {
   getLotByMachine,
   getInfoTem,
   scanQrCode,
+  startStopProduce,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
@@ -169,6 +170,7 @@ const Manufacture1 = (props) => {
   const ws = useRef(null);
 
   const reloadData = async () => {
+    getListLotDetail();
     getOverAllDetail();
   };
   const overallColumns = [
@@ -233,28 +235,23 @@ const Manufacture1 = (props) => {
 
 
   var timeout;
+  const loadDataRescursive = async (params, machine_id) => {
+    console.log(params, machine_id);
+    if (!machine_id) return;
+    const res = await getLotByMachine(params);
+    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+    if (res.success) {
+      if (window.location.href.indexOf("/oi/manufacture") > -1)
+        timeout = setTimeout(function () {
+          loadDataRescursive(params, machine_id);
+        }, 5000);
+    }
+  };
   useEffect(() => {
     clearTimeout(timeout)
-    const loadDataRescursive = async (params, machine_id) => {
-      console.log(params, machine_id);
-      if (!machine_id) return;
-      const res = await getLotByMachine(params);
-      setData(res.data);
-      if (res.data[0]?.status === 1) {
-        setSelectedLot(res.data[0]);
-      } else {
-        setSelectedLot(null);
-      }
-      if (res.success) {
-        if (window.location.href.indexOf("manufacture") > -1)
-          timeout = setTimeout(function () {
-            loadDataRescursive(params, machine_id);
-          }, 5000);
-      }
-    };
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
-  }, [params.start_date, params.end_date, params.machine_id]);
+  }, [params.start_date, params.end_date, params.machine_id, selectedLot]);
 
 
 
@@ -269,9 +266,9 @@ const Manufacture1 = (props) => {
   };
 
   const getListLotDetail = async () => {
-    const res = await getLotByMachine(params);
     setLoading(true);
-    return res.data;
+    const res = await getLotByMachine(params);
+    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })))
   };
 
   const onChangeLine = (value) => {
@@ -285,6 +282,7 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
+    var className = selectedLot ? "seleted-lot" : ""
     if (record.status === 1) {
       return "table-row-green";
     }
@@ -297,7 +295,7 @@ const Manufacture1 = (props) => {
     if (record.status === 4) {
       return "table-row-grey";
     }
-    return "";
+    return className;
   };
 
   const handlePrint = async () => {
@@ -347,6 +345,30 @@ const Manufacture1 = (props) => {
 
   };
 
+  const onClickRow = (record) => {
+    !data.some(e=>e.status === 1) && setSelectedLot(record);
+  }
+  const [isPause, setIsPasue] = useState(true);
+  const onClickBtn = async () => {
+    var res = await startStopProduce({lo_sx: selectedLot?.lo_sx, is_pause: !isPause, machine_id: machine_id});
+    if(res.success){
+      setIsPasue(!isPause);
+      reloadData();
+    }
+  }
+  useEffect(()=>{
+    if(data.some(e=>e.status === 1)){
+      setIsPasue(false);
+    }else{
+      setIsPasue(true);
+    }
+    data.forEach(e=>{
+      if(e.status === 1 && e.lo_sx !== selectedLot?.lo_sx){
+        setSelectedLot(e);
+      }
+    })
+  }, [data])
+  const tableRef = useRef();
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -371,6 +393,11 @@ const Manufacture1 = (props) => {
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
               dataSource={selectedLot ? [selectedLot] : []}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: (event) => {tableRef.current?.scrollTo({ key: selectedLot?.lo_sx });},
+                };
+              }}
             />
           </Col>
           <Row
@@ -381,7 +408,7 @@ const Manufacture1 = (props) => {
               width: "100%",
             }}
           >
-            <Col span={9}>
+            <Col span={6}>
               <DatePicker
                 allowClear={false}
                 placeholder="Từ ngày"
@@ -391,7 +418,7 @@ const Manufacture1 = (props) => {
                 onChange={onChangeStartDate}
               />
             </Col>
-            <Col span={9}>
+            <Col span={6}>
               <DatePicker
                 allowClear={false}
                 placeholder="Đến ngày"
@@ -401,6 +428,7 @@ const Manufacture1 = (props) => {
                 onChange={onChangeEndDate}
               />
             </Col>
+            <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100" disabled={!selectedLot}>{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
             <Col span={6}>
               <Button
                 size="medium"
@@ -426,11 +454,17 @@ const Manufacture1 = (props) => {
               rowClassName={(record, index) =>
                 "no-hover " + rowClassName(record, index)
               }
+              ref={tableRef}
               pagination={false}
               bordered
               columns={columns}
               rowSelection={rowSelection}
-              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: (event) => {onClickRow(record)},
+                };
+              }}
+              dataSource={data}
             />
           </Col>
         </Row>
