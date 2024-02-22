@@ -38,3 +38,8 @@ export async function updateWarehouseFGExport(params) {
   const res = await axios.post("/ui/warehouse/fg/export/update", params);
   return res.data;
 }
+
+export async function getGoodsReceiptNote(params) {
+  const res = await axios.get("/ui/warehouse/mtl/goods-receipt-note", {params});
+  return res.data;
+}

@@ -25,6 +25,7 @@ import {
   createWarehouseImport,
   deleteWarehouseImport,
   exportWarehouseTicket,
+  getGoodsReceiptNote,
   getListPlanMaterialExport,
   getListPlanMaterialImport,
   updateWarehouseImport,
@@ -438,7 +439,7 @@ const WarehouseMLT = (props) => {
             return { ...e, key: e.id };
           })}
           scroll={{
-            y: window.innerHeight * 0.60,
+            y: "50vh",
           }}
           className="h-100"
           rowSelection={rowSelection}
@@ -468,23 +469,71 @@ const WarehouseMLT = (props) => {
   ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
-    setExportLoading(true);
-    var material_ids = [];
-    importList.forEach((e) => {
-      if (listCheck.includes(e.id)) {
-        material_ids.push(e.material_id);
-      }
-    });
-    const res = await exportWarehouseTicket({
-      ...params,
-      material_ids: material_ids,
-    });
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading(false);
+    // setExportLoading(true);
+    // const res = await exportWarehouseTicket({note_ids: listCheckReceipt});
+    // if (res.success) {
+    //   window.location.href = baseURL + res.data;
+    // }
+    // setExportLoading(false);
   };
   const { userProfile } = useProfile();
+  const [openExportModal, setOpenExportModal] = useState(false);
+  const [receiptNote, setReceiptNote] = useState([]);
+  const [listCheckReceipt, setListCheckReceipt] = useState([]);
+  const getReceiptNote = async () => {
+    var res = await getGoodsReceiptNote();
+    setReceiptNote(res);
+  }
+  const receiptNoteColumns = [
+    {
+      title: "Mã phiếu",
+      dataIndex: "id",
+      key: "id",
+      align: "center",
+      width: 100
+    },
+
+    {
+      title: "Tên nhà cung cấp",
+      dataIndex: "supplier_name",
+      key: "supplier_name",
+      align: "center",
+      width: 250
+    },
+    {
+      title: "Số xe",
+      dataIndex: "vehicle_number",
+      key: "vehicle_number",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Khối lượng tổng",
+      dataIndex: "total_weight",
+      key: "total_weight",
+      align: "center",
+    },
+    {
+      title: "Khối lượng xe",
+      dataIndex: "vehicle_weight",
+      key: "vehicle_weight",
+      align: "center",
+    },
+    {
+      title: "Khối lượng hàng",
+      dataIndex: "material_weight",
+      key: "material_weight",
+      align: "center",
+    },
+  ];
+  useEffect(()=>{
+    getReceiptNote()
+  }, [openExportModal]);
+  const rowSelectionReceipt = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheckReceipt(selectedRowKeys);
+    },
+  };
   return (
     <>
       {contextHolder}
@@ -585,7 +634,7 @@ const WarehouseMLT = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Card style={{ height: '100%' }} className="custom-card scroll">
+          <Card style={{ height: '100%' }}>
             <Tabs
               defaultActiveKey="1"
               onChange={(activeKey) => setCurrentTab(activeKey)}
@@ -595,8 +644,8 @@ const WarehouseMLT = (props) => {
                   <Space>
                     <Button
                       type="primary"
-                      onClick={exportFile}
-                      loading={exportLoading}
+                      onClick={() => setOpenExportModal(true)}
+                    // loading={exportLoading}
                     >
                       Xuất phiếu nhập kho
                     </Button>
@@ -750,6 +799,24 @@ const WarehouseMLT = (props) => {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
+      onOk={exportFile}
+      okText={"Tải xuống"}>
+        <Table
+          bordered
+          columns={receiptNoteColumns}
+          dataSource={receiptNote.map((e) => {
+            return { ...e, key: e.id };
+          })}
+          scroll={{
+            y: "50vh",
+          }}
+          className="h-100"
+          rowSelection={rowSelectionReceipt}
+          pagination={false}
+          size="small"
+        />,
       </Modal>
     </>
   );

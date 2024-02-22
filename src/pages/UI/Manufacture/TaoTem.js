@@ -27,7 +27,6 @@ import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { findDOMNode } from "react-dom";
 
 const EditableCell = ({
     editing,
@@ -105,7 +104,7 @@ const TaoTem = () => {
         const item = data.find((val) => val.key === editingKey);
         const row = await form.validateFields();
         console.log({ ...item, ...row });
-        const res = await updateTem({ ...item, ...row });
+        const res = await updateTem({ ...item, ...row, ids: listCheck });
         if (res) {
             form.resetFields();
             loadListTable();
@@ -472,23 +471,24 @@ const TaoTem = () => {
         openModal && searchOrder()
     }, [openModal, orderParams]);
     const tableRef = useRef();
-    const header = findDOMNode(tableRef.current)?.getElementsByClassName('ant-table-header')[0];
-    const headerHeight = useRef(0);
-    headerHeight.current = header?.offsetHeight ?? 0;
+    const header = document.querySelector('.ant-table-header');
+    const [headerHeight, setHeaderHeight] = useState(header?.offsetHeight ?? 0);
     useEffect(() => {
         const handleWindowResize = () => {
-            const header = findDOMNode(tableRef.current)?.getElementsByClassName('ant-table-header')[0];
+            const header = document?.querySelector('.ant-table-header');
             console.log(header?.offsetHeight);
-            headerHeight.current = (header?.offsetHeight ?? 0);
+            setHeaderHeight(header?.offsetHeight ?? 0);
         };
         window.addEventListener('resize', handleWindowResize);
         return () => {
             window.removeEventListener('resize', handleWindowResize);
         };
     });
-    useEffect(()=>{
-        console.log(headerHeight.current);
-    }, [headerHeight.current])
+
+    useEffect(() => {
+        const header = document?.querySelector('.ant-table-header');
+        setHeaderHeight(header?.offsetHeight ?? 0);
+    }, [data])
     return (
         <>
             {contextHolder}
@@ -593,7 +593,7 @@ const TaoTem = () => {
                 <Col span={20}>
                     <Card
                         title="Quản lý tạo tem"
-                        className="custom-card scroll"
+                        className="custom-card"
                         extra={
                             <Space>
                                 <Button
@@ -654,7 +654,7 @@ const TaoTem = () => {
                                     size="small"
                                     bordered
                                     scroll={{
-                                        y: (453 - headerHeight.current - 8) + 'px',
+                                        y: 453 - headerHeight,
                                         x: "120vw"
                                     }}
                                     components={{

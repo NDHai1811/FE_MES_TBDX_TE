@@ -145,6 +145,7 @@ const HeaderUI = () => {
                 color: "#fff",
                 fontWeight: "600",
               }}
+              className="ant-menu-dark"
               items={items.filter(
                 (e) => !e?.hidden
                 // (userProfile?.permission ?? []).includes("*") ||
