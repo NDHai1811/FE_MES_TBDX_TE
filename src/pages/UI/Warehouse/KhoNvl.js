@@ -366,20 +366,59 @@ const KhoNvl = (props) => {
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Vị trí" className="mb-3">
-                    <Input placeholder="Nhập mã vị trí" />
+                  <Form.Item label="Loại giấy" className="mb-3">
+                    <Input placeholder="Nhập loại giấy" />
                   </Form.Item>
-                  <Form.Item label="Mã cuộn TBDX" className="mb-3">
-                    <Input placeholder="Nhập mã cuộn TBDX" />
+                  <Form.Item label="Khổ giấy" className="mb-3">
+                    <Input placeholder="Nhập khổ giấy" />
                   </Form.Item>
-                  <Form.Item label="Tên NCC" className="mb-3">
-                    <Input placeholder="Nhập tên NCC" />
+                  <Form.Item label="Định lượng" className="mb-3">
+                    <Input placeholder="Nhập định lượng" />
                   </Form.Item>
                   <Form.Item label="Mã cuộn NCC" className="mb-3">
                     <Input placeholder="Nhập mã cuộn NCC" />
                   </Form.Item>
-                  <Form.Item label="Loại giấy" className="mb-3">
-                    <Input placeholder="Nhập loại giấy" />
+                  <Form.Item label="Mã vật tư" className="mb-3">
+                    <Input placeholder="Nhập mã vật tư" />
+                  </Form.Item>
+                  <Form.Item label="Ngày nhập" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày nhập"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, tg_nhap: value })
+                      }
+                      value={params.tg_nhap}
+                      format={COMMON_DATE_FORMAT}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Số phiếu nhập kho" className="mb-3">
+                    <Input placeholder="Nhập số phiếu nhập kho" />
+                  </Form.Item>
+                  <Form.Item label="Số lượng cuối" className="mb-3">
+                    <Input placeholder="Nhập số lượng cuối" />
+                  </Form.Item>
+                  <Form.Item label="Ngày xuất" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày xuất"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, tg_xuat: value })
+                      }
+                      value={params.tg_xuat}
+                      format={COMMON_DATE_FORMAT}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Số cuộn" className="mb-3">
+                    <Input placeholder="Nhập số lượng cuối" />
+                  </Form.Item>
+                  <Form.Item label="Khu vực" className="mb-3">
+                    <Input placeholder="Nhập khu vực" />
+                  </Form.Item>
+                  <Form.Item label="Vị trí" className="mb-3">
+                    <Input placeholder="Nhập vị trí" />
                   </Form.Item>
                 </Form>
               </div>
@@ -388,12 +427,12 @@ const KhoNvl = (props) => {
         </Col>
         <Col span={20}>
           <Card
+            title="Quản lý kho NVL"
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
             extra={
               <Space>
-
                 <Button
                   type="primary"
                   loading={exportLoading}
@@ -404,22 +443,7 @@ const KhoNvl = (props) => {
               </Space>
             }
           >
-            <Row style={{ alignItems: "flex-end" }} gutter={16}>
-              <Col span={8}>
-                <Table
-                  columns={columns1}
-                  dataSource={mockDataTable1}
-                  pagination={false}
-                  bordered
-                  showHeader={false}
-                  className="custom-height-table"
-                />
-              </Col>
-              <Col span={16}>
-                <DualAxes {...config} />
-              </Col>
-            </Row>
-            <Row className="mt-5">
+            <Row>
               <Table
                 size="small"
                 bordered
