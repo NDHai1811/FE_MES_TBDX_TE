@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DatePicker,
   Col,
@@ -18,12 +18,12 @@ import { DualAxes } from "@ant-design/charts";
 import {
   exportBMCardWarehouse,
   exportSummaryWarehouse,
-  getHistoryWareHouse,
 } from "../../../api";
 import { exportWarehouse } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
+import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 
 const dataDualAxes = Array.from({ length: 18 }, (_, i) => ({
   time: `C${i + 1}`,
@@ -84,51 +84,9 @@ const table1 = [
     align: "center",
   },
   {
-    title: "Kho",
-    dataIndex: "kho",
-    key: "kho",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khu vực",
-    dataIndex: "khu_vuc",
-    key: "khu_vuc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Ngày",
-    dataIndex: "ngay",
-    key: "ngay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Tên nhà cung cấp",
+    title: "Tên NCC",
     dataIndex: "ten_ncc",
     key: "ten_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã cuộn NCC",
-    dataIndex: "ma_cuon_ncc",
-    key: "ma_cuon_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Tên khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
     align: "center",
     render: (value) => value || "-",
   },
@@ -140,7 +98,14 @@ const table1 = [
     render: (value) => value || "-",
   },
   {
-    title: "Khổ",
+    title: "FSC",
+    dataIndex: "fsc",
+    key: "fsc",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Khổ giấy (cm)",
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
@@ -154,82 +119,81 @@ const table1 = [
     render: (value) => value || "-",
   },
   {
-    title: "Nhập kho",
-    children: [
-      {
-        title: "Thời gian nhập",
-        dataIndex: "tg_nhap",
-        key: "tg_nhap",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "SL nhập",
-        dataIndex: "sl_nhap",
-        key: "sl_nhap",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Người nhập",
-        dataIndex: "nguoi_nhap",
-        key: "nguoi_nhap",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
+    title: "Số kg nhập",
+    dataIndex: "so_kg_nhap",
+    key: "so_kg_nhap",
+    align: "center",
+    render: (value) => value || "-",
   },
   {
-    title: "Xuất kho",
-    children: [
-      {
-        title: "Ngày xuất",
-        dataIndex: "ngay_xuat",
-        key: "ngay_xuat",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "SL xuất",
-        dataIndex: "sl_xuat",
-        key: "sl_xuat",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Đầu sóng",
-        dataIndex: "dau_song",
-        key: "dau_song",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Người xuất",
-        dataIndex: "nguoi_xuat",
-        key: "nguoi_xuat",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
+    title: "Mã vật tư",
+    dataIndex: "ma_vat_tu",
+    key: "ma_vat_tu",
+    align: "center",
+    render: (value) => value || "-",
   },
   {
-    title: "Tồn kho",
-    children: [
-      {
-        title: "SL tồn",
-        dataIndex: "sl_ton",
-        key: "sl_ton",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Số ngày tồn",
-        dataIndex: "so_ngay_ton",
-        key: "so_ngay_ton",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
+    title: "Ngày nhập",
+    dataIndex: "tg_nhap",
+    key: "tg_nhap",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Số phiếu nhập kho",
+    dataIndex: "so_phieu_nhap_kho",
+    key: "kho_giay",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Sl đầu (kg)",
+    dataIndex: "sl_dau",
+    key: "sl_dau",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Sl xuất (kg)",
+    dataIndex: "sl_xuat",
+    key: "dinh_luong",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Sl cuối (kg)",
+    dataIndex: "sl_cuoi",
+    key: "sl_cuoi",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Ngày xuất",
+    dataIndex: "tg_xuat",
+    key: "tg_xuat",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Số cuộn",
+    dataIndex: "so_cuon",
+    key: "so_cuon",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Khu vực",
+    dataIndex: "khu_vuc",
+    key: "khu_vuc",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "locator_id",
+    key: "locator_id",
+    align: "center",
+    render: (value) => value || "-",
   },
 ];
 
@@ -286,240 +250,6 @@ const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
-
-  const dataTable1 = [
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.1",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1001",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "sC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.2",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1123",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1500",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "800",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "700",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.3",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1021",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1600",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "700",
-      dau_song: "sC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "900",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.11",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1222",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "2000",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "1000",
-      dau_song: "lC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "1000",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.22",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1112",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1900",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "900",
-      dau_song: "lC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "1000",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.34",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-2991",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1600",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "1000",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.12",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-2321",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "F",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.22",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1230",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.15",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1104",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "lC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.17",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-2003",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.11",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1123",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "F",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-  ];
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
@@ -531,10 +261,13 @@ const KhoNvl = (props) => {
   };
   async function btn_click() {
     setLoading(false);
-    const res = await getHistoryWareHouse(params);
+    const res = await getHistoryWareHouseMLT(params);
     setDataTable(res);
     setLoading(false);
   }
+  useEffect(() => {
+    btn_click();
+  }, [])
   const [loading, setLoading] = useState(false);
   const [exportLoading1, setExportLoading1] = useState(false);
   const items = [
@@ -580,13 +313,6 @@ const KhoNvl = (props) => {
       setExportLoading1(false);
     }
   }
-
-  const onSelect = (selectedKeys, info) => {
-    console.log("selected", selectedKeys, info);
-  };
-  const onCheck = (checkedKeys, info) => {
-    console.log("onCheck", checkedKeys, info);
-  };
 
   return (
     <>
@@ -667,7 +393,7 @@ const KhoNvl = (props) => {
             className="custom-card scroll"
             extra={
               <Space>
-                
+
                 <Button
                   type="primary"
                   loading={exportLoading}
@@ -703,7 +429,7 @@ const KhoNvl = (props) => {
                   y: "70vh",
                 }}
                 columns={table1}
-                dataSource={dataTable1}
+                dataSource={dataTable}
               />
             </Row>
           </Card>

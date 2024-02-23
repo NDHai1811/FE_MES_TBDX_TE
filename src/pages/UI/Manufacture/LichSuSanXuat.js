@@ -196,9 +196,12 @@ const columns3 = [
 const LichSuSanXuat = (props) => {
   document.title = "UI - Lịch sử sản xuất";
   const [params, setParams] = useState({
-    start_date: dayjs(),
-    end_date: dayjs(),
+    page: 1,
+    pageSize: 10,
   });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   useEffect(() => {
     (async () => {
       const res1 = await getUIItemMenu();
@@ -206,6 +209,13 @@ const LichSuSanXuat = (props) => {
     })();
     btn_click();
   }, []);
+  useEffect(() => {
+    (async () => {
+      const res3 = await getProduceTable(params);
+      setTotalPage(res3.data.totalPage);
+      setDataTable3(res3.data.data);
+    })();
+  }, [params]);
 
   const [dataTable1, setDataTable1] = useState([]);
   const [dataTable2, setDataTable2] = useState([]);
@@ -223,7 +233,8 @@ const LichSuSanXuat = (props) => {
           return { ...res2.data[key], lo_sx: key };
         })
       );
-      setDataTable3(res3.data);
+      setTotalPage(res3.data.totalPage);
+      setDataTable3(res3.data.data);
       setLoading(false);
     })();
   }
@@ -296,8 +307,10 @@ const LichSuSanXuat = (props) => {
                       allowClear={false}
                       placeholder="Bắt đầu"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, start_date: value })
+                      onChange={(value) => {
+                        setParams({ ...params, start_date: value, page: 1 });
+                        setPage(1);
+                      }
                       }
                       value={params.start_date}
                     />
@@ -305,8 +318,10 @@ const LichSuSanXuat = (props) => {
                       allowClear={false}
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, end_date: value })
+                      onChange={(value) => {
+                        setParams({ ...params, end_date: value, page: 1 });
+                        setPage(1);
+                      }
                       }
                       value={params.end_date}
                     />
@@ -325,6 +340,7 @@ const LichSuSanXuat = (props) => {
                           customer_id: e.target.value,
                           page: 1,
                         });
+                        setPage(1);
                       }}
                       placeholder="Nhập khách hàng"
                     />
@@ -334,7 +350,8 @@ const LichSuSanXuat = (props) => {
                       allowClear
                       showSearch
                       onChange={(value) => {
-                        setParams({ ...params, mdh: value });
+                        setParams({ ...params, mdh: value, page: 1 });
+                        setPage(1);
                       }}
                       open={false}
                       suffixIcon={null}
@@ -352,6 +369,7 @@ const LichSuSanXuat = (props) => {
                           lo_sx: e.target.value,
                           page: 1,
                         });
+                        setPage(1);
                       }}
                       placeholder="Nhập lô sản xuất"
                     />
@@ -365,6 +383,7 @@ const LichSuSanXuat = (props) => {
                           quy_cach: e.target.value,
                           page: 1,
                         });
+                        setPage(1);
                       }}
                       placeholder="Nhập quy cách"
                     />
@@ -423,7 +442,17 @@ const LichSuSanXuat = (props) => {
               <Table
                 size="small"
                 bordered
-                pagination={false}
+                pagination={{
+                  current: page,
+                  size: "default",
+                  total: totalPage,
+                  showSizeChanger: true,
+                  onChange: (page, pageSize) => {
+                    setPage(page);
+                    setPageSize(pageSize);
+                    setParams({ ...params, page: page, pageSize: pageSize });
+                  },
+                }}
                 scroll={{
                   x: "120vw",
                   y: window.innerHeight * 0.30,
