@@ -358,7 +358,7 @@ const NhapTay = (props) => {
 
   const onScan = async (result) => {
     const lo_sx = JSON.parse(result)?.lo_sx;
-    manualScan({ lo_sx: lo_sx, machine_id: machine_id })
+    manualScan({ lo_sx: JSON.parse(result)?.lo_sx, machine_id: machine_id, so_luong: JSON.parse(result)?.so_luong })
       .then(() => { reloadData(lo_sx); handleCloseMdl() })
       .catch((err) => { console.log("Quét mã qr thất bại: ", err); handleCloseMdl(); });
   };
