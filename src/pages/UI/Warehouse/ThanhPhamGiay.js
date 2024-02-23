@@ -18,7 +18,7 @@ import { DualAxes } from "@ant-design/charts";
 import {
   exportBMCardWarehouse,
   exportSummaryWarehouse,
-  getHistoryWareHouse,
+ 
 } from "../../../api";
 import { exportWarehouse } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
@@ -470,8 +470,8 @@ const ThanhPhamGiay = (props) => {
   };
   async function btn_click() {
     setLoading(false);
-    const res = await getHistoryWareHouse(params);
-    setDataTable(res);
+    // const res = await getHistoryWareHouse(params);
+    // setDataTable(res);
     setLoading(false);
   }
   const [loading, setLoading] = useState(false);

@@ -14,6 +14,7 @@ function PopupInTemKhoNvl(props) {
   const [materials, setMaterials] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
   const scanRef = useRef();
+  const [currentValue, setCurrentValue] = useState("");
 
   const messageAlert = (content, type = "error") => {
     messageApi.open({
@@ -189,6 +190,29 @@ function PopupInTemKhoNvl(props) {
       })
       .catch((err) => console.log("Gửi dữ liệu in tem thất bại: ", err));
   };
+  const handleEnterPress = () => {
+    if (!list) {
+      setCurrentData(currentValue);
+    } else {
+      if (materials.some((e) => !e.locator_id)) {
+        const item = materials.find((val) => !val.locator_id);
+        const newData = materials.map((val) => {
+          if (val.material_id === item.material_id) {
+            val.locator_id = currentValue;
+          }
+          return {
+            ...val,
+          };
+        });
+        setMaterials(newData);
+      }
+    }
+    setCurrentValue('');
+  };
+  const onChangeValue = (e) => {
+    const inputValue = e.target.value;
+    setCurrentValue(inputValue);
+  };
   return (
     <div>
       {contextHolder}
@@ -210,6 +234,13 @@ function PopupInTemKhoNvl(props) {
           <Col span={24}>
             <ScanQR isHideButton={true} onResult={(res) => onScan(res)} />
           </Col>
+          <Input
+            placeholder="Nhập giá trị"
+            onPressEnter={handleEnterPress}
+            style={{ marginTop: 16, height: 50 }}
+            value={currentValue}
+            onChange={onChangeValue}
+          />
           <Col span={24}>
             <Table
               size="small"

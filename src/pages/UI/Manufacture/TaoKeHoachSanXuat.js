@@ -12,22 +12,18 @@ import {
     Input,
     InputNumber,
     Typography,
-    Popconfirm,
     Checkbox
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
 import {
     createProductPlan,
-    exportKHSX,
     exportPreviewPlan,
     getListProductPlan,
     getOrderList,
     handleOrder,
-    handlePlan,
 } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
-import { getOrders } from "../../../api";
 import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
 import { EditOutlined } from "@ant-design/icons";
@@ -345,7 +341,6 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
-            console.log(lsxParams);
             loadListPlans();
         })()
     }, [lsxParams]);

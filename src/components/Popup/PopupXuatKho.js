@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react";
-import { Modal, Row, Col, Table, message } from "antd";
+import { Modal, Row, Col, Table, message, Input } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
@@ -17,6 +17,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 function PopupXuatKhoNvl(props) {
   const { visible, setVisible, setCurrentScan } = props;
   const [data, setData] = useState();
+  const [currentValue, setCurrentValue] = useState();
   const getData = async (value) => {
     var res = await scanExportsNVL({ material_id: value });
     if (res.success) {
@@ -78,14 +79,28 @@ function PopupXuatKhoNvl(props) {
   const onScanResult = (value) => {
     const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
     if (value && data) {
-      if(value !== data.material_id){
+      if (value !== data.material_id) {
         sendResult({ ...data, locator_id: value });
       }
-    } else if(value && !data) {
+    } else if (value && !data) {
       getData(value);
     }
   };
-
+  const handleEnterPress = () => {
+    const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
+    if (currentValue && data) {
+      if (currentValue !== data.material_id) {
+        sendResult({ ...data, locator_id: currentValue });
+      }
+    } else if (currentValue && !data) {
+      getData(currentValue);
+    }
+    setCurrentValue("");
+  };
+  const onChangeValue = (e) => {
+    const inputValue = e.target.value;
+    setCurrentValue(inputValue);
+  };
   return (
     <div>
       <Modal
@@ -97,6 +112,13 @@ function PopupXuatKhoNvl(props) {
         <ScanQR
           isHideButton={true}
           onResult={(res) => onScanResult(res)}
+        />
+        <Input
+          placeholder="Nhập giá trị"
+          onPressEnter={handleEnterPress}
+          style={{ marginTop: 16, height: 50 }}
+          value={currentValue}
+          onChange={onChangeValue}
         />
         <Row className="mt-3">
           <Col span={24}>

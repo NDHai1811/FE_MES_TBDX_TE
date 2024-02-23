@@ -53,6 +53,7 @@ function PopupQuetQr(props) {
     const index = data.findIndex((item) =>
       Object.values(item).some((val) => val === "")
     );
+    console.log(data, index);
     const newData = data.map((val, i) => {
       if (index === i) {
         const emptyKey = Object.keys(val).find((key) => val[key] === "");
@@ -101,7 +102,7 @@ function PopupQuetQr(props) {
           val[emptyKey] = result;
           setCheckData(
             checkData.map((it, itemIndex) => {
-              if (itemIndex === index) {
+              if (it.vi_tri === itemByIndex.vi_tri) {
                 it.isDone = true;
               }
               return { ...it };

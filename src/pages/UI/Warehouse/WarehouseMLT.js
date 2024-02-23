@@ -6,7 +6,6 @@ import {
   Table,
   Modal,
   Card,
-  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -16,7 +15,6 @@ import {
   Col,
   Row,
   Space,
-  Tree,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
@@ -231,11 +229,10 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Số kg",
-      dataIndex: "so_kg",
-      key: "so_kg",
+      title: "Mã cuộn nhà cung cấp",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
       align: "center",
-      width: '6%'
     },
     {
       title: "Loại giấy",
@@ -271,10 +268,11 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Mã cuộn nhà cung cấp",
-      dataIndex: "ma_cuon_ncc",
-      key: "ma_cuon_ncc",
+      title: "Số kg",
+      dataIndex: "so_kg",
+      key: "so_kg",
       align: "center",
+      width: '6%'
     },
     {
       title: "Ngày nhập",
@@ -684,7 +682,7 @@ const WarehouseMLT = (props) => {
                         Upload excel
                       </Button>
                     </Upload>
-                    <Button type="primary" onClick={deleteRecord}>
+                    {/* <Button type="primary" onClick={deleteRecord}>
                       Xóa
                     </Button>
                     <Button type="primary" onClick={onEdit}>
@@ -692,7 +690,7 @@ const WarehouseMLT = (props) => {
                     </Button>
                     <Button type="primary" onClick={onInsert}>
                       Thêm
-                    </Button>
+                    </Button> */}
                     <Button type="primary" onClick={handlePrint}>
                       In tem NVL
                     </Button>
