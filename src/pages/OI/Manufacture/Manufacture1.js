@@ -20,6 +20,8 @@ import {
   getLotByMachine,
   scanQrCode,
   startStopProduce,
+  getTrackingStatus,
+  getCurrentManufacturing,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import Tem from "./Tem";
@@ -154,17 +156,14 @@ const Manufacture1 = (props) => {
   });
   const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
-  const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
-  const [listTem, setListTem] = useState([])
+  const [listTem, setListTem] = useState([]);
+  const [isPause, setIsPasue] = useState(true);
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
-  const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
-  const [isScan, setIsScan] = useState(0);
-  const ws = useRef(null);
 
   const reloadData = async () => {
     getListLotDetail();
@@ -213,42 +212,46 @@ const Manufacture1 = (props) => {
   ];
 
   useEffect(() => {
-    if (machineOptions.length > 0) {
-      (async () => {
-        if (machine_id) {
-          reloadData();
-        }
-      })();
-    }
-  }, [machine_id, machineOptions, loadData]);
+    (async () => {
+      var res = await getTrackingStatus({ machine_id: machine_id });
+      if (res.success) {
+        setIsPasue(!res.data?.status)
+      }
+    })();
+  }, []);
 
-  useEffect(() => {
-    if (isScan === 1) {
-      setIsOpenQRScanner(true);
-    } else if (isScan === 2) {
-      setIsOpenQRScanner(false);
-    }
-  }, [isScan]);
-
+  useEffect(()=>{
+    reloadData();
+  }, [params, machine_id]);
 
   var timeout;
-  const loadDataRescursive = async (params, machine_id) => {
-    console.log(params, machine_id);
-    if (!machine_id) return;
-    const res = await getLotByMachine(params);
-    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+  const loadDataRescursive = async (machine_id, selectedLot) => {
+    if (!machine_id || isPause) return;
+    const res = await getCurrentManufacturing({machine_id});
+    console.log(selectedLot?.lo_sx, res.data?.lo_sx);
+    if(selectedLot?.lo_sx !== res.data?.lo_sx){
+      reloadData();
+    }
+    setData(prev=>prev.map(e=>{
+      if(e?.lo_sx === res.data?.lo_sx){
+        return {...e, ...res.data}
+      }
+      return e;
+    }))
+    setSelectedLot(res.data);
     if (res.success) {
       if (window.location.href.indexOf("/oi/manufacture") > -1)
         timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
+          loadDataRescursive(machine_id, selectedLot);
+        }, 2000);
     }
   };
   useEffect(() => {
-    clearTimeout(timeout)
-    loadDataRescursive(params, machine_id);
+    clearTimeout(timeout);
+    console.log('changed lo_sx', selectedLot);
+    loadDataRescursive(machine_id, selectedLot, isPause);
     return () => clearTimeout(timeout);
-  }, [params.start_date, params.end_date, params.machine_id, selectedLot]);
+  }, [isPause, selectedLot?.lo_sx]);
 
 
 
@@ -270,12 +273,6 @@ const Manufacture1 = (props) => {
 
   const onChangeLine = (value) => {
     window.location.href = ("/oi/manufacture/" + value);
-  };
-
-  const onScan = async (result) => {
-    scanQrCode({ lot_id: result, machine_id: machine_id })
-      .then(reloadData())
-      .catch((err) => console.log("Quét mã qr thất bại: ", err));
   };
 
   const rowClassName = (record, index) => {
@@ -319,10 +316,6 @@ const Manufacture1 = (props) => {
     content: () => componentRef3.current,
   });
 
-  const handleCloseMdl = () => {
-    setIsOpenQRScanner(false);
-    setIsScan(2);
-  };
 
   const onChangeStartDate = (value) => {
     setParams({ ...params, start_date: value });
@@ -343,28 +336,16 @@ const Manufacture1 = (props) => {
   };
 
   const onClickRow = (record) => {
-    !data.some(e=>e.status === 1) && setSelectedLot(record);
+    !data.some(e => e.status === 1) && setSelectedLot(record);
   }
-  const [isPause, setIsPasue] = useState(true);
+  
   const onClickBtn = async () => {
-    var res = await startStopProduce({lo_sx: selectedLot?.lo_sx, is_pause: !isPause, machine_id: machine_id});
-    if(res.success){
+    var res = await startStopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: !isPause, machine_id: machine_id });
+    if (res.success) {
       setIsPasue(!isPause);
       reloadData();
     }
   }
-  useEffect(()=>{
-    if(data.some(e=>e.status === 1)){
-      setIsPasue(false);
-    }else{
-      setIsPasue(true);
-    }
-    data.forEach(e=>{
-      if(e.status === 1 && e.lo_sx !== selectedLot?.lo_sx){
-        setSelectedLot(e);
-      }
-    })
-  }, [data])
   const tableRef = useRef();
   return (
     <React.Fragment>
@@ -392,7 +373,7 @@ const Manufacture1 = (props) => {
               dataSource={selectedLot ? [selectedLot] : []}
               onRow={(record, rowIndex) => {
                 return {
-                  onClick: (event) => {tableRef.current?.scrollTo({ key: selectedLot?.lo_sx });},
+                  onClick: (event) => { tableRef.current?.scrollTo({ key: selectedLot?.lo_sx }); },
                 };
               }}
             />
@@ -425,7 +406,7 @@ const Manufacture1 = (props) => {
                 onChange={onChangeEndDate}
               />
             </Col>
-            <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100" disabled={!selectedLot}>{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+            <Col span={6}><Button type="primary" onClick={onClickBtn} disabled={!selectedLot && isPause} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
             <Col span={6}>
               <Button
                 size="medium"
@@ -458,7 +439,7 @@ const Manufacture1 = (props) => {
               rowSelection={rowSelection}
               onRow={(record, rowIndex) => {
                 return {
-                  onClick: (event) => {onClickRow(record)},
+                  onClick: (event) => { onClickRow(record) },
                 };
               }}
               dataSource={data}
@@ -466,22 +447,6 @@ const Manufacture1 = (props) => {
           </Col>
         </Row>
       </Spin>
-      {isOpenQRScanner && (
-        <Modal
-          title="Quét QR"
-          open={isOpenQRScanner}
-          onCancel={handleCloseMdl}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isOpenQRScanner}
-            onResult={(res) => {
-              onScan(res);
-              setIsOpenQRScanner(false);
-            }}
-          />
-        </Modal>
-      )}
     </React.Fragment>
   );
 };
