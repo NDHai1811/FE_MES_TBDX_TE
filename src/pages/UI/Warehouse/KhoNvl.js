@@ -14,7 +14,6 @@ import {
   Form,
   Tree,
 } from "antd";
-import { DualAxes } from "@ant-design/charts";
 import {
   exportBMCardWarehouse,
   exportSummaryWarehouse,

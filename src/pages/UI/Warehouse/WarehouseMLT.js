@@ -216,6 +216,13 @@ const WarehouseMLT = (props) => {
 
   const columns = [
     {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      align: "center",
+      render: (value, item, index) => (index + 1),
+    },
+    {
       title: "Mã cuộn TBDX",
       dataIndex: "material_id",
       key: "material_id",
@@ -223,15 +230,9 @@ const WarehouseMLT = (props) => {
     },
 
     {
-      title: "Tên nhà cung cấp",
+      title: "Tên NCC",
       dataIndex: "ten_ncc",
       key: "ten_ncc",
-      align: "center",
-    },
-    {
-      title: "Mã cuộn nhà cung cấp",
-      dataIndex: "ma_cuon_ncc",
-      key: "ma_cuon_ncc",
       align: "center",
     },
     {
@@ -262,17 +263,23 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Mã vật tư",
-      dataIndex: "ma_vat_tu",
-      key: "ma_vat_tu",
-      align: "center",
-    },
-    {
-      title: "Số kg",
+      title: "Số ký nhập",
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
       width: '6%'
+    },
+    {
+      title: "Mã cuộn NCC",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+    },
+    {
+      title: "Mã vật tư",
+      dataIndex: "ma_vat_tu",
+      key: "ma_vat_tu",
+      align: "center",
     },
     {
       title: "Ngày nhập",
@@ -280,6 +287,12 @@ const WarehouseMLT = (props) => {
       key: "created_at",
       align: "center",
       render: (value, item, index) => dayjs(value).format('DD-MM-YYYY'),
+    },
+    {
+      title: "Số phiếu nhập kho",
+      dataIndex: "goods_receipt_note_id",
+      key: "goods_receipt_note_id",
+      align: "center",
     },
     {
       title: "IQC OK/NG",

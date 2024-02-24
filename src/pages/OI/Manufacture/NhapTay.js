@@ -34,7 +34,7 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getMachines } from "../../../api/oi/equipment";
-
+const SCAN_TIME_OUT = 3000;
 const columns = [
   {
     title: "Khách hàng",
@@ -170,6 +170,7 @@ const NhapTay = (props) => {
   const [visiblePrint, setVisiblePrint] = useState(false);
   const [isPrint, setIsPrint] = useState(false);
   const { machineOptions = [] } = props
+  const scanRef = useRef();
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
@@ -357,10 +358,15 @@ const NhapTay = (props) => {
   };
 
   const onScan = async (result) => {
-    const lo_sx = JSON.parse(result)?.lo_sx;
-    manualScan({ lo_sx: JSON.parse(result)?.lo_sx, machine_id: machine_id, so_luong: JSON.parse(result)?.so_luong })
-      .then(() => { reloadData(lo_sx); handleCloseMdl() })
-      .catch((err) => { console.log("Quét mã qr thất bại: ", err); handleCloseMdl(); });
+    if (scanRef.current) {
+      clearTimeout(scanRef.current);
+    }
+    scanRef.current = setTimeout(() => {
+      const lo_sx = JSON.parse(result)?.lo_sx;
+      manualScan({ lo_sx: JSON.parse(result)?.lo_sx, machine_id: machine_id, so_luong: JSON.parse(result)?.so_luong })
+        .then(() => { reloadData(lo_sx); handleCloseMdl() })
+        .catch((err) => { console.log("Quét mã qr thất bại: ", err); handleCloseMdl(); });
+    }, SCAN_TIME_OUT);
   };
 
   const rowClassName = (record, index) => {
