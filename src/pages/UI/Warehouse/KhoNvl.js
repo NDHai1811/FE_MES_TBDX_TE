@@ -43,7 +43,7 @@ const KhoNvl = (props) => {
   };
   async function btn_click() {
     setLoading(true);
-    const res = await getHistoryWareHouseMLT({...form.getFieldsValue(true), ...params});
+    const res = await getHistoryWareHouseMLT({ ...form.getFieldsValue(true), ...params });
     setDataTable(res.data);
     setTotalPage(res.totalPage);
     setLoading(false);
@@ -181,7 +181,7 @@ const KhoNvl = (props) => {
   ];
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  
+
   return (
     <>
       {contextHolder}
@@ -198,7 +198,10 @@ const KhoNvl = (props) => {
                     type="primary"
                     htmlType="submit"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={() => {
+                      setParams({ ...params, page: 1 })
+                      setPage(1);
+                    }}
                   >
                     Tìm kiếm
                   </Button>
@@ -234,7 +237,7 @@ const KhoNvl = (props) => {
               </div> */}
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={btn_click}>
+                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={()=>{ setParams({ ...params, page: 1 });setPage(1);}}>
                   <Form.Item label="Loại giấy" className="mb-3" name={"loai_giay"}>
                     <Input allowClear placeholder="Nhập loại giấy" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), loai_giay: event.target.value })} />
                   </Form.Item>
@@ -317,7 +320,7 @@ const KhoNvl = (props) => {
                 bordered
                 pagination={{
                   current: page,
-                  size: "small",
+                  size: "default",
                   total: totalPage,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
