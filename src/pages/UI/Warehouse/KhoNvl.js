@@ -27,7 +27,7 @@ import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [params, setParams] = useState();
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -43,14 +43,14 @@ const KhoNvl = (props) => {
   };
   async function btn_click() {
     setLoading(true);
-    const res = await getHistoryWareHouseMLT(form.getFieldsValue(true));
+    const res = await getHistoryWareHouseMLT({...form.getFieldsValue(true), ...params});
     setDataTable(res.data);
     setTotalPage(res.totalPage);
     setLoading(false);
   }
   useEffect(() => {
     btn_click();
-  }, [])
+  }, [params])
   const table1 = [
     {
       title: "STT",
