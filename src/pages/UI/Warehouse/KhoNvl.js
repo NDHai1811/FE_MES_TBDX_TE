@@ -83,6 +83,13 @@ const table1 = [
     align: "center",
   },
   {
+    title: "Mã cuộn TBDX",
+    dataIndex: "material_id",
+    key: "material_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
     title: "Tên NCC",
     dataIndex: "ten_ncc",
     key: "ten_ncc",
@@ -272,8 +279,8 @@ const KhoNvl = (props) => {
   useEffect(() => {
     btn_click();
   }, [])
-  const onFinish = async () =>{
-    
+  const onFinish = async () => {
+
   }
   const [loading, setLoading] = useState(false);
   const [exportLoading1, setExportLoading1] = useState(false);
@@ -320,7 +327,7 @@ const KhoNvl = (props) => {
       setExportLoading1(false);
     }
   }
-  
+
   return (
     <>
       {contextHolder}
@@ -375,19 +382,19 @@ const KhoNvl = (props) => {
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={btn_click}>
                   <Form.Item label="Loại giấy" className="mb-3" name={"loai_giay"}>
-                    <Input allowClear placeholder="Nhập loại giấy" onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), loai_giay: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập loại giấy" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), loai_giay: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Khổ giấy" className="mb-3" name={"kho_giay"}>
-                    <Input allowClear placeholder="Nhập khổ giấy"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), kho_giay: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập khổ giấy" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), kho_giay: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Định lượng" className="mb-3" name={"dinh_luong"}>
-                    <Input allowClear placeholder="Nhập định lượng"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), dinh_luong: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập định lượng" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), dinh_luong: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Mã cuộn NCC" className="mb-3" name={"ma_cuon_ncc"}>
-                    <Input allowClear placeholder="Nhập mã cuộn NCC"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), ma_cuon_ncc: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập mã cuộn NCC" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), ma_cuon_ncc: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Mã vật tư" className="mb-3" name={"ma_vat_tu"}>
-                    <Input allowClear placeholder="Nhập mã vật tư"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), ma_vat_tu: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập mã vật tư" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), ma_vat_tu: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Ngày nhập" className="mb-3" name={"tg_nhap"}>
                     <DatePicker
@@ -401,10 +408,10 @@ const KhoNvl = (props) => {
                     />
                   </Form.Item>
                   <Form.Item label="Số phiếu nhập kho" className="mb-3" name={"goods_receipt_note_id"}>
-                    <Input allowClear placeholder="Nhập số phiếu nhập kho"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), goods_receipt_note_id: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập số phiếu nhập kho" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), goods_receipt_note_id: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Số lượng cuối" className="mb-3" name={"so_kg"}>
-                    <Input allowClear placeholder="Nhập số lượng cuối"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), so_kg: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập số lượng cuối" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), so_kg: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Ngày xuất" className="mb-3" name={"tg_xuat"}>
                     <DatePicker
@@ -418,13 +425,13 @@ const KhoNvl = (props) => {
                     />
                   </Form.Item>
                   <Form.Item label="Số cuộn" className="mb-3" name={"so_cuon"}>
-                    <Input allowClear placeholder="Nhập cuộn"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), so_cuon: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập cuộn" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), so_cuon: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Khu vực" className="mb-3" name={"khu_vuc"}>
-                    <Input allowClear placeholder="Nhập khu vực"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), khu_vuc: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập khu vực" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), khu_vuc: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Vị trí" className="mb-3" name={"locator_id"}>
-                    <Input allowClear placeholder="Nhập vị trí"  onChange={(event)=>form.setFieldsValue({...form.getFieldsValue(true), locator_id: event.target.value})}/>
+                    <Input allowClear placeholder="Nhập vị trí" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), locator_id: event.target.value })} />
                   </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
