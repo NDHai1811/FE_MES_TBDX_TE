@@ -43,7 +43,7 @@ const KhoNvl = (props) => {
   };
   async function btn_click() {
     setLoading(true);
-    const res = await getHistoryWareHouseMLT({...form.getFieldsValue(true), ...params});
+    const res = await getHistoryWareHouseMLT(form.getFieldsValue(true));
     setDataTable(res.data);
     setTotalPage(res.totalPage);
     setLoading(false);
