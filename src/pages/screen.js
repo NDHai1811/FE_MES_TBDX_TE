@@ -14,8 +14,6 @@ const Screen = (props) => {
   const { userProfile } = useProfile();
   const { Title } = Typography;
 
-  const userPermissions = JSON.parse(window.localStorage.getItem("authUser"));
-  const isRawMaterialWarehouse = userProfile.permission.includes("kho-nvl");
   const is_warehouse = userProfile.permission.some(e=>e.includes("kho"));
   const dashboard = [
     // {
@@ -67,38 +65,6 @@ const Screen = (props) => {
       permission: "oi-warehouse-nvl",
     },
   ];
-  const listUI = [
-    {
-      title: "Sản xuất",
-      link: "/ui/manufacture/ke-hoach-san-xuat",
-      permission: "ui-sx",
-    },
-    {
-      title: "Chất lượng",
-      link: "/ui/quality/PQC",
-      permission: "ui-cl",
-    },
-    {
-      title: "Thiết bị",
-      link: "/ui/equipment/thong-ke-loi",
-      permission: "ui-tb",
-    },
-    {
-      title: "Kho",
-      link: "/ui/warehouse/quan-ly-kho",
-      permission: "ui-kho",
-    },
-    {
-      title: "KPI",
-      link: "/ui/kpi",
-      permission: "ui-kpi",
-    },
-    {
-      title: "Master Data",
-      link: "/ui/master-data/san-xuat/cong-doan",
-      permission: "ui-master-data",
-    },
-  ];
   const permissionOI = (listOI ?? []).filter(
     (e) =>
     userProfile.username === 'admin' || 
@@ -128,7 +94,7 @@ const Screen = (props) => {
           <Col md={12} lg={12} xl={8}>
             <Card className="mt-4">
               <div className="text-center mt-2">
-                <img className="mb-3 w-25" src={logo} />
+                <img className="mb-3 w-25" src={logo} alt=""/>
                 <Title level={4}>
                   CÔNG TY CỔ PHẦN THÁI BÌNH DƯƠNG XANH
                 </Title>

@@ -262,7 +262,7 @@ const KeHoachSanXuat = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
-    setData(res.map((e) => ({ ...e, key: e.id })));
+    setData((Array.isArray(res) ? res : (Object.values(res)) ?? []).map((e) => ({ ...e, key: e.id })));
     setLoading(false);
   };
 

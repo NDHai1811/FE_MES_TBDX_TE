@@ -79,8 +79,8 @@ const columns = [
   },
   {
     title: "SL kế hoạch",
-    dataIndex: "dinh_muc",
-    key: "dinh_muc",
+    dataIndex: "san_luong_kh",
+    key: "san_luong_kh",
     align: "center",
   },
   {
@@ -117,8 +117,8 @@ const Manufacture1 = (props) => {
     },
     {
       title: "Sản lượng kế hoạch",
-      dataIndex: "dinh_muc",
-      key: "dinh_muc",
+      dataIndex: "san_luong_kh",
+      key: "san_luong_kh",
       align: "center",
       render: (value) => value,
     },

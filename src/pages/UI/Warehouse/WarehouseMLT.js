@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Layout,
   Divider,
   Button,
   Table,
@@ -19,11 +18,9 @@ import {
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
 import { baseURL } from "../../../config";
-import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
 import {
   createWarehouseImport,
-  deleteWarehouseImport,
   exportWarehouseTicket,
   getGoodsReceiptNote,
   getListPlanMaterialExport,
@@ -32,57 +29,6 @@ import {
 } from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
 import { useProfile } from "../../../components/hooks/UserHooks";
-
-const { TabPane } = Tabs;
-
-const itemsMenu = [
-  {
-    title: "Kho nguyên vật liệu",
-    key: "0-0",
-    children: [
-      {
-        title: "Kho A",
-        key: "0-1",
-      },
-      {
-        title: "Kho B",
-        key: "0-2",
-      },
-      {
-        title: "Kho dở dang",
-        key: "0-3",
-      },
-    ],
-  },
-  {
-    title: "KV bán thành phẩm",
-    key: "1-0",
-    children: [
-      {
-        title: "KV BTP giấy tấm",
-        key: "1-1",
-      },
-      {
-        title: "KV BTP sau in",
-        key: "1-2",
-      },
-    ],
-  },
-  {
-    title: "Kho thành phẩm",
-    key: "2-0",
-    children: [
-      {
-        title: "Kho chờ nhập",
-        key: "2-1",
-      },
-      {
-        title: "Kho đã nhập",
-        key: "2-2",
-      },
-    ],
-  },
-];
 
 const columns1 = [
   {
@@ -159,8 +105,6 @@ const columns1 = [
     align: "center",
   },
 ];
-
-const { Sider } = Layout;
 const WarehouseMLT = (props) => {
   document.title = "UI - Quản lý giấy cuộn";
 
@@ -174,19 +118,6 @@ const WarehouseMLT = (props) => {
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [importList, setImportList] = useState([]);
   const [exportList, setExportList] = useState([]);
-  const onChangeChecbox = (e) => {
-    if (e.target.checked) {
-      if (!listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) => [...oldArray, e.target.value]);
-      }
-    } else {
-      if (listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) =>
-          oldArray.filter((datainput) => datainput !== e.target.value)
-        );
-      }
-    }
-  };
   useEffect(() => {
     console.log(importList, listCheck);
     const new_data = importList.filter((datainput) =>
@@ -194,7 +125,7 @@ const WarehouseMLT = (props) => {
     );
     console.log(new_data);
     setListMaterialCheck(new_data);
-  }, [listCheck]);
+  }, [listCheck, importList]);
 
   const getExportList = () => {
     getListPlanMaterialExport()
@@ -202,16 +133,6 @@ const WarehouseMLT = (props) => {
       .catch((err) =>
         console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
       );
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteWarehouseImport({ id: listCheck });
-      setListCheck([]);
-      getImportList();
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
   };
 
   const columns = [
@@ -303,57 +224,6 @@ const WarehouseMLT = (props) => {
         value === 0 ? "Chưa kiểm tra" : value === 1 ? "OK" : "NG",
     },
   ];
-  const mergedKey = "khach_hang";
-  const mergeColumn = [
-    "ma_cuon_tbdx",
-    "ma_vat_tu",
-    "ten_ncc",
-    "ma_cuon_ncc",
-    "so_kg",
-    "loai_giay",
-    "kho_giay",
-    "dinh_luong",
-    "ok_ng",
-  ];
-  const mergeValue = mergeColumn.map((e) => {
-    return { key: e, set: new Set() };
-  });
-
-  const isEditing = (col, record) =>
-    col.editable === true && listCheck.includes(record.id);
-
-  const onCell = (record, e) => {
-    const props = {
-      record,
-      ...e,
-      editable: isEditing(e, record),
-      handleSave,
-    };
-
-    if (!mergeColumn.includes(e.key)) {
-      return props;
-    }
-
-    const set = mergeValue.find((s) => s.key === e.key)?.set;
-    if (set?.has(record[mergedKey])) {
-      return { rowSpan: 0, ...props };
-    }
-
-    const rowCount = importList.filter(
-      (data) => data[mergedKey] === record[mergedKey]
-    ).length;
-    set?.add(record[mergedKey]);
-    return { rowSpan: rowCount, ...props };
-  };
-
-  const customColumns = columns.map((e) => ({
-    ...e,
-    onCell: (record) => onCell(record, e),
-  }));
-
-  const handleSave = async (row) => {
-    setImportList((prev) => prev.map((e) => (e.id === row.id ? row : e)));
-  };
 
   const getImportList = async () => {
     const res = await getListPlanMaterialImport(params);
@@ -392,47 +262,20 @@ const WarehouseMLT = (props) => {
       getExportList();
     }
   };
-
-  const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
-  const onEdit = () => {
-    if (listCheck.length > 1) {
-      message.info("Chỉ chọn 1 bản ghi để chỉnh sửa");
-    } else if (listCheck.length == 0) {
-      message.info("Chưa chọn bản ghi cần chỉnh sửa");
-    } else {
-      const result = importList.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue(result);
-      setOpenMdlEdit(true);
-      setTitleMdlEdit("Cập nhật");
-    }
-  };
   const componentRef1 = useRef();
 
   const handlePrint = useReactToPrint({
     content: () => componentRef1.current,
   });
-
-  const onInsert = () => {
-    setTitleMdlEdit("Thêm mới");
-    form.resetFields();
-    setOpenMdlEdit(true);
-  };
   const [form] = Form.useForm();
   const onFinish = async (values) => {
     if (values.id) {
-      const res = await updateWarehouseImport(values);
+      await updateWarehouseImport(values);
     } else {
-      const res = await createWarehouseImport(values);
+      await createWarehouseImport(values);
     }
     setOpenMdlEdit(false);
     getImportList();
-  };
-
-  const onSelect = (selectedKeys, info) => {
-    console.log("selected", selectedKeys, info);
-  };
-  const onCheck = (checkedKeys, info) => {
-    console.log("onCheck", checkedKeys, info);
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -721,7 +564,7 @@ const WarehouseMLT = (props) => {
         </Col>
       </Row>
       <Modal
-        title={titleMdlEdit}
+        title={"Cập nhật"}
         open={openMdlEdit}
         onCancel={() => setOpenMdlEdit(false)}
         footer={null}
@@ -819,6 +662,7 @@ const WarehouseMLT = (props) => {
       </Modal>
       <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
         onOk={exportFile}
+        okButtonProps={{loading: exportLoading}}
         okText={"Tải xuống"}>
         <Table
           bordered

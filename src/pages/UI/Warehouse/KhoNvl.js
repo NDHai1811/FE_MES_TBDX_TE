@@ -255,79 +255,69 @@ const itemsMenu = [
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
-  const [form] = Form.useForm();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [totalPage, setTotalPage] = useState(1);
-  const [exportLoading, setExportLoading] = useState(false);
-  const exportFile = async () => {
-    setExportLoading(true);
-    const res = await exportWarehouseMLTLogs(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading(false);
-  };
-  async function btn_click() {
-    setLoading(false);
-    const res = await getHistoryWareHouseMLT(form.getFieldsValue(true));
-    setDataTable(res.data);
-    setTotalPage(res.totalPage);
-    setLoading(false);
-  }
-  useEffect(() => {
-    btn_click();
-  }, [])
-  const onFinish = async () => {
-
-  }
-  const [loading, setLoading] = useState(false);
-  const [exportLoading1, setExportLoading1] = useState(false);
-  const items = [
-    {
-      key: "1",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={exportImportWarehouse}
-        >
-          Tổng hợp xuất nhập tồn
-        </a>
-      ),
+      align: "center",
+      render: (value) => value || "-",
     },
     {
-      key: "2",
-      label: (
-        <a target="_blank" rel="noopener noreferrer" onClick={exportBMcard}>
-          BM thẻ kho
-        </a>
-      ),
+      title: "Số phiếu nhập kho",
+      dataIndex: "so_phieu_nhap_kho",
+      key: "kho_giay",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl đầu (kg)",
+      dataIndex: "so_kg_dau",
+      key: "so_kg_dau",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl xuất (kg)",
+      dataIndex: "sl_xuat",
+      key: "dinh_luong",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl cuối (kg)",
+      dataIndex: "so_kg_cuoi",
+      key: "so_kg_cuoi",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Ngày xuất",
+      dataIndex: "tg_xuat",
+      key: "tg_xuat",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số cuộn",
+      dataIndex: "so_cuon",
+      key: "so_cuon",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Khu vực",
+      dataIndex: "khu_vuc",
+      key: "khu_vuc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Vị trí",
+      dataIndex: "locator_id",
+      key: "locator_id",
+      align: "center",
+      render: (value) => value || "-",
     },
   ];
+  const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  async function exportImportWarehouse() {
-    setExportLoading1(true);
-    var res = await exportSummaryWarehouse(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading1(false);
-  }
-  async function exportBMcard() {
-    if (!params.ten_sp) {
-      messageApi.warning("Hãy chọn sản phẩm trước");
-    } else {
-      setExportLoading1(true);
-      var res = await exportBMCardWarehouse(params);
-      if (res.success) {
-        window.location.href = baseURL + res.data;
-      }
-      setExportLoading1(false);
-    }
-  }
-
+  
   return (
     <>
       {contextHolder}
