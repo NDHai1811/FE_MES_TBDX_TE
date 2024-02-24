@@ -8,7 +8,6 @@ import { useProfile } from "../components/hooks/UserHooks";
 import { logoutUser } from "../store/actions";
 
 import { setUserProfile } from "../store/actions";
-import EmptyPage from "../pages/EmptyPage";
 import VerticalLayout from "../layouts/index";
 import ForbiddenPage from "../pages/ForbiddenPage";
 
