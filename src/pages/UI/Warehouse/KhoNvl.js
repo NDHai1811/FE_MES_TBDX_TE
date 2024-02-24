@@ -24,237 +24,101 @@ import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 
-const dataDualAxes = Array.from({ length: 18 }, (_, i) => ({
-  time: `C${i + 1}`,
-  value: Math.floor(Math.random() * 14),
-}));
-
-const config = {
-  data: [dataDualAxes, dataDualAxes],
-  xField: "time",
-  yField: ["value", "value"],
-  geometryOptions: [{ geometry: "column" }, { geometry: "line", smooth: true }],
-  yAxis: {
-    value: {
-      min: 0,
-      max: 14,
-    },
-  },
-  legend: false,
-};
-
-const mockDataTable1 = [
-  {
-    title: "Số kg tồn trong kho",
-    value: 18902,
-  },
-  {
-    title: "Số cuộn tồn trong kho",
-    value: 3023,
-  },
-  {
-    title: "Số vị trí còn trống trong kho",
-    value: 30,
-  },
-];
-
-const columns1 = [
-  {
-    title: "Tiêu đề",
-    dataIndex: "title",
-    key: "title",
-    align: "center",
-    rowScope: "row",
-  },
-  {
-    title: "Số lượng",
-    dataIndex: "value",
-    key: "value",
-    align: "center",
-  },
-];
-
-const table1 = [
-  {
-    title: "STT",
-    dataIndex: "index",
-    key: "index",
-    render: (value, record, index) => index + 1,
-    align: "center",
-  },
-  {
-    title: "Mã cuộn TBDX",
-    dataIndex: "material_id",
-    key: "material_id",
-    render: (value, record, index) => index + 1,
-    align: "center",
-  },
-  {
-    title: "Tên NCC",
-    dataIndex: "ten_ncc",
-    key: "ten_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Loại giấy",
-    dataIndex: "loai_giay",
-    key: "loai_giay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "FSC",
-    dataIndex: "fsc",
-    key: "fsc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khổ giấy (cm)",
-    dataIndex: "kho_giay",
-    key: "kho_giay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Định lượng",
-    dataIndex: "dinh_luong",
-    key: "dinh_luong",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số kg nhập",
-    dataIndex: "so_kg_nhap",
-    key: "so_kg_nhap",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã vật tư",
-    dataIndex: "ma_vat_tu",
-    key: "ma_vat_tu",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Ngày nhập",
-    dataIndex: "tg_nhap",
-    key: "tg_nhap",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số phiếu nhập kho",
-    dataIndex: "so_phieu_nhap_kho",
-    key: "kho_giay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl đầu (kg)",
-    dataIndex: "so_kg_dau",
-    key: "so_kg_dau",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl xuất (kg)",
-    dataIndex: "sl_xuat",
-    key: "dinh_luong",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Sl cuối (kg)",
-    dataIndex: "so_kg_cuoi",
-    key: "so_kg_cuoi",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Ngày xuất",
-    dataIndex: "tg_xuat",
-    key: "tg_xuat",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số cuộn",
-    dataIndex: "so_cuon",
-    key: "so_cuon",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khu vực",
-    dataIndex: "khu_vuc",
-    key: "khu_vuc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "locator_id",
-    key: "locator_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-];
-
-const itemsMenu = [
-  {
-    title: "Kho nguyên vật liệu",
-    key: "0-0",
-    children: [
-      {
-        title: "Kho A",
-        key: "0-1",
-      },
-      {
-        title: "Kho B",
-        key: "0-2",
-      },
-      {
-        title: "Kho dở dang",
-        key: "0-3",
-      },
-    ],
-  },
-  {
-    title: "KV bán thành phẩm",
-    key: "1-0",
-    children: [
-      {
-        title: "KV BTP giấy tấm",
-        key: "1-1",
-      },
-      {
-        title: "KV BTP sau in",
-        key: "1-2",
-      },
-    ],
-  },
-  {
-    title: "Kho thành phẩm",
-    key: "2-0",
-    children: [
-      {
-        title: "Kho chờ nhập",
-        key: "2-1",
-      },
-      {
-        title: "Kho đã nhập",
-        key: "2-2",
-      },
-    ],
-  },
-];
-
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
+  const [params, setParams] = useState();
+  const [form] = Form.useForm();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPage, setTotalPage] = useState(1);
+  const [exportLoading, setExportLoading] = useState(false);
+  const exportFile = async () => {
+    setExportLoading(true);
+    const res = await exportWarehouseMLTLogs((form.getFieldsValue(true)));
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
+  };
+  async function btn_click() {
+    setLoading(true);
+    const res = await getHistoryWareHouseMLT({...form.getFieldsValue(true), ...params});
+    setDataTable(res.data);
+    setTotalPage(res.totalPage);
+    setLoading(false);
+  }
+  useEffect(() => {
+    btn_click();
+  }, [params])
+  const table1 = [
+    {
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
+      align: "center",
+    },
+    {
+      title: "Tên NCC",
+      dataIndex: "ten_ncc",
+      key: "ten_ncc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Loại giấy",
+      dataIndex: "loai_giay",
+      key: "loai_giay",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "FSC",
+      dataIndex: "fsc",
+      key: "fsc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Khổ giấy (cm)",
+      dataIndex: "kho_giay",
+      key: "kho_giay",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Định lượng",
+      dataIndex: "dinh_luong",
+      key: "dinh_luong",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số kg nhập",
+      dataIndex: "so_kg_nhap",
+      key: "so_kg_nhap",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã cuộn MCC",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã vật tư",
+      dataIndex: "ma_vat_tu",
+      key: "ma_vat_tu",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Ngày nhập",
+      dataIndex: "tg_nhap",
+      key: "tg_nhap",
       align: "center",
       render: (value) => value || "-",
     },
@@ -462,6 +326,7 @@ const KhoNvl = (props) => {
                     setParams({ ...params, page: page, pageSize: pageSize });
                   },
                 }}
+                loading={loading}
                 scroll={{
                   x: "130vw",
                   y: "70vh",
