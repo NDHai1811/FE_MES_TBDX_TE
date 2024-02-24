@@ -243,13 +243,13 @@ const Manufacture1 = (props) => {
       if (window.location.href.indexOf("/oi/manufacture") > -1)
         timeout = setTimeout(function () {
           loadDataRescursive(machine_id, selectedLot);
-        }, 2000);
+        }, 5000);
     }
   };
   useEffect(() => {
     clearTimeout(timeout);
     console.log('changed lo_sx', selectedLot);
-    loadDataRescursive(machine_id, selectedLot, isPause);
+    !isPause && loadDataRescursive(machine_id, selectedLot, isPause);
     return () => clearTimeout(timeout);
   }, [isPause, selectedLot?.lo_sx]);
 
@@ -336,7 +336,7 @@ const Manufacture1 = (props) => {
   };
 
   const onClickRow = (record) => {
-    !data.some(e => e.status === 1) && setSelectedLot(record);
+    record.status <= 1 && isPause && setSelectedLot(record);
   }
   
   const onClickBtn = async () => {
@@ -406,7 +406,7 @@ const Manufacture1 = (props) => {
                 onChange={onChangeEndDate}
               />
             </Col>
-            <Col span={6}><Button type="primary" onClick={onClickBtn} disabled={!selectedLot && isPause} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+            <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
             <Col span={6}>
               <Button
                 size="medium"
