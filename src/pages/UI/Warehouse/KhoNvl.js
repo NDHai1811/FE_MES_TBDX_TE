@@ -102,6 +102,13 @@ const KhoNvl = (props) => {
       render: (value) => value || "-",
     },
     {
+      title: "Mã cuộn MCC",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
       title: "Mã vật tư",
       dataIndex: "ma_vat_tu",
       key: "ma_vat_tu",
