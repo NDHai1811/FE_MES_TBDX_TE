@@ -43,3 +43,8 @@ export async function exportReportQC(params) {
   const res = await axios.get("/export/report-qc", { params });
   return res;
 }
+
+export async function exportWarehouseMLTLogs(params) {
+  const res = await axios.get("/ui/export/warehouse-mlt-logs", { params });
+  return res;
+}
