@@ -132,6 +132,13 @@ const table1 = [
     render: (value) => value || "-",
   },
   {
+    title: "Mã cuộn NCC",
+    dataIndex: "ma_cuon_ncc",
+    key: "ma_cuon_ncc",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
     title: "Mã vật tư",
     dataIndex: "ma_vat_tu",
     key: "ma_vat_tu",
