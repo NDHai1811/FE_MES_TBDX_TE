@@ -504,6 +504,23 @@ const KeHoachSanXuat = () => {
       onClick: handlePrintXaLot
     },
   ];
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -613,7 +630,7 @@ const KeHoachSanXuat = () => {
         <Col span={20}>
           <Card
             title="Kế hoạch sản xuất"
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
                 <Button
@@ -693,7 +710,7 @@ const KeHoachSanXuat = () => {
                   pagination={false}
                   scroll={{
                     x: "300vw",
-                    y: window.innerHeight * 0.6,
+                    y: tableHeight,
                   }}
                   components={{
                     body: {

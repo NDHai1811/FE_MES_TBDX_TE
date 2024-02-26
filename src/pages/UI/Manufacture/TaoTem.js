@@ -471,24 +471,23 @@ const TaoTem = () => {
         openModal && searchOrder()
     }, [openModal, orderParams]);
     const tableRef = useRef();
-    const header = document.querySelector('.ant-table-header');
-    const [headerHeight, setHeaderHeight] = useState(header?.offsetHeight ?? 0);
+    const header = document.querySelector('.custom-card .ant-table-header');
+    const pagination = document.querySelector('.custom-card .ant-pagination');
+    const card = document.querySelector('.custom-card .ant-card-body');
+    const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
     useEffect(() => {
         const handleWindowResize = () => {
-            const header = document?.querySelector('.ant-table-header');
-            console.log(header?.offsetHeight);
-            setHeaderHeight(header?.offsetHeight ?? 0);
+            const header = document.querySelector('.custom-card .ant-table-header');
+            const pagination = document.querySelector('.custom-card .ant-pagination');
+            const card = document.querySelector('.custom-card .ant-card-body');
+            setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
         };
+        handleWindowResize();
         window.addEventListener('resize', handleWindowResize);
         return () => {
             window.removeEventListener('resize', handleWindowResize);
         };
-    });
-
-    useEffect(() => {
-        const header = document?.querySelector('.ant-table-header');
-        setHeaderHeight(header?.offsetHeight ?? 0);
-    }, [data])
+    }, [data]);
     return (
         <>
             {contextHolder}
@@ -654,7 +653,7 @@ const TaoTem = () => {
                                     size="small"
                                     bordered
                                     scroll={{
-                                        y: 453 - headerHeight,
+                                        y: tableHeight,
                                         x: "120vw"
                                     }}
                                     components={{

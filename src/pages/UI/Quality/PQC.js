@@ -615,7 +615,7 @@ const QualityPQC = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Row gutter={[8, 8]}>
+          <Row gutter={[8, 8]} style={{height: '100%'}}>
             <Col span={16}>
               <Card
                 title="Biểu đồ xu hướng lỗi"

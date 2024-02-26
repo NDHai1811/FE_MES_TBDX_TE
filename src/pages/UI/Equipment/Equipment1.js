@@ -469,7 +469,7 @@ const Equipment1 = (props) => {
 
   const configPieChart = {
     appendPadding: 10,
-    // height:200,
+    height:100,
     data: dataPieChart,
     angleField: "value",
     colorField: "name",
@@ -483,7 +483,7 @@ const Equipment1 = (props) => {
 
   return (
     <>
-      <Row style={{ padding: "8px" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
@@ -621,13 +621,13 @@ const Equipment1 = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Row gutter={[8, 8]}>
+          <Row gutter={[8, 8]} style={{height: '100%'}}>
             <Col span={12}>
               <Card
                 title="Tần suất phát sinh lỗi"
-                bodyStyle={{ height: "90%" }}
+                bodyStyle={{ padding: 12, height: 200 }}
                 style={{
-                  height: 300,
+                  height: '100%',
                   padding: "0px",
                 }}
               >
@@ -635,30 +635,10 @@ const Equipment1 = (props) => {
               </Card>
             </Col>
             <Col span={12}>
-              {/* <Card
-                bodyStyle={{ height: "90%" }}
-                style={{
-                  height: 300,
-                }}
-              >
-                <h4 style={{ textAlign: "center", marginTop: -12 }}>
-                  5 SỰ CỐ XUẤT HIỆN NHIỀU NHẤT
-                </h4>
-                <Table
-                  className="my-custom-table"
-                  dataSource={errorTable}
-                  columns={column}
-                  pagination={false}
-                  bordered
-                />
-              </Card> */}
               <Card
                 title="Hiệu suất máy"
-                bodyStyle={{ height: "90%" }}
-                style={{
-                  height: 300,
-                  padding: "0px",
-                }}
+                bodyStyle={{ padding: 12, height: 200 }}
+                style={{ height: "100%", padding: "0px" }}
               >
                 <Column {...configColChart} />
               </Card>

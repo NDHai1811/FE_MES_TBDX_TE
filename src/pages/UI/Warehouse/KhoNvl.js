@@ -27,10 +27,10 @@ import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState({page: 1, pageSize: 10, totalPage: 1});
+  const [params, setParams] = useState({page: 1, pageSize: 20, totalPage: 1});
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [totalPage, setTotalPage] = useState(1);
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
@@ -192,6 +192,23 @@ const KhoNvl = (props) => {
     console.log(params);
     params.page === 1 ? btn_click() : setParams({...params, page: 1});
   }
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [dataTable]);
   return (
     <>
       {contextHolder}
@@ -289,7 +306,7 @@ const KhoNvl = (props) => {
             title="Quản lý kho NVL"
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0 }}
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
                 <Button
@@ -310,6 +327,7 @@ const KhoNvl = (props) => {
                   current: params.page,
                   size: "small",
                   total: params.totalPage,
+                  pageSize: params.pageSize,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
                     setPage(page);
@@ -320,7 +338,7 @@ const KhoNvl = (props) => {
                 loading={loading}
                 scroll={{
                   x: "130vw",
-                  y: "55vh",
+                  y: tableHeight,
                 }}
                 columns={table1}
                 dataSource={dataTable}
