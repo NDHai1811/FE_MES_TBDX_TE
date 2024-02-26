@@ -197,11 +197,13 @@ const LichSuSanXuat = (props) => {
   document.title = "UI - Lịch sử sản xuất";
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
+    start_date: dayjs(),
+    end_date: dayjs()
   });
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   useEffect(() => {
     (async () => {
       const res1 = await getUIItemMenu();
@@ -397,7 +399,7 @@ const LichSuSanXuat = (props) => {
           <Card
             style={{ height: "100%" }}
             title="Lịch sử sản xuất"
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
                 {/* <Button
@@ -419,7 +421,7 @@ const LichSuSanXuat = (props) => {
           >
             <Spin spinning={loading}>
               <Table
-                className="mb-3"
+                className="mb-2"
                 size="small"
                 bordered
                 locale={{ emptyText: "Trống" }}
@@ -428,14 +430,14 @@ const LichSuSanXuat = (props) => {
                 dataSource={dataTable1}
               />
               <Table
-                className="mb-3"
+                className="mb-2"
                 size="small"
                 bordered
                 locale={{ emptyText: "Trống" }}
                 pagination={false}
                 columns={columns2}
                 scroll={{
-                  y: window.innerHeight * 0.10,
+                  y: window.innerHeight * 0.05,
                 }}
                 dataSource={dataTable2}
               />
@@ -444,8 +446,9 @@ const LichSuSanXuat = (props) => {
                 bordered
                 pagination={{
                   current: page,
-                  size: "default",
+                  size: "small",
                   total: totalPage,
+                  pageSize: pageSize,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
                     setPage(page);
@@ -455,7 +458,7 @@ const LichSuSanXuat = (props) => {
                 }}
                 scroll={{
                   x: "120vw",
-                  y: window.innerHeight * 0.30,
+                  y: window.innerHeight * 0.28,
                 }}
                 columns={columns3}
                 dataSource={dataTable3}

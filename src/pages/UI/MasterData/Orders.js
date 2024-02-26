@@ -198,7 +198,7 @@ const Orders = () => {
   const [form] = Form.useForm();
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
   });
   const [editingKey, setEditingKey] = useState("");
   const [isSidebar, setIsSidebar] = useState(true);
@@ -212,7 +212,7 @@ const Orders = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [isOpenMdl, setIsOpenMdl] = useState(false);
   const [rowUpdate, setRowUpdate] = useState({});
   const [listParams, setListParams] = useState([]);
@@ -1247,6 +1247,23 @@ const Orders = () => {
     setInputData(items);
   };
   const { userProfile } = useProfile();
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -1547,6 +1564,7 @@ const Orders = () => {
           <Card
             style={{ display: 'block', height: "100%", overflow: 'hidden' }}
             title={<><Button type="text" onClick={() => setIsSidebar(!isSidebar)} size="small" icon={isSidebar ? <LeftOutlined /> : <RightOutlined />}></Button><span style={{ fontSize: '16px', marginLeft: '6px' }}>Quản lý đơn hàng</span></>}
+            className="custom-card"
             extra={
               <Space>
                 <Popover content={content} title="Ẩn/Hiện cột" trigger="click">
@@ -1624,6 +1642,7 @@ const Orders = () => {
                   current: page,
                   size: "small",
                   total: totalPage,
+                  pageSize: pageSize,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
                     setPage(page);
@@ -1639,7 +1658,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: "58vh",
+                  y: tableHeight,
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)

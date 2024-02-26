@@ -66,7 +66,13 @@ const Buyer = () => {
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 20,
+  });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [data, setData] = useState([]);
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -350,10 +356,11 @@ const Buyer = () => {
     setLoading(true);
     const res = await getBuyers(params);
     setData(
-      res.reverse().map((e) => {
+      res.data.reverse().map((e) => {
         return { ...e, key: e.id };
       })
     );
+    setTotalPage(res.totalPage);
     setLoading(false);
   };
 
@@ -404,6 +411,26 @@ const Buyer = () => {
     },
   };
 
+  useEffect(()=>{
+    loadListTable(params);
+  }, [page, pageSize])
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+          const header = document.querySelector('.custom-card .ant-table-header');
+          const pagination = document.querySelector('.custom-card .ant-pagination');
+          const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -412,7 +439,6 @@ const Buyer = () => {
           <div className="slide-bar">
             <Card
               style={{ height: '100%' }}
-              bodyStyle={{ padding: 0, height: 'calc(100% - 60px)' }}
               className="custom-card scroll"
               actions={[
 
@@ -460,7 +486,7 @@ const Buyer = () => {
           <Card
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0, height: '100%' }}
-            className="custom-card scroll"
+            className="custom-card"
             title="Quản lý Buyer"
             extra={
               <Space>
@@ -508,10 +534,21 @@ const Buyer = () => {
                 <Table
                   size="small"
                   bordered
-                  pagination={{ position: ["bottomRight"], size: "default", }}
+                  pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    },
+                  }}
                   scroll={{
                     x: "240vw",
-                    y: "64vh",
+                    y: tableHeight,
                   }}
                   components={{
                     body: {

@@ -17,6 +17,7 @@ import {
   InputNumber,
   Popconfirm,
   Typography,
+  Dropdown,
 } from "antd";
 import { baseURL } from "../../../config";
 import { useReactToPrint } from "react-to-print";
@@ -33,9 +34,11 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
 import {
   DeleteOutlined,
+  DownOutlined,
   EditOutlined,
 } from "@ant-design/icons";
 import TemXaLot from "./TemXaLot";
+import Tem from "../../OI/Manufacture/Tem";
 import { useProfile } from "../../../components/hooks/UserHooks";
 
 const KeHoachSanXuat = () => {
@@ -48,8 +51,10 @@ const KeHoachSanXuat = () => {
     end_date: dayjs(),
   });
   const [listCheck, setListCheck] = useState([]);
-  const [listPrint, setListPrint] = useState([]);
+  const [listPrintSong, setListPrintSong] = useState([]);
+  const [listPrintXaLot, setListPrintXaLot] = useState([]);
   const componentRef1 = useRef();
+  const componentRef2 = useRef();
   const col_detailTable = [
     {
       title: "STT",
@@ -405,12 +410,29 @@ const KeHoachSanXuat = () => {
   };
   const isEditing = (record) => record.key === editingKey;
   const [editingKey, setEditingKey] = useState("");
-  const print = useReactToPrint({
+  const printSong = useReactToPrint({
+    content: () => componentRef2.current,
+  });
+  const printXaLot = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const handlePrint = async () => {
-    print();
-    setListCheck([]);
+  const handlePrintSong = async () => {
+    if(listPrintSong.length > 0){
+      printSong();
+      setListPrintSong([])
+      setListCheck([]);
+    } else {
+      message.info("Chọn kế hoạch công đoạn Sóng");
+    }
+  };
+  const handlePrintXaLot = async () => {
+    if(listPrintXaLot.length > 0){
+      printXaLot();
+      setListPrintXaLot([]);
+      setListCheck([]);
+    } else {
+      message.info("Chọn kế hoạch công đoạn Xả lót");
+    }
   };
   const mergedColumns = col_detailTable.map((col) => {
     if (!col.editable) {
@@ -454,11 +476,51 @@ const KeHoachSanXuat = () => {
     setData(items);
   };
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
-      setListPrint(selectedRows);
+      const song = [];
+      const xaLot = [];
+      selectedRows.forEach(element => {
+        if(element.line_id === '30'){
+          song.push(element)
+        }else if(element.line_id === '33'){
+          xaLot.push(element)
+        }
+      });
+      setListPrintSong(song);
+      setListPrintXaLot(xaLot);
       setListCheck(selectedRowKeys);
     },
   };
+  const printItemDropdown = [
+    {
+      key: 1,
+      label: "In tem Sóng",
+      onClick: handlePrintSong
+    },
+    {
+      key: 2,
+      label: "In tem Xả lót",
+      onClick: handlePrintXaLot
+    },
+  ];
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -568,7 +630,7 @@ const KeHoachSanXuat = () => {
         <Col span={20}>
           <Card
             title="Kế hoạch sản xuất"
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
                 <Button
@@ -621,16 +683,20 @@ const KeHoachSanXuat = () => {
                   Xoá
                 </Button>
 
-                <Button
+                {/* <Button
                   size="medium"
                   type="primary"
                   style={{ width: "100%" }}
-                  onClick={handlePrint}
+                  onClick={handlePrintXaLot}
                 >
                   In tem xả lot
-                </Button>
+                </Button> */}
+                <Dropdown.Button type="primary" menu={{ items: printItemDropdown }} placement="bottomRight" arrow icon={<DownOutlined />}>
+                  In tem
+                </Dropdown.Button>
                 <div className="report-history-invoice">
-                  <TemXaLot listCheck={listPrint} ref={componentRef1} />
+                  <TemXaLot listCheck={listPrintXaLot} ref={componentRef1} />
+                  <Tem listCheck={listPrintSong} ref={componentRef2} />
                 </div>
               </Space>
             }
@@ -644,7 +710,7 @@ const KeHoachSanXuat = () => {
                   pagination={false}
                   scroll={{
                     x: "300vw",
-                    y: window.innerHeight * 0.6,
+                    y: tableHeight,
                   }}
                   components={{
                     body: {

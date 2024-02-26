@@ -27,15 +27,15 @@ import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState();
+  const [params, setParams] = useState({page: 1, pageSize: 20, totalPage: 1});
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [totalPage, setTotalPage] = useState(1);
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportWarehouseMLTLogs((form.getFieldsValue(true)));
+    const res = await exportWarehouseMLTLogs((params));
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -43,21 +43,28 @@ const KhoNvl = (props) => {
   };
   async function btn_click() {
     setLoading(true);
-    const res = await getHistoryWareHouseMLT({ ...form.getFieldsValue(true), ...params });
+    const res = await getHistoryWareHouseMLT(params);
+    setParams({...params, totalPage: res.totalPage})
     setDataTable(res.data);
-    setTotalPage(res.totalPage);
     setLoading(false);
   }
   useEffect(() => {
     btn_click();
-  }, [params])
+  }, [params.page, params.pageSize])
   const table1 = [
     {
       title: "STT",
       dataIndex: "index",
       key: "index",
-      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
+      render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
       align: "center",
+    },
+    {
+      title: "Mã cuộn TBDX",
+      dataIndex: "material_id",
+      key: "material_id",
+      align: "center",
+      render: (value) => value || "-",
     },
     {
       title: "Tên NCC",
@@ -102,7 +109,7 @@ const KhoNvl = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "Mã cuộn MCC",
+      title: "Mã cuộn NCC",
       dataIndex: "ma_cuon_ncc",
       key: "ma_cuon_ncc",
       align: "center",
@@ -181,7 +188,27 @@ const KhoNvl = (props) => {
   ];
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
+  const formSubmition = () => {
+    console.log(params);
+    params.page === 1 ? btn_click() : setParams({...params, page: 1});
+  }
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [dataTable]);
   return (
     <>
       {contextHolder}
@@ -198,60 +225,38 @@ const KhoNvl = (props) => {
                     type="primary"
                     htmlType="submit"
                     style={{ width: "80%" }}
-                    onClick={() => {
-                      setParams({ ...params, page: 1 })
-                      setPage(1);
-                    }}
+                    onClick={()=>formSubmition()}
                   >
                     Tìm kiếm
                   </Button>
                 </div>,
               ]}
             >
-              {/* <Divider>Thời gian truy vấn</Divider> */}
-              {/* <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, start_date: value })
-                      }
-                      value={params.start_date}
-                      format={COMMON_DATE_FORMAT}
-                    />
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Kết thúc"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, end_date: value })
-                      }
-                      value={params.end_date}
-                      format={COMMON_DATE_FORMAT}
-                    />
-                  </Space>
-                </Form>
-              </div> */}
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={()=>{ setParams({ ...params, page: 1 });setPage(1);}}>
+                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={()=>formSubmition()}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    formSubmition();
+                  }
+                }}>
+                  <Form.Item label="Mã cuộn TBDX" className="mb-3" name={"material_id"}>
+                    <Input allowClear placeholder="Nhập mã cuộn TBDX" onChange={(event) => setParams({ ...params, material_id: event.target.value })} />
+                  </Form.Item>
                   <Form.Item label="Loại giấy" className="mb-3" name={"loai_giay"}>
-                    <Input allowClear placeholder="Nhập loại giấy" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), loai_giay: event.target.value })} />
+                    <Input allowClear placeholder="Nhập loại giấy" onChange={(event) => setParams({ ...params, loai_giay: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Khổ giấy" className="mb-3" name={"kho_giay"}>
-                    <Input allowClear placeholder="Nhập khổ giấy" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), kho_giay: event.target.value })} />
+                    <Input allowClear placeholder="Nhập khổ giấy" onChange={(event) => setParams({ ...params, kho_giay: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Định lượng" className="mb-3" name={"dinh_luong"}>
-                    <Input allowClear placeholder="Nhập định lượng" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), dinh_luong: event.target.value })} />
+                    <Input allowClear placeholder="Nhập định lượng" onChange={(event) => setParams({ ...params, dinh_luong: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Mã cuộn NCC" className="mb-3" name={"ma_cuon_ncc"}>
-                    <Input allowClear placeholder="Nhập mã cuộn NCC" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), ma_cuon_ncc: event.target.value })} />
+                    <Input allowClear placeholder="Nhập mã cuộn NCC" onChange={(event) => setParams({ ...params, ma_cuon_ncc: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Mã vật tư" className="mb-3" name={"ma_vat_tu"}>
-                    <Input allowClear placeholder="Nhập mã vật tư" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), ma_vat_tu: event.target.value })} />
+                    <Input allowClear placeholder="Nhập mã vật tư" onChange={(event) => setParams({ ...params, ma_vat_tu: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Ngày nhập" className="mb-3" name={"tg_nhap"}>
                     <DatePicker
@@ -259,16 +264,16 @@ const KhoNvl = (props) => {
                       placeholder="Ngày nhập"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        form.setFieldsValue({ ...form.getFieldsValue(true), tg_nhap: value })
+                        setParams({ ...params, tg_nhap: value })
                       }
                       format={COMMON_DATE_FORMAT}
                     />
                   </Form.Item>
                   <Form.Item label="Số phiếu nhập kho" className="mb-3" name={"goods_receipt_note_id"}>
-                    <Input allowClear placeholder="Nhập số phiếu nhập kho" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), goods_receipt_note_id: event.target.value })} />
+                    <Input allowClear placeholder="Nhập số phiếu nhập kho" onChange={(event) => setParams({ ...params, goods_receipt_note_id: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Số lượng cuối" className="mb-3" name={"so_kg"}>
-                    <Input allowClear placeholder="Nhập số lượng cuối" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), so_kg: event.target.value })} />
+                    <Input allowClear placeholder="Nhập số lượng cuối" onChange={(event) => setParams({ ...params, so_kg: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Ngày xuất" className="mb-3" name={"tg_xuat"}>
                     <DatePicker
@@ -276,19 +281,19 @@ const KhoNvl = (props) => {
                       placeholder="Ngày xuất"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        form.setFieldsValue({ ...form.getFieldsValue(true), tg_xuat: value })
+                        setParams({ ...params, tg_xuat: value })
                       }
                       format={COMMON_DATE_FORMAT}
                     />
                   </Form.Item>
                   <Form.Item label="Số cuộn" className="mb-3" name={"so_cuon"}>
-                    <Input allowClear placeholder="Nhập cuộn" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), so_cuon: event.target.value })} />
+                    <Input allowClear placeholder="Nhập cuộn" onChange={(event) => setParams({ ...params, so_cuon: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Khu vực" className="mb-3" name={"khu_vuc"}>
-                    <Input allowClear placeholder="Nhập khu vực" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), khu_vuc: event.target.value })} />
+                    <Input allowClear placeholder="Nhập khu vực" onChange={(event) => setParams({ ...params, khu_vuc: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Vị trí" className="mb-3" name={"locator_id"}>
-                    <Input allowClear placeholder="Nhập vị trí" onChange={(event) => form.setFieldsValue({ ...form.getFieldsValue(true), locator_id: event.target.value })} />
+                    <Input allowClear placeholder="Nhập vị trí" onChange={(event) => setParams({ ...params, locator_id: event.target.value })} />
                   </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
@@ -301,7 +306,7 @@ const KhoNvl = (props) => {
             title="Quản lý kho NVL"
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0 }}
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
                 <Button
@@ -319,9 +324,10 @@ const KhoNvl = (props) => {
                 size="small"
                 bordered
                 pagination={{
-                  current: page,
-                  size: "default",
-                  total: totalPage,
+                  current: params.page,
+                  size: "small",
+                  total: params.totalPage,
+                  pageSize: params.pageSize,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
                     setPage(page);
@@ -332,7 +338,7 @@ const KhoNvl = (props) => {
                 loading={loading}
                 scroll={{
                   x: "130vw",
-                  y: "70vh",
+                  y: tableHeight,
                 }}
                 columns={table1}
                 dataSource={dataTable}

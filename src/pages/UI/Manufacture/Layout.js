@@ -68,11 +68,11 @@ const Layout = () => {
   const [type, setType] = useState("");
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
   });
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [keys, setKeys] = useState([
     "machine_layout_id",
     "customer_id",
@@ -716,7 +716,23 @@ const Layout = () => {
 
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -834,8 +850,9 @@ const Layout = () => {
                   bordered
                   pagination={{
                     current: page,
-                    size: "default",
+                    size: "small",
                     total: totalPage,
+                    pageSize: pageSize,
                     showSizeChanger: true,
                     onChange: (page, pageSize) => {
                       setPage(page);
@@ -845,7 +862,7 @@ const Layout = () => {
                   }}
                   scroll={{
                     x: "280vw",
-                    y: "58vh",
+                    y: tableHeight,
                   }}
                   components={{
                     body: {

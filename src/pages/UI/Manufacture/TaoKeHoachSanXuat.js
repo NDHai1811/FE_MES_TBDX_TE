@@ -137,9 +137,6 @@ const TaoKeHoachSanXuat = () => {
         setPreviewPlan(items);
         setEditingKey()
     };
-    useEffect(() => {
-        console.log(editingKey);
-    }, [editingKey])
     const onChange = (value, dataIndex) => {
         const items = previewPlan.map((val) => {
             if (val.key === editingKey) {
@@ -467,6 +464,12 @@ const TaoKeHoachSanXuat = () => {
         }
         setEditingKey("");
     };
+    const [lineId, setLineId] = useState();
+    useEffect(()=>{
+        const line_id = listMachines.find(e=>planParams?.machine_id === e.id)?.line_id;
+        console.log(line_id);
+        setLineId(line_id);
+    }, [planParams.machine_id])
     return (
         <>
             <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -524,7 +527,7 @@ const TaoKeHoachSanXuat = () => {
                         <Form form={formUpdate}>
                             <Table size='small' bordered
                                 pagination={false}
-                                columns={planParams?.machine_id?.includes('P') ? mergedColumns : columnKHSX}
+                                columns={(lineId && (lineId == "31" || lineId == "32")) ? mergedColumns : columnKHSX}
                                 components={{
                                     body: {
                                         cell: EditableCell,
