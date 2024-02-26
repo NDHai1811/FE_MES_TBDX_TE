@@ -131,240 +131,19 @@ const columnTable = [
   },
 ];
 
-const data1 = [
-  { type: "Xanh", value: 70 },
-  { type: "Cam", value: 30 },
-];
-
-const data2 = [
-  { type: "Xanh", value: 84 },
-  { type: "Cam", value: 16 },
-];
-
-const data3 = [
-  { type: "Thời gian dừng kế hoạch", value: 60 },
-  { type: "Thời gian dừng bất thường", value: 38 },
-];
-
-const config = {
-  // appendPadding: 10,
-  data: data1,
-  width: 100,
-  height: 100,
-  angleField: "value",
-  colorField: "type",
-  radius: 0.8,
-  color: (value) => {
-    return value.type === "Xanh" ? "blue" : "orange";
-  },
-  label: false,
-  legend: false,
-  tooltip: {
-    formatter: (datum) => {
-      return {
-        name: datum.type,
-        value: datum.value?.toFixed(2) + "%",
-      };
-    },
-  },
-};
-
-const config2 = {
-  // appendPadding: 4,
-  data: data2,
-  height: 100,
-  width: 100,
-  angleField: "value",
-  colorField: "type",
-  radius: 0.8,
-  label: false,
-  color: (value) => {
-    return value.type === "Xanh" ? "blue" : "orange";
-  },
-  legend: false,
-  tooltip: {
-    formatter: (datum) => {
-      return {
-        name: datum.type,
-        value: datum.value?.toFixed(2) + "%",
-      };
-    },
-  },
-};
-
-const config3 = {
-  title: {
-    text: "Thời gian dừng (Phút)",
-    style: {
-      fontSize: "14px",
-      fontWeight: "bold",
-      textAlign: "center",
-    },
-  },
-  height: 250,
-  data: data3,
-  xField: "type",
-  yField: "value",
-  seriesField: "type",
-  isGroup: true,
-  color: "blue",
-  xAxis: {
-    label: {
-      autoHide: false,
-      autoRotate: true,
-    },
-  },
-  label: {
-    position: "top",
-    offsetY: 10,
-    formatter: (value) => {
-      return value.value ? `${value.value}%` : "";
-    },
-  },
-  legend: false,
-  yAxis: {
-    max: 80,
-  },
-  meta: {
-    type: {
-      alias: "Máy",
-    },
-    value: {
-      alias: "Hiệu suất",
-    },
-  },
-};
-const column = [
-  {
-    title: "Mã sự cố",
-    dataIndex: "ma_su_co",
-    key: "ma_su_co",
-    align: "center",
-    height: 30,
-  },
-  {
-    title: "Tên sự cố",
-    dataIndex: "ten_su_co",
-    key: "ten_su_co",
-    align: "center",
-    height: 30,
-  },
-  {
-    title: "Số lần",
-    dataIndex: "so_lan",
-    key: "so_lan",
-    align: "center",
-    height: 30,
-  },
-];
-
-const dataTable = [];
-
-const errorTable = [
-  {
-    ma_su_co: "SC01",
-    ten_su_co: "Mất điện",
-    so_lan: 7,
-  },
-  {
-    ma_su_co: "SC02",
-    ten_su_co: "Sản phẩm mới (duyệt mẫu)",
-    so_lan: 6,
-  },
-  {
-    ma_su_co: "SC03",
-    ten_su_co: "Bảo trì (định kỳ)",
-    so_lan: 5,
-  },
-  {
-    ma_su_co: "SC04",
-    ten_su_co: "Vệ sinh 5S",
-    so_lan: 4,
-  },
-  {
-    ma_su_co: "SC05",
-    ten_su_co: "Nghỉ giữa ca",
-    so_lan: 2,
-  },
-];
-
 const Equipment1 = (props) => {
   document.title = "UI - Thống kê lỗi";
   const [listLoSX, setListLoSX] = useState([]);
   const [listCustomers, setListCustomers] = useState([]);
   const [data, setData] = useState();
   const [dataPieChart, setDataPieChart] = useState([]);
-  const [dataColChart, setDataColChart] = useState([
-    {
-      name: "Máy in P.06",
-      percent: 50,
-    },
-    {
-      name: "Máy in P.05",
-      percent: 60,
-    },
-    {
-      name: "Máy dán P.06",
-      percent: 70,
-    },
-    {
-      name: "Máy in P.15",
-      percent: 30,
-    },
-    {
-      name: "Chuyền máy dợn sóng",
-      percent: 25,
-    },
-  ]);
+  const [dataColChart, setDataColChart] = useState([]);
 
   const [params, setParams] = useState({
     machine_code: "",
     date: [dayjs(), dayjs()],
   });
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    //   (async () => {
-    //     setLoading(false);
-    //     const res2 = await getProducts();
-    //     setListIdProducts(
-    //       res2.data.map((e) => {
-    //         return { ...e, label: e.id, value: e.id };
-    //       })
-    //     );
-    //     const res3 = await getLoSanXuat();
-    //     setListLoSX(
-    //       res3.data.map((e) => {
-    //         return { ...e, label: e, value: e };
-    //       })
-    //     );
-    //     const res4 = await getStaffs();
-    //     setListStaffs(
-    //       res4.data.map((e) => {
-    //         return { ...e, label: e.name, value: e.id };
-    //       })
-    //     );
-    //     const res5 = await getCustomers();
-    //     setListCustomers(
-    //       res5.data.map((e) => {
-    //         return { ...e, label: e.name, value: e.id };
-    //       })
-    //     );
-    //     const res6 = await getErrorsMachine();
-    //     setListErrorsMachine(
-    //       res6.data.map((e) => {
-    //         return { ...e, label: e.noi_dung, value: e.id };
-    //       })
-    //     );
-    //     const res7 = await getMachineOfLine();
-    //     setListMachines(
-    //       res7.data.map((e) => {
-    //         return { ...e, label: e.name, value: e.code };
-    //       })
-    //     );
-    //     setLoading(false);
-    //   })();
-    // btn_click();
-  }, []);
 
   function btn_click() {
     (async () => {
@@ -396,11 +175,12 @@ const Equipment1 = (props) => {
       position: "top",
       offsetY: 10,
     },
+    padding: [20, 10, 50, 30],
     xAxis: {
       label: {
         autoHide: false,
-        autoRotate: false,
-        rotate: -270,
+        autoRotate: true,
+        // rotate: -270,
       },
     },
     yAxis: {

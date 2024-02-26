@@ -103,9 +103,9 @@ const TaoKeHoachSanXuat = () => {
     useEffect(() => {
         (async () => {
             const res1 = await getMachineList();
-            setListMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+            setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })))
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+            setListCustomers(res2.data)
         })();
     }, []);
 
@@ -465,8 +465,8 @@ const TaoKeHoachSanXuat = () => {
         setEditingKey("");
     };
     const [lineId, setLineId] = useState();
-    useEffect(()=>{
-        const line_id = listMachines.find(e=>planParams?.machine_id === e.id)?.line_id;
+    useEffect(() => {
+        const line_id = listMachines.find(e => planParams?.machine_id === e.id)?.line_id;
         console.log(line_id);
         setLineId(line_id);
     }, [planParams.machine_id])

@@ -28,11 +28,6 @@ import {
 import "../style.scss";
 import { Pie, Column, Line, G2 } from "@ant-design/charts";
 import {
-  getLines,
-  getKpi,
-  getProducts,
-  getCustomers,
-  getAllMachine,
   exportKPI,
 } from "../../../api/ui/main";
 import dayjs from "dayjs";

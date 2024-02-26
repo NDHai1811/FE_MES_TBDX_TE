@@ -212,11 +212,7 @@ const LichSuSanXuat = (props) => {
     btn_click();
   }, []);
   useEffect(() => {
-    (async () => {
-      const res3 = await getProduceTable(params);
-      setTotalPage(res3.data.totalPage);
-      setDataTable3(res3.data.data);
-    })();
+    btn_click();
   }, [params]);
 
   const [dataTable1, setDataTable1] = useState([]);

@@ -269,9 +269,9 @@ const TaoTem = () => {
         (async () => {
             loadListTable();
             const res1 = await getMachineList();
-            setListMachines(res1.data.map((e) => ({ ...e, label: e.id, value: e.id })));
+            setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })));
+            setListCustomers(res2.data);
             const res3 = await getUsers();
             setListUsers(res3.map((e) => ({ ...e, label: e.name, value: e.id })));
         })();
