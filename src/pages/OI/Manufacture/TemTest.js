@@ -29,7 +29,7 @@ const PrintTemplate = ({ detail }) => {
           <tbody>
             <tr>
               <td colSpan={12}>
-                <div className="d-flex justify-content-center flex-row w-100 text-center">
+                <div className="d-flex justify-content-center flex-column w-100 text-center">
                   <QRCode
                       style={{ display: 'flex', width:'100%', alignSelf:'center', textAlign:'center' }}
                       value={detail.id}
