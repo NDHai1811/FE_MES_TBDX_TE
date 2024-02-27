@@ -32,7 +32,7 @@ const PrintTemplate = ({ detail }) => {
                 <div className="d-flex justify-content-between" style={{ margin: '0px' }}>
                   <QRCode
                     style={{ marginRight: "5px" }}
-                    value={detail.lo_sx}
+                    value={detail.qr_code}
                     bordered={false}
                     size={120}
                     type="svg"
