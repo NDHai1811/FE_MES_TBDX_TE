@@ -23,6 +23,9 @@ export const deleteWarehouseImport = async (params) => {
 export const exportWarehouseTicket = async (params) => {
   return await axios.get("/ui/warehouse/import-material-ticket/export", { params });
 };
+export const exportVehicleWeightTicket = async (params) => {
+  return await axios.get("/ui/warehouse/vehicle-weight-ticket/export", { params });
+};
 
 export async function getWarehouseFGExportList(params) {
   const res = await axios.get("/ui/warehouse/fg/export/list", { params });

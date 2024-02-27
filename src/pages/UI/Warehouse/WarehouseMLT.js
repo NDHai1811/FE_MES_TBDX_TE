@@ -21,6 +21,7 @@ import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import {
   createWarehouseImport,
+  exportVehicleWeightTicket,
   exportWarehouseTicket,
   getGoodsReceiptNote,
   getListPlanMaterialExport,
@@ -324,7 +325,7 @@ const WarehouseMLT = (props) => {
     },
   ];
   const [exportLoading, setExportLoading] = useState(false);
-  const exportFile = async () => {
+  const exportFileReceiptNote = async () => {
     setExportLoading(true);
     if (listCheckReceipt.length) {
       const res = await exportWarehouseTicket({ id: listCheckReceipt[0] });
@@ -333,6 +334,17 @@ const WarehouseMLT = (props) => {
       }
     }
     setExportLoading(false);
+  };
+  const [exportLoading1, setExportLoading1] = useState(false);
+  const exportFileVehicleWeightNote = async () => {
+    setExportLoading1(true);
+    if (listCheckReceipt.length) {
+      const res = await exportVehicleWeightTicket({ id: listCheckReceipt[0] });
+      if (res.success) {
+        window.location.href = baseURL + res.data;
+      }
+    }
+    setExportLoading1(false);
   };
   const { userProfile } = useProfile();
   const [openExportModal, setOpenExportModal] = useState(false);
@@ -385,7 +397,7 @@ const WarehouseMLT = (props) => {
     },
   ];
   useEffect(() => {
-    getReceiptNote()
+    openExportModal && getReceiptNote()
   }, [openExportModal]);
   const rowSelectionReceipt = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -661,9 +673,16 @@ const WarehouseMLT = (props) => {
         </Form>
       </Modal>
       <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
-        onOk={exportFile}
-        okButtonProps={{loading: exportLoading}}
-        okText={"Tải xuống"}>
+        // onOk={exportFile}
+        // okButtonProps={{loading: exportLoading}}
+        // okText={"Tải xuống"}
+        footer={
+          <Space>
+            <Button>Huỷ</Button>
+            <Button type="primary" onClick={exportFileReceiptNote} loading={exportLoading}>Phiếu xuất kho</Button>
+            <Button type="primary" onClick={exportFileVehicleWeightNote} loading={exportLoading1}>Phiếu cân xe</Button>
+          </Space>
+        }>
         <Table
           bordered
           columns={receiptNoteColumns}

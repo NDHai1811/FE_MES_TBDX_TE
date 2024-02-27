@@ -364,7 +364,6 @@ const WarehouseExportPlan = () => {
 
   useEffect(() => {
     (async () => {
-      loadListTable(params);
       const res1 = await getVehicles();
       setListVehicles(res1);
       const res2 = await getUsers();
@@ -380,7 +379,7 @@ const WarehouseExportPlan = () => {
     btn_click();
   }, [page, pageSize])
 
-  const loadListTable = async (params) => {
+  const loadListTable = async () => {
     setLoading(true);
     const res = await getWarehouseFGExportList(params);
     setData(
@@ -546,11 +545,11 @@ const WarehouseExportPlan = () => {
                       error();
                     } else if (info.file.status === "done") {
                       if (info.file.response.success === true) {
-                        loadListTable(params);
+                        loadListTable();
                         success();
                         setLoadingExport(false);
                       } else {
-                        loadListTable(params);
+                        loadListTable();
                         message.error(info.file.response.message);
                         setLoadingExport(false);
                       }
