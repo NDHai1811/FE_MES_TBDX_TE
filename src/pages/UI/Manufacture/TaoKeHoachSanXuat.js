@@ -22,6 +22,7 @@ import {
     getListProductPlan,
     getOrderList,
     handleOrder,
+    handlePlan,
 } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
 import { getMachineList } from "../../../api/ui/machine";
@@ -96,8 +97,8 @@ const TaoKeHoachSanXuat = () => {
         if (res.success) {
             setPreviewPlan(res.data.map((e, index) => ({ ...e, key: index })));
             setOpenMdlOrder(false);
-            setLoadingPlans(false);
         }
+        setLoadingPlans(false);
     };
 
     useEffect(() => {
@@ -127,15 +128,33 @@ const TaoKeHoachSanXuat = () => {
     }
     const onUpdate = async (record) => {
         const row = await formUpdate.validateFields();
+        var thu_tu_cu = record.thu_tu_uu_tien;
+        var thu_tu_moi = row.thu_tu_uu_tien;
         const items = [...previewPlan].map((val) => {
-            console.log(val.key === editingKey);
-            if (val.key === editingKey) {
-                return { ...val, ...row };
+            var element = {...val};
+            if(thu_tu_moi == val.thu_tu_uu_tien){
+                element = { ...val, thu_tu_uu_tien: thu_tu_cu };
             }
-            return { ...val };
+            if (val.key === editingKey) {
+                element = { ...val, ...row };
+            }
+            return element;
         });
-        setPreviewPlan(items);
-        setEditingKey()
+        const inp = {
+            order_id: listCheck,
+            machine_id: planParams.machine_id,
+            start_time: dayjs(planParams.start_date).format('YYYY-MM-DD HH:mm:ss'),
+            plans: items,
+        }
+        setLoadingPlans(true)
+        const res = await handlePlan(inp);
+        if (res.success) {
+            setPreviewPlan(res.data.map((e, index) => ({ ...e, key: index })));
+            setOpenMdlOrder(false);
+        }
+        setLoadingPlans(false);
+        setEditingKey();
+        formUpdate.resetFields();
     };
     const onChange = (value, dataIndex) => {
         const items = previewPlan.map((val) => {
@@ -197,6 +216,20 @@ const TaoKeHoachSanXuat = () => {
             title: 'Số lượng',
             dataIndex: 'sl_kh',
             key: 'sl_kh',
+            align: 'center',
+            editable: true
+        },
+        {
+            title: 'Tốc độ',
+            dataIndex: 'toc_do',
+            key: 'toc_do',
+            align: 'center',
+            editable: true
+        },
+        {
+            title: 'TG đổi model',
+            dataIndex: 'tg_doi_model',
+            key: 'tg_doi_model',
             align: 'center',
             editable: true
         },
@@ -391,7 +424,6 @@ const TaoKeHoachSanXuat = () => {
                         style={{
                             margin: 0,
                         }}
-                        initialValue={record?.[dataIndex]}
                     >
                         {inputNode}
                     </Form.Item>
@@ -411,7 +443,7 @@ const TaoKeHoachSanXuat = () => {
         render: (_, record) => {
             const editable = isEditing(record);
             return editable ? (
-                <span>
+                <>
                     <Typography.Link
                         onClick={() => onUpdate(record)}
                         style={{
@@ -421,15 +453,15 @@ const TaoKeHoachSanXuat = () => {
                         Lưu
                     </Typography.Link>
                     <a onClick={cancel}>Hủy</a>
-                </span>
+                </>
             ) : (
-                <span>
+                <>
                     <EditOutlined
-                        style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+                        style={{ color: "#1677ff", fontSize: 18 }}
                         disabled={editingKey !== ""}
                         onClick={() => edit(record)}
                     />
-                </span>
+                </>
             );
         },
     }
@@ -450,7 +482,7 @@ const TaoKeHoachSanXuat = () => {
         };
     });
     const edit = (record) => {
-        form.setFieldsValue({
+        formUpdate.setFieldsValue({
             ...record,
         });
         setEditingKey(record.key);
@@ -527,7 +559,7 @@ const TaoKeHoachSanXuat = () => {
                         <Form form={formUpdate}>
                             <Table size='small' bordered
                                 pagination={false}
-                                columns={(lineId && (lineId == "31" || lineId == "32")) ? mergedColumns : columnKHSX}
+                                columns={(lineId) ? mergedColumns : columnKHSX}
                                 components={{
                                     body: {
                                         cell: EditableCell,
