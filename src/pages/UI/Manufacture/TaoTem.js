@@ -901,7 +901,7 @@ const TaoTem = () => {
                         current: page,
                         size: "default",
                         total: totalPage,
-                        pageSize: 50,
+                        pageSize: pageSize,
                         showSizeChanger: true,
                         onChange: (page, pageSize) => {
                             setPage(page);
