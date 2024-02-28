@@ -213,6 +213,7 @@ const TaoTem = () => {
             dataIndex: "note",
             key: "note",
             align: "center",
+            editable: true,
         },
         {
             title: "Máy in",
