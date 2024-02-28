@@ -92,6 +92,8 @@ const WarehouseExportPlan = () => {
   const [params, setParams] = useState({
     page: 1,
     pageSize: 20,
+    start_date: dayjs(),
+    end_date: dayjs(),
   });
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
@@ -494,7 +496,6 @@ const WarehouseExportPlan = () => {
                 <Form
                   style={{ margin: "0 15px" }}
                   layout="vertical"
-                 
                 >
                   <Form.Item label="Thòi gian bắt đầu" className="mb-3">
                     <DatePicker
