@@ -238,7 +238,7 @@ const QualityPQC = (props) => {
       width: 100,
       render: (value, record) => (
         <Popconfirm
-          disabled={record.phan_dinh !== 2}
+          disabled={record?.phan_dinh !== 2}
           title="Tái kiểm"
           description="Cho phép tái kiểm lot này?"
           okText="Có"
@@ -246,7 +246,7 @@ const QualityPQC = (props) => {
           onConfirm={() => recheck(record.id)}
           cancelText="Không"
         >
-          <Button disabled={record.phan_dinh !== 2}>Tái kiểm</Button>
+          <Button disabled={record?.phan_dinh !== 2}>Tái kiểm</Button>
         </Popconfirm>
       ),
     },
@@ -286,7 +286,7 @@ const QualityPQC = (props) => {
     })();
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     btn_click();
   }, [page, pageSize])
   const [exportLoading, setExportLoading] = useState(false);
@@ -342,17 +342,17 @@ const QualityPQC = (props) => {
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .ant-table-header');
-        const pagination = document.querySelector('.custom-card .ant-pagination');
-        const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [dataTable]);
   return (
     <React.Fragment>
