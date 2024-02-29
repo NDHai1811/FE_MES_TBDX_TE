@@ -15,6 +15,7 @@ import {
   Typography,
   Select,
   InputNumber,
+  DatePicker,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -91,6 +92,8 @@ const WarehouseExportPlan = () => {
   const [params, setParams] = useState({
     page: 1,
     pageSize: 20,
+    start_date: dayjs(),
+    end_date: dayjs(),
   });
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
@@ -162,8 +165,8 @@ const WarehouseExportPlan = () => {
       key: "tai_xe",
       align: "center",
       editable: hasEditColumn("tai_xe"),
-      render: (value)=>{
-        const item = listVehicles.find(e=>e.user1 === value);
+      render: (value) => {
+        const item = listVehicles.find(e => e.user1 === value);
         return item?.driver?.name
       },
       width: '15%'
@@ -182,8 +185,8 @@ const WarehouseExportPlan = () => {
       key: "nguoi_xuat",
       align: "center",
       editable: hasEditColumn("nguoi_xuat"),
-      render: (value)=>{
-        const item = listUsers.find(e=>e.id == value);
+      render: (value) => {
+        const item = listUsers.find(e => e.id == value);
         return item?.name
       },
       width: '15%'
@@ -298,14 +301,14 @@ const WarehouseExportPlan = () => {
           row.ids = listCheck;
         }
         var res = await updateWarehouseFGExport(row);
-        if(res){
+        if (res) {
           loadListTable();
         }
         setEditingKey("");
       } else {
         // await createBuyers(row);
         const items = [row, ...data.filter((val) => val.key !== key)];
-        if(res){
+        if (res) {
           loadListTable();
         }
         setEditingKey("");
@@ -375,7 +378,7 @@ const WarehouseExportPlan = () => {
     loadListTable(params);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     btn_click();
   }, [page, pageSize])
 
@@ -434,12 +437,12 @@ const WarehouseExportPlan = () => {
       if (e.key === editingKey) {
         var target = null;
         if (dataIndex === 'tai_xe') {
-          target = listVehicles.find(e=>e.user1 === value);
+          target = listVehicles.find(e => e.user1 === value);
         } else {
-          target = listVehicles.find(e=>e.id === value);
+          target = listVehicles.find(e => e.id === value);
         }
-        form.setFieldsValue({ ...e, so_xe: target?.id, tai_xe: target?.user1})
-        return { ...e, so_xe: target?.id, tai_xe: target?.user1}
+        form.setFieldsValue({ ...e, so_xe: target?.id, tai_xe: target?.user1 })
+        return { ...e, so_xe: target?.id, tai_xe: target?.user1 }
       } else {
         return e;
       }
@@ -452,17 +455,17 @@ const WarehouseExportPlan = () => {
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .ant-table-header');
-        const pagination = document.querySelector('.custom-card .ant-pagination');
-        const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [data]);
   return (
     <>
@@ -474,14 +477,52 @@ const WarehouseExportPlan = () => {
               style={{ height: "100%" }}
               bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
+              actions={[
+                <div
+                  layout="vertical"
+                >
+                  <Button
+                    type="primary"
+                    style={{ width: "80%" }}
+                    onClick={btn_click}
+                  >
+                    Truy vấn
+                  </Button>
+                </div>
+              ]}
             >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
                   style={{ margin: "0 15px" }}
                   layout="vertical"
-                  onFinish={btn_click}
                 >
+                  <Form.Item label="Thòi gian bắt đầu" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, start_date: value, page: 1 });
+                        setPage(1);
+                      }
+                      }
+                      value={params.start_date}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Thời gian kết thúc" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, end_date: value, page: 1 });
+                        setPage(1);
+                      }
+                      }
+                      value={params.end_date}
+                    />
+                  </Form.Item>
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
                       allowClear
@@ -508,15 +549,6 @@ const WarehouseExportPlan = () => {
                       }
                       placeholder="Nhập mã quản lý"
                     />
-                  </Form.Item>
-                  <Form.Item style={{ textAlign: "center" }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      style={{ width: "80%" }}
-                    >
-                      Tìm kiếm
-                    </Button>
                   </Form.Item>
                 </Form>
               </div>

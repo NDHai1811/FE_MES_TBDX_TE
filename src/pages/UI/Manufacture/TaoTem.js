@@ -213,6 +213,7 @@ const TaoTem = () => {
             dataIndex: "note",
             key: "note",
             align: "center",
+            editable: true,
         },
         {
             title: "Máy in",
@@ -400,6 +401,30 @@ const TaoTem = () => {
             title: "Số lượng",
             dataIndex: "sl",
             key: "sl",
+            align: "center",
+        },
+        {
+            title: "Kích thước",
+            dataIndex: "kich_thuoc",
+            key: "kich_thuoc",
+            align: "center",
+        },
+        {
+            title: "Dài",
+            dataIndex: "length",
+            key: "length",
+            align: "center",
+        },
+        {
+            title: "Rộng",
+            dataIndex: "width",
+            key: "width",
+            align: "center",
+        },
+        {
+            title: "Cao",
+            dataIndex: "height",
+            key: "height",
             align: "center",
         },
         {
@@ -705,6 +730,29 @@ const TaoTem = () => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
+                                label="Nhân viên sản xuất"
+                                className="mb-3"
+                            >
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    placeholder="Chọn người sản xuất"
+                                    style={{ width: "100%" }}
+                                    onChange={(value) =>
+                                        setOrderParams({ ...orderParams, nhan_vien_sx: value })
+                                    }
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? "")
+                                            .toLowerCase()
+                                            .includes(input.toLowerCase())
+                                    }
+                                    popupMatchSelectWidth={listUsers.length > 0 ? 400 : 0}
+                                    options={listUsers}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
                             >
@@ -750,27 +798,102 @@ const TaoTem = () => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                label="Nhân viên sản xuất"
+                                label="MQL"
                                 className="mb-3"
                             >
                                 <Select
+                                    mode="tags"
                                     allowClear
                                     showSearch
-                                    placeholder="Chọn người sản xuất"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setOrderParams({ ...orderParams, nhan_vien_sx: value })
-                                    }
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? "")
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
-                                    }
-                                    popupMatchSelectWidth={listUsers.length > 0 ? 400 : 0}
-                                    options={listUsers}
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, mql: value, page: 1 });
+                                        setPage(1);
+                                    }}
+                                    open={false}
+                                    placeholder="Nhập MQL"
+                                    options={[]}
                                 />
                             </Form.Item>
                         </Col>
+                        <Col span={6}>
+                            <Form.Item
+                                label="Kích thước"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            kich_thuoc: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập kích thước"
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Dài"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            length: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập dài"
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Rộng"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            width: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập rộng"
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Cao"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            height: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập cao"
+                                />
+                            </Form.Item>
+                        </Col>
+
+
                     </Row>
                 </Form>
                 <Table size='small' bordered
@@ -779,7 +902,7 @@ const TaoTem = () => {
                         current: page,
                         size: "default",
                         total: totalPage,
-                        pageSize: 50,
+                        pageSize: pageSize,
                         showSizeChanger: true,
                         onChange: (page, pageSize) => {
                             setPage(page);
