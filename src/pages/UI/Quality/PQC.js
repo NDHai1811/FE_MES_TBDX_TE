@@ -397,7 +397,7 @@ const QualityPQC = (props) => {
                     <DatePicker
                       allowClear={false}
                       placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
+                      placement="right"
                       onChange={(value) =>
                         setParams({ ...params, start_date: value })
                       }
@@ -406,7 +406,6 @@ const QualityPQC = (props) => {
                     <DatePicker
                       allowClear={false}
                       placeholder="Kết thúc"
-                      style={{ width: "100%" }}
                       onChange={(value) =>
                         setParams({ ...params, end_date: value })
                       }

@@ -113,6 +113,13 @@ const QCByMachine = (props) => {
           },
         };
       },
+      render: (text, record) => {
+        if (record.checked_tinh_nang) {
+          return record.sl_tinh_nang;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Kiểm tra ngoại quan",
@@ -130,6 +137,13 @@ const QCByMachine = (props) => {
           },
         };
       },
+      render: (text, record) => {
+        if (record.checked_ngoai_quan) {
+          return record.sl_ngoai_quan;
+        } else {
+          return "-";
+        }
+      },
     },
     {
       title: "Số phế",
@@ -146,6 +160,13 @@ const QCByMachine = (props) => {
             cursor: 'pointer'
           },
         };
+      },
+      render: (text, record) => {
+        if (record.checked_sl_ng) {
+          return record.sl_ng_qc;
+        } else {
+          return "-";
+        }
       },
     },
     {
