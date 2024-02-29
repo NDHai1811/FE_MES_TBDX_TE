@@ -28,6 +28,7 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
+import { getListMachine } from "../../../api";
 
 const QCByMachine = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -48,7 +49,7 @@ const QCByMachine = (props) => {
   });
   const overallColumns = [
     {
-      title: "Công đoạn",
+      title: "Máy",
       dataIndex: "cong_doan",
       key: "cong_doan",
       align: "center",
@@ -272,8 +273,8 @@ const QCByMachine = (props) => {
 
   const getListOption = async () => {
     setLoading(true);
-    var machine = await getQCLine();
-    setMachineOptions(machine.data);
+    var machine = await getListMachine();
+    setMachineOptions(machine);
     setLoading(false);
   };
   async function getData() {
@@ -291,12 +292,13 @@ const QCByMachine = (props) => {
     setLoading(false);
   }
   useEffect(() => {
-    if (machine_id) {
+    if (machine_id && params.machine.length > 0 && machine_id !== params.machine[0]) {
       setParams({...params, machine: [machine_id]})
     }
+    setSelectedRow()
   }, [machine_id]);
   useEffect(() => {
-    if (params.machine) {
+    if (params?.machine?.length) {
       getData();
     }
   }, [params]);

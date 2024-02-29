@@ -152,8 +152,8 @@ const QualityPQC = (props) => {
     },
     {
       title: "Đơn hàng",
-      dataIndex: "order_id",
-      key: "order_id",
+      dataIndex: "mdh",
+      key: "mdh",
       align: "center",
     },
     {
@@ -168,18 +168,18 @@ const QualityPQC = (props) => {
       key: "quy_cach",
       align: "center",
     },
-    {
-      title: "TG BĐ",
-      dataIndex: "thoi_gian_bat_dau",
-      key: "thoi_gian_bat_dau",
-      align: "center",
-    },
-    {
-      title: "TG KT",
-      dataIndex: "thoi_gian_ket_thuc",
-      key: "thoi_gian_ket_thuc",
-      align: "center",
-    },
+    // {
+    //   title: "TG BĐ",
+    //   dataIndex: "thoi_gian_bat_dau",
+    //   key: "thoi_gian_bat_dau",
+    //   align: "center",
+    // },
+    // {
+    //   title: "TG KT",
+    //   dataIndex: "thoi_gian_ket_thuc",
+    //   key: "thoi_gian_ket_thuc",
+    //   align: "center",
+    // },
     {
       title: "Sản lượng đếm được",
       dataIndex: "sl_dau_ra_hang_loat",
@@ -238,7 +238,7 @@ const QualityPQC = (props) => {
       width: 100,
       render: (value, record) => (
         <Popconfirm
-          disabled={record.phan_dinh !== 2}
+          disabled={record?.phan_dinh !== 2}
           title="Tái kiểm"
           description="Cho phép tái kiểm lot này?"
           okText="Có"
@@ -246,7 +246,7 @@ const QualityPQC = (props) => {
           onConfirm={() => recheck(record.id)}
           cancelText="Không"
         >
-          <Button disabled={record.phan_dinh !== 2}>Tái kiểm</Button>
+          <Button disabled={record?.phan_dinh !== 2}>Tái kiểm</Button>
         </Popconfirm>
       ),
     },

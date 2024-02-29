@@ -115,7 +115,7 @@ const Checksheet2 = (props) => {
         {text}
       </Button> */}
       <Modal
-        title={"Kiểm tra "+text}
+        title={"Kiểm tra " + (text ?? "")}
         open={open}
         onCancel={closeModal}
         footer={
