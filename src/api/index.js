@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function getListMachine(params) {
-  const res = await axios.get("/machine/list", params);
+  const res = await axios.get("/oi/machine/list", params);
   return res.data;
 }
 export async function storePallet(params) {

@@ -19,7 +19,7 @@ const Checksheet1 = (props) => {
     text,
     selectedLot,
     onSubmit,
-    machine_id = null,
+    machines = [],
     line_id = null,
     open,
     setOpen,
@@ -60,9 +60,9 @@ const Checksheet1 = (props) => {
   useEffect(() => {
     if (selectedLot) {
       (async () => {
-        if (machine_id) {
+        if (machines.length > 0) {
           var res = await getChecksheetList({
-            machine: [machine_id],
+            machine: machines,
             lo_sx: selectedLot?.lo_sx,
           });
           setChecksheet(res.data);
@@ -104,7 +104,7 @@ const Checksheet1 = (props) => {
                 {text}
             </Button> */}
       <Modal
-        title={"Kiểm tra " + text}
+        title={"Kiểm tra " + (text ?? "")}
         open={open}
         onCancel={closeModal}
         footer={

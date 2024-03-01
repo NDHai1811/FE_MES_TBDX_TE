@@ -1,97 +1,117 @@
-import { Form, Input, Table } from "antd";
+import { DatePicker, Form, Input, InputNumber, Select, Table } from "antd";
 import React, { useContext, useRef, useState, useEffect } from "react";
 import "./style.css";
-const EditableContext = React.createContext(null);
-const EditableRow = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}>
-      <EditableContext.Provider value={form}>
-        <tr {...props} />
-      </EditableContext.Provider>
-    </Form>
-  );
-};
-const EditableCell = ({
-  title,
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  ...restProps
-}) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef(null);
-  const form = useContext(EditableContext);
-  useEffect(() => {
-    if (editing) {
-      inputRef.current.focus();
-    }
-  }, [editing]);
-  const toggleEdit = () => {
-    setEditing(!editing);
-    form.setFieldsValue({
-      [dataIndex]: record[dataIndex],
-    });
-  };
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-      toggleEdit();
-      handleSave({
-        ...record,
-        ...values,
-      });
-    } catch (errInfo) {
-      console.log("Save failed:", errInfo);
-    }
-  };
-  let childNode = children;
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        rules={[{ required: true, message: `${title} không được để trống.` }]}
-      >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-      </Form.Item>
-    ) : (
-      <div
-        className="editable-cell-value-wrap"
-        style={{
-          paddingRight: 24,
-        }}
-        onClick={toggleEdit}
-      >
-        {children}
-      </div>
-    );
-  }
-  return <td {...restProps}>{childNode}</td>;
-};
+import Actions from "./Actions";
 const EditableTable = (props) => {
-  const { dataSource, setDataSource } = props;
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    console.log(newData);
-    setDataSource(newData);
+  const { onDelete = null, onChange = null, onSelect = null, onSave = null, form = null} = props;
+  var editableColumns = [];
+  const [dataSource, setDataSource] = useState(props.dataSource ?? []);
+  useEffect(()=>{
+    setDataSource(props.dataSource);
+  }, [props.dataSource])
+  const [editingKey, setEditingKey] = useState();
+  const EditableCell = ({
+    editing,
+    dataIndex,
+    title,
+    inputType,
+    record,
+    index,
+    children,
+    onChange,
+    onSelect,
+    options,
+    ...restProps
+  }) => {
+    let inputNode;
+    switch (inputType) {
+      case "number":
+        inputNode = <InputNumber />;
+        break;
+      case "select":
+        inputNode = (
+          <Select
+            value={record?.[dataIndex]}
+            options={options}
+            optionFilterProp="label"
+            onChange={(value) => onSelect(value, dataIndex)}
+            showSearch
+          />
+        );
+        break;
+      case "date":
+        inputNode = (
+          <DatePicker
+            value={record?.[dataIndex]}
+            options={options}
+            onSelect={(value) => onSelect(value, dataIndex)}
+            onChange={(value) => value.isValid() && onChange(value, dataIndex)}
+            showSearch
+          />
+        );
+        break;
+      default:
+        inputNode = <Input />;
+        break;
+    }
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item
+            name={dataIndex}
+            style={{
+              margin: 0,
+            }}
+          >
+            {inputNode}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
   };
+  if (onSave || onDelete) {
+    editableColumns = [...props.columns, {
+      title: "Tác vụ",
+      dataIndex: "action",
+      key: "action",
+      align: "center",
+      fixed: "right",
+      render: (_, record) => <Actions
+        form={form}
+        onSave={onSave}
+        onDelete={onDelete}
+        record={record}
+        editingKey={editingKey}
+        setEditingKey={setEditingKey}
+        setDataSource={setDataSource}
+      />
+    }].map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+      return {
+        ...col,
+        onCell: (record) => ({
+          record,
+          inputType: "text",
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: record.key === editingKey,
+          onChange,
+          onSelect,
+        }),
+      };
+    });;
+  }
   return (
     <Table
       {...props}
-      rowClassName="editable-row"
-      columns={props.columns}
+      columns={editableColumns}
+      dataSource={dataSource}
       components={{
         body: {
-          row: EditableRow,
           cell: EditableCell,
         },
       }}

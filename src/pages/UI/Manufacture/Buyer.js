@@ -455,7 +455,6 @@ const Buyer = () => {
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
-                  style={{ margin: "0 15px" }}
                   layout="vertical"
                 // onFinish={btn_click}
                 >

@@ -123,7 +123,7 @@ const PQC_OQC = (props) => {
         };
       },
       render: (text, record) => {
-        if (record.phan_dinh !== 0) {
+        if (record.checked_tinh_nang) {
           return record.sl_tinh_nang;
         } else {
           return "-";
@@ -147,7 +147,7 @@ const PQC_OQC = (props) => {
         };
       },
       render: (text, record) => {
-        if (record.phan_dinh !== 0) {
+        if (record.checked_ngoai_quan) {
           return record.sl_ngoai_quan;
         } else {
           return "-";
@@ -171,7 +171,7 @@ const PQC_OQC = (props) => {
         };
       },
       render: (text, record) => {
-        if (record.phan_dinh !== 0) {
+        if (record.checked_sl_ng) {
           return record.sl_ng;
         } else {
           return "-";
@@ -229,7 +229,7 @@ const PQC_OQC = (props) => {
       key: "sl_loi",
       align: "center",
       render: (text, record) => {
-        if (record.phan_dinh !== 0) {
+        if (record.checked_tinh_nang) {
           return record.sl_tinh_nang;
         } else {
           return "-";
@@ -242,7 +242,7 @@ const PQC_OQC = (props) => {
       key: "sl_ngoai_quan",
       align: "center",
       render: (text, record) => {
-        if (record.phan_dinh !== 0) {
+        if (record.checked_ngoai_quan) {
           return record.sl_ngoai_quan;
         } else {
           return "-";
@@ -557,6 +557,7 @@ const PQC_OQC = (props) => {
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK1}
         line_id={line_id}
+        machines={params.machine ?? []}
       />
       <Checksheet2
         text="ngoại quan"
