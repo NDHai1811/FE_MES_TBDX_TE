@@ -14,7 +14,7 @@ import {
   Form,
   Tree,
 } from "antd";
-import { exportWarehouse } from "../../../api/ui/export";
+import { exportWarehouse, exportWarehouseFGLogs } from "../../../api/ui/export";
 import { getHistoryWareHouseFG } from "../../../api/ui/warehouse";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
@@ -167,7 +167,7 @@ const ThanhPhamGiay = (props) => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportWarehouse(params);
+    const res = await exportWarehouseFGLogs(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
