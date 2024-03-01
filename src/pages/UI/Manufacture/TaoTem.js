@@ -89,11 +89,11 @@ const TaoTem = () => {
     const [loadingExport, setLoadingExport] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editingKey, setEditingKey] = useState("");
-    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 50 });
+    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 100 });
     const componentRef1 = useRef();
     const [totalPage, setTotalPage] = useState(1);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(50);
+    const [pageSize, setPageSize] = useState(100);
     const [params, setParams] = useState({ show: 'new' });
     const optionsDisplay = [
         { value: 'new', label: 'Mới' },
@@ -164,12 +164,14 @@ const TaoTem = () => {
             key: "sl_tem",
             align: "center",
             editable: true,
+            width: '5%',
         },
         {
             title: "MQL",
             dataIndex: "mql",
             key: "mql",
             align: "center",
+            width: '3%',
         },
         {
             title: "Số lượng",
@@ -177,6 +179,7 @@ const TaoTem = () => {
             key: "so_luong",
             align: "center",
             editable: true,
+            width: '4%',
         },
         {
             title: "GMO",
@@ -214,6 +217,7 @@ const TaoTem = () => {
             key: "note",
             align: "center",
             editable: true,
+            width: '10%',
         },
         {
             title: "Máy in",
@@ -221,6 +225,7 @@ const TaoTem = () => {
             key: "machine_id",
             align: "center",
             editable: true,
+            width: '8%',
         },
         {
             title: "Nhân viên sản xuất",
@@ -228,7 +233,7 @@ const TaoTem = () => {
             key: "nhan_vien_sx",
             align: "center",
             editable: true,
-            width: '12%',
+            width: '10%',
             render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
@@ -380,28 +385,32 @@ const TaoTem = () => {
             align: "center",
         },
         {
-            title: "Đơn hàng TBDX",
+            title: "MDH",
             dataIndex: "mdh",
             key: "mdh",
             align: "center",
+            width: '4%'
         },
         {
-            title: "Đơn hàng khách hàng",
+            title: "Order",
             dataIndex: "order",
             key: "order",
             align: "center",
+            width: '5%'
         },
         {
             title: "MQL",
             dataIndex: "mql",
             key: "mql",
             align: "center",
+            width: '2%'
         },
         {
             title: "Số lượng",
             dataIndex: "sl",
             key: "sl",
             align: "center",
+            width: '3%'
         },
         {
             title: "Kích thước",
@@ -414,18 +423,21 @@ const TaoTem = () => {
             dataIndex: "length",
             key: "length",
             align: "center",
+            width: '2%'
         },
         {
             title: "Rộng",
             dataIndex: "width",
             key: "width",
             align: "center",
+            width: '2%'
         },
         {
             title: "Cao",
             dataIndex: "height",
             key: "height",
             align: "center",
+            width: '2%'
         },
         {
             title: "GMO",
@@ -438,24 +450,28 @@ const TaoTem = () => {
             dataIndex: "po",
             key: "po",
             align: "center",
+            width: '8%'
         },
         {
             title: "STYLE",
             dataIndex: "style",
             key: "style",
             align: "center",
+            width: '18%'
         },
         {
             title: "STYLE NO",
             dataIndex: "style",
             key: "style",
             align: "center",
+            width: '18%'
         },
         {
             title: "COLOR",
             dataIndex: "color",
             key: "color",
             align: "center",
+            width: '5%'
         },
         {
             title: "Ghi chú",
@@ -624,7 +640,7 @@ const TaoTem = () => {
                                     size="medium"
                                     type="primary"
                                     style={{ width: "100%" }}
-                                    onClick={() => setOpenModal(true)}
+                                    onClick={() => { setOpenModal(true); setOrderParams({ page: 1, pageSize: 100 }) }}
                                 >
                                     Tạo từ ĐH
                                 </Button>
@@ -679,7 +695,7 @@ const TaoTem = () => {
                                     bordered
                                     scroll={{
                                         y: tableHeight,
-                                        x: "120vw"
+                                        x: "180vw"
                                     }}
                                     components={{
                                         body: {
@@ -699,16 +715,26 @@ const TaoTem = () => {
             <div className="report-history-invoice">
                 <TemIn listCheck={listTem} ref={componentRef1} />
             </div>
-            <Modal open={openModal} onCancel={() => setOpenModal(false)} title="Tạo tem từ đơn hàng" width={1200}
-                okText={'Tạo tem'}
-                onOk={() => createStamp()}
+            <Modal
+                open={openModal}
+                onCancel={() => setOpenModal(false)}
+                footer={null}
+                title="Tạo tem từ đơn hàng"
+                width={'98vw'}
+                height={'100vh'}
+                style={{
+                    position: 'fixed',
+                    left: '0',
+                    right: '0',
+                    top: '5px'
+                }}
             >
                 <Form layout="vertical">
-                    <Row gutter={[8, 8]}>
+                    <Row gutter={[8, 0]}>
                         <Col span={6}>
                             <Form.Item
                                 label="Máy"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     allowClear
@@ -725,13 +751,14 @@ const TaoTem = () => {
                                             .includes(input.toLowerCase())
                                     }
                                     options={listMachines}
+                                    value={orderParams.machine_id}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
                                 label="Nhân viên sản xuất"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     allowClear
@@ -748,13 +775,14 @@ const TaoTem = () => {
                                     }
                                     popupMatchSelectWidth={listUsers.length > 0 ? 400 : 0}
                                     options={listUsers}
+                                    value={orderParams.nhan_vien_sx}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
                                 label="Khách hàng"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     allowClear
@@ -773,13 +801,14 @@ const TaoTem = () => {
                                     }
                                     popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
                                     options={listCustomers}
+                                    value={orderParams.short_name}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
                                 label="MDH"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     mode="tags"
@@ -793,6 +822,7 @@ const TaoTem = () => {
                                     open={false}
                                     placeholder="Nhập mã đơn hàng"
                                     options={[]}
+                                    value={orderParams.mdh}
                                 />
                             </Form.Item>
                         </Col>
@@ -813,6 +843,7 @@ const TaoTem = () => {
                                     open={false}
                                     placeholder="Nhập MQL"
                                     options={[]}
+                                    value={orderParams.mql}
                                 />
                             </Form.Item>
                         </Col>
@@ -832,6 +863,7 @@ const TaoTem = () => {
                                         setPage(1);
                                     }}
                                     placeholder="Nhập kích thước"
+                                    value={orderParams.kich_thuoc}
                                 />
                             </Form.Item>
                         </Col>
@@ -851,6 +883,7 @@ const TaoTem = () => {
                                         setPage(1);
                                     }}
                                     placeholder="Nhập dài"
+                                    value={orderParams.length}
                                 />
                             </Form.Item>
                         </Col>
@@ -870,6 +903,7 @@ const TaoTem = () => {
                                         setPage(1);
                                     }}
                                     placeholder="Nhập rộng"
+                                    value={orderParams.width}
                                 />
                             </Form.Item>
                         </Col>
@@ -889,18 +923,18 @@ const TaoTem = () => {
                                         setPage(1);
                                     }}
                                     placeholder="Nhập cao"
+                                    value={orderParams.height}
                                 />
                             </Form.Item>
                         </Col>
-
-
                     </Row>
+                    <Button type="primary" className="mb-2" onClick={() => createStamp()}>Tạo tem</Button>
                 </Form>
                 <Table size='small' bordered
                     loading={loadingOrders}
                     pagination={{
                         current: page,
-                        size: "default",
+                        size: "small",
                         total: totalPage,
                         pageSize: pageSize,
                         showSizeChanger: true,
@@ -912,8 +946,8 @@ const TaoTem = () => {
                     }}
                     scroll={
                         {
-                            x: '130vw',
-                            y: '60vh'
+                            x: '260vw',
+                            y: '42vh'
                         }
                     }
                     tableLayout="fixed"
