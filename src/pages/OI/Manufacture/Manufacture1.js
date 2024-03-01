@@ -24,6 +24,7 @@ import {
   getCurrentManufacturing,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
+import TemTest from "./TemTest";
 import Tem from "./Tem";
 import TemIn from "./TemIn";
 import TemDan from "./TemDan";
@@ -32,6 +33,7 @@ import {
 } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
+import { getTem } from "../../../api";
 
 
 const columns = [
@@ -217,6 +219,8 @@ const Manufacture1 = (props) => {
       if (res.success) {
         setIsPasue(!res.data?.status)
       }
+      var tem = await getTem();
+      setListTem(tem);
     })();
   }, []);
 
@@ -243,7 +247,7 @@ const Manufacture1 = (props) => {
       if (window.location.href.indexOf("/oi/manufacture") > -1)
         timeout = setTimeout(function () {
           loadDataRescursive(machine_id, selectedLot);
-        }, 5000);
+        }, 3000);
     }
   };
   useEffect(() => {
@@ -276,7 +280,6 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    var className = selectedLot ? "seleted-lot" : ""
     if (record.status === 1) {
       return "table-row-green";
     }
@@ -289,7 +292,7 @@ const Manufacture1 = (props) => {
     if (record.status === 4) {
       return "table-row-grey";
     }
-    return className;
+    return "";
   };
 
   const handlePrint = async () => {
@@ -416,7 +419,8 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <Tem listCheck={listTem} ref={componentRef1} />
+                <TemTest listCheck={listTem} ref={componentRef1} />
+                {/* <Tem listCheck={listTem} ref={componentRef1} /> */}
                 <TemIn listCheck={listTem} ref={componentRef2} />
                 <TemDan listCheck={listTem} ref={componentRef3} />
               </div>

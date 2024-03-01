@@ -206,6 +206,7 @@ const WarehouseMLT = (props) => {
       dataIndex: "ma_cuon_ncc",
       key: "ma_cuon_ncc",
       align: "center",
+      editable: true
     },
     {
       title: "Mã vật tư",
