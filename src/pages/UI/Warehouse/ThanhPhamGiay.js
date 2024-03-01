@@ -265,8 +265,8 @@ const ThanhPhamGiay = (props) => {
                   <Form.Item label="Lô SX" className="mb-3">
                     <Input placeholder="Nhập lô sx" onChange={(event) => setParams({ ...params, lo_sx: event.target.value })} />
                   </Form.Item>
-                  <Form.Item label="Tên khách hàng" className="mb-3">
-                    <Input placeholder="Nhập tên kh" onChange={(event) => setParams({ ...params, khach_hang: event.target.value })} />
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Input placeholder="Nhập mã kh" onChange={(event) => setParams({ ...params, khach_hang: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Đơn hàng" className="mb-3">
                     <Input placeholder="Nhập đơn hàng" onChange={(event) => setParams({ ...params, mdh: event.target.value })} />
