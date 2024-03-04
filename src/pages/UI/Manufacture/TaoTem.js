@@ -26,7 +26,7 @@ import TemIn from "../../OI/Manufacture/TemIn";
 import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
@@ -371,7 +371,7 @@ const TaoTem = () => {
     const searchOrder = async () => {
         setLoadingOrders(true);
         const res = await getOrders(orderParams);
-        setOrders(res.data);
+        setOrders(res.data.map(e => ({ ...e, key: e.id })));
         setTotalPage(res.totalPage);
         setLoadingOrders(false);
     }
@@ -481,20 +481,38 @@ const TaoTem = () => {
             align: "center",
         },
     ];
-    const [orderChecked, setOrderChecked] = useState([])
+    const selectOrdersColumns = [...ordersColumn, {
+        title: 'Tác vụ',
+        key: 'action',
+        dataIndex: 'action',
+        align: 'center',
+        fixed: 'right',
+        width: 60,
+        render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => deselectOrder(record.key)} />
+    }];
+    const [orderChecked, setOrderChecked] = useState([]);
+    const [selectedOrders, setSelectedOrders] = useState([]);
     const orderRowSelection = {
-        selectedRowKeys: orderChecked,
+        selectedRowKeys: [].concat(selectedOrders).map(e => e.key),
+        fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(selectedRows, selectedRowKeys);
             setOrderChecked(selectedRowKeys);
+            setSelectedOrders(prev => {
+                const newArray = [...prev, ...selectedRows];
+                return newArray.filter((e, index) => {
+                    return index === newArray.findIndex(o => e.key === o.key);
+                });
+            });
         },
     };
     const createStamp = async () => {
+        const order_ids = [...selectedOrders].map(e => e.id)
         if (!orderParams.machine_id) {
             messageApi.info('Chưa chọn máy');
             return 0;
         }
-        if (orderChecked.length <= 0) {
+        if (order_ids.length <= 0) {
             messageApi.info('Chưa chọn đơn hàng');
             return 0;
         }
@@ -502,10 +520,11 @@ const TaoTem = () => {
             messageApi.info('Chưa chọn nhân viên');
             return 0;
         }
-        var res = await createStampFromOrder({ order_ids: orderChecked, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
+        var res = await createStampFromOrder({ order_ids: order_ids, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
         if (res.success) {
             setOpenModal(false);
             setOrderChecked([]);
+            setSelectedOrders([]);
             loadListTable();
         }
     }
@@ -530,6 +549,10 @@ const TaoTem = () => {
             window.removeEventListener('resize', handleWindowResize);
         };
     }, [data]);
+
+    const deselectOrder = (key) => {
+        setSelectedOrders([...selectedOrders].filter(e => e.key !== key));
+    }
     const items = [
         {
             label: 'Danh sách đơn hàng',
@@ -558,26 +581,15 @@ const TaoTem = () => {
                 tableLayout="fixed"
                 rowSelection={orderRowSelection}
                 columns={ordersColumn}
-                dataSource={orders.map(e => ({ ...e, key: e.id }))} />
+                dataSource={orders} />
         },
         {
             label: 'Đơn hàng đã chọn',
             key: 2,
             extra: <Button />,
             children: <Table size='small' bordered
+                pagination={false}
                 loading={loadingOrders}
-                pagination={{
-                    current: page,
-                    size: "small",
-                    total: totalPage,
-                    pageSize: pageSize,
-                    showSizeChanger: true,
-                    onChange: (page, pageSize) => {
-                        setPage(page);
-                        setPageSize(pageSize);
-                        setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
-                    },
-                }}
                 scroll={
                     {
                         x: '260vw',
@@ -585,9 +597,8 @@ const TaoTem = () => {
                     }
                 }
                 tableLayout="fixed"
-                rowSelection={orderRowSelection}
-                columns={ordersColumn}
-                dataSource={orders.map(e => ({ ...e, key: e.id }))} />
+                columns={selectOrdersColumns}
+                dataSource={[...selectedOrders]} />
         }
     ];
     const extraTab = {
@@ -992,32 +1003,12 @@ const TaoTem = () => {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Button type="primary" className="mb-2" onClick={() => createStamp()}>Tạo tem</Button>
                 </Form>
-                <Table size='small' bordered
-                    loading={loadingOrders}
-                    pagination={{
-                        current: page,
-                        size: "small",
-                        total: totalPage,
-                        pageSize: pageSize,
-                        showSizeChanger: true,
-                        onChange: (page, pageSize) => {
-                            setPage(page);
-                            setPageSize(pageSize);
-                            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
-                        },
-                    }}
-                    scroll={
-                        {
-                            x: '260vw',
-                            y: '42vh'
-                        }
-                    }
-                    tableLayout="fixed"
-                    rowSelection={orderRowSelection}
-                    columns={ordersColumn}
-                    dataSource={orders.map(e => ({ ...e, key: e.id }))} />
+                <Tabs
+                    type="card"
+                    items={items}
+                    tabBarExtraContent={extraTab}
+                />
             </Modal>
         </>
     );
