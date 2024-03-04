@@ -627,7 +627,7 @@ const TaoTem = () => {
         }
     ];
     const extraTab = {
-        left: <Button type="primary" className="tabs-extra-demo-button" onClick={() => createStamp()}>Tạo tem</Button>,
+        right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => createStamp()}>Tạo tem</Button>,
     };
     return (
         <>

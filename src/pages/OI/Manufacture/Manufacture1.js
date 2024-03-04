@@ -219,8 +219,8 @@ const Manufacture1 = (props) => {
       if (res.success) {
         setIsPasue(!res.data?.status)
       }
-      var tem = await getTem();
-      setListTem(tem);
+      // var tem = await getTem();
+      // setListTem(tem);
     })();
   }, []);
 
@@ -419,8 +419,8 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <div className="report-history-invoice">
-                <TemTest listCheck={listTem} ref={componentRef1} />
-                {/* <Tem listCheck={listTem} ref={componentRef1} /> */}
+                {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+                <Tem listCheck={listTem} ref={componentRef1} />
                 <TemIn listCheck={listTem} ref={componentRef2} />
                 <TemDan listCheck={listTem} ref={componentRef3} />
               </div>
