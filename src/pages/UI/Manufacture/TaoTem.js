@@ -534,60 +534,60 @@ const TaoTem = () => {
         {
             label: 'Danh sách đơn hàng',
             key: 1,
-            extra: <Button/>,
+            extra: <Button />,
             children: <Table size='small' bordered
-            loading={loadingOrders}
-            pagination={{
-                current: page,
-                size: "small",
-                total: totalPage,
-                pageSize: pageSize,
-                showSizeChanger: true,
-                onChange: (page, pageSize) => {
-                    setPage(page);
-                    setPageSize(pageSize);
-                    setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
-                },
-            }}
-            scroll={
-                {
-                    x: '260vw',
-                    y: '42vh'
+                loading={loadingOrders}
+                pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                        setPage(page);
+                        setPageSize(pageSize);
+                        setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+                    },
+                }}
+                scroll={
+                    {
+                        x: '260vw',
+                        y: '42vh'
+                    }
                 }
-            }
-            tableLayout="fixed"
-            rowSelection={orderRowSelection}
-            columns={ordersColumn}
-            dataSource={orders.map(e => ({ ...e, key: e.id }))} />
+                tableLayout="fixed"
+                rowSelection={orderRowSelection}
+                columns={ordersColumn}
+                dataSource={orders.map(e => ({ ...e, key: e.id }))} />
         },
         {
             label: 'Đơn hàng đã chọn',
             key: 2,
-            extra: <Button/>,
+            extra: <Button />,
             children: <Table size='small' bordered
-            loading={loadingOrders}
-            pagination={{
-                current: page,
-                size: "small",
-                total: totalPage,
-                pageSize: pageSize,
-                showSizeChanger: true,
-                onChange: (page, pageSize) => {
-                    setPage(page);
-                    setPageSize(pageSize);
-                    setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
-                },
-            }}
-            scroll={
-                {
-                    x: '260vw',
-                    y: '42vh'
+                loading={loadingOrders}
+                pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                        setPage(page);
+                        setPageSize(pageSize);
+                        setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+                    },
+                }}
+                scroll={
+                    {
+                        x: '260vw',
+                        y: '42vh'
+                    }
                 }
-            }
-            tableLayout="fixed"
-            rowSelection={orderRowSelection}
-            columns={ordersColumn}
-            dataSource={orders.map(e => ({ ...e, key: e.id }))} />
+                tableLayout="fixed"
+                rowSelection={orderRowSelection}
+                columns={ordersColumn}
+                dataSource={orders.map(e => ({ ...e, key: e.id }))} />
         }
     ];
     const extraTab = {
@@ -992,12 +992,32 @@ const TaoTem = () => {
                             </Form.Item>
                         </Col>
                     </Row>
-                    
+                    <Button type="primary" className="mb-2" onClick={() => createStamp()}>Tạo tem</Button>
                 </Form>
-                <Tabs
-                    items={items}
-                    tabBarExtraContent={extraTab}
-                />
+                <Table size='small' bordered
+                    loading={loadingOrders}
+                    pagination={{
+                        current: page,
+                        size: "small",
+                        total: totalPage,
+                        pageSize: pageSize,
+                        showSizeChanger: true,
+                        onChange: (page, pageSize) => {
+                            setPage(page);
+                            setPageSize(pageSize);
+                            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+                        },
+                    }}
+                    scroll={
+                        {
+                            x: '260vw',
+                            y: '42vh'
+                        }
+                    }
+                    tableLayout="fixed"
+                    rowSelection={orderRowSelection}
+                    columns={ordersColumn}
+                    dataSource={orders.map(e => ({ ...e, key: e.id }))} />
             </Modal>
         </>
     );
