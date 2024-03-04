@@ -209,7 +209,7 @@ const LichSuSanXuat = (props) => {
       const res1 = await getUIItemMenu();
       setItemMenu(res1.data);
     })();
-    btn_click();
+    // btn_click();
   }, []);
   useEffect(() => {
     btn_click();
@@ -223,14 +223,14 @@ const LichSuSanXuat = (props) => {
     (async () => {
       setLoading(true);
       const res1 = await getProduceOverall(params);
-      const res2 = await getProducePercent(params);
+      // const res2 = await getProducePercent(params);
       const res3 = await getProduceTable(params);
       setDataTable1(res1.data);
-      setDataTable2(
-        Object.keys(res2.data ?? {}).map((key) => {
-          return { ...res2.data[key], lo_sx: key };
-        })
-      );
+      // setDataTable2(
+      //   Object.keys(res2.data ?? {}).map((key) => {
+      //     return { ...res2.data[key], lo_sx: key };
+      //   })
+      // );
       setTotalPage(res3.data.totalPage);
       setDataTable3(res3.data.data);
       setLoading(false);
@@ -262,6 +262,26 @@ const LichSuSanXuat = (props) => {
     );
     setParams({ ...params, machine: filteredKeys });
   };
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - 100 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .custom-table .ant-table-header');
+        const pagination = document.querySelector('.custom-card .custom-table .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - 100 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [dataTable3]);
+  useEffect(()=>{
+    console.log(tableHeight);
+  }, [tableHeight])
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -425,7 +445,7 @@ const LichSuSanXuat = (props) => {
                 columns={columns1}
                 dataSource={dataTable1}
               />
-              <Table
+              {/* <Table
                 className="mb-2"
                 size="small"
                 bordered
@@ -436,7 +456,7 @@ const LichSuSanXuat = (props) => {
                   y: window.innerHeight * 0.05,
                 }}
                 dataSource={dataTable2}
-              />
+              /> */}
               <Table
                 size="small"
                 bordered
@@ -452,9 +472,10 @@ const LichSuSanXuat = (props) => {
                     setParams({ ...params, page: page, pageSize: pageSize });
                   },
                 }}
+                className="custom-table"
                 scroll={{
                   x: "120vw",
-                  y: window.innerHeight * 0.28,
+                  y: tableHeight,
                 }}
                 columns={columns3}
                 dataSource={dataTable3}

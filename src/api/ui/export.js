@@ -48,3 +48,7 @@ export async function exportWarehouseMLTLogs(params) {
   const res = await axios.get("/ui/export/warehouse-mlt-logs", { params });
   return res;
 }
+export async function exportWarehouseFGLogs(params) {
+  const res = await axios.get("/ui/export/warehouse-fg-logs", { params });
+  return res;
+}

@@ -14,7 +14,7 @@ import {
   Form,
   Tree,
 } from "antd";
-import { exportWarehouse } from "../../../api/ui/export";
+import { exportWarehouse, exportWarehouseFGLogs } from "../../../api/ui/export";
 import { getHistoryWareHouseFG } from "../../../api/ui/warehouse";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
@@ -167,7 +167,7 @@ const ThanhPhamGiay = (props) => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportWarehouse(params);
+    const res = await exportWarehouseFGLogs(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -265,8 +265,8 @@ const ThanhPhamGiay = (props) => {
                   <Form.Item label="Lô SX" className="mb-3">
                     <Input placeholder="Nhập lô sx" onChange={(event) => setParams({ ...params, lo_sx: event.target.value })} />
                   </Form.Item>
-                  <Form.Item label="Tên khách hàng" className="mb-3">
-                    <Input placeholder="Nhập tên kh" onChange={(event) => setParams({ ...params, khach_hang: event.target.value })} />
+                  <Form.Item label="Khách hàng" className="mb-3">
+                    <Input placeholder="Nhập mã kh" onChange={(event) => setParams({ ...params, khach_hang: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Đơn hàng" className="mb-3">
                     <Input placeholder="Nhập đơn hàng" onChange={(event) => setParams({ ...params, mdh: event.target.value })} />
