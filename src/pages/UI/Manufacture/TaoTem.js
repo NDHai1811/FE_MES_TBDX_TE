@@ -488,7 +488,7 @@ const TaoTem = () => {
         align: 'center',
         fixed: 'right',
         width: 60,
-        render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => deselectOrder(record.key)} />
+        render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
     }];
     const [orderChecked, setOrderChecked] = useState([]);
     const [selectedOrders, setSelectedOrders] = useState([]);
@@ -505,7 +505,20 @@ const TaoTem = () => {
                 });
             });
         },
+        onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
+        onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
     };
+    const onDeselectOrders = (rows) => {
+        setSelectedOrders(prev => {
+            const newArray = [...prev];
+            return newArray.filter((e, index) => {
+                return !rows.some(o=>o.key === e.key)
+            });
+        });
+    }
+    useEffect(()=>{
+        console.log(selectedOrders);
+    }, [selectedOrders]);
     const createStamp = async () => {
         const order_ids = [...selectedOrders].map(e => e.id)
         if (!orderParams.machine_id) {
@@ -549,10 +562,6 @@ const TaoTem = () => {
             window.removeEventListener('resize', handleWindowResize);
         };
     }, [data]);
-
-    const deselectOrder = (key) => {
-        setSelectedOrders([...selectedOrders].filter(e => e.key !== key));
-    }
     const items = [
         {
             label: 'Danh sách đơn hàng',
