@@ -16,6 +16,7 @@ import {
     Typography,
     InputNumber,
     Tabs,
+    Badge,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
@@ -512,11 +513,11 @@ const TaoTem = () => {
         setSelectedOrders(prev => {
             const newArray = [...prev];
             return newArray.filter((e, index) => {
-                return !rows.some(o=>o.key === e.key)
+                return !rows.some(o => o.key === e.key)
             });
         });
     }
-    useEffect(()=>{
+    useEffect(() => {
         console.log(selectedOrders);
     }, [selectedOrders]);
     const createStamp = async () => {
@@ -566,7 +567,6 @@ const TaoTem = () => {
         {
             label: 'Danh sách đơn hàng',
             key: 1,
-            extra: <Button />,
             children: <Table size='small' bordered
                 loading={loadingOrders}
                 pagination={{
@@ -593,9 +593,8 @@ const TaoTem = () => {
                 dataSource={orders} />
         },
         {
-            label: 'Đơn hàng đã chọn',
+            label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedOrders.length} showZero color="#1677ff" overflowCount={999}/></Space>,
             key: 2,
-            extra: <Button />,
             children: <Table size='small' bordered
                 pagination={false}
                 loading={loadingOrders}
@@ -607,7 +606,24 @@ const TaoTem = () => {
                 }
                 tableLayout="fixed"
                 columns={selectOrdersColumns}
-                dataSource={[...selectedOrders]} />
+                dataSource={selectedOrders}
+                summary={() => (
+                    <Table.Summary fixed>
+                        <Table.Summary.Row>
+                            {selectOrdersColumns.map((e, index) => {
+                                if (index === 0) {
+                                    return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
+                                } else if (index === 4) {
+                                    return <Table.Summary.Cell align="center" index={index}>{
+                                        selectedOrders.reduce((sum, { sl }) => sum + parseInt(sl), 0)
+                                    }</Table.Summary.Cell>
+                                } else {
+                                    return <Table.Summary.Cell index={index} />
+                                }
+                            })}
+                        </Table.Summary.Row>
+                    </Table.Summary>
+                )} />
         }
     ];
     const extraTab = {
