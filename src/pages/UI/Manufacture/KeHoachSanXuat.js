@@ -41,15 +41,24 @@ import TemXaLot from "./TemXaLot";
 import Tem from "../../OI/Manufacture/Tem";
 import { useProfile } from "../../../components/hooks/UserHooks";
 
+const LINE_SONG_ID = '30';
+const LINE_IN_ID = '31';
+const LINE_DAN_ID = '32';
+const LINE_XA_LOT_ID = '33';
+const SONG_MACHINE = ['S01'];
 const KeHoachSanXuat = () => {
   document.title = "Kế hoạch sản xuất";
   const history = useHistory();
   const { userProfile } = useProfile();
   const [form] = Form.useForm();
   const [params, setParams] = useState({
+    machine: SONG_MACHINE,
     start_date: dayjs(),
     end_date: dayjs(),
   });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [listCheck, setListCheck] = useState([]);
   const [listPrintSong, setListPrintSong] = useState([]);
   const [listPrintXaLot, setListPrintXaLot] = useState([]);
@@ -60,7 +69,7 @@ const KeHoachSanXuat = () => {
       title: "STT",
       dataIndex: "stt",
       key: "stt",
-      render: (value, item, index) => index + 1,
+      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
       align: "center",
       width: "1.5%",
     },
@@ -260,6 +269,7 @@ const KeHoachSanXuat = () => {
     (async () => {
       const res1 = await getUIItemMenu();
       setItemMenu(res1.data);
+      setParams({...params, machine: (res1.data.find(e=>e.id === LINE_SONG_ID)?.children ?? []).map(e=>e.id)})
     })();
   }, []);
 
@@ -267,7 +277,9 @@ const KeHoachSanXuat = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getListProductPlan(params);
-    setData((Array.isArray(res) ? res : (Object.values(res)) ?? []).map((e) => ({ ...e, key: e.id })));
+    const result = (Array.isArray(res) ? res : (Object.values(res)) ?? []).map((e) => ({ ...e, key: e.id }));
+    setData(result);
+    setTotalPage(result.length)
     setLoading(false);
   };
 
@@ -299,7 +311,7 @@ const KeHoachSanXuat = () => {
   };
   const onDetele = async (record) => {
     console.log(record);
-    await deleteRecordProductPlan({ id: record.id });
+    await deleteRecordProductPlan([record.id]);
     loadListTable();
   };
   const deleteRecord = async () => {
@@ -351,12 +363,12 @@ const KeHoachSanXuat = () => {
   };
   const [exportLoadingXL, setExportLoadingXL] = useState(false);
   const exportFileXL = async () => {
-    setExportLoadingXL(true);
+    setExportLoading(true);
     const res = await exportKHXaLot({ ...params, plan_ids: listCheck });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
-    setExportLoadingXL(false);
+    setExportLoading(false);
   };
   const EditableCell = ({
     editing,
@@ -481,9 +493,9 @@ const KeHoachSanXuat = () => {
       const song = [];
       const xaLot = [];
       selectedRows.forEach(element => {
-        if(element.line_id === '30'){
+        if(element.line_id === LINE_SONG_ID){
           song.push(element)
-        }else if(element.line_id === '33'){
+        }else if(element.line_id === LINE_XA_LOT_ID){
           xaLot.push(element)
         }
       });
@@ -502,6 +514,18 @@ const KeHoachSanXuat = () => {
       key: 2,
       label: "In tem Xả lót",
       onClick: handlePrintXaLot
+    },
+  ];
+  const exportItemDropdown = [
+    {
+      key: 1,
+      label: "KHSX Sóng",
+      onClick: exportFile,
+    },
+    {
+      key: 2,
+      label: "KHSX Xả lót",
+      onClick: exportFileXL,
     },
   ];
   const header = document.querySelector('.custom-card .ant-table-header');
@@ -550,6 +574,7 @@ const KeHoachSanXuat = () => {
                   <Tree
                     checkable
                     onCheck={onCheck}
+                    checkedKeys={params.machine}
                     treeData={itemsMenu}
                   />
                 </Form.Item>
@@ -633,7 +658,7 @@ const KeHoachSanXuat = () => {
             className="custom-card"
             extra={
               <Space>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={exportFile}
                   loading={exportLoading}
@@ -646,7 +671,10 @@ const KeHoachSanXuat = () => {
                   loading={exportLoadingXL}
                 >
                   KHSX Xả Lot
-                </Button>
+                </Button> */}
+                <Dropdown.Button type="primary" menu={{ items: exportItemDropdown }} loading={exportLoading} placement="bottomRight" trigger={'click'} arrow icon={<DownOutlined />}>
+                  Tải file Excel
+                </Dropdown.Button>
                 <Upload
                   showUploadList={false}
                   name="files"
@@ -707,7 +735,18 @@ const KeHoachSanXuat = () => {
                 <Table
                   size="small"
                   bordered
-                  pagination={false}
+                  pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    },
+                  }}
                   scroll={{
                     x: "300vw",
                     y: tableHeight,

@@ -317,6 +317,12 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         },
         {
+            title: 'Kết cấu giấy',
+            dataIndex: 'ket_cau_giay',
+            key: 'ket_cau_giay',
+            align: 'center',
+        },
+        {
             title: 'Mã Layout',
             dataIndex: 'layout_id',
             key: 'layout_id',
