@@ -248,7 +248,6 @@ const Import = (props) => {
 
   const prinTem = () => {
     print();
-    setListCheck([]);
   }
   const onShowPopup = () => {
     setVisible(true);
