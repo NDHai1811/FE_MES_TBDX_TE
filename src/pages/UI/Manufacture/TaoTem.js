@@ -91,11 +91,11 @@ const TaoTem = () => {
     const [loadingExport, setLoadingExport] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editingKey, setEditingKey] = useState("");
-    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 100 });
+    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 20 });
     const componentRef1 = useRef();
     const [totalPage, setTotalPage] = useState(1);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(100);
+    const [pageSize, setPageSize] = useState(20);
     const [params, setParams] = useState({ show: 'new' });
     const optionsDisplay = [
         { value: 'new', label: 'Mới' },
@@ -740,7 +740,7 @@ const TaoTem = () => {
                                     size="medium"
                                     type="primary"
                                     style={{ width: "100%" }}
-                                    onClick={() => { setOpenModal(true); setOrderParams({ page: 1, pageSize: 100 }) }}
+                                    onClick={() => { setOpenModal(true); setOrderParams({ page: 1, pageSize: 20 }) }}
                                 >
                                     Tạo từ ĐH
                                 </Button>
