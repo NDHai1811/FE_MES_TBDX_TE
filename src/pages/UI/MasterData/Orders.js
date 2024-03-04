@@ -955,6 +955,7 @@ const Orders = () => {
       {
         so_luong: 0,
         ngay_giao: "",
+        dot: 1,
         xuong_giao: "",
       },
     ]);
@@ -1203,7 +1204,17 @@ const Orders = () => {
             />
           </div>
         </Col>
-        <Col span={12}>
+        <Col span={3}>
+          <div>
+            <p3 style={{ display: "block" }}>Đợt</p3>
+            <Input
+              placeholder="Nhập đợt"
+              onChange={(e) => onChangeDot(e.target.value, index)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={9}>
           <div>
             <p3 style={{ display: "block" }}>Nơi giao</p3>
             <Input
@@ -1241,6 +1252,16 @@ const Orders = () => {
     const items = inputData.map((val, i) => {
       if (i === index) {
         val.xuong_giao = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+
+  const onChangeDot = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.dot = value;
       }
       return { ...val };
     });

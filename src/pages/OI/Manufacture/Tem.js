@@ -96,10 +96,12 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center">{detail.thu_tu_uu_tien}</td>
             </tr>
             <tr>
-              <td colSpan={5} style={{ fontSize: '12px' }}>GHI CHÚ TBDX</td>
+              <td colSpan={4} style={{ fontSize: '12px' }}>GHI CHÚ TBDX</td>
+              <td colSpan={1} style={{ fontSize: '12px' }} className="text-center">ĐỢT</td>
             </tr>
             <tr>
-              <td className="text-center" colSpan={5}><b>{detail.note_2}</b></td>
+              <td className="text-center" colSpan={4}><b>{detail.note_2}</b></td>
+              <td className="text-center" colSpan={1}><b>{detail.dot}</b></td>
             </tr>
             <tr>
               <td className="text-center" style={{ fontSize: '12px' }}>NGÀY SX</td>
