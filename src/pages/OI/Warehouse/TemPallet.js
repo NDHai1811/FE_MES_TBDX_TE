@@ -91,8 +91,6 @@ export default class TemPallet extends React.Component {
     for (const info of listCheck) {
       const tempTemplate = <PrintTemplate info={info} />;
       printingPages.push(tempTemplate);
-      printingPages.push(tempTemplate);
-      printingPages.push(tempTemplate);
     }
     return <div>{printingPages}</div>;
   }
