@@ -31,12 +31,12 @@ const Footer = () => {
       key: "/oi/quality/qc",
       permission: "oi-quality-cl",
     },
-    {
-      label: "Chất lượng (SX)",
-      icon: <StarOutlined />,
-      key: "/oi/quality/sx",
-      permission: "oi-quality-sx",
-    },
+    // {
+    //   label: "Chất lượng (SX)",
+    //   icon: <StarOutlined />,
+    //   key: "/oi/quality/machine",
+    //   permission: "oi-quality-sx",
+    // },
     {
       label: "Thiết bị",
       icon: <ToolOutlined />,

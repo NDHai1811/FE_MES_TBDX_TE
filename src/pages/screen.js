@@ -39,11 +39,16 @@ const Screen = (props) => {
       link: "/oi/manufacture",
       permission: "oi-manufacture",
     },
-    {
-      title: "Chất lượng",
-      link: "/oi/quality/sx",
-      permission: "oi-quality-sx",
-    },
+    // {
+    //   title: "Chất lượng (Máy IOT)",
+    //   link: "/oi/quality/machine-iot",
+    //   permission: "oi-quality-sx",
+    // },
+    // {
+    //   title: "Chất lượng (Máy thủ công)",
+    //   link: "/oi/quality/machine",
+    //   permission: "oi-quality-sx",
+    // },
     {
       title: "Chất lượng",
       link: "/oi/quality/qc",
@@ -127,7 +132,7 @@ const Screen = (props) => {
                     return (
                       <Col span={12} key={index}>
                         <Link to={e.link}>
-                          <Button type="primary" className="w-100">
+                          <Button type="primary" className="w-100" style={{paddingInline: 0}}>
                             {e.title}
                           </Button>
                         </Link>
@@ -145,7 +150,7 @@ const Screen = (props) => {
                     return (
                       <Col span={12} key={index}>
                         <Link to={e.link}>
-                          <Button type="primary" className="w-100">
+                          <Button type="primary" className="w-100" style={{paddingInline: 0}}>
                             {e.title}
                           </Button>
                         </Link>
