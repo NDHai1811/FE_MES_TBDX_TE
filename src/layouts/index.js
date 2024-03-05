@@ -30,9 +30,7 @@ const Layout = (props) => {
                 minHeight: "100%",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <UserCard />
-              </div>
               <div style={{ marginBottom: 60 }}>{props.children}</div>
             </div>
             <Footer />

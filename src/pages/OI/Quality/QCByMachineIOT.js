@@ -10,8 +10,6 @@ import {
   Radio,
   DatePicker,
   Select,
-  Button,
-  message,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
@@ -32,8 +30,6 @@ import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 import { getListMachine } from "../../../api";
 import Checksheet3 from "../../../components/Popup/Checksheet3";
-import { QrcodeOutlined } from "@ant-design/icons";
-import ScanQR from "../../../components/Scanner";
 
 const QCByMachine = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -49,7 +45,10 @@ const QCByMachine = (props) => {
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
   const [openModalCK3, setOpenModalCK3] = useState(false);
-  const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
+  const [date, setDate] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const overallColumns = [
     {
       title: "Máy",
@@ -62,7 +61,6 @@ const QCByMachine = (props) => {
           value={machine_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
-          showSearch
           bordered={false}
         />
       ),
@@ -201,24 +199,6 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
-      key: "san_luong",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
-      align: "center",
-    },
-    {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
@@ -256,7 +236,39 @@ const QCByMachine = (props) => {
         }
       },
     },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+    },
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+    },
   ];
+
+  const disabledStartDate = (current) => {
+    return current && current < dayjs().subtract(7, "day");
+  };
+
+  const disabledEndDate = (current) => {
+    return current && current.startOf("day") < date.start_date.startOf("day");
+  };
 
   const rowClassName = (record, index) => {
     if (record.id === selectedRow?.id) {
@@ -284,9 +296,14 @@ const QCByMachine = (props) => {
 
   const getListOption = async () => {
     setLoading(true);
-    var machine = await getListMachine();
-    setMachineOptions(machine);
-    setLoading(false);
+    var machine = await getListMachine({ is_iot: true });
+    if (machine.length > 0) {
+      setMachineOptions(machine);
+      setLoading(false);
+    } else {
+      history.push('/screen');
+    }
+
   };
   async function getData() {
     setLoading(true);
@@ -319,30 +336,40 @@ const QCByMachine = (props) => {
       if (!target) {
         target = machineOptions[0];
       }
-      if (target.is_iot) {
+      if(target.is_iot){
         history.push("/oi/quality/machine-iot/" + target.value);
-      } else {
+      }else{
         history.push("/oi/quality/machine/" + target.value);
       }
     }
   }, [machineOptions]);
   const onChangeLine = (value, option) => {
     console.log(option);
-    setParams({ ...params, machine: value ? [value] : [] })
-    if (option.is_iot) {
+    setParams({ ...params, machine: value ? [value] : [] });
+    if(option.is_iot){
       history.push("/oi/quality/machine-iot/" + value);
-    } else {
+    }else{
       history.push("/oi/quality/machine/" + value);
     }
   };
-  const [isScan, setIsScan] = useState(0);
-  useEffect(() => {
-    if (isScan === 1) {
-      setIsOpenQRScanner(true);
-    } else if (isScan === 2) {
-      setIsOpenQRScanner(false);
+  const [form1] = Form.useForm();
+  const [form2] = Form.useForm();
+  const onSubmitSLP = async (values) => {
+    if (selectedRow?.lo_sx) {
+      onSubmitResult(values);
     }
-  }, [isScan]);
+    setOpenModal1(false);
+    form1.resetFields();
+  };
+  const onSubmitPhanDinh = async (values) => {
+    if (selectedRow?.lo_sx) {
+      onSubmitResult(values);
+    }
+    setOpenModal2(false);
+    form2.resetFields();
+  };
+  const [openModal1, setOpenModal1] = useState(false);
+  const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
     if (values?.tinh_nang) {
@@ -358,22 +385,6 @@ const QCByMachine = (props) => {
       data: values,
     });
     getData();
-  };
-  const onScan = async (result) => {
-    const lo_sx = JSON.parse(result).lo_sx;
-    const target = data.find(e=>e.lo_sx === lo_sx);
-    if(target){
-      setSelectedRow(target);
-    }else{
-      message.info('Không tìm thấy lô')
-    }
-    
-    setIsOpenQRScanner(false);
-    setIsScan(2)
-  };
-  const handleCloseMdl = () => {
-    setIsOpenQRScanner(false);
-    setIsScan(2);
   };
   return (
     <React.Fragment>
@@ -426,7 +437,7 @@ const QCByMachine = (props) => {
           gutter={[3, 8]}
           style={{ justifyContent: "space-between" }}
         >
-          <Col span={8}>
+          <Col span={12}>
             <DatePicker
               placeholder="Từ ngày"
               style={{ width: "100%" }}
@@ -436,7 +447,7 @@ const QCByMachine = (props) => {
               onChange={(value) => value.isValid() && setParams({ ...params, start_date: value })}
             />
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <DatePicker
               placeholder="Đến ngày"
               style={{ width: "100%" }}
@@ -446,15 +457,6 @@ const QCByMachine = (props) => {
               onChange={(value) => value.isValid() && setParams({ ...params, end_date: value })}
             />
           </Col>
-          <Col span={8}>
-            <Button
-              size="medium"
-              type="primary"
-              style={{ width: "100%" }}
-              onClick={() => setIsScan(1)}
-              icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-            />
-          </Col>
         </Row>
 
         <Table
@@ -462,6 +464,7 @@ const QCByMachine = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
+            x: "calc(700px + 50%)",
             y: 300,
           }}
           pagination={false}
@@ -506,22 +509,6 @@ const QCByMachine = (props) => {
         setOpen={setOpenModalCK3}
         machine_id={machine_id}
       />
-      {isOpenQRScanner && (
-        <Modal
-          title="Quét QR"
-          open={isOpenQRScanner}
-          onCancel={handleCloseMdl}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isOpenQRScanner}
-            onResult={(res) => {
-              onScan(res);
-              setIsOpenQRScanner(false);
-            }}
-          />
-        </Modal>
-      )}
     </React.Fragment>
   );
 };

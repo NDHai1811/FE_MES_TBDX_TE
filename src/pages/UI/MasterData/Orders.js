@@ -759,19 +759,17 @@ const Orders = () => {
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
-          <span>
+          <span className="d-flex justify-content-evenly flex-wrap">
             <Button
               onClick={() => onUpdate(record)}
               size="small"
               type="primary"
-              style={{
-                marginRight: 5,
-              }}
+              style={{ margin: 2, }}
             >
               Lưu
             </Button>
             <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-              <Button size="small" type="primary" danger >Hủy</Button>
+              <Button size="small" type="primary" danger style={{ margin: 2, }}>Hủy</Button>
             </Popconfirm>
           </span>
         ) : (
