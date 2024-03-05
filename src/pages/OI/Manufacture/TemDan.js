@@ -128,8 +128,6 @@ export default class TemIn extends React.Component {
             const tempTemplate = <PrintTemplate detail={detail} key={index} />;
             printingPages.push(tempTemplate);
         });
-
-        // }
         return <div>{printingPages}</div>;
     }
 }
