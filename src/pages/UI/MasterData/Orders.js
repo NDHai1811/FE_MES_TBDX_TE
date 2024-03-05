@@ -875,9 +875,9 @@ const Orders = () => {
             value: e.drc_id,
             label: e.drc_id + " (" + e.drc.description + ")",
           }));
-        if (filteredOptions.length <= 0) {
-          filteredOptions = listDRC;
-        }
+        // if (filteredOptions.length <= 0) {
+        //   filteredOptions = listDRC;
+        // }
         break;
     }
     return filteredOptions;
@@ -1286,13 +1286,13 @@ const Orders = () => {
   return (
     <>
       {contextHolder}
-      <div style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 60px)', display: 'flex' }}>
-        <div className={isSidebar ? 'ant-col ant-col-4 px-1' : 'ant-col-0'}>
+      <div style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 60px)', display: 'flex', gap: 4 }}>
+        <div className={isSidebar ? 'ant-col ant-col-4' : 'ant-col-0'}>
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
-              bodyStyle={{ padding: 0, height: 'calc(100vh - 145px)' }}
-              className="custom-card"
+              bodyStyle={{ padding: 0}}
+              className="custom-card scroll"
               actions={[
                 <div layout="vertical">
                   <Button
@@ -1306,9 +1306,9 @@ const Orders = () => {
               ]}
             >
               <Divider>Tìm kiếm</Divider>
-              <div className="mb-3 custom-card" style={{ height: 'calc(100% - 60px)', overflow: 'auto' }} >
+              <div className="mb-3" >
                 <Form
-                  style={{ margin: "0 5px" }}
+                  style={{ margin: "0 15px" }}
                   layout="vertical"
                   onFinish={btn_click}
                 >

@@ -43,7 +43,7 @@ const PQC_OQC = (props) => {
   const [data, setData] = useState([]);
   const [lineOptions, setLineOptions] = useState([]);
   const [params, setParams] = useState({ line_id: line_id, start_date: dayjs(), end_date: dayjs() });
-  const [overall, setOverall] = useState([]);
+  const [overall, setOverall] = useState([{}]);
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
@@ -383,7 +383,7 @@ const PQC_OQC = (props) => {
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row gutter={[6, 8]} className="mt-3">
+        <Row gutter={[6, 8]} className="mt-1">
           <Col span={24}>
             <Table
               locale={{ emptyText: "Trống" }}

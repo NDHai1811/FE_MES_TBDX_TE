@@ -447,7 +447,7 @@ const InDan = (props) => {
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row className="mt-3" gutter={[6, 8]}>
+        <Row className="mt-1" gutter={[6, 8]}>
           <Col span={24}>
             <Table
               size="small"
@@ -470,85 +470,76 @@ const InDan = (props) => {
               dataSource={selectedLot ? [selectedLot] : []}
             />
           </Col>
-          <Row
-            gutter={4}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            <Col span={7}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Từ ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeStartDate}
-              />
-            </Col>
-            <Col span={7}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Đến ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeEndDate}
-              />
-            </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={() => setIsScan(1)}
-                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-              />
-            </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={handlePrint}
-                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-              />
-              <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
-                <TemIn listCheck={listCheck} ref={componentRef2} />
-                <TemDan listCheck={listCheck} ref={componentRef3} />
-              </div>
-            </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={openMdlPrint}
-              >
-                IN TEM
-              </Button>
-            </Col>
-          </Row>
-          <Col span={24}>
-            <Table
-              scroll={{
-                x: "calc(700px + 50%)",
-                y: 300,
-              }}
-              size="small"
-              rowClassName={(record, index) =>
-                "no-hover " + rowClassName(record, index)
-              }
-              pagination={false}
-              bordered
-              columns={columns}
-              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+          <Col span={9}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Từ ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeStartDate}
             />
           </Col>
+          <Col span={9}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Đến ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeEndDate}
+            />
+          </Col>
+          <Col span={2}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={() => setIsScan(1)}
+              icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
+            />
+          </Col>
+          <Col span={2}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={handlePrint}
+              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+            />
+            <div className="report-history-invoice">
+              <Tem listCheck={listCheck} ref={componentRef1} />
+              <TemIn listCheck={listCheck} ref={componentRef2} />
+              <TemDan listCheck={listCheck} ref={componentRef3} />
+            </div>
+          </Col>
+          <Col span={2}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={openMdlPrint}
+            >
+              IN TEM
+            </Button>
+          </Col>
         </Row>
+        <Col span={24}>
+          <Table
+            scroll={{
+              x: "calc(700px + 50%)",
+              y: 300,
+            }}
+            size="small"
+            rowClassName={(record, index) =>
+              "no-hover " + rowClassName(record, index)
+            }
+            pagination={false}
+            bordered
+            columns={columns}
+            dataSource={data.map((e, index) => ({ ...e, key: index }))}
+          />
+        </Col>
       </Spin>
       {isOpenQRScanner && (
         <Modal

@@ -220,7 +220,7 @@ const Export = (props) => {
   }
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[4, 12]}>
+      <Row className="mt-1" gutter={[4, 12]}>
         <Col span={24}>
           <Table
             pagination={false}

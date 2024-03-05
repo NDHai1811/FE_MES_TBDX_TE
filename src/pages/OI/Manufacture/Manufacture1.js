@@ -224,21 +224,21 @@ const Manufacture1 = (props) => {
     })();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     reloadData();
   }, [params, machine_id]);
 
   var timeout;
   const loadDataRescursive = async (machine_id, selectedLot) => {
     if (!machine_id || isPause) return;
-    const res = await getCurrentManufacturing({machine_id});
+    const res = await getCurrentManufacturing({ machine_id });
     console.log(selectedLot?.lo_sx, res.data?.lo_sx);
-    if(selectedLot?.lo_sx !== res.data?.lo_sx){
+    if (selectedLot?.lo_sx !== res.data?.lo_sx) {
       reloadData();
     }
-    setData(prev=>prev.map(e=>{
-      if(e?.lo_sx === res.data?.lo_sx){
-        return {...e, ...res.data}
+    setData(prev => prev.map(e => {
+      if (e?.lo_sx === res.data?.lo_sx) {
+        return { ...e, ...res.data }
       }
       return e;
     }))
@@ -341,7 +341,7 @@ const Manufacture1 = (props) => {
   const onClickRow = (record) => {
     record.status <= 1 && isPause && setSelectedLot(record);
   }
-  
+
   const onClickBtn = async () => {
     var res = await startStopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: !isPause, machine_id: machine_id });
     if (res.success) {
@@ -353,7 +353,7 @@ const Manufacture1 = (props) => {
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row className="mt-3" gutter={[6, 8]}>
+        <Row className="mt-1" gutter={[6, 8]}>
           <Col span={24}>
             <Table
               size="small"
@@ -381,51 +381,42 @@ const Manufacture1 = (props) => {
               }}
             />
           </Col>
-          <Row
-            gutter={4}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            <Col span={6}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Từ ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeStartDate}
-              />
-            </Col>
-            <Col span={6}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Đến ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeEndDate}
-              />
-            </Col>
-            <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
-            <Col span={6}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={handlePrint}
-                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-              />
-              <div className="report-history-invoice">
-                {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
-                <Tem listCheck={listTem} ref={componentRef1} />
-                <TemIn listCheck={listTem} ref={componentRef2} />
-                <TemDan listCheck={listTem} ref={componentRef3} />
-              </div>
-            </Col>
-          </Row>
+          <Col span={6}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Từ ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeStartDate}
+            />
+          </Col>
+          <Col span={6}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Đến ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeEndDate}
+            />
+          </Col>
+          <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+          <Col span={6}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={handlePrint}
+              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+            />
+            <div className="report-history-invoice">
+              {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+              <Tem listCheck={listTem} ref={componentRef1} />
+              <TemIn listCheck={listTem} ref={componentRef2} />
+              <TemDan listCheck={listTem} ref={componentRef3} />
+            </div>
+          </Col>
           <Col span={24}>
             <Table
               scroll={{

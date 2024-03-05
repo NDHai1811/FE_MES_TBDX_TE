@@ -389,7 +389,7 @@ const QCByMachine = (props) => {
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row gutter={[6, 8]} className="mt-3">
+        <Row gutter={[6, 8]} className="mt-1">
           <Col span={24}>
             <Table
               locale={{ emptyText: "Trống" }}

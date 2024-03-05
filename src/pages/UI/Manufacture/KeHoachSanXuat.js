@@ -572,9 +572,9 @@ const KeHoachSanXuat = () => {
               </div>
             ]}
           >
+            <Divider>Công đoạn</Divider>
             <div className="mb-3">
               <Form style={{ margin: "0 15px" }} layout="vertical">
-                <Divider>Công đoạn</Divider>
                 <Form.Item className="mb-3">
                   <Tree
                     checkable
