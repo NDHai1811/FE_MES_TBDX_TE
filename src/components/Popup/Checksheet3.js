@@ -29,7 +29,7 @@ const Checksheet3 = (props) => {
   return (
     <React.Fragment>
       <Modal
-        title="Số lượng phế"
+        title={text}
         open={open}
         onCancel={() => setOpen(false)}
         okText={"Xác nhận"}

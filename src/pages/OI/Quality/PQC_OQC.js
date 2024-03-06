@@ -32,6 +32,7 @@ import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
 import { useRef } from "react";
+import Checksheet3 from "../../../components/Popup/Checksheet3";
 
 const PQC_OQC = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -47,6 +48,7 @@ const PQC_OQC = (props) => {
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
+  const [openModalCK3, setOpenModalCK3] = useState(false);
   useEffect(()=>{
     if(!line_id && lineOptions.length > 0){
       const item = lineOptions[0];
@@ -163,7 +165,7 @@ const PQC_OQC = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow?.checked_sl_ng === false && setOpenModal1(true);
+            selectedRow?.checked_sl_ng === false && setOpenModalCK3(true);
           },
           style: {
             cursor: 'pointer'
@@ -480,75 +482,6 @@ const PQC_OQC = (props) => {
             rowHoverBg: "#000000",
           }}
         />
-        <Modal
-          title="Số lượng phế"
-          open={openModal1}
-          onCancel={() => setOpenModal1(false)}
-          okText={"Xác nhận"}
-          okButtonProps={{
-            onClick: () => form1.submit(),
-          }}
-        >
-          <Form
-            form={form1}
-            initialValues={{
-              sl_ng_qc: 0,
-            }}
-            onFinish={onSubmitSLP}
-          >
-            <Form.Item name={"sl_ng_qc"}>
-              <InputNumber
-                style={{ width: "100%" }}
-                inputMode="numeric"
-                onPressEnter={() => form1.submit()}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Modal
-          title="Phán định"
-          open={openModal2}
-          onCancel={() => setOpenModal2(false)}
-          okText={"Xác nhận"}
-          okButtonProps={{
-            onClick: () => form1.submit(),
-          }}
-        >
-          <Form
-            form={form2}
-            initialValues={{
-              result: 0,
-            }}
-            onFinish={onSubmitPhanDinh}
-          >
-            <Form.Item name={"phan-dinh"}>
-              <Radio.Group
-                size="large"
-                style={{ float: "right", width: "100%", height: "100%" }}
-                className="d-flex"
-                optionType="button"
-                buttonStyle="solid"
-              >
-                <Radio.Button
-                  value={1}
-                  className={
-                    "positive-radio text-center h-100 d-flex align-items-center justify-content-center"
-                  }
-                  style={{ flex: 1 }}
-                >
-                  OK
-                </Radio.Button>
-                <Radio.Button
-                  value={2}
-                  className="negative-radio text-center h-100 d-flex align-items-center justify-content-center"
-                  style={{ flex: 1 }}
-                >
-                  NG
-                </Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-          </Form>
-        </Modal>
       </Spin>
       <Checksheet1
         text="tính năng"
@@ -565,6 +498,14 @@ const PQC_OQC = (props) => {
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK2}
+        line_id={line_id}
+      />
+      <Checksheet3
+        text="Số lượng phế"
+        open={openModalCK3}
+        selectedLot={selectedRow}
+        onSubmit={onSubmitResult}
+        setOpen={setOpenModalCK3}
         line_id={line_id}
       />
     </React.Fragment>

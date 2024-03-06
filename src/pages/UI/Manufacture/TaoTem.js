@@ -919,7 +919,8 @@ const TaoTem = () => {
                                         setOrderParams({ ...orderParams, mdh: value, page: 1 });
                                         setPage(1);
                                     }}
-                                    open={false}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
                                     placeholder="Nhập mã đơn hàng"
                                     options={[]}
                                     value={orderParams.mdh}
@@ -940,7 +941,8 @@ const TaoTem = () => {
                                         setOrderParams({ ...orderParams, mql: value, page: 1 });
                                         setPage(1);
                                     }}
-                                    open={false}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
                                     placeholder="Nhập MQL"
                                     options={[]}
                                     value={orderParams.mql}

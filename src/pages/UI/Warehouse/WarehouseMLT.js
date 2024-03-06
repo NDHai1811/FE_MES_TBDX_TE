@@ -23,6 +23,7 @@ import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import {
   createWarehouseImport,
+  deleteGoodsReceiptNote,
   exportVehicleWeightTicket,
   exportWarehouseTicket,
   getGoodsReceiptNote,
@@ -311,20 +312,6 @@ const WarehouseMLT = (props) => {
       key: "1",
       label: "Nhập dữ liệu nhập kho",
       children: [
-        // <Table
-        //   bordered
-        //   columns={columns}
-        //   dataSource={importList.map((e) => {
-        //     return { ...e, key: e.id };
-        //   })}
-        //   scroll={{
-        //     y: "50vh",
-        //   }}
-        //   className="h-100"
-        //   rowSelection={rowSelection}
-        //   pagination={false}
-        //   size="small"
-        // />,
         <Form form={formImport}>
           <EditableTable
             form={formImport}
@@ -388,9 +375,12 @@ const WarehouseMLT = (props) => {
   const [openExportModal, setOpenExportModal] = useState(false);
   const [receiptNote, setReceiptNote] = useState([]);
   const [listCheckReceipt, setListCheckReceipt] = useState([]);
+  const [loadingNotes, setLoadingNotes] = useState(false);
   const getReceiptNote = async () => {
+    setLoadingNotes(true);
     var res = await getGoodsReceiptNote();
     setReceiptNote(res);
+    setLoadingNotes(false);
   }
   const receiptNoteColumns = [
     {
@@ -452,6 +442,10 @@ const WarehouseMLT = (props) => {
   const [formNote] = Form.useForm();
   const onSaveNote = async (record) => {
     var res = await updateGoodsReceiptNote(record);
+    getReceiptNote();
+  }
+  const onDeleteNote = async (record) =>{
+    var res = await deleteGoodsReceiptNote(record);
     getReceiptNote();
   }
   return (
@@ -729,13 +723,14 @@ const WarehouseMLT = (props) => {
         footer={
           <Space>
             <Button>Huỷ</Button>
-            <Button type="primary" onClick={exportFileReceiptNote} loading={exportLoading}>Phiếu xuất kho</Button>
+            <Button type="primary" onClick={exportFileReceiptNote} loading={exportLoading}>Phiếu nhập kho</Button>
             <Button type="primary" onClick={exportFileVehicleWeightNote} loading={exportLoading1}>Phiếu cân xe</Button>
           </Space>
         }>
         <Form form={formNote}>
           <EditableTable
             bordered
+            loading={loadingNotes}
             form={formNote}
             columns={receiptNoteColumns}
             dataSource={receiptNote.map((e) => {
@@ -749,6 +744,7 @@ const WarehouseMLT = (props) => {
             pagination={false}
             size="small"
             onSave={onSaveNote}
+            onDelete={onDeleteNote}
           />
         </Form>
       </Modal>

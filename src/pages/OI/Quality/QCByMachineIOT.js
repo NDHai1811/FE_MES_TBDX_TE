@@ -352,24 +352,6 @@ const QCByMachine = (props) => {
       history.push("/oi/quality/machine/" + value);
     }
   };
-  const [form1] = Form.useForm();
-  const [form2] = Form.useForm();
-  const onSubmitSLP = async (values) => {
-    if (selectedRow?.lo_sx) {
-      onSubmitResult(values);
-    }
-    setOpenModal1(false);
-    form1.resetFields();
-  };
-  const onSubmitPhanDinh = async (values) => {
-    if (selectedRow?.lo_sx) {
-      onSubmitResult(values);
-    }
-    setOpenModal2(false);
-    form2.resetFields();
-  };
-  const [openModal1, setOpenModal1] = useState(false);
-  const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
     if (values?.tinh_nang) {
@@ -503,6 +485,7 @@ const QCByMachine = (props) => {
         machine_id={machine_id}
       />
       <Checksheet3
+        text={'Số lượng phế'}
         open={openModalCK3}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
