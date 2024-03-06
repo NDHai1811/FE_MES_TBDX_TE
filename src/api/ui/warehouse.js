@@ -52,6 +52,11 @@ export async function updateGoodsReceiptNote(params) {
   return res.data;
 }
 
+export async function deleteGoodsReceiptNote(params) {
+  const res = await axios.delete("/ui/goods-receipt-note/delete", {params});
+  return res.data;
+}
+
 export async function getHistoryWareHouseMLT(params) {
   const res = await axios.get("/ui/warehouse/mlt/log", { params: params });
   return res.data;

@@ -1291,7 +1291,7 @@ const Orders = () => {
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
-              bodyStyle={{ padding: 0}}
+              bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
               actions={[
                 <div layout="vertical">
@@ -1357,6 +1357,20 @@ const Orders = () => {
                       open={false}
                       tokenSeparators={[',']}
                       options={[]}
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          mql: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập MQL"
                     />
                   </Form.Item>
                   <Form.Item label="L" className="mb-3">
@@ -1427,20 +1441,6 @@ const Orders = () => {
                         setPage(1);
                       }}
                       placeholder="Nhập order"
-                    />
-                  </Form.Item>
-                  <Form.Item label="MQL" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          mql: e.target.value,
-                          page: 1,
-                        });
-                        setPage(1);
-                      }}
-                      placeholder="Nhập MQL"
                     />
                   </Form.Item>
                   <Form.Item label="PO" className="mb-3">

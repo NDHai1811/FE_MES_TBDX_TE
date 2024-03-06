@@ -180,6 +180,12 @@ const columns3 = [
     align: "center",
   },
   {
+    title: "Đợt",
+    dataIndex: "dot",
+    key: "dot",
+    align: "center",
+  },
+  {
     title: "Tên công nhân sản xuất",
     dataIndex: "user_name",
     key: "user_name",
