@@ -345,7 +345,6 @@ const TaoTem = () => {
     };
     useEffect(() => {
         setListTem([...data].filter(e => listCheck.includes(e.key)).map(e => {
-            console.log({ ...e, nhan_vien_sx: listUsers.find(user => user?.value == e?.nhan_vien_sx)?.label });
             return { ...e, nhan_vien_sx: listUsers.find(user => user?.value == e?.nhan_vien_sx)?.label };
         }));
     }, [listCheck, data])
@@ -497,7 +496,6 @@ const TaoTem = () => {
         selectedRowKeys: [].concat(selectedOrders).map(e => e.key),
         fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRows, selectedRowKeys);
             setOrderChecked(selectedRowKeys);
             setSelectedOrders(prev => {
                 const newArray = [...prev, ...selectedRows];
@@ -517,9 +515,6 @@ const TaoTem = () => {
             });
         });
     }
-    useEffect(() => {
-        console.log(selectedOrders);
-    }, [selectedOrders]);
     const createStamp = async () => {
         const order_ids = [...selectedOrders].map(e => e.id)
         if (!orderParams.machine_id) {
