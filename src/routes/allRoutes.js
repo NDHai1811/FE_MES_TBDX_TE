@@ -55,6 +55,7 @@ import TaoTon from "../pages/UI/Warehouse/TaoTon";
 import TinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
 import EmptyPage from "../pages/EmptyPage";
 import QCByMachineIOT from "../pages/OI/Quality/QCByMachineIOT";
+import IQC from "../pages/OI/Quality/IQC";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -107,9 +108,9 @@ const authProtectedRoutes = [
   { path: ["/tao-tem"], component: InTem },
   { path: ["/oi/manufacture", "/oi/manufacture/:machine_id"], component: Manufacture, permission: 'oi-manufacture'},
   // { path: ["/oi/quality/:type"], component: Quality, permission: 'oi-quality' },
-  { path: ["/oi/quality/machine-iot", "/oi/quality/machine-iot/:machine_id"], component: QCByMachineIOT, permission: 'oi-quality-sx' },
-  { path: ["/oi/quality/machine", "/oi/quality/machine/:machine_id"], component: QCByMachine, permission: 'oi-quality-sx' },
-  { path: ["/oi/quality/qc", "/oi/quality/qc/:line_id"], component: QCByLine, permission: 'oi-quality-cl' },
+  { path: ["/oi/quality/machine-iot", "/oi/quality/machine-iot/:machine_id"], component: QCByMachineIOT, permission: 'oi-quality-machine-iot' },
+  { path: ["/oi/quality/machine", "/oi/quality/machine/:machine_id"], component: QCByMachine, permission: 'oi-quality-machine' },
+  { path: ["/oi/quality/iqc", "/oi/quality/iqc"], component: IQC, permission: 'oi-quality-iqc' },
   { path: ["/oi/equipment", "/oi/equipment/:machine_id"], component: Equipment, permission: 'oi-equipment' },
   { path: ["/oi/warehouse/kho-nvl", "/oi/warehouse/kho-nvl/:line"], component: Warehouse, permission: 'oi-warehouse-nvl' },
   { path: ["/oi/warehouse/kho-tp", "/oi/warehouse/kho-tp/:line"], component: WarehouseTP, permission: 'oi-warehouse-tp' },

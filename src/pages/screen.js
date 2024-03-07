@@ -39,20 +39,20 @@ const Screen = (props) => {
       link: "/oi/manufacture",
       permission: "oi-manufacture",
     },
-    // {
-    //   title: "Chất lượng (Máy IOT)",
-    //   link: "/oi/quality/machine-iot",
-    //   permission: "oi-quality-sx",
-    // },
-    // {
-    //   title: "Chất lượng (Máy thủ công)",
-    //   link: "/oi/quality/machine",
-    //   permission: "oi-quality-sx",
-    // },
     {
-      title: "Chất lượng",
-      link: "/oi/quality/qc",
-      permission: "oi-quality-cl",
+      title: "Chất lượng (IOT)",
+      link: "/oi/quality/machine-iot",
+      permission: "oi-quality-machine-iot",
+    },
+    {
+      title: "Chất lượng (TC)",
+      link: "/oi/quality/machine",
+      permission: "oi-quality-machine",
+    },
+    {
+      title: "IQC",
+      link: "/oi/quality/iqc",
+      permission: "oi-quality-iqc",
     },
     {
       title: "Thiết bị",
