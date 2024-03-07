@@ -19,6 +19,7 @@ import { getCustomers } from "../../../api/ui/main";
 import {
     createProductPlan,
     exportPreviewPlan,
+    exportPreviewPlanXaLot,
     getListProductPlan,
     getOrderList,
     handleOrder,
@@ -329,9 +330,15 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         },
         {
-            title: 'Ghi chú khách',
+            title: 'Ghi chú khách hàng',
             dataIndex: 'note_1',
             key: 'note_1',
+            align: 'center',
+        },
+        {
+            title: 'Đợt',
+            dataIndex: 'dot',
+            key: 'dot',
             align: 'center',
         },
         {
@@ -382,11 +389,19 @@ const TaoKeHoachSanXuat = () => {
     }, [lsxParams]);
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () => {
-        setExportLoading(true);
-        const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
-        if (res.success) {
-            window.location.href = baseURL + res.data;
+        setExportLoading(false);
+        if(planParams.line_id === '30'){
+            const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
+            if (res.success) {
+                window.location.href = baseURL + res.data;
+            }
+        }else if(planParams.line_id === '33'){
+            const res = await exportPreviewPlanXaLot({ plans: previewPlan, start_time: planParams.start_date });
+            if (res.success) {
+                window.location.href = baseURL + res.data;
+            }
         }
+        
         setExportLoading(false);
     };
 
@@ -529,9 +544,9 @@ const TaoKeHoachSanXuat = () => {
                                         className="mb-3"
                                         rules={[{ required: true }]}
                                     >
-                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => {
-                                            setPlanParams({ ...planParams, machine_id: value });
-                                            setOrderParams({ ...orderParams, machine_id: value });
+                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={(value, option) => {
+                                            setPlanParams({ ...planParams, machine_id: value, line_id: option.line_id });
+                                            setOrderParams({ ...orderParams, machine_id: value, line_id: option.line_id });
                                         }}
                                             optionFilterProp="label" />
                                     </Form.Item>
@@ -586,7 +601,7 @@ const TaoKeHoachSanXuat = () => {
             >
                 <Form layout="vertical">
                     <Row gutter={[16, 16]}>
-                        <Col span={6}>
+                        <Col span={4}>
                             <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
@@ -609,7 +624,7 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        <Col span={4}>
                             <Form.Item
                                 label="MDH"
                                 className="mb-3"
@@ -622,8 +637,29 @@ const TaoKeHoachSanXuat = () => {
                                     onChange={(value) => {
                                         setOrderParams({ ...orderParams, mdh: value });
                                     }}
-                                    open={false}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
                                     placeholder="Nhập mã đơn hàng"
+                                    options={[]}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Đợt"
+                                className="mb-3"
+                            >
+                                <Select
+                                    mode="tags"
+                                    allowClear
+                                    showSearch
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, dot: value });
+                                    }}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
+                                    placeholder="Nhập đợt"
                                     options={[]}
                                 />
                             </Form.Item>
