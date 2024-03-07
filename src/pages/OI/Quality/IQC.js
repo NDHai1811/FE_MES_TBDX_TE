@@ -258,23 +258,20 @@ const IQC = (props) => {
   };
 
   async function getData() {
-    if (line_id) {
-      setLoading(true);
-      var overall = await getIQCOverall({ ...params });
-      setOverall(overall.data);
-      var res = await getLotIQCList({ ...params });
-      setData(res.data);
-      if (res.data.length > 0) {
-        var current = res.data.find((e) => e.id === selectedRow?.id);
-        if (
-          current?.iqc &&
-          current?.iqc !== selectedRow?.iqc
-        ) {
-          setSelectedRow();
-        }
+    setLoading(true);
+    var overall = await getIQCOverall({ ...params });
+    setOverall(overall.data);
+    var res = await getLotIQCList({ ...params });
+    setData(res.data);
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.iqc &&
+        current?.iqc !== selectedRow?.iqc
+      ) {
+        setSelectedRow();
       }
     }
-
     setLoading(false);
   }
 
@@ -387,7 +384,7 @@ const IQC = (props) => {
               onChange={(value) =>
                 value.isValid() && setParams({ ...params, end_date: value })
               }
-              onSelect={(value) => setParams({ ...params, start_date: value })}
+              onSelect={(value) => setParams({ ...params, end_date: value })}
             />
           </Col>
         </Row>
