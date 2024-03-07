@@ -94,7 +94,9 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td colSpan={2} style={{ fontSize: '14px', paddingLeft: '10px' }}>NHÓM MÁY</td>
-                            <td colSpan={3} style={{ paddingLeft: '10px', fontWeight: '700', fontSize: '26px' }}>GT</td>
+                            <td colSpan={1} style={{ paddingLeft: '10px', fontWeight: '700', fontSize: '26px' }}>GT</td>
+                            <td colSpan={1} style={{ fontSize: '14px', paddingLeft: '10px' }}>ĐỢT</td>
+                            <td colSpan={1} style={{ paddingLeft: '10px', fontWeight: '700', fontSize: '26px' }}>{detail.dot}</td>
                         </tr>
                         <tr>
                             <td style={{ fontSize: '14px', paddingLeft: '10px', fontWeight: '700' }}>NGÀY SX</td>

@@ -149,7 +149,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "kho",
       key: "kho",
       align: "center",
-      align: 60,
+      width: 60,
     },
     {
       title: "Kết cấu giấy",
@@ -274,7 +274,7 @@ const KeHoachSanXuat = () => {
     (async () => {
       const res1 = await getUIItemMenu();
       setItemMenu(res1.data);
-      setParams({...params, machine: (res1.data.find(e=>e.id === LINE_SONG_ID)?.children ?? []).map(e=>e.id)})
+      setParams({ ...params, machine: (res1.data.find(e => e.id === LINE_SONG_ID)?.children ?? []).map(e => e.id) })
     })();
   }, []);
 
@@ -434,7 +434,7 @@ const KeHoachSanXuat = () => {
     content: () => componentRef1.current,
   });
   const handlePrintSong = async () => {
-    if(listPrintSong.length > 0){
+    if (listPrintSong.length > 0) {
       printSong();
       setListPrintSong([])
       setListCheck([]);
@@ -443,7 +443,7 @@ const KeHoachSanXuat = () => {
     }
   };
   const handlePrintXaLot = async () => {
-    if(listPrintXaLot.length > 0){
+    if (listPrintXaLot.length > 0) {
       printXaLot();
       setListPrintXaLot([]);
       setListCheck([]);
@@ -498,9 +498,9 @@ const KeHoachSanXuat = () => {
       const song = [];
       const xaLot = [];
       selectedRows.forEach(element => {
-        if(element.line_id === LINE_SONG_ID){
+        if (element.line_id === LINE_SONG_ID) {
           song.push(element)
-        }else if(element.line_id === LINE_XA_LOT_ID){
+        } else if (element.line_id === LINE_XA_LOT_ID) {
           xaLot.push(element)
         }
       });
@@ -538,17 +538,17 @@ const KeHoachSanXuat = () => {
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .ant-table-header');
-        const pagination = document.querySelector('.custom-card .ant-pagination');
-        const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [data]);
   return (
     <>
