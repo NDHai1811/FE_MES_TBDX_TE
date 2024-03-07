@@ -228,10 +228,10 @@ const LichSuSanXuat = (props) => {
   function btn_click() {
     (async () => {
       setLoading(true);
-      const res1 = await getProduceOverall(params);
+      // const res1 = await getProduceOverall(params);
       // const res2 = await getProducePercent(params);
       const res3 = await getProduceTable(params);
-      setDataTable1(res1.data);
+      // setDataTable1(res1.data);
       // setDataTable2(
       //   Object.keys(res2.data ?? {}).map((key) => {
       //     return { ...res2.data[key], lo_sx: key };
@@ -271,13 +271,13 @@ const LichSuSanXuat = (props) => {
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
-  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - 100 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
       const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .custom-table .ant-table-header');
-        const pagination = document.querySelector('.custom-card .custom-table .ant-pagination');
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
         const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - 100 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
       };
       handleWindowResize();
       window.addEventListener('resize', handleWindowResize);
@@ -412,6 +412,20 @@ const LichSuSanXuat = (props) => {
                       placeholder="Nhập quy cách"
                     />
                   </Form.Item>
+                  <Form.Item label="Đợt" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          dot: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập đợt"
+                    />
+                  </Form.Item>
                 </Form>
               </div>
             </Card>
@@ -442,7 +456,7 @@ const LichSuSanXuat = (props) => {
             }
           >
             <Spin spinning={loading}>
-              <Table
+              {/* <Table
                 className="mb-2"
                 size="small"
                 bordered
@@ -450,7 +464,7 @@ const LichSuSanXuat = (props) => {
                 pagination={false}
                 columns={columns1}
                 dataSource={dataTable1}
-              />
+              /> */}
               {/* <Table
                 className="mb-2"
                 size="small"
@@ -478,7 +492,6 @@ const LichSuSanXuat = (props) => {
                     setParams({ ...params, page: page, pageSize: pageSize });
                   },
                 }}
-                className="custom-table"
                 scroll={{
                   x: "120vw",
                   y: tableHeight,
