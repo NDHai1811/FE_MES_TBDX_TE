@@ -26,17 +26,17 @@ const Footer = () => {
       permission: "oi-manufacture",
     },
     {
-      label: "Chất lượng",
+      label: "Chất lượng (IQC)",
       icon: <StarOutlined />,
-      key: "/oi/quality/qc",
+      key: "/oi/quality/iqc",
       permission: "oi-quality-cl",
     },
-    // {
-    //   label: "Chất lượng (SX)",
-    //   icon: <StarOutlined />,
-    //   key: "/oi/quality/machine",
-    //   permission: "oi-quality-sx",
-    // },
+    {
+      label: "Chất lượng (SX)",
+      icon: <StarOutlined />,
+      key: "/oi/quality/machine",
+      permission: "oi-quality-sx",
+    },
     {
       label: "Thiết bị",
       icon: <ToolOutlined />,
