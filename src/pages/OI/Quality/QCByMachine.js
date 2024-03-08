@@ -207,6 +207,18 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+    },
+    {
       title: "Sản lượng đầu ra",
       dataIndex: "san_luong",
       key: "san_luong",
@@ -361,13 +373,13 @@ const QCByMachine = (props) => {
   };
   const onScan = async (result) => {
     const lo_sx = JSON.parse(result).lo_sx;
-    const target = data.find(e=>e.lo_sx === lo_sx);
-    if(target){
+    const target = data.find(e => e.lo_sx === lo_sx);
+    if (target) {
       setSelectedRow(target);
-    }else{
+    } else {
       message.info('Không tìm thấy lô')
     }
-    
+
     setIsOpenQRScanner(false);
     setIsScan(2)
   };
