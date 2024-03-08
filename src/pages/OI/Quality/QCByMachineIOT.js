@@ -39,16 +39,12 @@ const QCByMachine = (props) => {
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
-  const [params, setParams] = useState({ machine: [machine_id], start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
   const [overall, setOverall] = useState([{}]);
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
   const [openModalCK3, setOpenModalCK3] = useState(false);
-  const [date, setDate] = useState({
-    start_date: dayjs(),
-    end_date: dayjs(),
-  });
   const overallColumns = [
     {
       title: "Máy",
@@ -262,14 +258,6 @@ const QCByMachine = (props) => {
     },
   ];
 
-  const disabledStartDate = (current) => {
-    return current && current < dayjs().subtract(7, "day");
-  };
-
-  const disabledEndDate = (current) => {
-    return current && current.startOf("day") < date.start_date.startOf("day");
-  };
-
   const rowClassName = (record, index) => {
     if (record.id === selectedRow?.id) {
       return "table-row-green";
@@ -320,7 +308,7 @@ const QCByMachine = (props) => {
     setLoading(false);
   }
   useEffect(() => {
-    if (machine_id && params.machine.length > 0 && machine_id !== params.machine[0]) {
+    if (machine_id) {
       setParams({ ...params, machine: [machine_id] })
     }
     setSelectedRow()
@@ -329,7 +317,7 @@ const QCByMachine = (props) => {
     if (params?.machine?.length) {
       getData();
     }
-  }, [params]);
+  }, [params.machine, params.end_date, params.start_date]);
   useEffect(() => {
     if (machineOptions.length > 0) {
       var target = machineOptions.find((e) => e.value === machine_id);
@@ -425,7 +413,7 @@ const QCByMachine = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              // disabledDate={disabledStartDate}
+              allowClear={false}
               onChange={(value) => value.isValid() && setParams({ ...params, start_date: value })}
             />
           </Col>
@@ -435,7 +423,7 @@ const QCByMachine = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              // disabledDate={disabledEndDate}
+              allowClear={false}
               onChange={(value) => value.isValid() && setParams({ ...params, end_date: value })}
             />
           </Col>
