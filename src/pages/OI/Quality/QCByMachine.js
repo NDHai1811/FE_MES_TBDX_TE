@@ -513,6 +513,7 @@ const QCByMachine = (props) => {
       />
       <Checksheet3
         open={openModalCK3}
+        text={'Nhập số phế'}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK3}
