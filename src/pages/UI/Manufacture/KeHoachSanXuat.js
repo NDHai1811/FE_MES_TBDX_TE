@@ -121,21 +121,21 @@ const KeHoachSanXuat = () => {
       dataIndex: "dai",
       key: "dai",
       align: "center",
-      width: 40,
+      width: 50,
     },
     {
       title: "W",
       dataIndex: "rong",
       key: "rong",
       align: "center",
-      width: 40,
+      width: 50,
     },
     {
       title: "H",
       dataIndex: "cao",
       key: "cao",
       align: "center",
-      width: 40,
+      width: 50,
     },
     {
       title: "Số lượng",
@@ -156,7 +156,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       align: "center",
-      width: 250,
+      width: 310,
     },
     {
       title: "Thời gian bắt đầu",
