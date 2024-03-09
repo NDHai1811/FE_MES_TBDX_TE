@@ -495,6 +495,7 @@ const KeHoachSanXuat = () => {
   };
   const rowSelection = {
     selectedRowKeys: listCheck,
+    fixed: true,
     onChange: (selectedRowKeys, selectedRows) => {
       const song = [];
       const xaLot = [];
