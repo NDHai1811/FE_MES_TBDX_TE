@@ -24,6 +24,7 @@ const EditableTable = (props) => {
     ...restProps
   }) => {
     let inputNode;
+    console.log(inputType, dataIndex);
     switch (inputType) {
       case "number":
         inputNode = <InputNumber />;
@@ -78,6 +79,7 @@ const EditableTable = (props) => {
       key: "action",
       align: "center",
       fixed: "right",
+      width: 80,
       render: (_, record) => <Actions
         form={form}
         onSave={onSave}
