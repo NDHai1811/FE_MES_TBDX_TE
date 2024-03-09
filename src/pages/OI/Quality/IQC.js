@@ -9,42 +9,33 @@ import {
   InputNumber,
   Radio,
   DatePicker,
-  Select,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
 import {
-  useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
   getIQCOverall,
-  getQCOverall,
   getLotIQCList,
-  getLotQCList,
   getQCLine,
   sendIQCResult,
-  sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
-import { useRef } from "react";
 
 const IQC = (props) => {
   document.title = "Kiểm tra chất lượng";
   const { line_id } = useParams();
-  const history = useHistory();
-  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
   const [lineOptions, setLineOptions] = useState([]);
   const [params, setParams] = useState({ line_id: line_id, start_date: dayjs(), end_date: dayjs() });
   const [overall, setOverall] = useState([{}]);
-  const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
   const overallColumns = [

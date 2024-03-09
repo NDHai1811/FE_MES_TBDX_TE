@@ -7,7 +7,6 @@ import {
   Table,
   Spin,
   DatePicker,
-  Modal,
   Select,
 } from "antd";
 import "../style.scss";
@@ -18,7 +17,6 @@ import {
 import {
   getOverAll,
   getLotByMachine,
-  scanQrCode,
   startStopProduce,
   getTrackingStatus,
   getCurrentManufacturing,
@@ -28,8 +26,6 @@ import {
   COMMON_DATE_FORMAT,
 } from "../../../commons/constants";
 import dayjs from "dayjs";
-import ScanQR from "../../../components/Scanner";
-import { getTem } from "../../../api";
 import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
 
@@ -217,8 +213,6 @@ const Manufacture1 = (props) => {
       if (res.success) {
         setIsPasue(!res.data?.status)
       }
-      // var tem = await getTem();
-      // setListTem(tem);
     })();
   }, []);
 

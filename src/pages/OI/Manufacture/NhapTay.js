@@ -19,9 +19,6 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import {
   getOverAll,
-  getLotByMachine,
-  getInfoTem,
-  scanQrCode,
   manualInput,
   manualList,
   manualScan,
@@ -30,7 +27,6 @@ import { useReactToPrint } from "react-to-print";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { getMachines } from "../../../api/oi/equipment";
 import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
 const SCAN_TIME_OUT = 3000;
@@ -198,10 +194,6 @@ const NhapTay = (props) => {
     setVisible(false);
   };
 
-  const onShowPopupPrint = () => {
-    setVisiblePrint(true);
-  };
-
   const closePopupPrint = () => {
     setVisiblePrint(false);
   };
@@ -267,16 +259,6 @@ const NhapTay = (props) => {
     }
   }, [machine_id, machineOptions, params.start_date, params.end_date]);
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     var target = machineOptions.find((e) => e.value === machine_id);
-  //     if (!target) {
-  //       target = machineOptions[0];
-  //     }
-  //     history.push("/manufacture/" + target.value);
-  //   }
-  // }, [machineOptions]);
-
   useEffect(() => {
     if (isScan === 1) {
       setIsOpenQRScanner(true);
@@ -291,19 +273,6 @@ const NhapTay = (props) => {
       handlePrint();
     }
   }, [isPrint]);
-
-  useEffect(() => {
-    getListMachine();
-  }, []);
-
-  const getListMachine = () => {
-    // getMachines()
-    // .then((res) => {
-    //   setMachineOptions(res.data);
-    //   window.localStorage.setItem('machines', JSON.stringify(res.data));
-    // })
-    //   .catch((err) => console.log("Get list machine error: ", err));
-  };
 
   const onChangeValue = (val) => {
     setValue(val);
@@ -323,7 +292,6 @@ const NhapTay = (props) => {
   };
 
   const onConfirmPrint = async () => {
-    // var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
     if (lotCurrent.so_luong < quantity) {
       message.error('Số lượng nhập vượt quá số lượng thực tế');
     } else {
