@@ -19,21 +19,16 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import {
   getOverAll,
-  getLotByMachine,
-  getInfoTem,
-  scanQrCode,
   manualInput,
   manualList,
   manualScan,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "./Tem";
-import TemIn from "./TemIn";
-import TemDan from "./TemDan";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { getMachines } from "../../../api/oi/equipment";
+import TemGiayTam from "./TemGiayTam";
+import TemThanhPham from "./TemThanhPham";
 const SCAN_TIME_OUT = 3000;
 const columns = [
   {
@@ -199,10 +194,6 @@ const NhapTay = (props) => {
     setVisible(false);
   };
 
-  const onShowPopupPrint = () => {
-    setVisiblePrint(true);
-  };
-
   const closePopupPrint = () => {
     setVisiblePrint(false);
   };
@@ -268,16 +259,6 @@ const NhapTay = (props) => {
     }
   }, [machine_id, machineOptions, params.start_date, params.end_date]);
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     var target = machineOptions.find((e) => e.value === machine_id);
-  //     if (!target) {
-  //       target = machineOptions[0];
-  //     }
-  //     history.push("/manufacture/" + target.value);
-  //   }
-  // }, [machineOptions]);
-
   useEffect(() => {
     if (isScan === 1) {
       setIsOpenQRScanner(true);
@@ -292,19 +273,6 @@ const NhapTay = (props) => {
       handlePrint();
     }
   }, [isPrint]);
-
-  useEffect(() => {
-    getListMachine();
-  }, []);
-
-  const getListMachine = () => {
-    // getMachines()
-    // .then((res) => {
-    //   setMachineOptions(res.data);
-    //   window.localStorage.setItem('machines', JSON.stringify(res.data));
-    // })
-    //   .catch((err) => console.log("Get list machine error: ", err));
-  };
 
   const onChangeValue = (val) => {
     setValue(val);
@@ -324,7 +292,6 @@ const NhapTay = (props) => {
   };
 
   const onConfirmPrint = async () => {
-    // var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
     if (lotCurrent.so_luong < quantity) {
       message.error('Số lượng nhập vượt quá số lượng thực tế');
     } else {
@@ -389,10 +356,8 @@ const NhapTay = (props) => {
     if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id.includes('P') || machine_id.includes('BE') || machine_id.includes('CH') || machine_id.includes('CL')) {
-        printIn();
-      } else if (machine_id.includes('D')) {
-        printDan();
+      } else {
+        printThanhPham();
       }
       setListCheck([]);
       setListTem([]);
@@ -402,11 +367,8 @@ const NhapTay = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const printIn = useReactToPrint({
+  const printThanhPham = useReactToPrint({
     content: () => componentRef2.current,
-  });
-  const printDan = useReactToPrint({
-    content: () => componentRef3.current,
   });
 
   const rowSelection = {
@@ -512,9 +474,8 @@ const NhapTay = (props) => {
               icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
             />
             <div className="report-history-invoice">
-              <Tem listCheck={listTem} ref={componentRef1} />
-              <TemIn listCheck={listTem} ref={componentRef2} />
-              <TemDan listCheck={listTem} ref={componentRef3} />
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
             </div>
           </Col>
           <Col span={2}>

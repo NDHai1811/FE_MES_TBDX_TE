@@ -27,7 +27,7 @@ function PopupQuetQrNhapKho(props) {
   const [palletId, setPalletId] = useState("");
   const [item, setItem] = useState({});
 
-  const totalQuantity = data?.reduce((sum, val) => sum + val?.so_luong, 0);
+  const totalQuantity = data?.reduce((sum, val) => sum + parseInt(val?.so_luong), 0);
 
   useEffect(() => {
     getSuggestList();

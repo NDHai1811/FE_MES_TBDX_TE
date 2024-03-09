@@ -3,11 +3,7 @@ import {
   Row,
   Col,
   Table,
-  Modal,
   Spin,
-  Form,
-  InputNumber,
-  Radio,
   DatePicker,
   Select,
 } from "antd";
@@ -20,7 +16,6 @@ import {
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
   getLotQCList,
-  getQCLine,
   getQCOverall,
   sendQCResult,
 } from "../../../api/oi/quality";
@@ -41,7 +36,6 @@ const QCByMachine = (props) => {
   const [machineOptions, setMachineOptions] = useState([]);
   const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
   const [overall, setOverall] = useState([{}]);
-  const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
   const [openModalCK3, setOpenModalCK3] = useState(false);
@@ -370,13 +364,6 @@ const QCByMachine = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-            // scroll={
-            //   window.screen.width < 720
-            //     ? {
-            //         x: window.screen.width,
-            //       }
-            //     : false
-            // }
             />
           </Col>
         </Row>
@@ -447,10 +434,7 @@ const QCByMachine = (props) => {
             return {
               onClick: (event) => {
                 onClickRow(event, record);
-              }, // click row
-              // onDoubleClick: (event) => {
-              //   onDBClickRow(event, record, index);
-              // }, // double click row
+              },
             };
           }}
           components={{

@@ -7,7 +7,6 @@ import {
   Table,
   Spin,
   DatePicker,
-  Modal,
   Select,
 } from "antd";
 import "../style.scss";
@@ -18,22 +17,17 @@ import {
 import {
   getOverAll,
   getLotByMachine,
-  scanQrCode,
   startStopProduce,
   getTrackingStatus,
   getCurrentManufacturing,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import TemTest from "./TemTest";
-import Tem from "./Tem";
-import TemIn from "./TemIn";
-import TemDan from "./TemDan";
 import {
   COMMON_DATE_FORMAT,
 } from "../../../commons/constants";
 import dayjs from "dayjs";
-import ScanQR from "../../../components/Scanner";
-import { getTem } from "../../../api";
+import TemGiayTam from "./TemGiayTam";
+import TemThanhPham from "./TemThanhPham";
 
 
 const columns = [
@@ -219,8 +213,6 @@ const Manufacture1 = (props) => {
       if (res.success) {
         setIsPasue(!res.data?.status)
       }
-      // var tem = await getTem();
-      // setListTem(tem);
     })();
   }, []);
 
@@ -299,10 +291,8 @@ const Manufacture1 = (props) => {
     if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
+      } else {
+        printThanhPham();
       }
       setListCheck([]);
       setListTem([]);
@@ -312,11 +302,8 @@ const Manufacture1 = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const printIn = useReactToPrint({
+  const printThanhPham = useReactToPrint({
     content: () => componentRef2.current,
-  });
-  const printDan = useReactToPrint({
-    content: () => componentRef3.current,
   });
 
 
@@ -412,9 +399,8 @@ const Manufacture1 = (props) => {
             />
             <div className="report-history-invoice">
               {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
-              <Tem listCheck={listTem} ref={componentRef1} />
-              <TemIn listCheck={listTem} ref={componentRef2} />
-              <TemDan listCheck={listTem} ref={componentRef3} />
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
             </div>
           </Col>
           <Col span={24}>

@@ -3,11 +3,9 @@ import {
   Row,
   Col,
   Table,
-  Modal,
   Spin,
   Form,
   InputNumber,
-  Radio,
   DatePicker,
   Select,
 } from "antd";
@@ -19,26 +17,21 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
-  getIQCOverall,
   getQCOverall,
-  getLotIQCList,
   getLotQCList,
   getQCLine,
-  sendIQCResult,
   sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
-import { useRef } from "react";
 import Checksheet3 from "../../../components/Popup/Checksheet3";
 
 const PQC_OQC = (props) => {
   document.title = "Kiểm tra chất lượng";
   const { line_id } = useParams();
   const history = useHistory();
-  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);

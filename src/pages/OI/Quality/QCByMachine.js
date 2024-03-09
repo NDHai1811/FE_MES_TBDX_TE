@@ -5,9 +5,6 @@ import {
   Table,
   Modal,
   Spin,
-  Form,
-  InputNumber,
-  Radio,
   DatePicker,
   Select,
   Button,
@@ -22,7 +19,6 @@ import {
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
   getLotQCList,
-  getQCLine,
   getQCOverall,
   sendQCResult,
 } from "../../../api/oi/quality";
@@ -401,13 +397,6 @@ const QCByMachine = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-            // scroll={
-            //   window.screen.width < 720
-            //     ? {
-            //         x: window.screen.width,
-            //       }
-            //     : false
-            // }
             />
           </Col>
         </Row>
@@ -486,10 +475,7 @@ const QCByMachine = (props) => {
             return {
               onClick: (event) => {
                 onClickRow(event, record);
-              }, // click row
-              // onDoubleClick: (event) => {
-              //   onDBClickRow(event, record, index);
-              // }, // double click row
+              },
             };
           }}
           components={{
@@ -513,6 +499,7 @@ const QCByMachine = (props) => {
       />
       <Checksheet3
         open={openModalCK3}
+        text={'Nhập số phế'}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK3}

@@ -24,16 +24,11 @@ import {
   scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "./Tem";
-import TemIn from "./TemIn";
-import TemDan from "./TemDan";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-
-const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
-const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
+import TemGiayTam from "./TemGiayTam";
+import TemThanhPham from "./TemThanhPham";
 
 const columns = [
   {
@@ -314,10 +309,8 @@ const InDan = (props) => {
       }
       if (machine_id === "S01") {
         print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
+      } else {
+        printThanhPham();
       }
       (async () => {
         reloadData()
@@ -336,80 +329,13 @@ const InDan = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const printIn = useReactToPrint({
+  const printThanhPham = useReactToPrint({
     content: () => componentRef2.current,
-  });
-  const printDan = useReactToPrint({
-    content: () => componentRef3.current,
   });
 
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
     setIsScan(2);
-  };
-
-  const connectWebsocket = (deviceId, resData) => {
-    const entityId = deviceId;
-    ws.current = new WebSocket(url);
-    ws.current.onopen = function () {
-      const object = {
-        tsSubCmds: [
-          {
-            entityType: "DEVICE",
-            entityId: entityId,
-            scope: "LATEST_TELEMETRY",
-            keys: "Pre_Counter,Error_Counter",
-            cmdId: 10,
-          },
-        ],
-        historyCmds: [],
-        attrSubCmds: [],
-      };
-      const data = JSON.stringify(object);
-      ws.current.send(data);
-    };
-
-    ws.current.onmessage = async function (event) {
-      if (resData[0]?.status !== 1) {
-        return 0;
-      }
-      const receivedMsg = JSON.parse(event.data);
-      const Pre_Counter = receivedMsg.data?.Pre_Counter
-        ? parseInt(receivedMsg.data?.Pre_Counter[0][1])
-        : 0;
-      const Error_Counter = receivedMsg.data?.Error_Counter
-        ? parseInt(receivedMsg.data.Error_Counter[0][1])
-        : 0;
-      let san_luong = parseInt(resData[0]?.san_luong);
-      let sl_ok = parseInt(resData[0]?.sl_ok);
-      let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
-      if (Pre_Counter > 0) {
-        san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
-        if (Error_Counter) {
-          sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
-        }
-        sl_ok = parseInt(san_luong - sl_ng);
-        if (
-          sl_ok >= resData[0]?.dinh_muc ||
-          resData[0]?.sl_ok - Pre_Counter > 10
-        ) {
-          reloadData();
-        } else {
-          const new_data = resData.map((value, index) => {
-            if (index === 0) {
-              value.san_luong = isNaN(san_luong) ? 0 : san_luong;
-              value.sl_ok = isNaN(sl_ok) ? 0 : sl_ok;
-              return value;
-            } else {
-              return value;
-            }
-          });
-
-          setData(new_data);
-          setSelectedLot(new_data[0]);
-        }
-      }
-    };
   };
 
   const onChangeStartDate = (value) => {
@@ -432,7 +358,6 @@ const InDan = (props) => {
   }
 
   const onConfirmPrint = async () => {
-    // var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
     if (selectedLot.so_luong < quantity) {
       message.error('Số lượng nhập vượt quá số lượng thực tế');
     } else {
@@ -508,9 +433,8 @@ const InDan = (props) => {
               icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
             />
             <div className="report-history-invoice">
-              <Tem listCheck={listCheck} ref={componentRef1} />
-              <TemIn listCheck={listCheck} ref={componentRef2} />
-              <TemDan listCheck={listCheck} ref={componentRef3} />
+              <TemGiayTam listCheck={listCheck} ref={componentRef1} />
+              <TemThanhPham listCheck={listCheck} ref={componentRef2} />
             </div>
           </Col>
           <Col span={2}>

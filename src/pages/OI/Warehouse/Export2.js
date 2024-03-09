@@ -170,13 +170,6 @@ const Export2 = (props) => {
       align: "center",
       render: (value) => value || "-",
     },
-    // {
-    //   title: "Số ngày tồn kho",
-    //   dataIndex: "so_ngay_ton",
-    //   key: "so_ngay_ton",
-    //   align: "center",
-    //   render: (value) => value || "-",
-    // },
   ];
 
   useEffect(() => {
