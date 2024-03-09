@@ -29,13 +29,13 @@ const Footer = () => {
       label: "Chất lượng (IQC)",
       icon: <StarOutlined />,
       key: "/oi/quality/iqc",
-      permission: "oi-quality-cl",
+      permission: "oi-quality-iqc",
     },
     {
       label: "Chất lượng (SX)",
       icon: <StarOutlined />,
       key: "/oi/quality/machine",
-      permission: "oi-quality-sx",
+      permission: "oi-quality-machine-iot",
     },
     {
       label: "Thiết bị",
