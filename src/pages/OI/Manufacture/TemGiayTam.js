@@ -38,7 +38,7 @@ const PrintTemplate = ({ detail }) => {
                     type="svg"
                   />
                   <div className="flex-column">
-                    <h3 style={{ fontSize: '32px', marginTop: '28px' }}>TEM DỢN SÓNG</h3>
+                    <h3 style={{ fontSize: '32px', marginTop: '28px' }}>TEM GIẤY TẤM</h3>
                     {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                   </div>
                   <div className="flex-column">
@@ -116,7 +116,7 @@ const PrintTemplate = ({ detail }) => {
     </div>
   );
 };
-export default class Tem extends React.Component {
+export default class TemGiayTam extends React.Component {
   render() {
     let printingPages = [];
     const { listCheck } = this.props;

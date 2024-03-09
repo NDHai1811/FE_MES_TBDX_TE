@@ -23,12 +23,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { createStampFromOrder, getTems, updateTem } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { useReactToPrint } from "react-to-print";
-import TemIn from "../../OI/Manufacture/TemIn";
 import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
 
 const EditableCell = ({
     editing,
@@ -808,7 +808,7 @@ const TaoTem = () => {
                 </Col>
             </Row>
             <div className="report-history-invoice">
-                <TemIn listCheck={listTem} ref={componentRef1} />
+                <TemThanhPham listCheck={listTem} ref={componentRef1} />
             </div>
             <Modal
                 open={openModal}

@@ -27,13 +27,12 @@ import {
   manualScan,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "./Tem";
-import TemIn from "./TemIn";
-import TemDan from "./TemDan";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import { getMachines } from "../../../api/oi/equipment";
+import TemGiayTam from "./TemGiayTam";
+import TemThanhPham from "./TemThanhPham";
 const SCAN_TIME_OUT = 3000;
 const columns = [
   {
@@ -389,10 +388,8 @@ const NhapTay = (props) => {
     if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id.includes('P') || machine_id.includes('BE') || machine_id.includes('CH') || machine_id.includes('CL')) {
-        printIn();
-      } else if (machine_id.includes('D')) {
-        printDan();
+      } else {
+        printThanhPham();
       }
       setListCheck([]);
       setListTem([]);
@@ -402,11 +399,8 @@ const NhapTay = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const printIn = useReactToPrint({
+  const printThanhPham = useReactToPrint({
     content: () => componentRef2.current,
-  });
-  const printDan = useReactToPrint({
-    content: () => componentRef3.current,
   });
 
   const rowSelection = {
@@ -512,9 +506,8 @@ const NhapTay = (props) => {
               icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
             />
             <div className="report-history-invoice">
-              <Tem listCheck={listTem} ref={componentRef1} />
-              <TemIn listCheck={listTem} ref={componentRef2} />
-              <TemDan listCheck={listTem} ref={componentRef3} />
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
             </div>
           </Col>
           <Col span={2}>

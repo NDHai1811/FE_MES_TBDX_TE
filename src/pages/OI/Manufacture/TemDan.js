@@ -37,7 +37,7 @@ const PrintTemplate = ({ detail }) => {
                                         type="svg"
                                     />
                                     <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ DÁN</h3>
+                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM THÀNH PHẨM</h3>
                                         {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
                                     <div className="flex-column">
@@ -95,8 +95,12 @@ const PrintTemplate = ({ detail }) => {
                         <tr>
                             <td><b>N.Viên S.X</b></td>
                             <td><span style={{ marginLeft: '10px' }}>{detail.nhan_vien_sx}</span></td>
-                            <td ><b>Máy in:</b></td>
+                            <td ><b>Máy:</b></td>
                             <td><span style={{ marginLeft: '10px' }}>{detail.machine_id}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Nơi giao</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.xuong_giao}</span></td>
                         </tr>
                         <tr>
                             <td><b>Ghi chú</b></td>
