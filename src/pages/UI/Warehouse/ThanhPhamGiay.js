@@ -90,6 +90,13 @@ const ThanhPhamGiay = (props) => {
       render: (value) => value || "-",
     },
     {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
       title: "Nhập kho",
       children: [
         {
@@ -178,7 +185,7 @@ const ThanhPhamGiay = (props) => {
     setLoading(true);
     const res = await getHistoryWareHouseFG(params);
     setDataTable(res.data);
-    setParams({...params, totalPage: res.totalPage})
+    setParams({ ...params, totalPage: res.totalPage })
     setLoading(false);
   }
   useEffect(() => {

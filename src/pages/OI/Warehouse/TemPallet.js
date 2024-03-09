@@ -17,14 +17,15 @@ const PrintTemplate = ({ info }) => {
         <table>
           <thead>
             <tr>
-              <th style={{ width: "33%" }}></th>
-              <th style={{ width: "33%" }}></th>
-              <th style={{ width: "33%" }}></th>
+              <th style={{ width: "25%" }}></th>
+              <th style={{ width: "25%" }}></th>
+              <th style={{ width: "25%" }}></th>
+              <th style={{ width: "25%" }}></th>
             </tr>
           </thead>
           <tbody>
             <tr style={{ lineHeight: '120px!important' }}>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 <div className="d-flex justify-content-between" style={{ height: '120px!important' }}>
                   <QRCode
                     style={{ marginRight: "5px" }}
@@ -59,17 +60,19 @@ const PrintTemplate = ({ info }) => {
               </td>
             </tr>
             <tr style={{ lineHeight: '25px' }}>
-              <td colSpan={3}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang} {info[0]?.customer_id}</b></td>
+              <td colSpan={4}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang} {info[0]?.customer_id}</b></td>
             </tr>
             <tr style={{ lineHeight: '20px' }}>
+              <td className="text-center">STT</td>
               <td className="text-center">MDH</td>
               <td className="text-center">MQL</td>
               <td className="text-center">Số lượng</td>
             </tr>
-            {info.map(function (detail) {
+            {info.map(function (detail, index) {
               return (
                 <>
                   <tr style={{ lineHeight: '20px' }}>
+                    <td className="text-center">{index + 1}</td>
                     <td className="text-center">{detail.mdh}</td>
                     <td className="text-center">{detail.mql}</td>
                     <td className="text-center">{detail.so_luong}</td>

@@ -41,6 +41,7 @@ import TemXaLot from "./TemXaLot";
 import Tem from "../../OI/Manufacture/TemGiayTam";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import TemGiayTam from "../../OI/Manufacture/TemGiayTam";
+import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
 
 const LINE_SONG_ID = '30';
 const LINE_IN_ID = '31';
@@ -730,7 +731,7 @@ const KeHoachSanXuat = () => {
                   In tem
                 </Dropdown.Button>
                 <div className="report-history-invoice">
-                  <TemXaLot listCheck={listPrintXaLot} ref={componentRef1} />
+                  <TemThanhPham listCheck={listPrintXaLot} ref={componentRef1} />
                   <TemGiayTam listCheck={listPrintSong} ref={componentRef2} />
                 </div>
               </Space>
