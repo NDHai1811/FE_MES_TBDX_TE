@@ -231,6 +231,15 @@ const Users = () => {
                       placeholder="Nhập tên nhân viên"
                     />
                   </Form.Item>
+                  <Form.Item label="Mã nhân viên" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, username: e.target.value })
+                      }
+                      placeholder="Nhập mã nhân viên"
+                    />
+                  </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
