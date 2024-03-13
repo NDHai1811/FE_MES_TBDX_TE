@@ -3,10 +3,10 @@ import React, { useContext, useRef, useState, useEffect } from "react";
 import "./style.css";
 import Actions from "./Actions";
 const EditableTable = (props) => {
-  const { onDelete = null, onChange = null, onSelect = null, onSave = null, form = null} = props;
+  const { onDelete = null, onChange = null, onSelect = null, onSave = null, form = null } = props;
   var editableColumns = [];
   const [dataSource, setDataSource] = useState(props.dataSource ?? []);
-  useEffect(()=>{
+  useEffect(() => {
     setDataSource(props.dataSource);
   }, [props.dataSource])
   const [editingKey, setEditingKey] = useState();
@@ -24,7 +24,6 @@ const EditableTable = (props) => {
     ...restProps
   }) => {
     let inputNode;
-    console.log(inputType, dataIndex);
     switch (inputType) {
       case "number":
         inputNode = <InputNumber />;
@@ -93,6 +92,7 @@ const EditableTable = (props) => {
       if (!col.editable) {
         return col;
       }
+      console.log(props);
       return {
         ...col,
         onCell: (record) => ({

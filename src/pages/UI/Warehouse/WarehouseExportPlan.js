@@ -181,7 +181,7 @@ const WarehouseExportPlan = () => {
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("so_luong"),
       width: 60,
     },
     {
@@ -189,7 +189,7 @@ const WarehouseExportPlan = () => {
       dataIndex: "tai_xe",
       key: "tai_xe",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("tai_xe"),
       render: (value) => {
         const item = listVehicles.find(e => e.user1 === value);
         return item?.driver?.name
@@ -201,7 +201,7 @@ const WarehouseExportPlan = () => {
       dataIndex: "so_xe",
       key: "so_xe",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("so_xe"),
       width: 100,
     },
     {
@@ -209,12 +209,56 @@ const WarehouseExportPlan = () => {
       dataIndex: "nguoi_xuat",
       key: "nguoi_xuat",
       align: "center",
-      editable: true,
+      editable: hasEditColumn("nguoi_xuat"),
       render: (value) => {
         const item = listUsers.find(e => e.id == value);
         return item?.name
       },
       width: 180,
+    },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      align: "center",
+      fixed: "right",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Lưu
+            </Typography.Link>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+              <a>Hủy</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <span>
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 20 }}
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            />
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa?"
+              onConfirm={() => deleteItem(record.key)}
+            >
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 20,
+                }}
+              />
+            </Popconfirm>
+          </span>
+        );
+      },
     },
   ];
 
@@ -296,7 +340,6 @@ const WarehouseExportPlan = () => {
       }
       form.resetFields();
     } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
     }
   };
 
@@ -304,7 +347,6 @@ const WarehouseExportPlan = () => {
     if (!col.editable) {
       return col;
     }
-    console.log(col);
     return {
       ...col,
       onCell: (record) => ({
@@ -312,12 +354,7 @@ const WarehouseExportPlan = () => {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
-        inputType:
-          col.dataIndex === "tai_xe" ||
-            col.dataIndex === "so_xe" ||
-            col.dataIndex === "nguoi_xuat"
-            ? "select"
-            : "text",
+        inputType: (col.dataIndex === "tai_xe" || col.dataIndex === "so_xe" || col.dataIndex === "nguoi_xuat") ? "select" : "text",
         options: options(col.dataIndex),
         onSelect:
           col.dataIndex === "tai_xe" ||
@@ -872,8 +909,7 @@ const WarehouseExportPlan = () => {
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
-                <EditableTable
-                  form={form}
+                <Table
                   size="small"
                   bordered
                   pagination={{
@@ -889,18 +925,17 @@ const WarehouseExportPlan = () => {
                     },
                   }}
                   scroll={{
-                    x: '90vw',
                     y: tableHeight,
                   }}
-                  // components={{
-                  //   body: {
-                  //     cell: EditableCell,
-                  //   },
-                  // }}
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  rowClassName="editable-row"
                   columns={mergedColumns}
                   dataSource={data}
                   rowSelection={rowSelection}
-                  onDelete={deleteItem}
                 />
               </Form>
             </Spin>
@@ -969,6 +1004,7 @@ const WarehouseExportPlan = () => {
                         item = <Select
                           mode={e?.mode}
                           options={e?.options}
+                          showSearch
                           maxTagCount={'responsive'}
                           allowClear
                           placeholder={'Nhập ' + e.title.toLowerCase()}
@@ -982,7 +1018,7 @@ const WarehouseExportPlan = () => {
                           showTime={e?.input_type === 'date_time'}
                           needConfirm={false}
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => value.isValid() && setOrderParams({ ...orderParams, [e.key]: value})}
+                          onChange={(value) => value.isValid() && setOrderParams({ ...orderParams, [e.key]: value })}
                           onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
                           value={orderParams[e.key]}
                         />;
