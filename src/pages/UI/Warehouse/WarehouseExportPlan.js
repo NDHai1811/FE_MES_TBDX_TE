@@ -222,6 +222,50 @@ const WarehouseExportPlan = () => {
       options: listUsers,
       width: 180,
     },
+    {
+      title: "Hành động",
+      dataIndex: "action",
+      align: "center",
+      fixed: "right",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{
+                marginRight: 8,
+              }}
+            >
+              Lưu
+            </Typography.Link>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+              <a>Hủy</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <span>
+            <EditOutlined
+              style={{ color: "#1677ff", fontSize: 20 }}
+              disabled={editingKey !== ""}
+              onClick={() => edit(record)}
+            />
+            <Popconfirm
+              title="Bạn có chắc chắn muốn xóa?"
+              onConfirm={() => deleteItem(record.key)}
+            >
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 20,
+                }}
+              />
+            </Popconfirm>
+          </span>
+        );
+      },
+    },
   ];
 
   const deleteItem = async (key) => {
@@ -873,7 +917,6 @@ const WarehouseExportPlan = () => {
                     },
                   }}
                   scroll={{
-                    x: '90vw',
                     y: tableHeight,
                   }}
                   // components={{
@@ -956,6 +999,7 @@ const WarehouseExportPlan = () => {
                         item = <Select
                           mode={e?.mode}
                           options={e?.options}
+                          showSearch
                           maxTagCount={'responsive'}
                           allowClear
                           placeholder={'Nhập ' + e.title.toLowerCase()}
