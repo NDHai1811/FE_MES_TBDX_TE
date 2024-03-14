@@ -635,8 +635,8 @@ const WarehouseExportPlan = () => {
     },
     {
       title: "Fac",
-      dataIndex: "fac",
-      key: "fac",
+      dataIndex: "xuong_giao",
+      key: "xuong_giao",
       align: "center",
       width: 60,
       isSearch: true,
@@ -1013,7 +1013,7 @@ const WarehouseExportPlan = () => {
                           showTime={e?.input_type === 'date_time'}
                           needConfirm={false}
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => value.isValid() && setOrderParams({ ...orderParams, [e.key]: value })}
+                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.key]: value })}
                           onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
                           value={orderParams[e.key]}
                         />;
