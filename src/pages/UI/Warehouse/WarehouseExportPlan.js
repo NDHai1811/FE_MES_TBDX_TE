@@ -194,6 +194,8 @@ const WarehouseExportPlan = () => {
         const item = listVehicles.find(e => e.user1 === value);
         return item?.driver?.name
       },
+      inputType: 'select',
+      options: listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name })),
       width: 180,
     },
     {
@@ -202,7 +204,9 @@ const WarehouseExportPlan = () => {
       key: "so_xe",
       align: "center",
       editable: true,
-      width: 100,
+      width: 150,
+      inputType: 'select',
+      options: listVehicles
     },
     {
       title: "Người xuất",
@@ -214,6 +218,8 @@ const WarehouseExportPlan = () => {
         const item = listUsers.find(e => e.id == value);
         return item?.name
       },
+      inputType: 'select',
+      options: listUsers,
       width: 180,
     },
   ];
@@ -265,34 +271,11 @@ const WarehouseExportPlan = () => {
     }
     setEditingKey("");
   };
-  const save = async (key) => {
+  const save = async (data) => {
     try {
-      const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (type === "update") {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-          key: row.id,
-        });
-        row.id = editingKey;
-        if (listCheck.length > 0) {
-          row.ids = listCheck;
-        }
-        var res = await updateWarehouseFGExport(row);
-        if (res) {
-          loadListTable();
-        }
-        setEditingKey("");
-      } else {
-        // await createBuyers(row);
-        const items = [row, ...data.filter((val) => val.key !== key)];
-        if (res) {
-          loadListTable();
-        }
-        setEditingKey("");
+      var res = await updateWarehouseFGExport(data);
+      if (res) {
+        loadListTable();
       }
       form.resetFields();
     } catch (errInfo) {
@@ -300,33 +283,30 @@ const WarehouseExportPlan = () => {
     }
   };
 
-  const mergedColumns = col_detailTable?.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    console.log(col);
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-        inputType:
-          col.dataIndex === "tai_xe" ||
-            col.dataIndex === "so_xe" ||
-            col.dataIndex === "nguoi_xuat"
-            ? "select"
-            : "text",
-        options: options(col.dataIndex),
-        onSelect:
-          col.dataIndex === "tai_xe" ||
-            col.dataIndex === "so_xe"
-            ? onSelectDriverVehicle
-            : onSelect,
-      }),
-    };
-  });
+  // const mergedColumns = col_detailTable?.map((col) => {
+  //   if (!col.editable) {
+  //     return col;
+  //   }
+  //   return {
+  //     ...col,
+  //     onCell: (record) => ({
+  //       record,
+  //       dataIndex: col.dataIndex,
+  //       title: col.title,
+  //       editing: isEditing(record),
+  //       inputType:
+  //         (col.dataIndex === "tai_xe" || col.dataIndex === "so_xe" || col.dataIndex === "nguoi_xuat")
+  //           ? "select"
+  //           : "text",
+  //       options: options(col.dataIndex),
+  //       onSelect:
+  //         col.dataIndex === "tai_xe" ||
+  //           col.dataIndex === "so_xe"
+  //           ? onSelectDriverVehicle
+  //           : onSelect,
+  //     }),
+  //   };
+  // });
   const options = (dataIndex) => {
     let filteredOptions = [];
     switch (dataIndex) {
@@ -350,16 +330,16 @@ const WarehouseExportPlan = () => {
   useEffect(() => {
     (async () => {
       const res1 = await getVehicles();
-      setListVehicles(res1);
+      setListVehicles(res1.map(e => ({ ...e, value: e.id, label: e.id })));
       const res2 = await getUsers();
-      setListUsers(res2);
+      setListUsers(res2.map(e => ({ ...e, value: e.id, label: e.name })));
       const res3 = await getCustomers();
       setListCustomers(res3.data);
     })();
   }, []);
 
   function btn_click() {
-    loadListTable(params);
+    loadListTable();
   }
 
   useEffect(() => {
@@ -407,18 +387,22 @@ const WarehouseExportPlan = () => {
     },
   };
 
-  const onSelect = (value, dataIndex) => {
-    const items = data.map((val) => {
-      if (val.key === editingKey) {
-        val[dataIndex] = value;
-      }
-      return { ...val };
-    });
-    setData(items);
+  const onSelect = (value, dataIndex, index) => {
+    if (dataIndex === 'tai_xe' || dataIndex === 'so_xe') {
+      onSelectDriverVehicle(value, dataIndex, index);
+    } else {
+      const items = data.map((val, i) => {
+        if (i === index) {
+          val[dataIndex] = value;
+        }
+        return { ...val };
+      });
+      setData(items);
+    }
   };
-  const onSelectDriverVehicle = (value, dataIndex) => {
-    const items = data.map((e) => {
-      if (e.key === editingKey) {
+  const onSelectDriverVehicle = (value, dataIndex, index) => {
+    const items = data.map((e, i) => {
+      if (i === index) {
         var target = null;
         if (dataIndex === 'tai_xe') {
           target = listVehicles.find(e => e.user1 === value);
@@ -897,10 +881,13 @@ const WarehouseExportPlan = () => {
                   //     cell: EditableCell,
                   //   },
                   // }}
-                  columns={mergedColumns}
+                  columns={col_detailTable}
                   dataSource={data}
+                  setDataSource={setData}
                   rowSelection={rowSelection}
                   onDelete={deleteItem}
+                  onSelect={onSelect}
+                  onSave={save}
                 />
               </Form>
             </Spin>
@@ -982,7 +969,7 @@ const WarehouseExportPlan = () => {
                           showTime={e?.input_type === 'date_time'}
                           needConfirm={false}
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => value.isValid() && setOrderParams({ ...orderParams, [e.key]: value})}
+                          onChange={(value) => value.isValid() && setOrderParams({ ...orderParams, [e.key]: value })}
                           onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
                           value={orderParams[e.key]}
                         />;

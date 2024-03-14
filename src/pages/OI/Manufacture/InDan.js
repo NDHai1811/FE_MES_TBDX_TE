@@ -295,7 +295,7 @@ const InDan = (props) => {
       return "table-row-yellow";
     }
     if (record.status === 3) {
-      return "table-row-yellow blink";
+      return "table-row-yellow";
     }
     if (record.status === 4) {
       return "table-row-grey";

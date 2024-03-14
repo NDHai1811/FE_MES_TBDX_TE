@@ -134,12 +134,16 @@ const WarehouseMLT = (props) => {
     setListMaterialCheck(new_data);
   }, [listCheck, importList]);
 
-  const getExportList = () => {
-    getListPlanMaterialExport()
-      .then((res) => setExportList(res.data))
-      .catch((err) =>
-        console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
-      );
+  const [exportParams, setExportParams] = useState({ page: 1, pageSize: 20, totalPage: 1 });
+  const getExportList = async () => {
+    setLoading(true);
+    setImportList([])
+    var res = await getListPlanMaterialExport({ ...params, ...exportParams });
+    if (res.success) {
+      setExportList(res.data.data);
+      setExportParams({ ...exportParams, totalPage: res.data.totalPage })
+    }
+    setLoading(false);
   };
   const [formImport] = Form.useForm();
   const columns = [
@@ -251,15 +255,18 @@ const WarehouseMLT = (props) => {
   }
 
   const getImportList = async () => {
+    setExportList([]);
+    setLoading(true);
     const res = await getListPlanMaterialImport(params);
     setImportList(res.data.map((e) => {
       return { ...e, key: e.id };
     }));
+    setLoading(false);
   };
 
   useEffect(() => {
     btn_click();
-  }, [currentTab]);
+  }, [currentTab, exportParams.page, exportParams.pageSize]);
 
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -278,13 +285,12 @@ const WarehouseMLT = (props) => {
   };
 
   const btn_click = async () => {
-    setLoading(true);
+    console.log(exportParams);
     if (currentTab === "1") {
-      var res = await getImportList();
+      getImportList();
     } else {
-      var res = await getExportList();
+      getExportList();
     }
-    setLoading(false);
   };
   const componentRef1 = useRef();
 
@@ -292,15 +298,6 @@ const WarehouseMLT = (props) => {
     content: () => componentRef1.current,
   });
   const [form] = Form.useForm();
-  const onFinish = async (values) => {
-    if (values.id) {
-      await updateWarehouseImport(values);
-    } else {
-      await createWarehouseImport(values);
-    }
-    setOpenMdlEdit(false);
-    getImportList();
-  };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
@@ -343,7 +340,16 @@ const WarehouseMLT = (props) => {
             y: "50vh",
           }}
           className="h-100"
-          pagination={false}
+          pagination={{
+            current: exportParams.page,
+            size: "small",
+            total: exportParams.totalPage,
+            pageSize: exportParams.pageSize,
+            showSizeChanger: true,
+            onChange: (page, pageSize) => {
+              setExportParams({ ...exportParams, page: page, pageSize: pageSize });
+            },
+          }}
           size="small"
         />,
       ],
@@ -444,7 +450,7 @@ const WarehouseMLT = (props) => {
     var res = await updateGoodsReceiptNote(record);
     getReceiptNote();
   }
-  const onDeleteNote = async (record) =>{
+  const onDeleteNote = async (record) => {
     var res = await deleteGoodsReceiptNote(record);
     getReceiptNote();
   }
@@ -464,7 +470,7 @@ const WarehouseMLT = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={()=>currentTab === '1' ? btn_click() : setExportParams({...exportParams, page: 1})}
                   >
                     Truy vấn
                   </Button>
@@ -500,45 +506,46 @@ const WarehouseMLT = (props) => {
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
                   <Form.Item
-                    label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
+                    label={"Mã cuộn TBDX"}
                     className="mb-3"
                   >
                     <Input
-                      placeholder={
-                        currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
-                      }
+                      placeholder={"Nhập mã cuộn TBDX"}
                       onChange={(e) =>
                         setParams({ ...params, material_id: e.target.value })
                       }
                     />
                   </Form.Item>
-                  <Form.Item
-                    label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
+                  {currentTab === '1' && <Form.Item
+                    label={"Mã cuộn NCC"}
                     className="mb-3"
                   >
                     <Input
-                      placeholder={
-                        currentTab === "1"
-                          ? "Nhập mã cuộn NCC"
-                          : "Nhập mã vật tư"
-                      }
+                      placeholder={"Nhập mã cuộn NCC"}
                       onChange={(e) =>
                         setParams({ ...params, ma_cuon_ncc: e.target.value })
                       }
                     />
-                  </Form.Item>
+                  </Form.Item>}
                   <Form.Item
-                    label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
+                    label={"Loại giấy"}
                     className="mb-3"
                   >
                     <Input
-                      placeholder={
-                        currentTab === "1"
-                          ? "Nhập loại giấy"
-                          : "Nhập mã cuộn TBDX"
-                      }
+                      placeholder={"Nhập loại giấy"}
                       onChange={(e) =>
                         setParams({ ...params, loai_giay: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={"Mã vật tư"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={"Nhập mã vật tư"}
+                      onChange={(e) =>
+                        setParams({ ...params, ma_vat_tu: e.target.value })
                       }
                     />
                   </Form.Item>
@@ -548,10 +555,9 @@ const WarehouseMLT = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Card style={{ height: '100%' }}>
-            <Spin spinning={loading}>
+          <Spin spinning={loading}>
+            <Card style={{ height: '100%' }}>
               <Tabs
-                defaultActiveKey="1"
                 onChange={(activeKey) => setCurrentTab(activeKey)}
                 items={tabsMenu}
                 tabBarExtraContent={
@@ -578,13 +584,13 @@ const WarehouseMLT = (props) => {
                             setLoadingUpload(false);
                           } else if (info.file.status === "done") {
                             if (info.file.response.success === true) {
-                              getImportList();
                               success();
                               setLoadingUpload(false);
+                              btn_click();
                             } else {
-                              getImportList();
                               message.error(info.file.response.message);
                               setLoadingUpload(false);
+                              btn_click();
                             }
                           }
                         }}
@@ -615,8 +621,8 @@ const WarehouseMLT = (props) => {
                   ) : null
                 }
               ></Tabs>
-            </Spin>
-          </Card>
+            </Card>
+          </Spin>
         </Col>
       </Row>
       {/* <Modal

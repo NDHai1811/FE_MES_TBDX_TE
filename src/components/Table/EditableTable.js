@@ -3,12 +3,8 @@ import React, { useContext, useRef, useState, useEffect } from "react";
 import "./style.css";
 import Actions from "./Actions";
 const EditableTable = (props) => {
-  const { onDelete = null, onChange = null, onSelect = null, onSave = null, form = null} = props;
+  const { onDelete = null, onChange = null, onSelect = null, onSave = null, form = null, dataSource, setDataSource } = props;
   var editableColumns = [];
-  const [dataSource, setDataSource] = useState(props.dataSource ?? []);
-  useEffect(()=>{
-    setDataSource(props.dataSource);
-  }, [props.dataSource])
   const [editingKey, setEditingKey] = useState();
   const EditableCell = ({
     editing,
@@ -24,7 +20,6 @@ const EditableTable = (props) => {
     ...restProps
   }) => {
     let inputNode;
-    console.log(inputType, dataIndex);
     switch (inputType) {
       case "number":
         inputNode = <InputNumber />;
@@ -35,7 +30,7 @@ const EditableTable = (props) => {
             value={record?.[dataIndex]}
             options={options}
             optionFilterProp="label"
-            onChange={(value) => onSelect(value, dataIndex)}
+            onChange={(value) => onSelect(value, dataIndex, index)}
             showSearch
           />
         );
@@ -45,8 +40,8 @@ const EditableTable = (props) => {
           <DatePicker
             value={record?.[dataIndex]}
             options={options}
-            onSelect={(value) => onSelect(value, dataIndex)}
-            onChange={(value) => value.isValid() && onChange(value, dataIndex)}
+            onSelect={(value) => onSelect(value, dataIndex, index)}
+            onChange={(value) => value.isValid() && onChange(value, dataIndex, index)}
             showSearch
           />
         );
@@ -72,41 +67,55 @@ const EditableTable = (props) => {
       </td>
     );
   };
-  if (onSave || onDelete) {
-    editableColumns = [...props.columns, {
-      title: "Tác vụ",
-      dataIndex: "action",
-      key: "action",
-      align: "center",
-      fixed: "right",
-      width: 80,
-      render: (_, record) => <Actions
-        form={form}
-        onSave={onSave}
-        onDelete={onDelete}
-        record={record}
-        editingKey={editingKey}
-        setEditingKey={setEditingKey}
-        setDataSource={setDataSource}
-      />
-    }].map((col) => {
-      if (!col.editable) {
-        return col;
-      }
-      return {
-        ...col,
-        onCell: (record) => ({
-          record,
-          inputType: "text",
-          dataIndex: col.dataIndex,
-          title: col.title,
-          editing: record.key === editingKey,
-          onChange,
-          onSelect,
-        }),
-      };
-    });;
-  }
+  editableColumns = [...props.columns, {
+    title: "Tác vụ",
+    dataIndex: "action",
+    key: "action",
+    align: "center",
+    fixed: "right",
+    width: 80,
+    render: (_, record) => <Actions
+      form={form}
+      onSave={onSave}
+      onDelete={onDelete}
+      record={record}
+      editingKey={editingKey}
+      setEditingKey={setEditingKey}
+      setDataSource={setDataSource}
+    />
+  }].map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record, rowIndex) => ({
+        record,
+        inputType: col.inputType,
+        options: col.options ?? [],
+        dataIndex: col.dataIndex,
+        title: col.title,
+        index: rowIndex,
+        editing: record.key === editingKey,
+        onChange: onChange ?? function (value, dataIndex, index) {
+          setDataSource(prev => prev.map(e => {
+            if (e.key === editingKey) {
+              return { ...e, [dataIndex]: value }
+            }
+            return { ...e };
+          }))
+        },
+        onSelect: onSelect ?? function (value, dataIndex, index) {
+          setDataSource(prev => prev.map(e => {
+            if (e.key === editingKey) {
+              return { ...e, [dataIndex]: value }
+            }
+            return { ...e };
+          }))
+        },
+      }),
+    };
+  });
   return (
     <Table
       {...props}

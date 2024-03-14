@@ -344,7 +344,7 @@ const NhapTay = (props) => {
     //   return "table-row-yellow";
     // }
     if (record.status === 3) {
-      return "table-row-yellow blink";
+      return "table-row-yellow";
     }
     if (record.status === 4) {
       return "table-row-grey";
@@ -491,7 +491,7 @@ const NhapTay = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: "calc(700px + 50%)",
+                x: "100%",
                 y: 300,
               }}
               size="small"

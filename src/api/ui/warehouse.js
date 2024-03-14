@@ -4,8 +4,8 @@ export const getListPlanMaterialImport = async (params) => {
   return await axios.get("/ui/warehouse/list-material-import", { params });
 };
 
-export const getListPlanMaterialExport = async () => {
-  return await axios.get("/ui/warehouse/list-material-export");
+export const getListPlanMaterialExport = async (params) => {
+  return await axios.get("/ui/warehouse/list-material-export", {params});
 };
 
 export const updateWarehouseImport = async (params) => {
