@@ -666,20 +666,6 @@ const KeHoachSanXuat = () => {
             className="custom-card"
             extra={
               <Space>
-                {/* <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                >
-                  KHSX Sóng
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={exportFileXL}
-                  loading={exportLoadingXL}
-                >
-                  KHSX Xả Lot
-                </Button> */}
                 <Dropdown.Button type="primary" menu={{ items: exportItemDropdown }} loading={exportLoading} placement="bottomRight" trigger={'click'} arrow icon={<DownOutlined />}>
                   Tải file Excel
                 </Dropdown.Button>
@@ -718,15 +704,6 @@ const KeHoachSanXuat = () => {
                 <Button type="primary" onClick={deleteRecord}>
                   Xoá
                 </Button>
-
-                {/* <Button
-                  size="medium"
-                  type="primary"
-                  style={{ width: "100%" }}
-                  onClick={handlePrintXaLot}
-                >
-                  In tem xả lot
-                </Button> */}
                 <Dropdown.Button type="primary" menu={{ items: printItemDropdown }} placement="bottomRight" arrow icon={<DownOutlined />}>
                   In tem
                 </Dropdown.Button>
