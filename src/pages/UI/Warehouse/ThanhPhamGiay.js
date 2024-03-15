@@ -38,6 +38,7 @@ const ThanhPhamGiay = (props) => {
       key: "index",
       render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
       align: "center",
+      fixed: 'left',
       width: 50
     },
     {
@@ -45,34 +46,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "khu_vuc",
       key: "khu_vuc",
       align: "center",
-      render: (value) => value || "-",
-    },
-    {
-      title: "Vị trí",
-      dataIndex: "vi_tri",
-      key: "vi_tri",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
-      title: "Ngày",
-      dataIndex: "ngay",
-      key: "ngay",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
-      title: "Mã tem (pallet)",
-      dataIndex: "pallet_id",
-      key: "pallet_id",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
-      title: "Lô SX",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
-      align: "center",
+      fixed: 'left',
       render: (value) => value || "-",
     },
     {
@@ -80,6 +54,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
+      fixed: 'left',
       render: (value) => value || "-",
     },
     {
@@ -87,6 +62,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
+      fixed: 'left',
       render: (value) => value || "-",
     },
     {
@@ -97,19 +73,61 @@ const ThanhPhamGiay = (props) => {
       render: (value) => value || "-",
     },
     {
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Kích thước",
+      dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
       title: "Nhập kho",
       children: [
         {
-          title: "Thời gian nhập",
+          title: "Ngày nhập",
           dataIndex: "tg_nhap",
           key: "tg_nhap",
           align: "center",
           render: (value) => value || "-",
         },
         {
+          title: "TG nhập",
+          dataIndex: "tg_nhap",
+          key: "tg_nhap",
+          align: "center",
+          render: (value) => (value && dayjs(value).format('HH:mm')) || "-",
+        },
+        {
           title: "SL nhập",
           dataIndex: "sl_nhap",
           key: "sl_nhap",
+          align: "center",
+          render: (value) => value || "-",
+        },
+        {
+          title: "Nhập dư",
+          dataIndex: "nhap_du",
+          key: "nhap_du",
           align: "center",
           render: (value) => value || "-",
         },
@@ -127,10 +145,17 @@ const ThanhPhamGiay = (props) => {
       children: [
         {
           title: "Ngày xuất",
-          dataIndex: "ngay_xuat",
-          key: "ngay_xuat",
+          dataIndex: "tg_xuat",
+          key: "tg_xuat",
           align: "center",
           render: (value) => value || "-",
+        },
+        {
+          title: "TG xuất",
+          dataIndex: "tg_xuat",
+          key: "tg_xuat",
+          align: "center",
+          render: (value) => (value && dayjs(value).format('HH:mm')) || "-",
         },
         {
           title: "SL xuất",
@@ -152,7 +177,7 @@ const ThanhPhamGiay = (props) => {
       title: "Tồn kho",
       children: [
         {
-          title: "SL tồn",
+          title: "Sl tồn",
           dataIndex: "sl_ton",
           key: "sl_ton",
           align: "center",
@@ -166,6 +191,27 @@ const ThanhPhamGiay = (props) => {
           render: (value) => value || "-",
         },
       ],
+    },
+    {
+      title: "Vị trí",
+      dataIndex: "vi_tri",
+      key: "vi_tri",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã tem (pallet)",
+      dataIndex: "pallet_id",
+      key: "pallet_id",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      render: (value) => value || "-",
     },
   ];
   const [totalPage, setTotalPage] = useState(1);

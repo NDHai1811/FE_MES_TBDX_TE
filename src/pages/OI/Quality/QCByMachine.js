@@ -58,7 +58,6 @@ const QCByMachine = (props) => {
           value={machine_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
-          showSearch
           bordered={false}
         />
       ),

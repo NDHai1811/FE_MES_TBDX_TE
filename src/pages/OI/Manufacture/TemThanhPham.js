@@ -53,7 +53,7 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td><b>Quy cách</b></td>
-                            <td className="text-center" colSpan={3}><b>{detail.quy_cach}</b></td>
+                            <td className="text-center" colSpan={3}><b>{detail.quy_cach_kh}</b></td>
                         </tr>
                         <tr>
                             <td><b>Số lượng</b></td>
@@ -63,7 +63,7 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td><b>Order</b></td>
-                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.order}</span></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.order_kh}</span></td>
                         </tr>
                         <tr>
                             <td><b>TMO</b></td>

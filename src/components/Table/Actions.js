@@ -19,7 +19,7 @@ const Actions = (props) => {
             }
             return e;
         }))
-        onSave({...record, ...row});
+        onSave && onSave({...record, ...row});
         form?.resetFields();
         setEditingKey();
     }
