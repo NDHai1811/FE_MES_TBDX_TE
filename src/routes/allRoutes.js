@@ -53,7 +53,7 @@ import TaoTem from "../pages/UI/Manufacture/TaoTem";
 import Vehicle from "../pages/UI/MasterData/Vehicle";
 import TaoTon from "../pages/UI/Warehouse/TaoTon";
 import TinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
-import EmptyPage from "../pages/EmptyPage";
+import EmptyPage from "../pages/emptyPage";
 import QCByMachineIOT from "../pages/OI/Quality/QCByMachineIOT";
 import IQC from "../pages/OI/Quality/IQC";
 
