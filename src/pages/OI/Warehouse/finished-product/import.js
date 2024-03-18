@@ -283,8 +283,8 @@ const Import = (props) => {
             record.status === 1
               ? "table-row-yellow"
               : record.status === 2
-              ? "table-row-grey"
-              : ""
+                ? "table-row-grey"
+                : ""
           }
           size="small"
           pagination={false}
@@ -309,8 +309,8 @@ const Import = (props) => {
             record.status === 1
               ? "table-row-yellow"
               : record.status === 2
-              ? "table-row-grey"
-              : ""
+                ? "table-row-grey"
+                : ""
           }
           size="small"
           pagination={false}
@@ -364,11 +364,11 @@ const Import = (props) => {
         </Col>
         <Col span={24}>
           <Row gutter={8}>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
-                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+                
                 type="primary"
                 onClick={() => setIsScan(true)}
                 style={{
@@ -377,10 +377,10 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                Quét mã Pallet
+                Quét nhập
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
@@ -395,7 +395,7 @@ const Import = (props) => {
                 Tạo tem
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
@@ -408,21 +408,19 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                In tem
+                In
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
                 type="primary"
                 onClick={onShowScanPallet}
-                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  marginTop: 8,
                 }}
               >
                 Scan pallet

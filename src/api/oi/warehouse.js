@@ -44,6 +44,11 @@ export const checkLoSX = async (params) => {
   return await axios.get("/oi/warehouse/fg/check-losx", { params });
 };
 
+export const getInfoPallet = async (params) => {
+  return await axios.get("/oi/warehouse/fg/info-pallet", { params });
+};
+
+
 export const importData = async (params) => {
   return await axios.post("/oi/warehouse/fg/import/save", params);
 };

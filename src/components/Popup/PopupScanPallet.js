@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import {
   checkLoSX,
+  getInfoPallet,
   getSuggestPallet,
   sendStorePallet,
 } from "../../api/oi/warehouse";
@@ -74,22 +75,15 @@ function PopupScanPallet(props) {
         {
           title: "Tác vụ",
           align: "center",
-          render: (_, record) => {
-            <span>
-              <Popconfirm
-                title="Bạn có chắc chắn muốn xóa?"
-                //   onConfirm={() => onDetele(record)}
-              >
-                <DeleteOutlined
-                  style={{
-                    color: "red",
-                    marginLeft: 8,
-                    fontSize: 18,
-                  }}
-                />
-              </Popconfirm>
-            </span>;
-          },
+          render: (_, record) => (
+            <DeleteOutlined
+              style={{
+                color: "red",
+                marginLeft: 8,
+                fontSize: 18,
+              }}
+            />
+          )
         },
       ]);
   }, [totalQuantity]);
@@ -97,14 +91,57 @@ function PopupScanPallet(props) {
   useEffect(() => {
     (async () => {
       if (currentResult) {
-        const result = JSON.parse(currentResult);
-        const res = await checkLoSX({ lo_sx: result.lo_sx });
-        const isExisted = data?.some((val) => val?.lo_sx === result.lo_sx);
+        const res = await getInfoPallet({ pallet_id: currentResult });
         console.log(res);
-        if (!isExisted && res.success == true) {
-          setData((prevData) => [
-            ...prevData,
-            { lo_sx: result.lo_sx, so_luong: result.so_luong },
+        if (res.success == true) {
+          setPalletId(res?.data?.id);
+          setData(res?.data?.losxpallet);
+          setColumns([
+            {
+              title: res.data.pallet_id,
+              children: [
+                {
+                  title: "STT",
+                  dataIndex: "index",
+                  key: "index",
+                  align: "center",
+                  render: (value, record, index) => index + 1,
+                },
+                {
+                  title: "Mã lô sản xuất",
+                  dataIndex: "lo_sx",
+                  key: "lo_sx",
+                  align: "center",
+                  render: (value) => value || "-",
+                },
+              ],
+            },
+            {
+              title: `${res.data.so_luong}`,
+              align: "center",
+              children: [
+                {
+                  title: "Số lượng",
+                  dataIndex: "so_luong",
+                  key: "so_luong",
+                  align: "center",
+                  render: (value) => value || "-",
+                },
+              ],
+            },
+            {
+              title: "Tác vụ",
+              align: "center",
+              render: (_, record) => (
+                <DeleteOutlined
+                  style={{
+                    color: "red",
+                    marginLeft: 8,
+                    fontSize: 18,
+                  }}
+                />
+              )
+            },
           ]);
         }
       }
@@ -156,22 +193,15 @@ function PopupScanPallet(props) {
           {
             title: "Tác vụ",
             align: "center",
-            render: (_, record) => {
-              <span>
-                <Popconfirm
-                  title="Bạn có chắc chắn muốn xóa?"
-                  //   onConfirm={() => onDetele(record)}
-                >
-                  <DeleteOutlined
-                    style={{
-                      color: "red",
-                      marginLeft: 8,
-                      fontSize: 18,
-                    }}
-                  />
-                </Popconfirm>
-              </span>;
-            },
+            render: (_, record) => (
+              <DeleteOutlined
+                style={{
+                  color: "red",
+                  marginLeft: 8,
+                  fontSize: 18,
+                }}
+              />
+            )
           },
         ]);
       })
