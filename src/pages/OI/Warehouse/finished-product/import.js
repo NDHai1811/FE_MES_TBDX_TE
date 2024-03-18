@@ -7,6 +7,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+
 import {
   getListPallet,
   getWarehouseFGOverall,
@@ -15,6 +16,7 @@ import {
 import TemPallet from "../TemPallet";
 import { useReactToPrint } from "react-to-print";
 import PopupQuetQrThanhPham from "../../../../components/Popup/PopupQuetQrThanhPham";
+import PopupScanPallet from "../../../../components/Popup/PopupScanPallet";
 
 const columnDetail = [
   {
@@ -230,6 +232,7 @@ const Import = (props) => {
 
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [info, setInfo] = useState([]);
   const [resData, setResData] = useState({
     locator_id: "",
@@ -248,18 +251,22 @@ const Import = (props) => {
 
   const prinTem = () => {
     print();
-  }
+  };
   const onShowPopup = () => {
     setVisible(true);
+  };
+
+  const onShowScanPallet = () => {
+    setIsVisible(true);
   };
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       const arr = selectedRows.map((value) => {
         if (value.losxpallet) {
-          return value.losxpallet
+          return value.losxpallet;
         }
-      })
+      });
       setListCheck(arr);
     },
   };
@@ -276,8 +283,8 @@ const Import = (props) => {
             record.status === 1
               ? "table-row-yellow"
               : record.status === 2
-                ? "table-row-grey"
-                : ""
+              ? "table-row-grey"
+              : ""
           }
           size="small"
           pagination={false}
@@ -302,8 +309,8 @@ const Import = (props) => {
             record.status === 1
               ? "table-row-yellow"
               : record.status === 2
-                ? "table-row-grey"
-                : ""
+              ? "table-row-grey"
+              : ""
           }
           size="small"
           pagination={false}
@@ -340,7 +347,7 @@ const Import = (props) => {
             className="mb-1"
             size="small"
             columns={column2}
-            locale={{ emptyText: 'Trống' }}
+            locale={{ emptyText: "Trống" }}
             dataSource={warehouseOverall}
           />
         </Col>
@@ -351,7 +358,7 @@ const Import = (props) => {
             className="mb-1"
             size="small"
             columns={columnDetail}
-            locale={{ emptyText: 'Trống' }}
+            locale={{ emptyText: "Trống" }}
             dataSource={selectedItem}
           />
         </Col>
@@ -404,6 +411,23 @@ const Import = (props) => {
                 In tem
               </Button>
             </Col>
+            <Col span={8}>
+              <Button
+                block
+                className="h-100 w-100"
+                type="primary"
+                onClick={onShowScanPallet}
+                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: 8,
+                }}
+              >
+                Scan pallet
+              </Button>
+            </Col>
           </Row>
         </Col>
         <Col span={24}>
@@ -423,6 +447,16 @@ const Import = (props) => {
         <PopupQuetQrNhapKho
           visible={visible}
           setVisible={setVisible}
+          setResData={setResData}
+          setListCheck={setListCheck}
+          setSelectedItem={setSelectedItem}
+          setResult={setResult}
+        />
+      )}
+      {isVisible && (
+        <PopupScanPallet
+          visible={isVisible}
+          setVisible={setIsVisible}
           setResData={setResData}
           setListCheck={setListCheck}
           setSelectedItem={setSelectedItem}
