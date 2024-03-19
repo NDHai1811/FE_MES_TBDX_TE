@@ -447,14 +447,14 @@ const QCByMachine = (props) => {
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK1}
-        machine_id={machine_id}
+        machines={[machine_id]}
       />
       <Checksheet2
         open={openModalCK2}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK2}
-        machine_id={machine_id}
+        machines={[machine_id]}
       />
       <Checksheet3
         text={'Số lượng phế'}

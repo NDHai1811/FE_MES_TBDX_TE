@@ -151,15 +151,18 @@ function PopupQuetQrNhapKho(props) {
 
     sendStorePallet(resData)
       .then((res) => {
-        setSelectedItem([
-          {
-            pallet_id: item.pallet_id,
-            locator_id: item.locator_id,
-            so_luong: totalQuantity,
-          },
-        ]);
-        setListCheck([res.data]);
-        setResult?.(res.data);
+        if (res.success) {
+          setSelectedItem([
+            {
+              pallet_id: item.pallet_id,
+              locator_id: item.locator_id,
+              so_luong: totalQuantity,
+            },
+          ]);
+          setListCheck([res.data]);
+          setResult?.(res.data);
+        }
+
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };

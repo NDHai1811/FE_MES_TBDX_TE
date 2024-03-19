@@ -83,7 +83,14 @@ const columns1 = [
     align: "center",
   },
   {
-    title: "Khổ",
+    title: "FSC",
+    dataIndex: "fsc",
+    key: "fsc",
+    align: "center",
+    render: (value) => value ? "X" : ""
+  },
+  {
+    title: "Khổ giấy",
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
@@ -95,9 +102,27 @@ const columns1 = [
     align: "center",
   },
   {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
+    title: "Số ký nhập",
+    dataIndex: "so_kg_nhap",
+    key: "so_kg_nhap",
+    align: "center",
+  },
+  {
+    title: "Số ký ban đầu",
+    dataIndex: "so_kg_ban_dau",
+    key: "so_kg_ban_dau",
+    align: "center",
+  },
+  {
+    title: "Số ký xuất",
+    dataIndex: "so_kg_xuat",
+    key: "so_kg_xuat",
+    align: "center",
+  },
+  {
+    title: "Số ký còn lại",
+    dataIndex: "so_kg_con_lai",
+    key: "so_kg_con_lai",
     align: "center",
   },
   {
@@ -110,6 +135,12 @@ const columns1 = [
     title: "Thời gian cần dự kiếm",
     dataIndex: "time_need",
     key: "time_need",
+    align: "center",
+  },
+  {
+    title: "Ca làm việc",
+    dataIndex: "ca_sx",
+    key: "ca_sx",
     align: "center",
   },
 ];
@@ -304,55 +335,31 @@ const WarehouseMLT = (props) => {
     },
   };
 
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [importList, exportList]);
   const tabsMenu = [
     {
       key: "1",
       label: "Nhập dữ liệu nhập kho",
-      children: [
-        <Form form={formImport}>
-          <EditableTable
-            form={formImport}
-            bordered
-            columns={columns}
-            dataSource={importList}
-            scroll={{
-              y: "50vh",
-            }}
-            className="h-100"
-            rowSelection={rowSelection}
-            pagination={false}
-            size="small"
-            onSave={onUpdate}
-          />
-        </Form>
-      ],
     },
     {
       key: "2",
       label: "Theo dõi xuất hàng",
-      children: [
-        <Table
-          bordered
-          columns={columns1}
-          dataSource={exportList}
-          scroll={{
-            x: "100vw",
-            y: "50vh",
-          }}
-          className="h-100"
-          pagination={{
-            current: exportParams.page,
-            size: "small",
-            total: exportParams.totalPage,
-            pageSize: exportParams.pageSize,
-            showSizeChanger: true,
-            onChange: (page, pageSize) => {
-              setExportParams({ ...exportParams, page: page, pageSize: pageSize });
-            },
-          }}
-          size="small"
-        />,
-      ],
     },
   ];
   const [exportLoading, setExportLoading] = useState(false);
@@ -470,7 +477,7 @@ const WarehouseMLT = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={()=>currentTab === '1' ? btn_click() : setExportParams({...exportParams, page: 1})}
+                    onClick={btn_click}
                   >
                     Truy vấn
                   </Button>
@@ -556,7 +563,7 @@ const WarehouseMLT = (props) => {
         </Col>
         <Col span={20}>
           <Spin spinning={loading}>
-            <Card style={{ height: '100%' }}>
+            <Card style={{ height: '100%' }} className="custom-card" title={
               <Tabs
                 onChange={(activeKey) => setCurrentTab(activeKey)}
                 items={tabsMenu}
@@ -621,6 +628,48 @@ const WarehouseMLT = (props) => {
                   ) : null
                 }
               ></Tabs>
+            }
+            >
+              {currentTab === '1' ?
+                <Form form={formImport}>
+                  <EditableTable
+                    form={formImport}
+                    bordered
+                    columns={columns}
+                    dataSource={importList}
+                    scroll={{
+                      y: tableHeight,
+                    }}
+                    className="h-100"
+                    rowSelection={rowSelection}
+                    pagination={false}
+                    size="small"
+                    onSave={onUpdate}
+                  />
+                </Form>
+                :
+                <Table
+                  bordered
+                  columns={columns1}
+                  dataSource={exportList}
+                  scroll={{
+                    x: "100vw",
+                    y: tableHeight,
+                  }}
+                  className="h-100"
+                  pagination={{
+                    current: exportParams.page,
+                    size: "small",
+                    total: exportParams.totalPage,
+                    pageSize: exportParams.pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setExportParams({ ...exportParams, page: page, pageSize: pageSize });
+                    },
+                  }}
+                  size="small"
+                />
+              }
             </Card>
           </Spin>
         </Col>

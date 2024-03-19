@@ -70,6 +70,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
+      fixed: 'left',
       render: (value) => value || "-",
     },
     {
@@ -99,6 +100,25 @@ const ThanhPhamGiay = (props) => {
       key: "kich_thuoc",
       align: "center",
       render: (value) => value || "-",
+    },
+    {
+      title: "Tồn kho",
+      children: [
+        {
+          title: "Sl tồn",
+          dataIndex: "sl_ton",
+          key: "sl_ton",
+          align: "center",
+          render: (value) => value || "-",
+        },
+        {
+          title: "Số ngày tồn",
+          dataIndex: "so_ngay_ton",
+          key: "so_ngay_ton",
+          align: "center",
+          render: (value) => value || "-",
+        },
+      ],
     },
     {
       title: "Nhập kho",
@@ -168,25 +188,6 @@ const ThanhPhamGiay = (props) => {
           title: "Người xuất",
           dataIndex: "nguoi_xuat",
           key: "nguoi_xuat",
-          align: "center",
-          render: (value) => value || "-",
-        },
-      ],
-    },
-    {
-      title: "Tồn kho",
-      children: [
-        {
-          title: "Sl tồn",
-          dataIndex: "sl_ton",
-          key: "sl_ton",
-          align: "center",
-          render: (value) => value || "-",
-        },
-        {
-          title: "Số ngày tồn",
-          dataIndex: "so_ngay_ton",
-          key: "so_ngay_ton",
           align: "center",
           render: (value) => value || "-",
         },
