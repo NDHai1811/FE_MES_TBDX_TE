@@ -63,6 +63,7 @@ const EditableCell = ({
           value={record?.[dataIndex]}
           options={options}
           onChange={(value) => onSelect(value, dataIndex)}
+          optionFilterProp="label"
           bordered
           showSearch
           popupMatchSelectWidth={options.length > 0 ? 200 : 0}
@@ -150,7 +151,7 @@ const WarehouseExportPlan = () => {
       render: (value, item) => dayjs(item.ngay_xuat).format('HH:mm:ss')
     },
     {
-      title: "Mã khách hàng",
+      title: "Khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
@@ -436,6 +437,7 @@ const WarehouseExportPlan = () => {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
+    optionFilterProp: 'label',
   };
 
   const onSelect = (value, dataIndex, index) => {
@@ -686,6 +688,7 @@ const WarehouseExportPlan = () => {
         });
       });
     },
+    optionFilterProp: 'label',
     onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
     onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
   };
@@ -819,7 +822,7 @@ const WarehouseExportPlan = () => {
                       value={params.end_date}
                     />
                   </Form.Item>
-                  <Form.Item label="Mã khách hàng" className="mb-3">
+                  <Form.Item label="Khách hàng" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>

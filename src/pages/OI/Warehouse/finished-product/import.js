@@ -7,6 +7,7 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+
 import {
   getListPallet,
   getWarehouseFGOverall,
@@ -15,6 +16,7 @@ import {
 import TemPallet from "../TemPallet";
 import { useReactToPrint } from "react-to-print";
 import PopupQuetQrThanhPham from "../../../../components/Popup/PopupQuetQrThanhPham";
+import PopupScanPallet from "../../../../components/Popup/PopupScanPallet";
 
 const columnDetail = [
   {
@@ -230,6 +232,7 @@ const Import = (props) => {
 
   const [isScan, setIsScan] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [info, setInfo] = useState([]);
   const [resData, setResData] = useState({
     locator_id: "",
@@ -248,18 +251,22 @@ const Import = (props) => {
 
   const prinTem = () => {
     print();
-  }
+  };
   const onShowPopup = () => {
     setVisible(true);
+  };
+
+  const onShowScanPallet = () => {
+    setIsVisible(true);
   };
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       const arr = selectedRows.map((value) => {
         if (value.losxpallet) {
-          return value.losxpallet
+          return value.losxpallet;
         }
-      })
+      });
       setListCheck(arr);
     },
   };
@@ -340,7 +347,7 @@ const Import = (props) => {
             className="mb-1"
             size="small"
             columns={column2}
-            locale={{ emptyText: 'Trống' }}
+            locale={{ emptyText: "Trống" }}
             dataSource={warehouseOverall}
           />
         </Col>
@@ -351,17 +358,17 @@ const Import = (props) => {
             className="mb-1"
             size="small"
             columns={columnDetail}
-            locale={{ emptyText: 'Trống' }}
+            locale={{ emptyText: "Trống" }}
             dataSource={selectedItem}
           />
         </Col>
         <Col span={24}>
           <Row gutter={8}>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
-                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+                
                 type="primary"
                 onClick={() => setIsScan(true)}
                 style={{
@@ -370,10 +377,10 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                Quét mã Pallet
+                Quét nhập
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
@@ -388,7 +395,7 @@ const Import = (props) => {
                 Tạo tem
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Button
                 block
                 className="h-100 w-100"
@@ -401,7 +408,22 @@ const Import = (props) => {
                   justifyContent: "center",
                 }}
               >
-                In tem
+                In
+              </Button>
+            </Col>
+            <Col span={6}>
+              <Button
+                block
+                className="h-100 w-100"
+                type="primary"
+                onClick={onShowScanPallet}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                Scan pallet
               </Button>
             </Col>
           </Row>
@@ -423,6 +445,16 @@ const Import = (props) => {
         <PopupQuetQrNhapKho
           visible={visible}
           setVisible={setVisible}
+          setResData={setResData}
+          setListCheck={setListCheck}
+          setSelectedItem={setSelectedItem}
+          setResult={setResult}
+        />
+      )}
+      {isVisible && (
+        <PopupScanPallet
+          visible={isVisible}
+          setVisible={setIsVisible}
           setResData={setResData}
           setListCheck={setListCheck}
           setSelectedItem={setSelectedItem}
