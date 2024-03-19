@@ -1312,6 +1312,19 @@ const Orders = () => {
                   layout="vertical"
                   onFinish={btn_click}
                 >
+                  <Form.Item label="Ngày đặt hàng" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày giao hàng"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, ngay_dat_hang: value, page: 1, })
+                        setPage(1);
+                      }
+                      }
+                      value={params.ngay_dat_hang}
+                    />
+                  </Form.Item>
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
                       allowClear
