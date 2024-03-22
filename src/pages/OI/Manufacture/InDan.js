@@ -149,6 +149,7 @@ const InDan = (props) => {
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
+  const [listTem, setListTem] = useState([]);
   const [deviceID, setDeviceID] = useState(
     "e9aba8d0-85da-11ee-8392-a51389126dc6"
   );
@@ -302,27 +303,15 @@ const InDan = (props) => {
     }
     return "";
   };
-  useEffect(() => {
-    if (listCheck.length > 0) {
-      if (machine_id) {
-        setParams({ ...params, machine_id })
-      }
+  const handlePrint = async () => {
+    if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
       } else {
         printThanhPham();
       }
-      (async () => {
-        reloadData()
-      })();
-    }
-    setListCheck([]);
-  }, [listCheck.length]);
-
-  const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
-      setListCheck(res.data);
+      setListCheck([]);
+      setListTem([]);
     }
   };
 
@@ -368,7 +357,16 @@ const InDan = (props) => {
       setVisiblePrint(false);
     }
   };
-
+  const rowSelection = {
+    selectedRowKeys: listCheck,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys)
+      setListTem(selectedRows);
+    },
+    // getCheckboxProps: (record) => ({
+    //   disabled: !record?.id
+    // }),
+  };
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -433,8 +431,8 @@ const InDan = (props) => {
               icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
             />
             <div className="report-history-invoice">
-              <TemGiayTam listCheck={listCheck} ref={componentRef1} />
-              <TemThanhPham listCheck={listCheck} ref={componentRef2} />
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
             </div>
           </Col>
           <Col span={2}>
@@ -448,7 +446,7 @@ const InDan = (props) => {
             </Button>
           </Col>
         </Row>
-        <Col span={24}>
+        <Col span={24} className="mt-2">
           <Table
             scroll={{
               x: "calc(700px + 50%)",
@@ -458,6 +456,7 @@ const InDan = (props) => {
             rowClassName={(record, index) =>
               "no-hover " + rowClassName(record, index)
             }
+            rowSelection={rowSelection}
             pagination={false}
             bordered
             columns={columns}

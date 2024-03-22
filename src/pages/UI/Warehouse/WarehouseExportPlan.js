@@ -402,7 +402,7 @@ const WarehouseExportPlan = () => {
     setLoading(true);
     const res = await getWarehouseFGExportList(params);
     setData(
-      res.data.reverse().map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
@@ -434,6 +434,7 @@ const WarehouseExportPlan = () => {
   };
 
   const rowSelection = {
+    fixed: true,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
@@ -895,13 +896,13 @@ const WarehouseExportPlan = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={exportFile}
                   loading={exportLoading}
                 >
                   Export Excel
-                </Button>
+                </Button> */}
                 <Button type="primary" onClick={() => setOpenMdl(true)}>
                   Tạo từ ĐH
                 </Button>
@@ -938,7 +939,7 @@ const WarehouseExportPlan = () => {
                   columns={col_detailTable}
                   dataSource={data}
                   setDataSource={setData}
-                  rowSelection={rowSelection}
+                  // rowSelection={rowSelection}
                   onDelete={deleteItem}
                   onSelect={onSelect}
                   onSave={save}

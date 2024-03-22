@@ -637,6 +637,7 @@ const WarehouseMLT = (props) => {
                     bordered
                     columns={columns}
                     dataSource={importList}
+                    setDataSource={setImportList}
                     scroll={{
                       y: tableHeight,
                     }}
