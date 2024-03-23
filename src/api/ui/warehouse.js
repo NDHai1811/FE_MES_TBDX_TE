@@ -69,7 +69,7 @@ export async function createWareHouseFGExport(params) {
   const res = await axios.post("/ui/warehouse/fg/export/create", params);
   return res;
 }
-export async function exportWarehouseExportNote(params) {
+export async function exportWarehouseFGDeliveryNote(params) {
   const res = await axios.post("/ui/warehouse/fg/export/export-note", params);
   return res;
 }
