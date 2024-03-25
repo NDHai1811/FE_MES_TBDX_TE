@@ -100,6 +100,10 @@ const PrintTemplate = ({ detail }) => {
                             <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.xuong_giao}</span></td>
                         </tr>
                         <tr>
+                            <td><b>Đợt</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.dot}</span></td>
+                        </tr>
+                        <tr>
                             <td><b>Ghi chú</b></td>
                             <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.note}</span></td>
                         </tr>

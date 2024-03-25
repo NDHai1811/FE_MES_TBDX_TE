@@ -29,6 +29,7 @@ import {
   deleteKhuon,
   exportKhuon,
   getKhuon,
+  getMachines,
   updateKhuon,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
@@ -40,6 +41,7 @@ const Khuon = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
+  const [machineList, setMachineList] = useState([]);
   const col_detailTable = [
     {
       title: "Mã khuôn",
@@ -59,98 +61,56 @@ const Khuon = () => {
       dataIndex: "dai",
       key: "dai",
       align: "center",
+      inputType: 'number'
     },
     {
       title: "Rộng",
       dataIndex: "rong",
       key: "rong",
       align: "center",
+      inputType: 'number'
     },
     {
       title: "Cao",
       dataIndex: "cao",
       key: "cao",
       align: "center",
+      inputType: 'number'
     },
     {
       title: "Số Kg",
       dataIndex: "so_kg",
       key: "so_kg",
       align: "center",
+      inputType: 'number'
     },
     {
       title: "Máy",
-      dataIndex: "machine",
-      key: "machine",
+      dataIndex: "machine_id",
+      key: "machine_id",
       align: "center",
+      inputType: 'select',
+      options: machineList
     },
     {
       title: "Số lượng khuôn (bộ)",
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
+      inputType: 'number'
     },
     {
       title: "Số mảnh ghép",
       dataIndex: "so_manh_ghep",
       key: "so_manh_ghep",
       align: "center",
+      inputType: 'number'
     },
     {
       title: "Ghi chú",
       key: "ghi_chu",
       dataIndex: "ghi_chu",
       align: "center",
-    },
-  ];
-  const formFields = [
-    {
-      title: "Mã khuôn",
-      key: "id",
-      required: true,
-    },
-    {
-      title: "Khách hàng",
-      key: "khach_hang",
-      required: true,
-    },
-    {
-      title: "Dài",
-      key: "dai",
-      isInputNumber: true,
-    },
-    {
-      title: "Rộng",
-      key: "rong",
-      isInputNumber: true,
-    },
-    {
-      title: "Cao",
-      key: "cao",
-      isInputNumber: true,
-    },
-    {
-      title: "Số Kg",
-      key: "so_kg",
-      isInputNumber: true,
-    },
-    {
-      title: "Máy",
-      key: "machine",
-    },
-    {
-      title: "Số lượng khuôn (bộ)",
-      key: "so_luong",
-      isInputNumber: true,
-    },
-    {
-      title: "Số mảnh ghép",
-      key: "so_manh_ghep",
-      isInputNumber: true,
-    },
-    {
-      title: "Ghi chú",
-      key: "ghi_chu",
     },
   ];
 
@@ -172,6 +132,8 @@ const Khuon = () => {
   useEffect(() => {
     (async () => {
       loadListTable(params);
+      var res = await getMachines();
+      setMachineList(res.map(e=>({value: e.id, label: e.id})));
     })();
   }, []);
 
@@ -248,6 +210,7 @@ const Khuon = () => {
     setExportLoading(false);
   };
   const rowSelection = {
+    fixed: true,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
@@ -380,7 +343,7 @@ const Khuon = () => {
                 pagination={true}
                 scroll={{
                   x: "100%",
-                  y: window.innerHeight*0.55,
+                  y: window.innerHeight * 0.55,
                 }}
                 columns={col_detailTable}
                 dataSource={data}
@@ -404,74 +367,31 @@ const Khuon = () => {
           onFinish={onFinish}
         >
           <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt") {
-                if (e?.children?.length > 0) {
-                  return e.children.map((c, index) => {
-                    return (
-                      <Col span={!c.hidden ? 12 / e.children.length : 0}>
-                        <Form.Item
-                          name={[e.key, c.key]}
-                          className="mb-3"
-                          label={e.title + " - " + c.title}
-                          hidden={c.hidden}
-                          rules={[{ required: c.required }]}
-                        >
-                          {!c.isTrueFalse ? (
-                            c.isInputNumber ? (
-                              <Input
-                                disabled={
-                                  c.disabled || (isEdit && c.key === "id")
-                                }
-                              ></Input>
-                            ) : (
-                              <InputNumber inputMode="numeric" min={0} />
-                            )
-                          ) : (
-                            <Select>
-                              <Select.Option value={1}>Có</Select.Option>
-                              <Select.Option value={0}>Không</Select.Option>
-                            </Select>
-                          )}
-                        </Form.Item>
-                      </Col>
-                    );
-                  });
-                } else {
-                  return (
-                    <Col span={!e.hidden ? 12 : 0}>
-                      <Form.Item
-                        name={e.key}
-                        className="mb-3"
-                        label={e.title}
-                        hidden={e.hidden}
-                        rules={[{ required: e.required }]}
-                      >
-                        {!e.isTrueFalse ? (
-                          !e.isInputNumber ? (
-                            <Input
-                              disabled={
-                                e.disabled || (isEdit && e.key === "id")
-                              }
-                            ></Input>
-                          ) : (
-                            <InputNumber
-                              inputMode="numeric"
-                              min={0}
-                              style={{ width: "100%" }}
-                              defaultValue={0}
-                            />
-                          )
-                        ) : (
-                          <Select>
-                            <Select.Option value={1}>Có</Select.Option>
-                            <Select.Option value={0}>Không</Select.Option>
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                  );
+            {col_detailTable.map((e) => {
+              if (e.key !== "stt") {
+                var inputNode;
+                switch (e.inputType) {
+                  case 'number':
+                    inputNode = <InputNumber {...e} className="w-100"/>;
+                    break;
+                  case 'select':
+                    inputNode = <Select {...e} className="w-100"/>;
+                    break;
+                  default:
+                    inputNode = <Input className="w-100"/>
+                    break;
                 }
+                return (
+                  <Col span={12}>
+                    <Form.Item
+                      name={e.key}
+                      className="mb-3"
+                      label={e.title}
+                    >
+                      {inputNode}
+                    </Form.Item>
+                  </Col>
+                );
               }
             })}
           </Row>

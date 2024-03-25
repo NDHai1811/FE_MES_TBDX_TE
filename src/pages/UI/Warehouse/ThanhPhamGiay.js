@@ -47,6 +47,7 @@ const ThanhPhamGiay = (props) => {
       key: "khu_vuc",
       align: "center",
       fixed: 'left',
+      width: 70,
       render: (value) => value || "-",
     },
     {
@@ -70,6 +71,8 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
+      fixed: 'left',
+      width: 50,
       render: (value) => value || "-",
     },
     {
@@ -77,6 +80,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "length",
       key: "length",
       align: "center",
+      width: 50,
       render: (value) => value || "-",
     },
     {
@@ -84,6 +88,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "width",
       key: "width",
       align: "center",
+      width: 50,
       render: (value) => value || "-",
     },
     {
@@ -91,6 +96,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "height",
       key: "height",
       align: "center",
+      width: 50,
       render: (value) => value || "-",
     },
     {
@@ -101,6 +107,27 @@ const ThanhPhamGiay = (props) => {
       render: (value) => value || "-",
     },
     {
+      title: "Tồn kho",
+      children: [
+        {
+          title: "Sl tồn",
+          dataIndex: "sl_ton",
+          key: "sl_ton",
+          align: "center",
+          width: 70,
+          render: (value) => value || "-",
+        },
+        {
+          title: "Số ngày tồn",
+          dataIndex: "so_ngay_ton",
+          key: "so_ngay_ton",
+          align: "center",
+          width: 100,
+          render: (value) => value || "-",
+        },
+      ],
+    },
+    {
       title: "Nhập kho",
       children: [
         {
@@ -108,13 +135,15 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "tg_nhap",
           key: "tg_nhap",
           align: "center",
-          render: (value) => value || "-",
+          width: 100,
+          render: (value) => (value && dayjs(value).format('DD/MM/YYYY')) || "-",
         },
         {
           title: "TG nhập",
           dataIndex: "tg_nhap",
           key: "tg_nhap",
           align: "center",
+          width: 70,
           render: (value) => (value && dayjs(value).format('HH:mm')) || "-",
         },
         {
@@ -122,6 +151,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "sl_nhap",
           key: "sl_nhap",
           align: "center",
+          width: 70,
           render: (value) => value || "-",
         },
         {
@@ -129,6 +159,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "nhap_du",
           key: "nhap_du",
           align: "center",
+          width: 80,
           render: (value) => value || "-",
         },
         {
@@ -136,6 +167,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "nguoi_nhap",
           key: "nguoi_nhap",
           align: "center",
+          width: 150,
           render: (value) => value || "-",
         },
       ],
@@ -148,13 +180,15 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "tg_xuat",
           key: "tg_xuat",
           align: "center",
-          render: (value) => value || "-",
+          width: 100,
+          render: (value) => (value && dayjs(value).format('DD/MM/YYYY')) || "-",
         },
         {
           title: "TG xuất",
           dataIndex: "tg_xuat",
           key: "tg_xuat",
           align: "center",
+          width: 70,
           render: (value) => (value && dayjs(value).format('HH:mm')) || "-",
         },
         {
@@ -162,6 +196,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "sl_xuat",
           key: "sl_xuat",
           align: "center",
+          width: 70,
           render: (value) => value || "-",
         },
         {
@@ -169,25 +204,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "nguoi_xuat",
           key: "nguoi_xuat",
           align: "center",
-          render: (value) => value || "-",
-        },
-      ],
-    },
-    {
-      title: "Tồn kho",
-      children: [
-        {
-          title: "Sl tồn",
-          dataIndex: "sl_ton",
-          key: "sl_ton",
-          align: "center",
-          render: (value) => value || "-",
-        },
-        {
-          title: "Số ngày tồn",
-          dataIndex: "so_ngay_ton",
-          key: "so_ngay_ton",
-          align: "center",
+          width: 150,
           render: (value) => value || "-",
         },
       ],

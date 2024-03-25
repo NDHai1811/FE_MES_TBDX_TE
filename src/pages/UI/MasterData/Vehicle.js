@@ -270,6 +270,7 @@ const Vehicle = () => {
         setExportLoading(false);
     };
     const rowSelection = {
+        fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
             setListCheck(selectedRowKeys);
         },
@@ -315,7 +316,7 @@ const Vehicle = () => {
                 <Col span={20}>
                     <Card
                         style={{ height: "100%" }}
-                        className="custom-card scroll"
+                        className="custom-card"
                         title="Quản lý xe"
                         extra={
                             <Space>

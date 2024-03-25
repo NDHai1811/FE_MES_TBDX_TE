@@ -229,16 +229,16 @@ const Orders = () => {
   ]);
   const optionChecks = [
     {
-      label: 'Dài',
-      value: 'dai',
+      label: 'L',
+      value: 'length',
     },
     {
-      label: 'Rộng',
-      value: 'rong',
+      label: 'W',
+      value: 'width',
     },
     {
-      label: 'Cao',
-      value: 'cao',
+      label: 'H',
+      value: 'height',
     },
     {
       label: 'Khổ',
@@ -498,6 +498,27 @@ const Orders = () => {
       key: "note_3",
       align: "center",
       editable: true,
+      checked: true,
+    },
+    {
+      title: "Dài",
+      dataIndex: "dai",
+      key: "dai",
+      align: "center",
+      checked: true,
+    },
+    {
+      title: "Rộng",
+      dataIndex: "rong",
+      key: "rong",
+      align: "center",
+      checked: true,
+    },
+    {
+      title: "Cao",
+      dataIndex: "cao",
+      key: "cao",
+      align: "center",
       checked: true,
     },
     {
