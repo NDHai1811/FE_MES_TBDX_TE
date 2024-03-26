@@ -515,8 +515,8 @@ const NhapTay = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: "calc(700px + 50%)",
-                y: 300,
+                x: tableSize.width,
+                y: tableSize.height,
               }}
               size="small"
               rowClassName={(record, index) =>
