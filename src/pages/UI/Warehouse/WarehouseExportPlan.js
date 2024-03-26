@@ -953,7 +953,7 @@ const WarehouseExportPlan = () => {
         open={openMdl}
         onCancel={() => setOpenMdl(false)}
         footer={null}
-        title="Tạo KHXK từ đơn hàng"
+        title="Tạo kế hoạch xuất kho từ đơn hàng"
         width={'98vw'}
         height={'100vh'}
         style={{

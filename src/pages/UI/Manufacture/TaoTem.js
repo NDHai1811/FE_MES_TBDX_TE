@@ -147,6 +147,7 @@ const TaoTem = () => {
             dataIndex: "khach_hang",
             key: "khach_hang",
             align: "center",
+            fixed: "left",
         },
         {
             title: "Đơn hàng TBDX",
@@ -384,95 +385,110 @@ const TaoTem = () => {
             dataIndex: "short_name",
             key: "short_name",
             align: "center",
+            width: '120px',
+            fixed: "left",
         },
         {
             title: "MDH",
             dataIndex: "mdh",
             key: "mdh",
             align: "center",
-            width: '4%'
+            width: '100px',
+            fixed: "left",
         },
         {
             title: "Order",
             dataIndex: "order",
             key: "order",
             align: "center",
-            width: '5%'
+            width: '120px',
+            fixed: "left",
         },
         {
             title: "MQL",
             dataIndex: "mql",
             key: "mql",
             align: "center",
-            width: '2%'
+            width: '50px',
+            fixed: "left",
         },
         {
             title: "Số lượng",
             dataIndex: "sl",
             key: "sl",
             align: "center",
-            width: '3%'
+            width: '80px',
+            fixed: "left",
         },
         {
             title: "Kích thước",
             dataIndex: "kich_thuoc",
             key: "kich_thuoc",
             align: "center",
+            width:'150px'
         },
         {
             title: "Dài",
             dataIndex: "length",
             key: "length",
             align: "center",
-            width: '2%'
+            width: '50px'
         },
         {
             title: "Rộng",
             dataIndex: "width",
             key: "width",
             align: "center",
-            width: '2%'
+            width: '55px'
         },
         {
             title: "Cao",
             dataIndex: "height",
             key: "height",
             align: "center",
-            width: '2%'
+            width: '50px'
         },
         {
             title: "GMO",
             dataIndex: "gmo",
             key: "gmo",
             align: "center",
+            width: '180px'
         },
         {
             title: "PO",
             dataIndex: "po",
             key: "po",
             align: "center",
-            width: '8%'
+            width: '240px'
         },
         {
             title: "STYLE",
             dataIndex: "style",
             key: "style",
             align: "center",
-            width: '18%'
+            width: '180px'
         },
         {
             title: "STYLE NO",
             dataIndex: "style",
             key: "style",
             align: "center",
-            width: '18%'
+            width: '180px'
         },
         {
             title: "COLOR",
             dataIndex: "color",
             key: "color",
             align: "center",
-            width: '5%'
+            width: '180px'
+        },
+        {
+            title: "Đợt",
+            dataIndex: "dot",
+            key: "dot",
+            align: "center",
+            width: '70px'
         },
         {
             title: "Ghi chú",
@@ -578,7 +594,7 @@ const TaoTem = () => {
                 }}
                 scroll={
                     {
-                        x: '260vw',
+                        x: '2200px',
                         y: '42vh'
                     }
                 }
@@ -588,14 +604,14 @@ const TaoTem = () => {
                 dataSource={orders} />
         },
         {
-            label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedOrders.length} showZero color="#1677ff" overflowCount={999}/></Space>,
+            label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedOrders.length} showZero color="#1677ff" overflowCount={999} /></Space>,
             key: 2,
             children: <Table size='small' bordered
                 pagination={false}
                 loading={loadingOrders}
                 scroll={
                     {
-                        x: '260vw',
+                        x: '2200px',
                         y: '42vh'
                     }
                 }
@@ -790,7 +806,7 @@ const TaoTem = () => {
                                     bordered
                                     scroll={{
                                         y: tableHeight,
-                                        x: "180vw"
+                                        x: "900px"
                                     }}
                                     components={{
                                         body: {
