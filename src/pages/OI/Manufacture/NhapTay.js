@@ -36,6 +36,7 @@ const columns = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
+    width:"120px",
     render: (value, record, index) => value || "-",
   },
   {
@@ -514,8 +515,8 @@ const NhapTay = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: tableSize.width,
-                y: tableSize.height,
+                x: "calc(700px + 50%)",
+                y: 300,
               }}
               size="small"
               rowClassName={(record, index) =>
