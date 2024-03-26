@@ -135,6 +135,20 @@ const WarehouseExportPlan = () => {
 
   const col_detailTable = [
     {
+      title: "Lệnh xuất",
+      dataIndex: "delivery_note_id",
+      key: "delivery_note_id",
+      align: "center",
+      width: 100,
+    },
+    {
+      title: "Người báo xuất",
+      dataIndex: "nguoi_bao_xuat",
+      key: "nguoi_bao_xuat",
+      align: "center",
+      width: 100,
+    },
+    {
       title: "Ngày xuất",
       dataIndex: "ngay_xuat",
       key: "ngay_xuat",
@@ -187,6 +201,13 @@ const WarehouseExportPlan = () => {
       width: 60,
     },
     {
+      title: "FAC",
+      dataIndex: "xuong_giao",
+      key: "xuong_giao",
+      align: "center",
+      width: 180
+    },
+    {
       title: "Tài xế",
       dataIndex: "tai_xe",
       key: "tai_xe",
@@ -224,56 +245,6 @@ const WarehouseExportPlan = () => {
       options: listUsers,
       width: 180,
     },
-    {
-      title: "FAC",
-      dataIndex: "xuong_giao",
-      key: "xuong_giao",
-      align: "center",
-    },
-    // {
-    //   title: "Hành động",
-    //   dataIndex: "action",
-    //   align: "center",
-    //   fixed: "right",
-    //   render: (_, record) => {
-    //     const editable = isEditing(record);
-    //     return editable ? (
-    //       <span>
-    //         <Typography.Link
-    //           onClick={() => save(record.key)}
-    //           style={{
-    //             marginRight: 8,
-    //           }}
-    //         >
-    //           Lưu
-    //         </Typography.Link>
-    //         <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-    //           <a>Hủy</a>
-    //         </Popconfirm>
-    //       </span>
-    //     ) : (
-    //       <span>
-    //         <EditOutlined
-    //           style={{ color: "#1677ff", fontSize: 20 }}
-    //           disabled={editingKey !== ""}
-    //           onClick={() => edit(record)}
-    //         />
-    //         <Popconfirm
-    //           title="Bạn có chắc chắn muốn xóa?"
-    //           onConfirm={() => deleteItem(record.key)}
-    //         >
-    //           <DeleteOutlined
-    //             style={{
-    //               color: "red",
-    //               marginLeft: 8,
-    //               fontSize: 20,
-    //             }}
-    //           />
-    //         </Popconfirm>
-    //       </span>
-    //     );
-    //   },
-    // },
   ];
 
   const deleteItem = async (key) => {
@@ -335,48 +306,6 @@ const WarehouseExportPlan = () => {
     }
   };
 
-  // const mergedColumns = col_detailTable?.map((col) => {
-  //   if (!col.editable) {
-  //     return col;
-  //   }
-  //   return {
-  //     ...col,
-  //     onCell: (record) => ({
-  //       record,
-  //       dataIndex: col.dataIndex,
-  //       title: col.title,
-  //       editing: isEditing(record),
-  //       inputType:
-  //         (col.dataIndex === "tai_xe" || col.dataIndex === "so_xe" || col.dataIndex === "nguoi_xuat")
-  //           ? "select"
-  //           : "text",
-  //       options: options(col.dataIndex),
-  //       onSelect:
-  //         col.dataIndex === "tai_xe" ||
-  //           col.dataIndex === "so_xe"
-  //           ? onSelectDriverVehicle
-  //           : onSelect,
-  //     }),
-  //   };
-  // });
-  const options = (dataIndex) => {
-    let filteredOptions = [];
-    switch (dataIndex) {
-      case "tai_xe":
-        filteredOptions = listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }));
-        break;
-      case "so_xe":
-        filteredOptions = listVehicles.map(e => ({ ...e, value: e?.id, label: e?.id }));
-        break;
-      case "nguoi_xuat":
-        filteredOptions = listUsers.map(e => ({ ...e, value: e?.id, label: e?.name }));
-        break;
-      default:
-        break;
-    }
-    return filteredOptions;
-  };
-
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
@@ -408,29 +337,6 @@ const WarehouseExportPlan = () => {
     );
     setTotalPage(res.totalPage)
     setLoading(false);
-  };
-
-  const success = () => {
-    messageApi.open({
-      type: "success",
-      content: "Upload file thành công",
-    });
-  };
-
-  const error = () => {
-    messageApi.open({
-      type: "error",
-      content: "Upload file lỗi",
-    });
-  };
-
-  const exportFile = async () => {
-    // setExportLoading(true);
-    // const res = await exportOrders(params);
-    // if (res.success) {
-    //   window.location.href = baseURL + res.data;
-    // }
-    // setExportLoading(false);
   };
 
   const rowSelection = {
@@ -832,6 +738,24 @@ const WarehouseExportPlan = () => {
                       placeholder="Nhập mã khách hàng"
                     />
                   </Form.Item>
+                  <Form.Item label="Lệnh xuất" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, delivery_note_id: e.target.value })
+                      }
+                      placeholder="Nhập lệnh xuất"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Người báo xuất" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, created_by: e.target.value })
+                      }
+                      placeholder="Nhập người báo xuất"
+                    />
+                  </Form.Item>
                   <Form.Item label="Mã đơn hàng" className="mb-3">
                     <Input
                       allowClear
@@ -863,46 +787,6 @@ const WarehouseExportPlan = () => {
             className="custom-card"
             extra={
               <Space>
-                <Upload
-                  showUploadList={false}
-                  name="files"
-                  action={baseURL + "/api/upload-ke-hoach-xuat-kho"}
-                  headers={{
-                    authorization: "Bearer " + userProfile.token,
-                  }}
-                  onChange={(info) => {
-                    setLoadingExport(true);
-                    if (info.file.status === "error") {
-                      setLoadingExport(false);
-                      error();
-                    } else if (info.file.status === "done") {
-                      if (info.file.response.success === true) {
-                        loadListTable();
-                        success();
-                        setLoadingExport(false);
-                      } else {
-                        loadListTable();
-                        message.error(info.file.response.message);
-                        setLoadingExport(false);
-                      }
-                    }
-                  }}
-                >
-                  <Button
-                    style={{ marginLeft: "15px" }}
-                    type="primary"
-                    loading={loadingExport}
-                  >
-                    Upload Excel
-                  </Button>
-                </Upload>
-                {/* <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                >
-                  Export Excel
-                </Button> */}
                 <Button type="primary" onClick={() => setOpenMdl(true)}>
                   Tạo từ ĐH
                 </Button>
@@ -928,7 +812,7 @@ const WarehouseExportPlan = () => {
                     },
                   }}
                   scroll={{
-                    x: '100vw',
+                    // x: '100vw',
                     y: tableHeight,
                   }}
                   // components={{
