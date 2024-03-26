@@ -340,7 +340,7 @@ const Manufacture1 = (props) => {
   const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
   const [tableSize, setTableSize] = useState(
     {
-      width: window.innerWidth < 700 ? '200vw' : '100%',
+      width: window.innerWidth < 700 ? '300vw' : '100%',
       height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
     }
   );
@@ -350,7 +350,7 @@ const Manufacture1 = (props) => {
       console.log(table);
       setTableSize(
         {
-          width: window.innerWidth < 700 ? '200vw' : '100%',
+          width: window.innerWidth < 700 ? '300vw' : '100%',
           height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
         }
       );
