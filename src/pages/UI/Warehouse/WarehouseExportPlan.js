@@ -134,20 +134,20 @@ const WarehouseExportPlan = () => {
   };
 
   const col_detailTable = [
-    {
-      title: "Lệnh xuất",
-      dataIndex: "delivery_note_id",
-      key: "delivery_note_id",
-      align: "center",
-      width: 100,
-    },
-    {
-      title: "Người báo xuất",
-      dataIndex: "nguoi_bao_xuat",
-      key: "nguoi_bao_xuat",
-      align: "center",
-      width: 100,
-    },
+    // {
+    //   title: "Lệnh xuất",
+    //   dataIndex: "delivery_note_id",
+    //   key: "delivery_note_id",
+    //   align: "center",
+    //   width: 100,
+    // },
+    // {
+    //   title: "Người báo xuất",
+    //   dataIndex: "nguoi_bao_xuat",
+    //   key: "nguoi_bao_xuat",
+    //   align: "center",
+    //   width: 100,
+    // },
     {
       title: "Ngày xuất",
       dataIndex: "ngay_xuat",
@@ -738,7 +738,7 @@ const WarehouseExportPlan = () => {
                       placeholder="Nhập mã khách hàng"
                     />
                   </Form.Item>
-                  <Form.Item label="Lệnh xuất" className="mb-3">
+                  {/* <Form.Item label="Lệnh xuất" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>
@@ -755,7 +755,7 @@ const WarehouseExportPlan = () => {
                       }
                       placeholder="Nhập người báo xuất"
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                   <Form.Item label="Mã đơn hàng" className="mb-3">
                     <Input
                       allowClear
