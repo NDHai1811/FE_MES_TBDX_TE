@@ -420,7 +420,6 @@ const NhapTay = (props) => {
   useEffect(() => {
     const handleWindowResize = () => {
       const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-      console.log(table);
       setTableSize(
         {
           width: window.innerWidth < 700 ? '300vw' : '100%',

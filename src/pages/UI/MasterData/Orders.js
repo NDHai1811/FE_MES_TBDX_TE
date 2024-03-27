@@ -347,7 +347,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "2%",
+      width: 100,
     },
     {
       title: "MDH",
@@ -357,7 +357,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "2%",
+      width: 100,
     },
     {
       title: "L",
@@ -367,7 +367,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.2%",
+      width: 60,
     },
     {
       title: "W",
@@ -377,7 +377,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.2%",
+      width: 60,
     },
     {
       title: "H",
@@ -387,7 +387,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.2%",
+      width: 60,
     },
     {
       title: "Kích thước ĐH",
@@ -397,6 +397,7 @@ const Orders = () => {
       editable: true,
       fixed: "left",
       checked: true,
+      width: 100
     },
     {
       title: "MQL",
@@ -405,7 +406,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "1%",
+      width: 60,
       fixed: "left",
     },
     {
@@ -413,7 +414,7 @@ const Orders = () => {
       dataIndex: "sl",
       key: "sl",
       align: "center",
-      width: "1.2%",
+      width: 70,
       editable: true,
       checked: true,
       fixed: "left",
@@ -423,7 +424,7 @@ const Orders = () => {
       dataIndex: "unit",
       key: "unit",
       align: "center",
-      width: "1.2%",
+      width: 60,
       editable: true,
       checked: true,
     },
@@ -432,9 +433,9 @@ const Orders = () => {
       dataIndex: "kich_thuoc_chuan",
       key: "kich_thuoc_chuan",
       align: "center",
-      width: "2.5%",
       editable: true,
       checked: true,
+      width: 100
     },
     {
       title: "Phân loại 1",

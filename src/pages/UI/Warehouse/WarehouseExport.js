@@ -34,13 +34,13 @@ import {
 import "../style.scss";
 import dayjs from "dayjs";
 import { DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { createWareHouseFGExport, exportWarehouseExportNote, exportWarehouseFGDeliveryNote, getWarehouseFGExportList, updateWarehouseFGExport, warehouseExportLogList } from "../../../api/ui/warehouse";
+import { createDeliveryNote, createExportCommand, createWareHouseFGExport, deleteDeliveryNote, exportWarehouseExportNote, exportWarehouseFGDeliveryNote, getDeliveryNoteList, getWarehouseFGExportList, updateDeliveryNote, updateWarehouseFGExport, warehouseExportLogList } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
 
 const WarehouseExport = () => {
-  document.title = "Quản lý xuất kho";
+  document.title = "Quản lý lệnh xuất kho";
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -67,81 +67,61 @@ const WarehouseExport = () => {
     "mdh",
     "mql",
     "so_luong",
-    "tai_xe",
-    "so_xe",
+    "driver_Id",
+    "vehicle_id",
     "nguoi_xuat",
   ]);
+  const [orders, setOrders] = useState([])
+  const [orderTotalPage, setOrdersTotalPage] = useState(1)
+  const [loadingOrders, setLoadingOrders] = useState(false);
   const [listVehicles, setListVehicles] = useState([]);
   const [listUsers, setListUsers] = useState([]);
-
-
+  const [selectedOrders, setSelectedOrders] = useState([]);
+  const [listCustomers, setListCustomers] = useState([]);
   const col_detailTable = [
     {
-      title: "Ngày xuất",
-      dataIndex: "ngay_xuat",
-      key: "ngay_xuat",
-      align: "center",
-      render: (value, item) => dayjs(value).format('DD/MM/YYYY')
-    },
-    {
-      title: "Thời gian xuất",
-      dataIndex: "thoi_gian_xuat",
-      key: "thoi_gian_xuat",
-      align: "center",
-      render: (value, item) => dayjs(item.ngay_xuat).format('HH:mm:ss')
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "customer_id",
-      key: "customer_id",
+      title: "Lệnh xuất",
+      dataIndex: "id",
+      key: "id",
       align: "center",
     },
     {
-      title: "Vị trí",
-      dataIndex: "locator_id",
-      key: "locator_id",
+      title: "Người báo xuất",
+      dataIndex: "created_by",
+      key: "created_by",
       align: "center",
+      render: (value)=>listUsers.find(e=>e.id === value)?.name,
     },
     {
-      title: "Mã đơn hàng",
-      dataIndex: "mdh",
-      key: "mdh",
+      title: "Số xe",
+      dataIndex: "vehicle_id",
+      key: "vehicle_id",
       align: "center",
-    },
-    {
-      title: "Mã quản lý",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-    },
-    {
-      title: "Số lượng",
-      dataIndex: "so_luong",
-      key: "so_luong_dh",
-      align: "center",
-    },
-    {
-      title: "Mã pallet",
-      dataIndex: "pallet_id",
-      key: "pallet_id",
-      align: "center",
+      inputType: 'select',
       editable: true,
+      options: listVehicles,
     },
     {
-      title: "Lô SX",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
+      title: "Tài xế",
+      dataIndex: "driver_id",
+      key: "driver_id",
       align: "center",
+      render: (value)=>listUsers.find(e=>e.id === value)?.name,
       editable: true,
+      inputType: 'select',
+      options: listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name })),
     },
     {
-      title: "FAC",
-      dataIndex: "xuong_giao",
-      key: "xuong_giao",
+      title: "Người xuất",
+      dataIndex: "exporter_id",
+      key: "exporter_id",
       align: "center",
+      render: (value)=>listUsers.find(e=>e.id === value)?.name,
+      editable: true,
+      inputType: 'select',
+      options: listUsers,
     },
   ];
-
   const [messageApi, contextHolder] = message.useMessage();
 
   function btn_click() {
@@ -155,7 +135,7 @@ const WarehouseExport = () => {
   const loadListTable = async () => {
     setListCheck([])
     setLoading(true);
-    const res = await warehouseExportLogList(params);
+    const res = await getDeliveryNoteList(params);
     setData(
       [...res.data].map((e) => {
         return { ...e, key: e.id };
@@ -164,35 +144,19 @@ const WarehouseExport = () => {
     setTotalPage(res.totalPage)
     setLoading(false);
   };
-  const [listCustomers, setListCustomers] = useState([]);
-  useEffect(()=>{
-    (async ()=>{
+  
+  useEffect(() => {
+    (async () => {
+      const res1 = await getVehicles();
+      setListVehicles(res1.map(e => ({ ...e, value: e.id, label: e.id })));
+      const res2 = await getUsers();
+      setListUsers(res2.map(e => ({ ...e, value: e.id, label: e.name })));
       const res3 = await getCustomers();
       setListCustomers(res3.data);
-    })()
-  }, [])
-  const exportFile = async () => {
-    if (listCheck.length <= 0) {
-      messageApi.warning('Vui lòng chọn lô cần xuất');
-      return 0;
-    }
-    if (!params.customer_id) {
-      messageApi.warning('Vui lòng chọn lọc theo 01 khách hàng duy nhất');
-      return 0;
-    }
-    const customers = [...new Set(data.filter(e => listCheck.includes(e.id)).map(e => e.customer_id))];
-    console.log(customers);
-    if (customers.length !== 1) {
-      messageApi.warning('Vui lòng chọn lọc theo 01 khách hàng duy nhất');
-      return 0;
-    }
-    setExportLoading(true);
-    const res = await exportWarehouseFGDeliveryNote({ids: listCheck, customer_id: params.customer_id});
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading(false);
-  };
+    })();
+  }, []);
+  const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 20, totalPage: 1, ngay_xuat: dayjs() });
+  const [exportCommandParams, setExportCommandParams] = useState();
 
   const rowSelection = {
     fixed: true,
@@ -202,7 +166,7 @@ const WarehouseExport = () => {
     },
     optionFilterProp: 'label',
   };
-  
+
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -220,6 +184,343 @@ const WarehouseExport = () => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [data]);
+
+  const onSave = async (record) => {
+    var res = await updateDeliveryNote(record)
+    if(res.success){
+      loadListTable();
+    }
+  }
+  const onDelete = async (record) => {
+    var res = await deleteDeliveryNote(record);
+    if(res.success){
+      loadListTable();
+    }
+  }
+  const onSelect = (value, dataIndex, index) => {
+    if (dataIndex === 'driver_id' || dataIndex === 'vehicle_id') {
+      onSelectDriverVehicle(value, dataIndex, index);
+    } else {
+      const items = data.map((val, i) => {
+        if (i === index) {
+          val[dataIndex] = value;
+        }
+        return { ...val };
+      });
+      setData(items);
+    }
+  };
+  const onSelectDriverVehicle = (value, dataIndex, index) => {
+    const items = data.map((e, i) => {
+      if (i === index) {
+        var target = null;
+        if (dataIndex === 'driver_id') {
+          target = listVehicles.find(e => e.user1 === value);
+        } 
+        else if(dataIndex === 'vehicle_id') {
+          target = listVehicles.find(e => e.id === value);
+        }
+        form.setFieldsValue({ ...e, vehicle_id: target?.id, driver_id: target?.user1 })
+        return { ...e, vehicle_id: target?.id, driver_id: target?.user1 }
+      } else {
+        return e;
+      }
+    });
+    setData(items)
+  }
+  const searchOrder = async (filterByNote = false) => {
+    var paramsSearchOrder = {...orderParams};
+    if(filterByNote){
+      paramsSearchOrder = {...paramsSearchOrder, filter_by_delivery_note: true}
+    }
+    setLoadingOrders(true);
+    const res = await getOrders(paramsSearchOrder);
+    setOrders(res.data.map(e => ({ ...e, key: e.id })));
+    setOrdersTotalPage(res.totalPage);
+    setLoadingOrders(false);
+  }
+  useEffect(() => {
+    if(openMdl){
+      searchOrder(true);
+    }
+  }, [openMdl, orderParams]);
+  const ordersColumn = [
+    {
+      title: "Khách hàng",
+      dataIndex: "short_name",
+      key: "short_name",
+      align: "center",
+      width: 100,
+      isSearch: true,
+      input_type: 'select',
+      options: listCustomers
+    },
+    {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      width: 100,
+      isSearch: true,
+      mode: 'tags',
+      input_type: 'select',
+    },
+    {
+      title: "Order",
+      dataIndex: "order",
+      key: "order",
+      align: "center",
+      width: 100,
+      isSearch: true,
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      width: 50,
+    },
+    {
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      width: 50,
+      isSearch: true,
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      width: 50,
+      isSearch: true,
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      width: 50,
+      isSearch: true,
+    },
+    {
+      title: "Kích thước",
+      dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
+      align: "center",
+      width: 160,
+      isSearch: true,
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "sl",
+      key: "sl",
+      align: "center",
+      width: 70,
+    },
+    {
+      title: "TMO",
+      dataIndex: "tmo",
+      key: "tmo",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "PO",
+      dataIndex: "po",
+      key: "po",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "STYLE",
+      dataIndex: "style",
+      key: "style",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "STYLE NO",
+      dataIndex: "style_no",
+      key: "style_no",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "COLOR",
+      dataIndex: "color",
+      key: "color",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "Item",
+      dataIndex: "item",
+      key: "item",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "RM",
+      dataIndex: "rm",
+      key: "rm",
+      align: "center",
+      isSearch: true,
+    },
+    {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
+      align: "center",
+    },
+    {
+      title: "Đợt",
+      dataIndex: "dot",
+      key: "dot",
+      align: "center",
+      width: 60,
+      isSearch: true,
+    },
+    {
+      title: "Fac",
+      dataIndex: "xuong_giao",
+      key: "xuong_giao",
+      align: "center",
+      width: 60,
+      isSearch: true,
+    },
+    {
+      title: "Hạn giao",
+      dataIndex: "han_giao",
+      key: "han_giao",
+      align: "center",
+      width: 100,
+      isSearch: true,
+      input_type: 'date',
+    },
+  ];
+  const selectOrdersColumns = [...ordersColumn, {
+    title: 'Tác vụ',
+    key: 'action',
+    dataIndex: 'action',
+    align: 'center',
+    fixed: 'right',
+    width: 60,
+    render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
+  }];
+  const onDeselectOrders = (rows) => {
+    setSelectedOrders(prev => {
+      const newArray = [...prev];
+      return newArray.filter((e, index) => {
+        return !rows.some(o => o.key === e.key)
+      });
+    });
+  }
+  const orderRowSelection = {
+    selectedRowKeys: [].concat(selectedOrders).map(e => e.key),
+    fixed: true,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedOrders(prev => {
+        const newArray = [...prev, ...selectedRows];
+        return newArray.filter((e, index) => {
+          return index === newArray.findIndex(o => e.key === o.key);
+        });
+      });
+    },
+    optionFilterProp: 'label',
+    onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
+    onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
+  };
+  const items = [
+    {
+      label: 'Danh sách đơn hàng',
+      key: 1,
+      children: <Table size='small' bordered
+        loading={loadingOrders}
+        pagination={{
+          current: orderParams.page,
+          size: "small",
+          total: orderTotalPage,
+          pageSize: orderParams.pageSize,
+          showSizeChanger: true,
+          onChange: (page, pageSize) => {
+            setPage(page);
+            setPageSize(pageSize);
+            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+          },
+        }}
+        scroll={
+          {
+            x: '170vw',
+            y: '42vh'
+          }
+        }
+        tableLayout="fixed"
+        rowSelection={orderRowSelection}
+        columns={ordersColumn}
+        dataSource={orders} />
+    },
+    {
+      label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedOrders.length} showZero color="#1677ff" overflowCount={999} /></Space>,
+      key: 2,
+      children: <Table size='small' bordered
+        pagination={false}
+        loading={loadingOrders}
+        scroll={
+          {
+            x: '260vw',
+            y: '42vh'
+          }
+        }
+        tableLayout="fixed"
+        columns={selectOrdersColumns}
+        dataSource={selectedOrders}
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              {selectOrdersColumns.map((e, index) => {
+                if (index === 0) {
+                  return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
+                } else if (index === 8) {
+                  return <Table.Summary.Cell align="center" index={index}>{
+                    selectedOrders.reduce((sum, { sl }) => sum + parseInt(sl), 0)
+                  }</Table.Summary.Cell>
+                } else {
+                  return <Table.Summary.Cell index={index} />
+                }
+              })}
+            </Table.Summary.Row>
+          </Table.Summary>
+        )} />
+    }
+  ];
+  const onCreate = async () => {
+    if(!exportCommandParams?.vehicle_id){
+      messageApi.warning('Chưa chọn xe!');
+      return 0;
+    }
+    if(!exportCommandParams?.driver_id){
+      messageApi.warning('Chưa chọn tài xế!');
+      return 0;
+    }
+    if(!exportCommandParams?.exporter_id){
+      messageApi.warning('Chưa chọn người xuất!');
+      return 0;
+    }
+    if(!selectedOrders.length){
+      messageApi.warning('Chưa chọn đơn hàng!');
+      return 0;
+    }
+    var res = await createDeliveryNote({ ...exportCommandParams, orders: selectedOrders });
+    if (res.success) {
+      setOpenMdl(false);
+      loadListTable();
+    }
+  }
+  const extraTab = {
+    right: <Button type="primary" className="tabs-extra-demo-button" onClick={onCreate}>Tạo lệnh XK</Button>,
+  };
   return (
     <>
       {contextHolder}
@@ -314,24 +615,24 @@ const WarehouseExport = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý xuất kho"
+            title="Quản lý lệnh xuất kho"
             bodyStyle={{ paddingBottom: 0 }}
             className="custom-card"
             extra={
               <Space>
                 <Button
                   type="primary"
-                  onClick={exportFile}
+                  onClick={()=>setOpenMdl(true)}
                 // loading={exportLoading}
                 >
-                  Tạo phiếu xuất kho
+                  Tạo lệnh xuất kho
                 </Button>
               </Space>
             }
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
-                <Table
+                <EditableTable
                   form={form}
                   size="small"
                   bordered
@@ -348,7 +649,7 @@ const WarehouseExport = () => {
                     },
                   }}
                   scroll={{
-                    x: '100vw',
+                    // x: '100vw',
                     y: tableHeight,
                   }}
                   // components={{
@@ -358,17 +659,140 @@ const WarehouseExport = () => {
                   // }}
                   columns={col_detailTable}
                   dataSource={data}
-                  // setDataSource={setData}
+                  setDataSource={setData}
                   rowSelection={rowSelection}
-                // onDelete={deleteItem}
-                // onSelect={onSelect}
-                // onSave={save}
+                  onDelete={onDelete}
+                  onSelect={onSelect}
+                  onSave={onSave}
                 />
               </Form>
             </Spin>
           </Card>
         </Col>
       </Row>
+      <Modal
+        open={openMdl}
+        onCancel={() => setOpenMdl(false)}
+        footer={null}
+        title="Tạo lệnh xuất kho từ đơn hàng"
+        width={'98vw'}
+        height={'100vh'}
+        style={{
+          // position: 'fixed',
+          left: '0',
+          right: '0',
+          top: '5px',
+        }}
+      >
+        <Form layout="vertical">
+          <Row gutter={[8, 0]}>
+            <Col span={8}>
+              <Form.Item
+                label="Số xe"
+                className="mb-2"
+              >
+                <Select options={listVehicles}
+                  value={exportCommandParams?.vehicle_id}
+                  onSelect={(value) => {
+                    const target = listVehicles.find(e => e.id === value);
+                    setExportCommandParams({ ...exportCommandParams, vehicle_id: value, driver_id: target?.user1 });
+                  }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Tài xế"
+                className="mb-2"
+              >
+                <Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
+                  value={exportCommandParams?.driver_id}
+                  onSelect={(value) => {
+                    const target = listVehicles.find(e => e.user1 === value);
+                    setExportCommandParams({ ...exportCommandParams, driver_id: value, vehicle_id: target?.id });
+                  }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Người xuất"
+                className="mb-2"
+              >
+                <Select options={listUsers}
+                  onSelect={(value) => {
+                    setExportCommandParams({ ...exportCommandParams, exporter_id: value });
+                  }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <ConfigProvider
+            theme={{
+              components: {
+                Collapse: {
+                  headerPadding: 0,
+                  contentPadding: 0
+                },
+              },
+            }}>
+            <Collapse
+              collapsible="header"
+              defaultActiveKey={['1']}
+              ghost
+              items={[
+                {
+                  key: '1',
+                  label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
+                  children: <Row gutter={[8, 0]}>
+                    {ordersColumn.map(e => {
+                      let item = null;
+                      if (e?.input_type === 'select') {
+                        item = <Select
+                          mode={e?.mode}
+                          options={e?.options}
+                          showSearch
+                          maxTagCount={'responsive'}
+                          allowClear
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
+                          value={orderParams[e.key]}
+                        />
+                      }
+                      else if (['date', 'date_time'].includes(e?.input_type)) {
+                        item = <DatePicker
+                          className="w-100"
+                          showTime={e?.input_type === 'date_time'}
+                          needConfirm={false}
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.key]: value })}
+                          onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
+                          value={orderParams[e.key]}
+                        />;
+                      } else {
+                        item = <Input
+                          allowClear
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value.target.value })}
+                          value={orderParams[e.key]}
+                        />
+                      }
+                      return e.isSearch && <Col span={4}>
+                        <Form.Item label={e.title} style={{ marginBottom: 8 }}>
+                          {item}
+                        </Form.Item>
+                      </Col>
+                    })}
+                  </Row>,
+                },
+              ]}
+            />
+          </ConfigProvider>
+        </Form>
+        <Tabs
+          className="mt-1"
+          type="card"
+          items={items}
+          tabBarExtraContent={extraTab}
+        />
+      </Modal>
     </>
   );
 };

@@ -34,7 +34,7 @@ import {
 import "../style.scss";
 import dayjs from "dayjs";
 import { DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { createWareHouseFGExport, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
+import { createExportCommand, createWareHouseFGExport, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
@@ -97,7 +97,7 @@ const WarehouseExportPlan = () => {
   document.title = "Kế hoạch xuất kho";
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
+  const [openMdlXK, setOpenMdlXK] = useState(false);
   const [form] = Form.useForm();
   const [params, setParams] = useState({
     page: 1,
@@ -109,45 +109,29 @@ const WarehouseExportPlan = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [data, setData] = useState([]);
-  const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [exportLoading, setExportLoading] = useState(false);
-  const [editingKey, setEditingKey] = useState("");
-  const [type, setType] = useState("");
-  const [keys, setKeys] = useState([
-    "id",
-    "ngay_xuat",
-    "customer_id",
-    "mdh",
-    "mql",
-    "so_luong",
-    "tai_xe",
-    "so_xe",
-    "nguoi_xuat",
-  ]);
   const [listVehicles, setListVehicles] = useState([]);
   const [listUsers, setListUsers] = useState([]);
-  const isEditing = (record) => record.key === editingKey;
-
-  const hasEditColumn = (value) => {
-    return keys.some((val) => val === value);
-  };
 
   const col_detailTable = [
-    // {
-    //   title: "Lệnh xuất",
-    //   dataIndex: "delivery_note_id",
-    //   key: "delivery_note_id",
-    //   align: "center",
-    //   width: 100,
-    // },
-    // {
-    //   title: "Người báo xuất",
-    //   dataIndex: "nguoi_bao_xuat",
-    //   key: "nguoi_bao_xuat",
-    //   align: "center",
-    //   width: 100,
-    // },
+    {
+      title: "Lệnh xuất",
+      dataIndex: "delivery_note_id",
+      key: "delivery_note_id",
+      align: "center",
+      width: 100,
+    },
+    {
+      title: "Người báo xuất",
+      dataIndex: "created_by",
+      key: "created_by",
+      align: "center",
+      width: 180,
+      render: (value) => {
+        const item = listUsers.find(e => e.id == value);
+        return item?.name
+      },
+    },
     {
       title: "Ngày xuất",
       dataIndex: "ngay_xuat",
@@ -209,40 +193,37 @@ const WarehouseExportPlan = () => {
     },
     {
       title: "Tài xế",
-      dataIndex: "tai_xe",
-      key: "tai_xe",
+      dataIndex: "driver_id",
+      key: "driver_id",
       align: "center",
-      editable: true,
       render: (value) => {
         const item = listVehicles.find(e => e.user1 === value);
         return item?.driver?.name
       },
-      inputType: 'select',
-      options: listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name })),
+      // inputType: 'select',
+      // options: listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name })),
       width: 180,
     },
     {
       title: "Số xe",
-      dataIndex: "so_xe",
-      key: "so_xe",
+      dataIndex: "vehicle_id",
+      key: "vehicle_id",
       align: "center",
-      editable: true,
       width: 150,
-      inputType: 'select',
-      options: listVehicles
+      // inputType: 'select',
+      // options: listVehicles
     },
     {
       title: "Người xuất",
-      dataIndex: "nguoi_xuat",
-      key: "nguoi_xuat",
+      dataIndex: "exporter_id",
+      key: "exporter_id",
       align: "center",
-      editable: true,
       render: (value) => {
         const item = listUsers.find(e => e.id == value);
         return item?.name
       },
-      inputType: 'select',
-      options: listUsers,
+      // inputType: 'select',
+      // options: listUsers,
       width: 180,
     },
   ];
@@ -257,43 +238,6 @@ const WarehouseExportPlan = () => {
     }
   };
 
-  const onAdd = () => {
-    form.resetFields();
-    const newData = [
-      {
-        key: data.length + 1,
-        id: "",
-        customer_id: "",
-        ngay_xuat: "",
-        mdh: "",
-        mql: "",
-        so_luong: "",
-        tai_xe: "",
-        so_xe: "",
-        nguoi_xuat: "",
-      },
-      ...data,
-    ];
-    setData(newData);
-    setEditingKey(data.length + 1);
-    setType("add");
-  };
-
-  const edit = (record) => {
-    form.setFieldsValue({
-      ...record,
-    });
-    setEditingKey(record.key);
-    setType("update");
-  };
-  const cancel = () => {
-    if (typeof editingKey === "number") {
-      const newData = [...data];
-      newData.shift();
-      setData(newData);
-    }
-    setEditingKey("");
-  };
   const save = async (data) => {
     try {
       var res = await updateWarehouseFGExport(data);
@@ -339,14 +283,6 @@ const WarehouseExportPlan = () => {
     setLoading(false);
   };
 
-  const rowSelection = {
-    fixed: true,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
-    },
-    optionFilterProp: 'label',
-  };
-
   const onSelect = (value, dataIndex, index) => {
     if (dataIndex === 'tai_xe' || dataIndex === 'so_xe') {
       onSelectDriverVehicle(value, dataIndex, index);
@@ -377,7 +313,6 @@ const WarehouseExportPlan = () => {
     });
     setData(items)
   }
-  const { userProfile } = useProfile();
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -397,20 +332,30 @@ const WarehouseExportPlan = () => {
   }, [data]);
   const [orders, setOrders] = useState([])
   const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 20, totalPage: 1, ngay_xuat: dayjs() });
+  const [exportCommandParams, setExportCommandParams] = useState();
   const [orderTotalPage, setOrdersTotalPage] = useState(1)
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState([]);
-  const searchOrder = async () => {
+  const searchOrder = async (filterByNote = false) => {
+    var paramsSearchOrder = {...orderParams};
+    if(filterByNote){
+      paramsSearchOrder = {...paramsSearchOrder, filter_by_delivery_note: true}
+    }
     setLoadingOrders(true);
-    const res = await getOrders(orderParams);
+    const res = await getOrders(paramsSearchOrder);
     setOrders(res.data.map(e => ({ ...e, key: e.id })));
     setOrdersTotalPage(res.totalPage);
     setLoadingOrders(false);
   }
   useEffect(() => {
-    openMdl && searchOrder()
-  }, [openMdl, orderParams]);
+    if(openMdl){
+      searchOrder();
+    }
+    else if(openMdlXK){
+      searchOrder(true);
+    }
+  }, [openMdl, orderParams, openMdlXK]);
   const ordersColumn = [
     {
       title: "Khách hàng",
@@ -672,7 +617,6 @@ const WarehouseExportPlan = () => {
       loadListTable();
     }
   }
-  const [isClose, setIsClose] = useState(false);
   return (
     <>
       {contextHolder}
@@ -738,7 +682,7 @@ const WarehouseExportPlan = () => {
                       placeholder="Nhập mã khách hàng"
                     />
                   </Form.Item>
-                  {/* <Form.Item label="Lệnh xuất" className="mb-3">
+                  <Form.Item label="Lệnh xuất" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>
@@ -755,7 +699,7 @@ const WarehouseExportPlan = () => {
                       }
                       placeholder="Nhập người báo xuất"
                     />
-                  </Form.Item> */}
+                  </Form.Item>
                   <Form.Item label="Mã đơn hàng" className="mb-3">
                     <Input
                       allowClear
@@ -787,8 +731,11 @@ const WarehouseExportPlan = () => {
             className="custom-card"
             extra={
               <Space>
+                <Button type="primary" onClick={() => setOpenMdlXK(true)}>
+                  Tạo lệnh XK
+                </Button>
                 <Button type="primary" onClick={() => setOpenMdl(true)}>
-                  Tạo từ ĐH
+                  Tạo KHXK từ ĐH
                 </Button>
               </Space>
             }

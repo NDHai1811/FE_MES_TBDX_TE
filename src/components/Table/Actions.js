@@ -5,6 +5,7 @@ const Actions = (props) => {
     const { record = null, onSave = null, form = null, onDelete = null, setEditingKey = null, editingKey = null, dataSource = [], setDataSource = null } = props;
     const onEdit = () => {
         form?.setFieldsValue(record);
+        console.log(record);
         setEditingKey(record.key);
     }
     const onCancel = () => {

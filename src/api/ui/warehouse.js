@@ -77,3 +77,23 @@ export async function warehouseExportLogList(params) {
   const res = await axios.get("/ui/warehouse/fg/export/log-list", {params});
   return res.data;
 }
+export async function createExportCommand(params) {
+  const res = await axios.post("/ui/warehouse/fg/export/create-export-command", params);
+  return res.data;
+}
+export async function getDeliveryNoteList(params) {
+  const res = await axios.get("/ui/delivery-note/list", {params});
+  return res;
+}
+export async function createDeliveryNote(params) {
+  const res = await axios.post("/ui/delivery-note/create", params);
+  return res;
+}
+export async function deleteDeliveryNote(params) {
+  const res = await axios.post("/ui/delivery-note/delete", params);
+  return res;
+}
+export async function updateDeliveryNote(params) {
+  const res = await axios.patch("/ui/delivery-note/update", params);
+  return res;
+}
