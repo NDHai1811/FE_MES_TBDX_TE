@@ -367,6 +367,30 @@ const InDan = (props) => {
     //   disabled: !record?.id
     // }),
   };
+  const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+  const [tableSize, setTableSize] = useState(
+    {
+      width: window.innerWidth < 700 ? '300vw' : '100%',
+      height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+    }
+  );
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+      console.log(table);
+      setTableSize(
+        {
+          width: window.innerWidth < 700 ? '300vw' : '100%',
+          height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+        }
+      );
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -449,13 +473,14 @@ const InDan = (props) => {
         <Col span={24} className="mt-2">
           <Table
             scroll={{
-              x: "calc(700px + 50%)",
-              y: 300,
+              x: tableSize.width,
+              y: tableSize.height,
             }}
             size="small"
             rowClassName={(record, index) =>
               "no-hover " + rowClassName(record, index)
             }
+            className="bottom-table"
             rowSelection={rowSelection}
             pagination={false}
             bordered

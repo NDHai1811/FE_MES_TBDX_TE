@@ -54,6 +54,7 @@ const EditableCell = ({
                     options={options}
                     onChange={(value) => onSelect(value, dataIndex)}
                     bordered
+                    popupMatchSelectWidth={options.length > 0 ? 200 : 0}
                     showSearch
                 />
             );
@@ -141,6 +142,7 @@ const TaoTem = () => {
             key: "lo_sx",
             align: "center",
             fixed: "left",
+            width: 120
         },
         {
             title: "Khách hàng",
@@ -148,33 +150,40 @@ const TaoTem = () => {
             key: "khach_hang",
             align: "center",
             fixed: "left",
+            width: 100,
         },
         {
             title: "Đơn hàng TBDX",
             dataIndex: "mdh",
             key: "mdh",
             align: "center",
+            fixed: "left",
+            width: 100
         },
         {
-            title: "Đơn hàng khách hàng",
-            dataIndex: "order",
-            key: "order",
+            title: "Đơn hàng KH",
+            dataIndex: "order_kh",
+            key: "order_kh",
             align: "center",
+            fixed: "left",
+            width: 90
         },
         {
-            title: "Số lượng tem",
+            title: "SL tem",
             dataIndex: "sl_tem",
             key: "sl_tem",
             align: "center",
+            fixed: "left",
             editable: true,
-            width: '5%',
+            width: 60
         },
         {
             title: "MQL",
             dataIndex: "mql",
             key: "mql",
             align: "center",
-            width: '3%',
+            fixed: "left",
+            width: 60
         },
         {
             title: "Số lượng",
@@ -182,37 +191,62 @@ const TaoTem = () => {
             key: "so_luong",
             align: "center",
             editable: true,
-            width: '4%',
+            fixed: "left",
+            width: 70
+        },
+        {
+            title: "Máy in",
+            dataIndex: "machine_id",
+            key: "machine_id",
+            align: "center",
+            fixed: "left",
+            width: 70,
+            editable: true,
+        },
+        {
+            title: "Nhân viên sản xuất",
+            dataIndex: "nhan_vien_sx",
+            key: "nhan_vien_sx",
+            align: "center",
+            fixed: "left",
+            width: 150,
+            editable: true,
+            render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
             title: "GMO",
             dataIndex: "gmo",
             key: "gmo",
             align: "center",
+            width: 150
         },
         {
             title: "PO",
             dataIndex: "po",
             key: "po",
             align: "center",
+            width: 150
         },
         {
             title: "STYLE",
             dataIndex: "style",
             key: "style",
             align: "center",
+            width: 150
         },
         {
             title: "STYLE NO",
             dataIndex: "style",
             key: "style",
-            align: "center",
+            align: "center",    
+            width: 150
         },
         {
             title: "COLOR",
             dataIndex: "color",
             key: "color",
             align: "center",
+            width: 150
         },
         {
             title: "Ghi chú",
@@ -220,24 +254,7 @@ const TaoTem = () => {
             key: "note",
             align: "center",
             editable: true,
-            width: '10%',
-        },
-        {
-            title: "Máy in",
-            dataIndex: "machine_id",
-            key: "machine_id",
-            align: "center",
-            editable: true,
-            width: '8%',
-        },
-        {
-            title: "Nhân viên sản xuất",
-            dataIndex: "nhan_vien_sx",
-            key: "nhan_vien_sx",
-            align: "center",
-            editable: true,
-            width: '10%',
-            render: (value) => listUsers.find(e => value == e?.value)?.label
+            width: 150
         },
         {
             title: "Tác vụ",
@@ -246,6 +263,7 @@ const TaoTem = () => {
             checked: true,
             align: "center",
             fixed: "right",
+            width: 50,
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -263,7 +281,7 @@ const TaoTem = () => {
                 ) : (
                     <span>
                         <EditOutlined
-                            style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+                            style={{ color: "#1677ff", fontSize: 18}}
                             disabled={editingKey !== ""}
                             onClick={() => edit(record)}
                         />
@@ -806,7 +824,7 @@ const TaoTem = () => {
                                     bordered
                                     scroll={{
                                         y: tableHeight,
-                                        x: "900px"
+                                        x: "100vw"
                                     }}
                                     components={{
                                         body: {

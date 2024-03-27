@@ -410,7 +410,29 @@ const NhapTay = (props) => {
       message.info('Chưa chọn lô in tem');
     }
   }
-
+  const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+  const [tableSize, setTableSize] = useState(
+    {
+      width: window.innerWidth < 700 ? '300vw' : '100%',
+      height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+    }
+  );
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+      setTableSize(
+        {
+          width: window.innerWidth < 700 ? '300vw' : '100%',
+          height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+        }
+      );
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -492,13 +514,14 @@ const NhapTay = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: "calc(700px + 50%)",
-                y: 300,
+                x: tableSize.width,
+                y: tableSize.height,
               }}
               size="small"
               rowClassName={(record, index) =>
                 "no-hover " + rowClassName(record, index)
               }
+              className="bottom-table"
               pagination={false}
               bordered
               columns={columns}

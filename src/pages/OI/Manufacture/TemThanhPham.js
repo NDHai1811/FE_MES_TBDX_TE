@@ -46,8 +46,8 @@ const PrintTemplate = ({ detail }) => {
                             </td>
                         </tr>
                         <tr>
-                            <td ><b>Khách hàng</b></td>
-                            <td> <span style={{ marginLeft: '10px' }}>{detail.khach_hang}</span></td>
+                            <td><b>Khách hàng</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.khach_hang}</span></td>
                             <td><b>Số Đ.H:</b></td>
                             <td><span style={{ marginLeft: '10px' }}>{detail.mdh}</span></td>
                         </tr>
@@ -59,7 +59,7 @@ const PrintTemplate = ({ detail }) => {
                             <td><b>Số lượng</b></td>
                             <td ><span style={{ marginLeft: '10px' }}>{detail.so_luong}</span></td>
                             <td><b>MQL TBDX</b></td>
-                            <td ><span style={{ marginLeft: '10px' }}>{detail.mql}</span></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.mql}</span></td>
                         </tr>
                         <tr>
                             <td><b>Order</b></td>
@@ -101,7 +101,9 @@ const PrintTemplate = ({ detail }) => {
                         </tr>
                         <tr>
                             <td><b>Đợt</b></td>
-                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.dot}</span></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.dot}</span></td>
+                            <td><b>SLG SX</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.slg_sx}</span></td>
                         </tr>
                         <tr>
                             <td><b>Ghi chú</b></td>
@@ -116,6 +118,20 @@ const PrintTemplate = ({ detail }) => {
 };
 export default class TemThanhPham extends React.Component {
     render() {
+        // function resize() {
+        //     let td = document.querySelectorAll(".print-only tr td");
+        //     let target = Array.from(td).filter(td => td.querySelector('span')).map(td=>{
+        //         let span = td.querySelector("span");
+        //         if(span){
+        //             td.style.fontSize = "" + parseInt(100/span.innerHTML) + 'px';
+        //             let style = window.getComputedStyle(td, null).getPropertyValue('font-size');
+        //             let fontSize = parseFloat(style);
+        //             console.log(fontSize);
+        //         }
+        //     });
+        // }
+        // resize();
+        // window.addEventListener('beforeprint', resize);
         let printingPages = [];
         const { listCheck } = this.props;
         // for (const detail of listCheck) {

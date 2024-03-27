@@ -77,7 +77,7 @@ const authProtectedRoutes = [
   { path: "/ui/equipment/thong-so-may", component: UIEquipment2, label: 'Thông số máy', permission: 'ui-equipment-thong-so-may' },
   { path: "/ui/equipment/quan-ly-khuon-film", component: QuanLyKhuonFilm, label: 'Quản lý khuôn/film', permission: 'ui-equipment-quan-ly-khuon-film' },
   { path: "/ui/warehouse/ke-hoach-xuat-kho", component: WarehouseExportPlan, label: 'Kế hoạch xuất kho', permission: 'ui-warehouse-ke-hoach-xuat-kho' },
-  // { path: "/ui/warehouse/quan-ly-xuat-kho", component: WarehouseExport, label: 'Quản lý xuất kho', permission: 'ui-warehouse-quan-ly-xuat-kho' },
+  { path: "/ui/warehouse/quan-ly-xuat-kho", component: WarehouseExport, label: 'Quản lý xuất kho', permission: 'ui-warehouse-quan-ly-xuat-kho' },
   { path: "/ui/warehouse/quan-ly-giay-cuon", component: WarehouseMLT, label: 'Quản lý giấy cuộn', permission: 'ui-warehouse-quan-ly-giay-cuon' },
   { path: "/ui/warehouse/quan-ly-kho-tp", component: ThanhPhamGiay, label: 'Quản lý kho thành phẩm', permission: 'ui-warehouse-quan-ly-kho-tp' },
   { path: "/ui/warehouse/quan-ly-kho-nvl", component: KhoNVL, label: 'Quản lý kho NVL', permission: 'ui-warehouse-quan-ly-kho-nvl' },
