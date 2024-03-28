@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Modal, Select, Input, Form, Button } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Row, Col, Table, Modal, Select, Input, Form, Button, message } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -67,6 +67,7 @@ const options = [
 
 const Export = (props) => {
   document.title = "Kho thành phẩm";
+  const SCAN_TIME_OUT = 1000;
   const { line } = useParams();
   const history = useHistory();
   const [selectedItem, setSelectedItem] = useState();
@@ -75,6 +76,7 @@ const Export = (props) => {
   const [isOpenQRScanner, setIsOpenQRScanner] = useState();
   const [deliveryNoteList, setDeliveryNote] = useState([]);
   const [form] = Form.useForm();
+  const scanRef = useRef();
   const column2 = [
     {
       title: "Kho",
@@ -213,8 +215,9 @@ const Export = (props) => {
     history.push("/oi/warehouse/kho-tp/" + value);
   };
 
-  const onChangeDeliveryNote = (value) => {
-    
+  const onChangeDeliveryNote = async (value) => {
+    const res = await getWarehouseFGExportLogs({ 'delivery_note_id': value });
+    setData(res.data);
   }
 
   const handleCloseMdl = () => {
@@ -232,15 +235,21 @@ const Export = (props) => {
     loadData()
   }, []);
   const onScan = async (result) => {
-    // if (scanRef.current) {
-    //   clearTimeout(scanRef.current);
-    // }
-    // scanRef.current = setTimeout(() => {
-    //   const lo_sx = JSON.parse(result)?.lo_sx;
-    //   manualScan({ lo_sx: JSON.parse(result)?.lo_sx, machine_id: machine_id, so_luong: JSON.parse(result)?.so_luong })
-    //     .then(() => { reloadData(lo_sx); handleCloseMdl() })
-    //     .catch((err) => { console.log("Quét mã qr thất bại: ", err); handleCloseMdl(); });
-    // }, SCAN_TIME_OUT);
+    console.log(result);
+    if (scanRef.current) {
+      clearTimeout(scanRef.current);
+    }
+    scanRef.current = setTimeout(() => {
+      const current_data = data.find((element) => {
+        return element.pallet_id == result;
+      })
+      if(current_data){
+        onSelectItem(current_data);
+      }else{
+        message.info('Mã pallet không khớp');
+        onSelectItem({});
+      }
+    }, SCAN_TIME_OUT);
   };
   const loadData = async () => {
     var res = await getWarehouseFGExportLogs();
@@ -353,11 +362,11 @@ const Export = (props) => {
             size="small"
             columns={exportColumns}
             dataSource={data}
-            onRow={(record) => {
-              return {
-                onClick: () => onSelectItem(record),
-              };
-            }}
+            // onRow={(record) => {
+            //   return {
+            //     onClick: () => onSelectItem(record),
+            //   };
+            // }}
           />
         </Col>
       </Row>
