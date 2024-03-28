@@ -367,7 +367,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 60,
+      width: 50,
     },
     {
       title: "W",
@@ -377,7 +377,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 60,
+      width: 50,
     },
     {
       title: "H",
@@ -387,7 +387,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 60,
+      width: 50,
     },
     {
       title: "Kích thước ĐH",
@@ -397,7 +397,7 @@ const Orders = () => {
       editable: true,
       fixed: "left",
       checked: true,
-      width: 100
+      width: 140
     },
     {
       title: "MQL",
@@ -406,7 +406,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 60,
+      width: 50,
       fixed: "left",
     },
     {
@@ -414,7 +414,7 @@ const Orders = () => {
       dataIndex: "sl",
       key: "sl",
       align: "center",
-      width: 70,
+      width: 60,
       editable: true,
       checked: true,
       fixed: "left",
@@ -442,7 +442,7 @@ const Orders = () => {
       dataIndex: "phan_loai_1",
       key: "phan_loai_1",
       align: "center",
-      width: "2%",
+      width: 90,
       editable: true,
       checked: true,
       render: (value) => PL1s.find((e) => e.value === value)?.label,
@@ -452,7 +452,7 @@ const Orders = () => {
       dataIndex: "quy_cach_drc",
       key: "quy_cach_drc",
       align: "center",
-      width: "5%",
+      width: 120,
       editable: true,
       checked: true,
     },
@@ -461,7 +461,7 @@ const Orders = () => {
       dataIndex: "phan_loai_2",
       key: "phan_loai_2",
       align: "center",
-      width: "4%",
+      width: 140,
       editable: true,
       checked: true,
       render: (value) => PL2s.find((e) => e.value === value)?.label,
