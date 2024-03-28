@@ -1059,6 +1059,7 @@ const WarehouseExportPlan = () => {
                 className="mb-2"
               >
                 <Select options={listVehicles}
+                  showSearch
                   value={exportCommandParams?.vehicle_id}
                   onSelect={(value) => {
                     const target = listVehicles.find(e => e.id === value);
@@ -1073,6 +1074,8 @@ const WarehouseExportPlan = () => {
               >
                 <Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
                   value={exportCommandParams?.driver_id}
+                  showSearch
+                  optionFilterProp="label"
                   onSelect={(value) => {
                     const target = listVehicles.find(e => e.user1 === value);
                     setExportCommandParams({ ...exportCommandParams, driver_id: value, vehicle_id: target?.id });
@@ -1085,6 +1088,8 @@ const WarehouseExportPlan = () => {
                 className="mb-2"
               >
                 <Select options={listUsers}
+                  showSearch
+                  optionFilterProp="label"
                   onSelect={(value) => {
                     setExportCommandParams({ ...exportCommandParams, exporter_id: value });
                   }} />
