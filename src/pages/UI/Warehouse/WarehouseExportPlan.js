@@ -343,6 +343,7 @@ const WarehouseExportPlan = () => {
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState([]);
+  const [selectedNotedOrders, setSelectedNotedOrders] = useState([]);
   const searchOrder = async (filterByNote = false) => {
     var paramsSearchOrder = {...orderParams};
     if(filterByNote){
@@ -535,6 +536,14 @@ const WarehouseExportPlan = () => {
       });
     });
   }
+  const onDeselectNotedOrders = (rows) => {
+    setSelectedNotedOrders(prev => {
+      const newArray = [...prev];
+      return newArray.filter((e, index) => {
+        return !rows.some(o => o.key === e.key)
+      });
+    });
+  }
   const orderRowSelection = {
     selectedRowKeys: [].concat(selectedOrders).map(e => e.key),
     fixed: true,
@@ -549,6 +558,22 @@ const WarehouseExportPlan = () => {
     optionFilterProp: 'label',
     onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
     onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
+  };
+  const notedOrderRowSelection = {
+    selectedRowKeys: [].concat(selectedNotedOrders).map(e => e.key),
+    fixed: true,
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(selectedRowKeys, selectedRows);
+      setSelectedNotedOrders(prev => {
+        const newArray = [...prev, ...selectedRows];
+        return newArray.filter((e, index) => {
+          return index === newArray.findIndex(o => e.key === o.key);
+        });
+      });
+    },
+    optionFilterProp: 'label',
+    onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectNotedOrders(changeRows),
+    onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectNotedOrders([record])
   };
   const items = [
     {
@@ -613,6 +638,69 @@ const WarehouseExportPlan = () => {
         )} />
     }
   ];
+  const itemsExportCommand = [
+    {
+      label: 'Danh sách đơn hàng',
+      key: 1,
+      children: <Table size='small' bordered
+        loading={loadingOrders}
+        pagination={{
+          current: orderParams.page,
+          size: "small",
+          total: orderTotalPage,
+          pageSize: orderParams.pageSize,
+          showSizeChanger: true,
+          onChange: (page, pageSize) => {
+            setPage(page);
+            setPageSize(pageSize);
+            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+          },
+        }}
+        scroll={
+          {
+            x: '170vw',
+            y: '42vh'
+          }
+        }
+        tableLayout="fixed"
+        rowSelection={notedOrderRowSelection}
+        columns={ordersColumn}
+        dataSource={orders} />
+    },
+    {
+      label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedNotedOrders.length} showZero color="#1677ff" overflowCount={999} /></Space>,
+      key: 2,
+      children: <Table size='small' bordered
+        pagination={false}
+        loading={loadingOrders}
+        scroll={
+          {
+            x: '260vw',
+            y: '42vh'
+          }
+        }
+        tableLayout="fixed"
+        columns={selectOrdersColumns}
+        dataSource={selectedNotedOrders}
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              {selectOrdersColumns.map((e, index) => {
+                if (index === 0) {
+                  return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
+                } else if (index === 8) {
+                  return <Table.Summary.Cell align="center" index={index}>{
+                    selectedNotedOrders.reduce((sum, { sl }) => sum + parseInt(sl), 0)
+                  }</Table.Summary.Cell>
+                } else {
+                  return <Table.Summary.Cell index={index} />
+                }
+              })}
+            </Table.Summary.Row>
+          </Table.Summary>
+        )} />
+    }
+  ];
   const extraTab = {
     right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo KHXK</Button>,
   };
@@ -624,6 +712,7 @@ const WarehouseExportPlan = () => {
     if (res.success) {
       setOpenMdl(false);
       loadListTable();
+      setSelectedOrders([]);
     }
   }
   const onCreateExportCommand = async () => {
@@ -639,14 +728,15 @@ const WarehouseExportPlan = () => {
       messageApi.warning('Chưa chọn người xuất!');
       return 0;
     }
-    if(!selectedOrders.length){
+    if(!selectedNotedOrders.length){
       messageApi.warning('Chưa chọn đơn hàng!');
       return 0;
     }
-    var res = await createDeliveryNote({ ...exportCommandParams, orders: selectedOrders });
+    var res = await createDeliveryNote({ ...exportCommandParams, orders: selectedNotedOrders });
     if (res.success) {
       setOpenMdlXK(false);
       loadListTable();
+      setSelectedNotedOrders([])
     }
   }
   return (
@@ -1039,7 +1129,7 @@ const WarehouseExportPlan = () => {
         <Tabs
           className="mt-1"
           type="card"
-          items={items}
+          items={itemsExportCommand}
           tabBarExtraContent={extraTabExportCommand}
         />
       </Modal>
