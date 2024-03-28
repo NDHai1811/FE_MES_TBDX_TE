@@ -84,3 +84,6 @@ export const getWarehouseFGExportLogs = async () => {
 export const exportPallet = async (params) => {
   return await axios.post("oi/warehouse/fg/export/handle-export-pallet", params);
 };
+export const getDeliveryNoteList = async (params) => {
+  return await axios.get("oi/warehouse/fg/export/list-delivery-note", { params });
+};

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Modal, Select, Input, Form } from "antd";
+import { Row, Col, Table, Modal, Select, Input, Form, Button } from "antd";
 import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { exportPallet, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
+import { exportPallet, getDeliveryNoteList, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
+import { QrcodeOutlined } from "@ant-design/icons";
+import ScanQR from "../../../../components/Scanner";
 
 const exportColumns = [
   {
@@ -70,6 +72,8 @@ const Export = (props) => {
   const [selectedItem, setSelectedItem] = useState();
   const [overall, setOverall] = useState([{}]);
   const [visible, setVisible] = useState(false);
+  const [isOpenQRScanner, setIsOpenQRScanner] = useState();
+  const [deliveryNoteList, setDeliveryNote] = useState([]);
   const [form] = Form.useForm();
   const column2 = [
     {
@@ -116,13 +120,29 @@ const Export = (props) => {
       render: (value) => value || "-",
     },
   ];
-
   const columnDetail = [
+    {
+      title: "Lệnh xuất kho",
+      dataIndex: "lenh_xuat_kho",
+      key: "lenh_xuat_kho",
+      align: "center",
+      width: '25%',
+      render: () => (
+        <Select
+          options={deliveryNoteList}
+
+          onChange={onChangeDeliveryNote}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
     {
       title: "Vị trí",
       dataIndex: "locator_id",
       key: "locator_id",
       align: "center",
+      width: '25%',
       render: (value) => value || "-",
     },
     {
@@ -130,6 +150,7 @@ const Export = (props) => {
       dataIndex: "pallet_id",
       key: "pallet_id",
       align: "center",
+      width: '25%',
       render: (value) => value || "-",
     },
     {
@@ -137,6 +158,7 @@ const Export = (props) => {
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
+      width: '25%',
       render: (value) => value || "-",
       onHeaderCell: (column) => {
         return {
@@ -191,6 +213,14 @@ const Export = (props) => {
     history.push("/oi/warehouse/kho-tp/" + value);
   };
 
+  const onChangeDeliveryNote = (value) => {
+    
+  }
+
+  const handleCloseMdl = () => {
+    setIsOpenQRScanner(false);
+  };
+
   const onSelectItem = (val) => {
     setSelectedItem(val);
     form.setFieldsValue(val?.lo_sx);
@@ -201,18 +231,34 @@ const Export = (props) => {
   useEffect(() => {
     loadData()
   }, []);
-
+  const onScan = async (result) => {
+    // if (scanRef.current) {
+    //   clearTimeout(scanRef.current);
+    // }
+    // scanRef.current = setTimeout(() => {
+    //   const lo_sx = JSON.parse(result)?.lo_sx;
+    //   manualScan({ lo_sx: JSON.parse(result)?.lo_sx, machine_id: machine_id, so_luong: JSON.parse(result)?.so_luong })
+    //     .then(() => { reloadData(lo_sx); handleCloseMdl() })
+    //     .catch((err) => { console.log("Quét mã qr thất bại: ", err); handleCloseMdl(); });
+    // }, SCAN_TIME_OUT);
+  };
   const loadData = async () => {
     var res = await getWarehouseFGExportLogs();
     setData(res.data);
     var res2 = await getWarehouseFGOverall();
     setOverall([res2.data])
+    var res3 = await getDeliveryNoteList();
+    const arr = [];
+    res3.data.map((value) => {
+      return arr.push({ 'label': value.id, 'value': value.id });
+    });
+    setDeliveryNote(arr);
     setSelectedItem();
   }
   const onFinish = async (values) => {
-    const params = {pallet_id: selectedItem?.pallet_id, lo_sx: values}
+    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values }
     var res = await exportPallet(params);
-    if(res.success){
+    if (res.success) {
       setVisible(false);
       form.resetFields();
       loadData();
@@ -240,8 +286,24 @@ const Export = (props) => {
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
-            dataSource={selectedItem ? [selectedItem] : []}
+            dataSource={selectedItem ? [selectedItem] : [{}]}
           />
+        </Col>
+        <Col span={24}>
+          <Button
+            block
+            className="h-100 w-100"
+            icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+            type="primary"
+            onClick={() => setIsOpenQRScanner(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Quét tem gộp
+          </Button>
         </Col>
         {/* <Col span={24}>
           <Row gutter={8}>
@@ -286,7 +348,7 @@ const Export = (props) => {
             }
             pagination={false}
             bordered
-            scroll={{y: '30vh'}}
+            scroll={{ y: '30vh' }}
             className="mb-4"
             size="small"
             columns={exportColumns}
@@ -299,6 +361,22 @@ const Export = (props) => {
           />
         </Col>
       </Row>
+      {isOpenQRScanner && (
+        <Modal
+          title="Quét QR"
+          open={isOpenQRScanner}
+          onCancel={handleCloseMdl}
+          footer={null}
+        >
+          <ScanQR
+            isScan={isOpenQRScanner}
+            onResult={(res) => {
+              onScan(res);
+              setIsOpenQRScanner(false);
+            }}
+          />
+        </Modal>
+      )}
       {visible && (
         <Modal
           title="Danh sách lô cần xuất"
