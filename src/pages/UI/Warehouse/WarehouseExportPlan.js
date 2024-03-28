@@ -528,6 +528,33 @@ const WarehouseExportPlan = () => {
     width: 60,
     render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
   }];
+  const notedOrdersColumns = [
+    {
+      title: 'Thời gian xuất',
+      dataIndex: 'tg_xuat',
+      align:'center',
+      render: (value)=>(value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
+    },
+    {
+      title: 'Người tạo KH xuất',
+      dataIndex: 'created_by',
+      align:'center',
+      isSearch: true,
+      input_type: 'select',
+      options: listUsers,
+      render: (value)=>listUsers.find(e=>e.id === value)?.name
+    },
+    ...ordersColumn
+  ]
+  const selectNotedOrdersColumns = [...notedOrdersColumns, {
+    title: 'Tác vụ',
+    key: 'action',
+    dataIndex: 'action',
+    align: 'center',
+    fixed: 'right',
+    width: 60,
+    render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
+  }];
   const onDeselectOrders = (rows) => {
     setSelectedOrders(prev => {
       const newArray = [...prev];
@@ -664,7 +691,7 @@ const WarehouseExportPlan = () => {
         }
         tableLayout="fixed"
         rowSelection={notedOrderRowSelection}
-        columns={ordersColumn}
+        columns={notedOrdersColumns}
         dataSource={orders} />
     },
     {
@@ -680,12 +707,12 @@ const WarehouseExportPlan = () => {
           }
         }
         tableLayout="fixed"
-        columns={selectOrdersColumns}
+        columns={selectNotedOrdersColumns}
         dataSource={selectedNotedOrders}
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>
-              {selectOrdersColumns.map((e, index) => {
+              {selectNotedOrdersColumns.map((e, index) => {
                 if (index === 0) {
                   return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
                 } else if (index === 8) {
@@ -968,8 +995,8 @@ const WarehouseExportPlan = () => {
                           maxTagCount={'responsive'}
                           allowClear
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
-                          value={orderParams[e.key]}
+                          onChange={(value) => setOrderParams({ ...orderParams, [e.dataIndex]: value })}
+                          value={orderParams[e.dataIndex]}
                         />
                       }
                       else if (['date', 'date_time'].includes(e?.input_type)) {
@@ -978,16 +1005,16 @@ const WarehouseExportPlan = () => {
                           showTime={e?.input_type === 'date_time'}
                           needConfirm={false}
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.key]: value })}
-                          onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
-                          value={orderParams[e.key]}
+                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.dataIndex]: value })}
+                          onSelect={(value) => setOrderParams({ ...orderParams, [e.dataIndex]: value })}
+                          value={orderParams[e.dataIndex]}
                         />;
                       } else {
                         item = <Input
                           allowClear
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value.target.value })}
-                          value={orderParams[e.key]}
+                          onChange={(value) => setOrderParams({ ...orderParams, [e.dataIndex]: value.target.value })}
+                          value={orderParams[e.dataIndex]}
                         />
                       }
                       return e.isSearch && <Col span={4}>
@@ -1082,7 +1109,7 @@ const WarehouseExportPlan = () => {
                   key: '1',
                   label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
                   children: <Row gutter={[8, 0]}>
-                    {ordersColumn.map(e => {
+                    {notedOrdersColumns.map(e => {
                       let item = null;
                       if (e?.input_type === 'select') {
                         item = <Select
@@ -1092,8 +1119,8 @@ const WarehouseExportPlan = () => {
                           maxTagCount={'responsive'}
                           allowClear
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
-                          value={orderParams[e.key]}
+                          onChange={(value) => setOrderParams({ ...orderParams, [e.dataIndex]: value })}
+                          value={orderParams[e.dataIndex]}
                         />
                       }
                       else if (['date', 'date_time'].includes(e?.input_type)) {
@@ -1102,16 +1129,16 @@ const WarehouseExportPlan = () => {
                           showTime={e?.input_type === 'date_time'}
                           needConfirm={false}
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.key]: value })}
-                          onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
-                          value={orderParams[e.key]}
+                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.dataIndex]: value })}
+                          onSelect={(value) => setOrderParams({ ...orderParams, [e.dataIndex]: value })}
+                          value={orderParams[e.dataIndex]}
                         />;
                       } else {
                         item = <Input
                           allowClear
                           placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value.target.value })}
-                          value={orderParams[e.key]}
+                          onChange={(value) => setOrderParams({ ...orderParams, [e.dataIndex]: value.target.value })}
+                          value={orderParams[e.dataIndex]}
                         />
                       }
                       return e.isSearch && <Col span={4}>
