@@ -5,9 +5,10 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { exportPallet, getDeliveryNoteList, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
-import { QrcodeOutlined } from "@ant-design/icons";
+import { downloadDeliveryNote, exportPallet, getDeliveryNoteList, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
+import { DownloadOutlined, QrcodeOutlined } from "@ant-design/icons";
 import ScanQR from "../../../../components/Scanner";
+import { baseURL } from "../../../../config";
 
 const exportColumns = [
   {
@@ -215,9 +216,11 @@ const Export = (props) => {
     history.push("/oi/warehouse/kho-tp/" + value);
   };
 
+  const [deliveryNoteId, setDeliveryNoteId] = useState();
   const onChangeDeliveryNote = async (value) => {
     const res = await getWarehouseFGExportLogs({ 'delivery_note_id': value });
     setData(res.data);
+    setDeliveryNoteId(value);
   }
 
   const handleCloseMdl = () => {
@@ -273,6 +276,19 @@ const Export = (props) => {
       loadData();
     }
   }
+  const [isDownloading, setIsDownloading] = useState(false)
+  const onDownloadDeliveryNote = async () => {
+    if(!deliveryNoteId){
+      message.warning('Chưa chọn lệnh xuất kho')
+      return 0;
+    }
+    setIsDownloading(true);
+    var res = await downloadDeliveryNote({delivery_note_id: deliveryNoteId});
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setIsDownloading(false);
+  }
   return (
     <React.Fragment>
       <Row className="mt-1" gutter={[4, 12]}>
@@ -298,7 +314,7 @@ const Export = (props) => {
             dataSource={selectedItem ? [selectedItem] : [{}]}
           />
         </Col>
-        <Col span={24}>
+        <Col span={12}>
           <Button
             block
             className="h-100 w-100"
@@ -312,6 +328,18 @@ const Export = (props) => {
             }}
           >
             Quét tem gộp
+          </Button>
+        </Col>
+        <Col span={12}>
+          <Button
+            block
+            className="h-100 w-100"
+            icon={<DownloadOutlined style={{ fontSize: "20px" }} />}
+            type="primary"
+            // loading={isDownloading}
+            onClick={onDownloadDeliveryNote}
+          >
+            Tải phiếu xuất hàng
           </Button>
         </Col>
         {/* <Col span={24}>

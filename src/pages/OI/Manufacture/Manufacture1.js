@@ -28,7 +28,8 @@ import {
 import dayjs from "dayjs";
 import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
-
+import { getTem } from "../../../api";
+import TemTest from "./TemTest";
 
 const columns = [
   {
@@ -213,6 +214,8 @@ const Manufacture1 = (props) => {
       if (res.success) {
         setIsPasue(!res.data?.status)
       }
+      // var tem = await getTem();
+      // setListTem(tem)
     })();
   }, []);
 

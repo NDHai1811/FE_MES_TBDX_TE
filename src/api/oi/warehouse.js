@@ -87,3 +87,6 @@ export const exportPallet = async (params) => {
 export const getDeliveryNoteList = async (params) => {
   return await axios.get("oi/warehouse/fg/export/list-delivery-note", { params });
 };
+export const downloadDeliveryNote = async (params) => {
+  return await axios.get("oi/warehouse/fg/export/download-delivery-note", { params });
+};
