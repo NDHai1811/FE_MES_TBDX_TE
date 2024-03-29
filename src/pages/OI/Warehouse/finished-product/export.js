@@ -76,6 +76,7 @@ const Export = (props) => {
   const [visible, setVisible] = useState(false);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState();
   const [deliveryNoteList, setDeliveryNote] = useState([]);
+  const [deliveryNoteID, setDeliveryNoteID] = useState();
   const [form] = Form.useForm();
   const scanRef = useRef();
   const column2 = [
@@ -218,10 +219,17 @@ const Export = (props) => {
 
   const [deliveryNoteId, setDeliveryNoteId] = useState();
   const onChangeDeliveryNote = async (value) => {
-    const res = await getWarehouseFGExportLogs({ 'delivery_note_id': value });
-    setData(res.data);
-    setDeliveryNoteId(value);
+    setDeliveryNoteID(value);
   }
+
+  useEffect(() => {
+    (async () => {
+      const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
+      if (res.success) {
+        setData(res.data);
+      }
+    })();
+  }, [deliveryNoteID]);
 
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
@@ -246,16 +254,16 @@ const Export = (props) => {
       const current_data = data.find((element) => {
         return element.pallet_id == result;
       })
-      if(current_data){
+      if (current_data) {
         onSelectItem(current_data);
-      }else{
+      } else {
         message.info('Mã pallet không khớp');
         onSelectItem({});
       }
     }, SCAN_TIME_OUT);
   };
   const loadData = async () => {
-    var res = await getWarehouseFGExportLogs();
+    var res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
     setData(res.data);
     var res2 = await getWarehouseFGOverall();
     setOverall([res2.data])
@@ -390,11 +398,11 @@ const Export = (props) => {
             size="small"
             columns={exportColumns}
             dataSource={data}
-            // onRow={(record) => {
-            //   return {
-            //     onClick: () => onSelectItem(record),
-            //   };
-            // }}
+          // onRow={(record) => {
+          //   return {
+          //     onClick: () => onSelectItem(record),
+          //   };
+          // }}
           />
         </Col>
       </Row>
