@@ -167,7 +167,7 @@ const Export = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedItem && setVisible(true);
+            selectedItem && selectedItem?.lo_sx?.length > 0 && setVisible(true);
           },
           style: {
             cursor: 'pointer'
@@ -275,7 +275,7 @@ const Export = (props) => {
     setSelectedItem();
   }
   const onFinish = async (values) => {
-    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values }
+    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: deliveryNoteID }
     var res = await exportPallet(params);
     if (res.success) {
       setVisible(false);
