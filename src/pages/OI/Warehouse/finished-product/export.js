@@ -217,7 +217,6 @@ const Export = (props) => {
     history.push("/oi/warehouse/kho-tp/" + value);
   };
 
-  const [deliveryNoteId, setDeliveryNoteId] = useState();
   const onChangeDeliveryNote = async (value) => {
     setDeliveryNoteID(value);
   }
@@ -286,12 +285,12 @@ const Export = (props) => {
   }
   const [isDownloading, setIsDownloading] = useState(false)
   const onDownloadDeliveryNote = async () => {
-    if(!deliveryNoteId){
+    if(!deliveryNoteID){
       message.warning('Chưa chọn lệnh xuất kho')
       return 0;
     }
     setIsDownloading(true);
-    var res = await downloadDeliveryNote({delivery_note_id: deliveryNoteId});
+    var res = await downloadDeliveryNote({delivery_note_id: deliveryNoteID});
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -344,7 +343,7 @@ const Export = (props) => {
             className="h-100 w-100"
             icon={<DownloadOutlined style={{ fontSize: "20px" }} />}
             type="primary"
-            // loading={isDownloading}
+            loading={isDownloading}
             onClick={onDownloadDeliveryNote}
           >
             Tải phiếu xuất hàng
