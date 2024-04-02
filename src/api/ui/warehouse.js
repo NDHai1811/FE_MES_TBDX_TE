@@ -97,3 +97,7 @@ export async function updateDeliveryNote(params) {
   const res = await axios.patch("/ui/delivery-note/update", params);
   return res;
 }
+export async function getWarehouseFGExportPlan(params) {
+  const res = await axios.get("/ui/warehouse/fg/export/plan/list", {params});
+  return res.data;
+}
