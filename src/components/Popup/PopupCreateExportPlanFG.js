@@ -24,7 +24,7 @@ import { getCustomers } from "../../api/ui/main";
 import { createDeliveryNote, createWareHouseFGExport, getDeliveryNoteList, getWarehouseFGExportPlan } from "../../api/ui/warehouse";
 import { DeleteOutlined } from "@ant-design/icons";
 
-const PopupCreateWarehouseFGExportPlan = (props) => {
+const PopupCreateExportPlanFG = (props) => {
 	const {listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null} = props;
 	const [open, setOpen] = useState(false);
 	const [params, setParams] = useState({});
@@ -444,4 +444,4 @@ const PopupCreateWarehouseFGExportPlan = (props) => {
 	);
 };
 
-export default PopupCreateWarehouseFGExportPlan;
+export default PopupCreateExportPlanFG;

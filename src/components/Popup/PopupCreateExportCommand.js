@@ -24,10 +24,10 @@ import { getCustomers } from "../../api/ui/main";
 import { createDeliveryNote, getDeliveryNoteList, getWarehouseFGExportPlan } from "../../api/ui/warehouse";
 import { DeleteOutlined } from "@ant-design/icons";
 
-const PopupSelectWarehouseFGExportPlan = (props) => {
-  const { listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null } = props;
-  const [open, setOpen] = useState(false);
-  const [params, setParams] = useState({});
+const PopupCreateExportCommand = (props) => {
+	const {listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null} = props;
+	const [open, setOpen] = useState(false);
+	const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 })
@@ -282,7 +282,8 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
     if (res.success) {
       setOpen(false);
       setSelectedRows([]);
-      onAfterCreate()
+      onAfterCreate();
+      setExportCommandParams({})
     }
   }
   const items = [
@@ -502,4 +503,4 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
   );
 };
 
-export default PopupSelectWarehouseFGExportPlan;
+export default PopupCreateExportCommand;
