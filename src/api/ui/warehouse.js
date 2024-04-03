@@ -41,6 +41,10 @@ export async function updateWarehouseFGExport(params) {
   const res = await axios.post("/ui/warehouse/fg/export/update", params);
   return res.data;
 }
+export async function deleteWarehouseFGExport(id) {
+  const res = await axios.delete("/ui/warehouse/fg/export/delete/"+id);
+  return res;
+}
 
 export async function getGoodsReceiptNote(params) {
   const res = await axios.get("/ui/warehouse/mtl/goods-receipt-note", {params});

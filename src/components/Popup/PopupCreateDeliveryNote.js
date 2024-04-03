@@ -19,21 +19,22 @@ import {
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
-import { getOrders, getUsers, getVehicles } from "../../api";
+import { getOrders, getRolesList, getUsers, getVehicles } from "../../api";
 import { getCustomers } from "../../api/ui/main";
 import { createDeliveryNote, getDeliveryNoteList, getWarehouseFGExportPlan } from "../../api/ui/warehouse";
 import { DeleteOutlined } from "@ant-design/icons";
 
 const PopupCreateDeliveryNote = (props) => {
-	const {listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null} = props;
-	const [open, setOpen] = useState(false);
-	const [params, setParams] = useState({});
+  const { listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null } = props;
+  const [open, setOpen] = useState(false);
+  const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 })
   const [selectedRows, setSelectedRows] = useState([]);
   const [exportCommandParams, setExportCommandParams] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
+  const [roleList, setRoleList] = useState([]);
   const columns = [
     {
       title: 'Thời gian xuất',
@@ -45,10 +46,10 @@ const PopupCreateDeliveryNote = (props) => {
       title: 'Người tạo KH',
       dataIndex: 'created_by',
       align: 'center',
-      isSearch: true,
-      input_type: 'select',
-      options: listUsers,
-      render: (value) => listUsers.find(e => e.id === value)?.name
+      // isSearch: true,
+      // input_type: 'select',
+      // options: listUsers,
+      // render: (value) => listUsers.find(e => e.id === value)?.name
     },
     {
       title: "Khách hàng",
@@ -238,6 +239,12 @@ const PopupCreateDeliveryNote = (props) => {
     setLoading(false);
   }
   useEffect(() => {
+    (async () => {
+      var res = await getRolesList();
+      setRoleList(res.map(e => ({ ...e, label: e.name, value: e.id })))
+    })()
+  }, [])
+  useEffect(() => {
     if (Object.keys(params).length > 0) {
       loadData({ ...params, page: 1, pageSize: 20 });
       setTableParams({ ...tableParams, page: 1, pageSize: 20 });
@@ -249,7 +256,7 @@ const PopupCreateDeliveryNote = (props) => {
       setTableParams({ ...tableParams, page: 1, pageSize: 20 });
     } else {
       setParams({});
-      setData()
+      setData([])
       setTableParams({ page: 1, pageSize: 20, totalPage: 1 });
     }
   }, [open]);
@@ -406,25 +413,29 @@ const PopupCreateDeliveryNote = (props) => {
               >
                 <div className="w-100 d-flex">
                   <Select
-                    style={{width:'45%'}}
-                    options={listUsers}
+                    style={{ width: '45%', marginRight: 8 }}
+                    options={roleList}
                     showSearch
+                    allowClear
                     placeholder="Chọn bộ phận"
-                    value={exportCommandParams.exporter_id}
+                    value={exportCommandParams.role_id}
                     optionFilterProp="label"
                     onSelect={(value) => {
-                      setExportCommandParams({ ...exportCommandParams, exporter_id: value });
-                    }} />
+                      setExportCommandParams({ ...exportCommandParams, role_id: value, exporter_id: null });
+                    }}
+                    onClear={() => setExportCommandParams({ ...exportCommandParams, role_id: null })}
+                  />
 
                   <Select
                     placeholder="Chọn người xuất"
-                    options={listUsers}
+                    options={exportCommandParams.role_id ? listUsers.filter(e => (e.roles ?? []).some(e => e.id === exportCommandParams.role_id)) : listUsers}
                     showSearch
                     value={exportCommandParams.exporter_id}
                     optionFilterProp="label"
                     onSelect={(value) => {
                       setExportCommandParams({ ...exportCommandParams, exporter_id: value });
-                    }} />
+                    }}
+                  />
                 </div>
               </Form.Item>
             </Col>
@@ -447,6 +458,44 @@ const PopupCreateDeliveryNote = (props) => {
                   key: '1',
                   label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
                   children: <Row gutter={[8, 0]}>
+                    <Col span={6}>
+                      <Form.Item label={'Người tạo KH'} style={{ marginBottom: 8 }}>
+                        <Row gutter={8}>
+                          <Col span={10}>
+                            <Form.Item>
+                              <Select
+                                style={{ width: '100%' }}
+                                options={roleList}
+                                showSearch
+                                allowClear
+                                placeholder="Chọn bộ phận"
+                                value={params.role_id}
+                                optionFilterProp="label"
+                                onSelect={(value) => {
+                                  setParams({ ...params, role_id: value, created_by: null });
+                                }}
+                                onClear={() => setParams({ ...params, role_id: null })}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={14}>
+                            <Form.Item>
+                              <Select
+                                style={{ width: '100%' }}
+                                placeholder="Chọn người tạo KH"
+                                options={params.role_id ? listUsers.filter(e => (e.roles ?? []).some(e => e.id === params.role_id)) : listUsers}
+                                showSearch
+                                value={params.created_by}
+                                optionFilterProp="label"
+                                onSelect={(value) => {
+                                  setParams({ ...params, created_by: value });
+                                }}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Form.Item>
+                    </Col>
                     {columns.filter(e => e.isSearch).map(e => {
                       let item = null;
                       if (e?.input_type === 'select') {
@@ -480,7 +529,7 @@ const PopupCreateDeliveryNote = (props) => {
                           value={params[e.dataIndex]}
                         />
                       }
-                      return e.isSearch && <Col span={4}>
+                      return e.isSearch && <Col span={2}>
                         <Form.Item label={e.title} style={{ marginBottom: 8 }}>
                           {item}
                         </Form.Item>
