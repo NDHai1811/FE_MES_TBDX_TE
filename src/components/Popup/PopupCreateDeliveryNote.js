@@ -29,26 +29,26 @@ const PopupCreateDeliveryNote = (props) => {
 	const [open, setOpen] = useState(false);
 	const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
-	const [data, setData] = useState([]);
-	const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1})
-	const [selectedRows, setSelectedRows] = useState([]);
+  const [data, setData] = useState([]);
+  const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 })
+  const [selectedRows, setSelectedRows] = useState([]);
   const [exportCommandParams, setExportCommandParams] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
-	const columns = [
-		{
+  const columns = [
+    {
       title: 'Thời gian xuất',
       dataIndex: 'ngay_xuat',
-      align:'center',
-      render: (value)=>(value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
+      align: 'center',
+      render: (value) => (value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
     },
     {
       title: 'Người tạo KH',
       dataIndex: 'created_by',
-      align:'center',
+      align: 'center',
       isSearch: true,
       input_type: 'select',
       options: listUsers,
-      render: (value)=>listUsers.find(e=>e.id === value)?.name
+      render: (value) => listUsers.find(e => e.id === value)?.name
     },
     {
       title: "Khách hàng",
@@ -205,7 +205,7 @@ const PopupCreateDeliveryNote = (props) => {
       input_type: 'date',
     },
   ];
-	const rowSelection = {
+  const rowSelection = {
     selectedRowKeys: [].concat(selectedRows).map(e => e.key),
     fixed: true,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -220,7 +220,7 @@ const PopupCreateDeliveryNote = (props) => {
     onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
     onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
   };
-	const selectedRowsColumns = [...columns, {
+  const selectedRowsColumns = [...columns, {
     title: 'Tác vụ',
     key: 'action',
     dataIndex: 'action',
@@ -230,30 +230,30 @@ const PopupCreateDeliveryNote = (props) => {
     render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
   }];
 
-	async function loadData(params){
-		setLoading(true);
-		var res = await getWarehouseFGExportPlan(params);
-		setData(res.data.map(e=>({...e, key: e.id})));
-    setTableParams({...tableParams, totalPage: res.totalPage})
-		setLoading(false);
-	}
-	useEffect(()=>{
-    if(Object.keys(params).length > 0){
-      loadData({...params, page: 1, pageSize: 20});
-      setTableParams({...tableParams, page: 1, pageSize: 20});
+  async function loadData(params) {
+    setLoading(true);
+    var res = await getWarehouseFGExportPlan(params);
+    setData(res.data.map(e => ({ ...e, key: e.id })));
+    setTableParams({ ...tableParams, totalPage: res.totalPage })
+    setLoading(false);
+  }
+  useEffect(() => {
+    if (Object.keys(params).length > 0) {
+      loadData({ ...params, page: 1, pageSize: 20 });
+      setTableParams({ ...tableParams, page: 1, pageSize: 20 });
     }
-	}, [params]);
-	useEffect(()=>{
-    if(open){
-      loadData({...params, page: 1, pageSize: 20});
-      setTableParams({...tableParams, page: 1, pageSize: 20});
-    }else{
+  }, [params]);
+  useEffect(() => {
+    if (open) {
+      loadData({ ...params, page: 1, pageSize: 20 });
+      setTableParams({ ...tableParams, page: 1, pageSize: 20 });
+    } else {
       setParams({});
       setData()
-      setTableParams({ page: 1, pageSize: 20, totalPage: 1});
+      setTableParams({ page: 1, pageSize: 20, totalPage: 1 });
     }
-	}, [open]);
-	const onDeselectOrders = (rows) => {
+  }, [open]);
+  const onDeselectOrders = (rows) => {
     setSelectedRows(prev => {
       const newArray = [...prev];
       return newArray.filter((e, index) => {
@@ -262,19 +262,19 @@ const PopupCreateDeliveryNote = (props) => {
     });
   }
   const onCreate = async () => {
-    if(!exportCommandParams?.vehicle_id){
+    if (!exportCommandParams?.vehicle_id) {
       messageApi.warning('Chưa chọn xe!');
       return 0;
     }
-    if(!exportCommandParams?.driver_id){
+    if (!exportCommandParams?.driver_id) {
       messageApi.warning('Chưa chọn tài xế!');
       return 0;
     }
-    if(!exportCommandParams?.exporter_id){
+    if (!exportCommandParams?.exporter_id) {
       messageApi.warning('Chưa chọn người xuất!');
       return 0;
     }
-    if(!selectedRows.length){
+    if (!selectedRows.length) {
       messageApi.warning('Chưa chọn đơn hàng cần xuất!');
       return 0;
     }
@@ -286,7 +286,7 @@ const PopupCreateDeliveryNote = (props) => {
       setExportCommandParams({})
     }
   }
-	const items = [
+  const items = [
     {
       label: 'Danh sách đơn hàng',
       key: 1,
@@ -300,7 +300,7 @@ const PopupCreateDeliveryNote = (props) => {
           showSizeChanger: true,
           onChange: (page, pageSize) => {
             setTableParams({ ...tableParams, page: page, pageSize: pageSize });
-            loadData({...params, page: page, pageSize: pageSize})
+            loadData({ ...params, page: page, pageSize: pageSize })
           },
         }}
         scroll={
@@ -347,145 +347,160 @@ const PopupCreateDeliveryNote = (props) => {
         )} />
     }
   ];
-	const extraTab = {
+  const extraTab = {
     right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo lệnh XK</Button>,
   };
-	return (
-		<React.Fragment>
+  return (
+    <React.Fragment>
       {contextHolder}
-			<Button type="primary" onClick={()=>setOpen(true)}>Tạo lệnh XK</Button>
-			<Modal
-				open={open}
-				onCancel={() => setOpen(false)}
-				footer={null}
-				title="Tạo lệnh xuất kho từ đơn hàng"
-				width={'98vw'}
-				height={'100vh'}
-				style={{
-					// position: 'fixed',
-					left: '0',
-					right: '0',
-					top: '5px',
-				}}
-			>
-				<Form layout="vertical">
-					<Row gutter={[8, 0]}>
-						<Col span={8}>
-							<Form.Item
-								label="Số xe"
-								className="mb-2"
-							>
-								<Select options={listVehicles}
-									showSearch
-									value={exportCommandParams?.vehicle_id}
-									onSelect={(value) => {
-										const target = listVehicles.find(e => e.id === value);
-										setExportCommandParams({ ...exportCommandParams, vehicle_id: value, driver_id: target?.user1 });
-									}} />
-							</Form.Item>
-						</Col>
-						<Col span={8}>
-							<Form.Item
-								label="Tài xế"
-								className="mb-2"
-							>
-								<Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
-									value={exportCommandParams?.driver_id}
-									showSearch
-									optionFilterProp="label"
-									onSelect={(value) => {
-										const target = listVehicles.find(e => e.user1 === value);
-										setExportCommandParams({ ...exportCommandParams, driver_id: value, vehicle_id: target?.id });
-									}} />
-							</Form.Item>
-						</Col>
-						<Col span={8}>
-							<Form.Item
-								label="Người xuất"
-								className="mb-2"
-							>
-								<Select options={listUsers}
-									showSearch
-                  value={exportCommandParams.exporter_id}
-									optionFilterProp="label"
-									onSelect={(value) => {
-										setExportCommandParams({ ...exportCommandParams, exporter_id: value });
-									}} />
-							</Form.Item>
-						</Col>
-					</Row>
-					<ConfigProvider
-						theme={{
-							components: {
-								Collapse: {
-									headerPadding: 0,
-									contentPadding: 0
-								},
-							},
-						}}>
-						<Collapse
-							collapsible="header"
-							defaultActiveKey={['1']}
-							ghost
-							items={[
-								{
-									key: '1',
-									label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
-									children: <Row gutter={[8, 0]}>
-										{columns.filter(e=>e.isSearch).map(e => {
-											let item = null;
-											if (e?.input_type === 'select') {
-												item = <Select
-													mode={e?.mode}
-													options={e?.options}
-													showSearch
-													maxTagCount={'responsive'}
-													allowClear
+      <Button type="primary" onClick={() => setOpen(true)}>Tạo lệnh XK</Button>
+      <Modal
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={null}
+        title="Tạo lệnh xuất kho từ đơn hàng"
+        width={'98vw'}
+        height={'100vh'}
+        style={{
+          // position: 'fixed',
+          left: '0',
+          right: '0',
+          top: '5px',
+        }}
+      >
+        <Form layout="vertical">
+          <Row gutter={[8, 0]}>
+            <Col span={8}>
+              <Form.Item
+                label="Số xe"
+                className="mb-2"
+              >
+                <Select options={listVehicles}
+                  showSearch
+                  value={exportCommandParams?.vehicle_id}
+                  onSelect={(value) => {
+                    const target = listVehicles.find(e => e.id === value);
+                    setExportCommandParams({ ...exportCommandParams, vehicle_id: value, driver_id: target?.user1 });
+                  }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Tài xế"
+                className="mb-2"
+              >
+                <Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
+                  value={exportCommandParams?.driver_id}
+                  showSearch
+                  optionFilterProp="label"
+                  onSelect={(value) => {
+                    const target = listVehicles.find(e => e.user1 === value);
+                    setExportCommandParams({ ...exportCommandParams, driver_id: value, vehicle_id: target?.id });
+                  }} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Người xuất"
+                className="mb-2"
+              >
+                <div className="w-100 d-flex">
+                  <Select
+                    style={{width:'45%'}}
+                    options={listUsers}
+                    showSearch
+                    placeholder="Chọn bộ phận"
+                    value={exportCommandParams.exporter_id}
+                    optionFilterProp="label"
+                    onSelect={(value) => {
+                      setExportCommandParams({ ...exportCommandParams, exporter_id: value });
+                    }} />
+
+                  <Select
+                    placeholder="Chọn người xuất"
+                    options={listUsers}
+                    showSearch
+                    value={exportCommandParams.exporter_id}
+                    optionFilterProp="label"
+                    onSelect={(value) => {
+                      setExportCommandParams({ ...exportCommandParams, exporter_id: value });
+                    }} />
+                </div>
+              </Form.Item>
+            </Col>
+          </Row>
+          <ConfigProvider
+            theme={{
+              components: {
+                Collapse: {
+                  headerPadding: 0,
+                  contentPadding: 0
+                },
+              },
+            }}>
+            <Collapse
+              collapsible="header"
+              defaultActiveKey={['1']}
+              ghost
+              items={[
+                {
+                  key: '1',
+                  label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
+                  children: <Row gutter={[8, 0]}>
+                    {columns.filter(e => e.isSearch).map(e => {
+                      let item = null;
+                      if (e?.input_type === 'select') {
+                        item = <Select
+                          mode={e?.mode}
+                          options={e?.options}
+                          showSearch
+                          maxTagCount={'responsive'}
+                          allowClear
                           optionFilterProp="label"
-													placeholder={'Nhập ' + e.title.toLowerCase()}
-													onChange={(value) => setParams({ ...params, [e.dataIndex]: value })}
-													value={params[e.dataIndex]}
-												/>
-											}
-											else if (['date', 'date_time'].includes(e?.input_type)) {
-												item = <DatePicker
-													className="w-100"
-													showTime={e?.input_type === 'date_time'}
-													needConfirm={false}
-													placeholder={'Nhập ' + e.title.toLowerCase()}
-													onChange={(value) => (!value || value.isValid()) && setParams({ ...params, [e.dataIndex]: value })}
-													onSelect={(value) => setParams({ ...params, [e.dataIndex]: value })}
-													value={params[e.dataIndex]}
-												/>;
-											} else {
-												item = <Input
-													allowClear
-													placeholder={'Nhập ' + e.title.toLowerCase()}
-													onChange={(value) => setParams({ ...params, [e.dataIndex]: value.target.value })}
-													value={params[e.dataIndex]}
-												/>
-											}
-											return e.isSearch && <Col span={2}>
-												<Form.Item label={e.title} style={{ marginBottom: 8 }}>
-													{item}
-												</Form.Item>
-											</Col>
-										})}
-									</Row>,
-								},
-							]}
-						/>
-					</ConfigProvider>
-				</Form>
-				<Tabs
-					className="mt-1"
-					type="card"
-					items={items}
-					tabBarExtraContent={extraTab}
-				/>
-			</Modal>
-		</React.Fragment>
-	);
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => setParams({ ...params, [e.dataIndex]: value })}
+                          value={params[e.dataIndex]}
+                        />
+                      }
+                      else if (['date', 'date_time'].includes(e?.input_type)) {
+                        item = <DatePicker
+                          className="w-100"
+                          showTime={e?.input_type === 'date_time'}
+                          needConfirm={false}
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => (!value || value.isValid()) && setParams({ ...params, [e.dataIndex]: value })}
+                          onSelect={(value) => setParams({ ...params, [e.dataIndex]: value })}
+                          value={params[e.dataIndex]}
+                        />;
+                      } else {
+                        item = <Input
+                          allowClear
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => setParams({ ...params, [e.dataIndex]: value.target.value })}
+                          value={params[e.dataIndex]}
+                        />
+                      }
+                      return e.isSearch && <Col span={4}>
+                        <Form.Item label={e.title} style={{ marginBottom: 8 }}>
+                          {item}
+                        </Form.Item>
+                      </Col>
+                    })}
+                  </Row>,
+                },
+              ]}
+            />
+          </ConfigProvider>
+        </Form>
+        <Tabs
+          className="mt-1"
+          type="card"
+          items={items}
+          tabBarExtraContent={extraTab}
+        />
+      </Modal>
+    </React.Fragment>
+  );
 };
 
 export default PopupCreateDeliveryNote;
