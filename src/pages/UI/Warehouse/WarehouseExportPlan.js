@@ -453,7 +453,7 @@ const WarehouseExportPlan = () => {
             extra={
               <Space>
                 <PopupSelectWarehouseFGExportPlan listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
-                <PopupCreateWarehouseFGExportPlan onAfterCreate={onAfterCreate}/>
+                <PopupCreateWarehouseFGExportPlan listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
               </Space>
             }
           >
