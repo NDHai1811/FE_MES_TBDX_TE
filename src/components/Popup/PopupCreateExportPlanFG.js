@@ -284,7 +284,7 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '42vh'
+            y: '70vh'
           }
         }
         tableLayout="fixed"
@@ -300,7 +300,7 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '260vw',
-            y: '42vh'
+            y: '70vh'
           }
         }
         tableLayout="fixed"
@@ -421,7 +421,7 @@ const PopupCreateExportPlanFG = (props) => {
 													value={params[e.dataIndex]}
 												/>
 											}
-											return e.isSearch && <Col span={4}>
+											return e.isSearch && <Col span={2}>
 												<Form.Item label={e.title} style={{ marginBottom: 8 }}>
 													{item}
 												</Form.Item>

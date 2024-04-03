@@ -39,7 +39,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
 import PopupCreateExportPlanFG from "../../../components/Popup/PopupCreateExportPlanFG.js";
-import PopupCreateExportCommand from "../../../components/Popup/PopupCreateExportCommand.js";
+import PopupCreateDeliveryNote from "../../../components/Popup/PopupCreateDeliveryNote.js";
 
 const EditableCell = ({
   editing,
@@ -453,7 +453,7 @@ const WarehouseExportPlan = () => {
             extra={
               <Space>
                 <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
-                <PopupCreateExportCommand listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
+                <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
               </Space>
             }
           >

@@ -24,7 +24,7 @@ import { getCustomers } from "../../api/ui/main";
 import { createDeliveryNote, getDeliveryNoteList, getWarehouseFGExportPlan } from "../../api/ui/warehouse";
 import { DeleteOutlined } from "@ant-design/icons";
 
-const PopupCreateExportCommand = (props) => {
+const PopupCreateDeliveryNote = (props) => {
 	const {listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null} = props;
 	const [open, setOpen] = useState(false);
 	const [params, setParams] = useState({});
@@ -42,7 +42,7 @@ const PopupCreateExportCommand = (props) => {
       render: (value)=>(value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
     },
     {
-      title: 'Người tạo KH xuất',
+      title: 'Người tạo KH',
       dataIndex: 'created_by',
       align:'center',
       isSearch: true,
@@ -118,7 +118,7 @@ const PopupCreateExportCommand = (props) => {
       isSearch: true,
     },
     {
-      title: "Số lượng xuất",
+      title: "SL xuất",
       dataIndex: "so_luong_xuat",
       key: "so_luong_xuat",
       align: "center",
@@ -306,7 +306,7 @@ const PopupCreateExportCommand = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '42vh'
+            y: '70vh'
           }
         }
         tableLayout="fixed"
@@ -322,7 +322,7 @@ const PopupCreateExportCommand = (props) => {
         scroll={
           {
             x: '260vw',
-            y: '42vh'
+            y: '70vh'
           }
         }
         tableLayout="fixed"
@@ -465,7 +465,7 @@ const PopupCreateExportCommand = (props) => {
 													value={params[e.dataIndex]}
 												/>
 											}
-											return e.isSearch && <Col span={4}>
+											return e.isSearch && <Col span={2}>
 												<Form.Item label={e.title} style={{ marginBottom: 8 }}>
 													{item}
 												</Form.Item>
@@ -488,4 +488,4 @@ const PopupCreateExportCommand = (props) => {
 	);
 };
 
-export default PopupCreateExportCommand;
+export default PopupCreateDeliveryNote;
