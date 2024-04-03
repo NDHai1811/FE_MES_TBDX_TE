@@ -38,8 +38,8 @@ import { createDeliveryNote, createExportCommand, createWareHouseFGExport, getDe
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
-import PopupSelectWarehouseFGExportPlan from "../../../components/Popup/PopupSelectWarehouseFGExportPlan";
-import PopupCreateWarehouseFGExportPlan from "../../../components/Popup/PopupCreateWarehouseFGExportPlan.js";
+import PopupCreateExportPlanFG from "../../../components/Popup/PopupCreateExportPlanFG.js";
+import PopupCreateExportCommand from "../../../components/Popup/PopupCreateExportCommand.js";
 
 const EditableCell = ({
   editing,
@@ -192,7 +192,7 @@ const WarehouseExportPlan = () => {
       dataIndex: "xuong_giao",
       key: "xuong_giao",
       align: "center",
-      width: 180
+      width: 120
     },
     {
       title: "Tài xế",
@@ -452,8 +452,8 @@ const WarehouseExportPlan = () => {
             className="custom-card"
             extra={
               <Space>
-                <PopupSelectWarehouseFGExportPlan listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
-                <PopupCreateWarehouseFGExportPlan listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
+                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
+                <PopupCreateExportCommand listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
               </Space>
             }
           >

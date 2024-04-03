@@ -21,10 +21,10 @@ import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
 import { getOrders, getUsers, getVehicles } from "../../api";
 import { getCustomers } from "../../api/ui/main";
-import { createDeliveryNote, getDeliveryNoteList, getWarehouseFGExportPlan } from "../../api/ui/warehouse";
+import { createDeliveryNote, createWareHouseFGExport, getDeliveryNoteList, getWarehouseFGExportPlan } from "../../api/ui/warehouse";
 import { DeleteOutlined } from "@ant-design/icons";
 
-const PopupSelectWarehouseFGExportPlan = (props) => {
+const PopupCreateExportPlanFG = (props) => {
 	const {listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null} = props;
 	const [open, setOpen] = useState(false);
 	const [params, setParams] = useState({});
@@ -32,24 +32,9 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
 	const [data, setData] = useState([]);
 	const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1})
 	const [selectedRows, setSelectedRows] = useState([]);
-  const [exportCommandParams, setExportCommandParams] = useState({});
+  const [planParams, sePlanParams] = useState({ngay_xuat: dayjs()});
   const [messageApi, contextHolder] = message.useMessage();
 	const columns = [
-		{
-      title: 'Thời gian xuất',
-      dataIndex: 'ngay_xuat',
-      align:'center',
-      render: (value)=>(value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
-    },
-    {
-      title: 'Người tạo KH xuất',
-      dataIndex: 'created_by',
-      align:'center',
-      isSearch: true,
-      input_type: 'select',
-      options: listUsers,
-      render: (value)=>listUsers.find(e=>e.id === value)?.name
-    },
     {
       title: "Khách hàng",
       dataIndex: "short_name",
@@ -118,9 +103,9 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
       isSearch: true,
     },
     {
-      title: "Số lượng xuất",
-      dataIndex: "so_luong_xuat",
-      key: "so_luong_xuat",
+      title: "Số lượng",
+      dataIndex: "sl",
+      key: "sl",
       align: "center",
       width: 70,
     },
@@ -232,7 +217,7 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
 
 	async function loadData(params){
 		setLoading(true);
-		var res = await getWarehouseFGExportPlan(params);
+		var res = await getOrders(params);
 		setData(res.data.map(e=>({...e, key: e.id})));
     setTableParams({...tableParams, totalPage: res.totalPage})
 		setLoading(false);
@@ -262,27 +247,21 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
     });
   }
   const onCreate = async () => {
-    if(!exportCommandParams?.vehicle_id){
-      messageApi.warning('Chưa chọn xe!');
-      return 0;
-    }
-    if(!exportCommandParams?.driver_id){
-      messageApi.warning('Chưa chọn tài xế!');
-      return 0;
-    }
-    if(!exportCommandParams?.exporter_id){
-      messageApi.warning('Chưa chọn người xuất!');
+    if(!planParams.ngay_xuat){
+      messageApi.warning('Chưa chọn ngày xuất!');
       return 0;
     }
     if(!selectedRows.length){
-      messageApi.warning('Chưa chọn đơn hàng cần xuất!');
+      messageApi.warning('Chưa chọn đơn hàng!');
       return 0;
     }
-    var res = await createDeliveryNote({ ...exportCommandParams, export_ids: selectedRows });
+    var res = await createWareHouseFGExport({ ngay_xuat: planParams.ngay_xuat, orders: selectedRows });
     if (res.success) {
       setOpen(false);
       setSelectedRows([]);
-      onAfterCreate()
+      setParams({});
+      setTableParams({ page: 1, pageSize: 20, totalPage: 1});
+      onAfterCreate();
     }
   }
 	const items = [
@@ -347,17 +326,17 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
     }
   ];
 	const extraTab = {
-    right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo lệnh XK</Button>,
+    right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo KHXK</Button>,
   };
 	return (
 		<React.Fragment>
       {contextHolder}
-			<Button type="primary" onClick={()=>setOpen(true)}>Tạo lệnh XK</Button>
+			<Button type="primary" onClick={()=>setOpen(true)}>Tạo KHXK từ ĐH</Button>
 			<Modal
 				open={open}
 				onCancel={() => setOpen(false)}
 				footer={null}
-				title="Tạo lệnh xuất kho từ đơn hàng"
+				title="Tạo KHXK từ đơn hàng"
 				width={'98vw'}
 				height={'100vh'}
 				style={{
@@ -371,45 +350,23 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
 					<Row gutter={[8, 0]}>
 						<Col span={8}>
 							<Form.Item
-								label="Số xe"
+								label="Ngày xuất"
 								className="mb-2"
 							>
-								<Select options={listVehicles}
-									showSearch
-									value={exportCommandParams?.vehicle_id}
-									onSelect={(value) => {
-										const target = listVehicles.find(e => e.id === value);
-										setExportCommandParams({ ...exportCommandParams, vehicle_id: value, driver_id: target?.user1 });
-									}} />
-							</Form.Item>
-						</Col>
-						<Col span={8}>
-							<Form.Item
-								label="Tài xế"
-								className="mb-2"
-							>
-								<Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
-									value={exportCommandParams?.driver_id}
-									showSearch
-									optionFilterProp="label"
-									onSelect={(value) => {
-										const target = listVehicles.find(e => e.user1 === value);
-										setExportCommandParams({ ...exportCommandParams, driver_id: value, vehicle_id: target?.id });
-									}} />
-							</Form.Item>
-						</Col>
-						<Col span={8}>
-							<Form.Item
-								label="Người xuất"
-								className="mb-2"
-							>
-								<Select options={listUsers}
-									showSearch
-                  value={exportCommandParams.exporter_id}
-									optionFilterProp="label"
-									onSelect={(value) => {
-										setExportCommandParams({ ...exportCommandParams, exporter_id: value });
-									}} />
+								<DatePicker
+                  allowClear={false}
+                  showTime
+                  placeholder="Ngày xuất"
+                  style={{ width: "100%" }}
+                  onChange={(value) => {
+                    value.isValid() && sePlanParams({ ...planParams, ngay_xuat: value });
+                  }}
+                  needConfirm={false}
+                  onSelect={(value) => {
+                    sePlanParams({ ...planParams, ngay_xuat: value });
+                  }}
+                  value={planParams.ngay_xuat}
+                />
 							</Form.Item>
 						</Col>
 					</Row>
@@ -487,4 +444,4 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
 	);
 };
 
-export default PopupSelectWarehouseFGExportPlan;
+export default PopupCreateExportPlanFG;
