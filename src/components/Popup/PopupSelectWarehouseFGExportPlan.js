@@ -440,6 +440,7 @@ const PopupSelectWarehouseFGExportPlan = (props) => {
 													showSearch
 													maxTagCount={'responsive'}
 													allowClear
+                          optionFilterProp="label"
 													placeholder={'Nhập ' + e.title.toLowerCase()}
 													onChange={(value) => setParams({ ...params, [e.dataIndex]: value })}
 													value={params[e.dataIndex]}
