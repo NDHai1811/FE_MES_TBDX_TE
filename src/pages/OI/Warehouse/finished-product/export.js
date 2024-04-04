@@ -283,6 +283,7 @@ const Export = (props) => {
       setVisible(false);
       form.resetFields();
       loadData();
+      loadDataTable();
     }
   }
   const [isDownloading, setIsDownloading] = useState(false)
