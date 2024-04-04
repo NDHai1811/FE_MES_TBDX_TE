@@ -77,6 +77,7 @@ const Export = (props) => {
   const [isOpenQRScanner, setIsOpenQRScanner] = useState();
   const [deliveryNoteList, setDeliveryNote] = useState([]);
   const [deliveryNoteID, setDeliveryNoteID] = useState();
+  const [loadingTable, setLoadingTable] = useState(false);
   const [form] = Form.useForm();
   const scanRef = useRef();
   const column2 = [
@@ -179,9 +180,9 @@ const Export = (props) => {
 
   const lsxColumns = [
     {
-      title: "Lô SX",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
       align: "center",
       render: (value) => value || "-",
     },
@@ -223,10 +224,12 @@ const Export = (props) => {
 
   useEffect(() => {
     (async () => {
+      setLoadingTable(true);
       const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
       if (res.success) {
         setData(res.data);
       }
+      setLoadingTable(false);
     })();
   }, [deliveryNoteID]);
 
@@ -262,6 +265,7 @@ const Export = (props) => {
     }, SCAN_TIME_OUT);
   };
   const loadData = async () => {
+    setLoadingTable(true)
     var res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
     setData(res.data);
     var res2 = await getWarehouseFGOverall();
@@ -273,6 +277,7 @@ const Export = (props) => {
     });
     setDeliveryNote(arr);
     setSelectedItem();
+    setLoadingTable(false)
   }
   const onFinish = async (values) => {
     const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: deliveryNoteID }
@@ -285,12 +290,12 @@ const Export = (props) => {
   }
   const [isDownloading, setIsDownloading] = useState(false)
   const onDownloadDeliveryNote = async () => {
-    if(!deliveryNoteID){
+    if (!deliveryNoteID) {
       message.warning('Chưa chọn lệnh xuất kho')
       return 0;
     }
     setIsDownloading(true);
-    var res = await downloadDeliveryNote({delivery_note_id: deliveryNoteID});
+    var res = await downloadDeliveryNote({ delivery_note_id: deliveryNoteID });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -391,6 +396,7 @@ const Export = (props) => {
               'no-hover ' + (record?.pallet_id === selectedItem?.pallet_id ? "table-row-green" : "")
             }
             pagination={false}
+            loading={loadingTable}
             bordered
             scroll={{ y: '30vh' }}
             className="mb-4"

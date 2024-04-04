@@ -3,6 +3,7 @@ import styled from "styled-components";
 import "./style.css";
 import { QRCode } from "antd";
 import logolight from "../../../assets/images/logo.jpg";
+import dayjs from "dayjs";
 
 const PageBreakWrapper = styled.div`
   && {
@@ -27,13 +28,16 @@ const PrintTemplate = ({ info }) => {
             <tr style={{ lineHeight: '120px!important' }}>
               <td colSpan={4}>
                 <div className="d-flex justify-content-between" style={{ height: '120px!important' }}>
-                  <QRCode
-                    style={{ marginRight: "5px" }}
-                    value={info[0]?.pallet_id}
-                    bordered={false}
-                    size={120}
-                    type="svg"
-                  />
+                  <div>
+                    <QRCode
+                      style={{ marginRight: "5px" }}
+                      value={info[0]?.pallet_id}
+                      bordered={false}
+                      size={120}
+                      type="svg"
+                    />
+                    <span>{info[0]?.pallet_id}</span>
+                  </div>
                   <div className="flex-column">
                     <h3
                       style={{
@@ -60,7 +64,8 @@ const PrintTemplate = ({ info }) => {
               </td>
             </tr>
             <tr style={{ lineHeight: '25px' }}>
-              <td colSpan={4}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang} {info[0]?.customer_id}</b></td>
+              <td colSpan={2}><span style={{ marginLeft: '10px' }}>Khách hàng:</span> <b>{info[0]?.khach_hang} {info[0]?.customer_id}</b></td>
+              <td colSpan={2}><span style={{ marginLeft: '10px' }}>Ngày:</span> <b>{dayjs(info[0]?.created_at).format('DD/MM/YYYY')}</b></td>
             </tr>
             <tr style={{ lineHeight: '20px' }}>
               <td className="text-center">STT</td>
