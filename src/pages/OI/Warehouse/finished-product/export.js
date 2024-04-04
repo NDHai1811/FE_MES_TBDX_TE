@@ -222,7 +222,6 @@ const Export = (props) => {
     setDeliveryNoteID(value);
   }
 
-  const [loadingTable, setLoadingTable] = useState(false);
   const loadDataTable = async () => {
     setLoadingTable(true);
     const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
@@ -360,7 +359,6 @@ const Export = (props) => {
             }
             loading={loadingTable}
             pagination={false}
-            loading={loadingTable}
             bordered
             scroll={{ y: '30vh' }}
             className="mb-4"
