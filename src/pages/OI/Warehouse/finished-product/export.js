@@ -135,7 +135,7 @@ const Export = (props) => {
       render: () => (
         <Select
           options={deliveryNoteList}
-
+          allowClear
           onChange={onChangeDeliveryNote}
           style={{ width: "100%" }}
           bordered={false}
@@ -222,15 +222,17 @@ const Export = (props) => {
     setDeliveryNoteID(value);
   }
 
+  const [loadingTable, setLoadingTable] = useState(false);
+  const loadDataTable = async () => {
+    setLoadingTable(true);
+    const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
+    if (res.success) {
+      setData(res.data);
+    }
+    setLoadingTable(false);
+  }
   useEffect(() => {
-    (async () => {
-      setLoadingTable(true);
-      const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
-      if (res.success) {
-        setData(res.data);
-      }
-      setLoadingTable(false);
-    })();
+    loadDataTable()
   }, [deliveryNoteID]);
 
   const handleCloseMdl = () => {
@@ -265,9 +267,6 @@ const Export = (props) => {
     }, SCAN_TIME_OUT);
   };
   const loadData = async () => {
-    setLoadingTable(true)
-    var res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
-    setData(res.data);
     var res2 = await getWarehouseFGOverall();
     setOverall([res2.data])
     var res3 = await getDeliveryNoteList();
@@ -354,47 +353,12 @@ const Export = (props) => {
             Tải phiếu xuất hàng
           </Button>
         </Col>
-        {/* <Col span={24}>
-          <Row gutter={8}>
-            <Col span={12}>
-              <Button
-                block
-                className="h-100 w-100"
-                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
-                type="primary"
-                onClick={() => setIsScan(true)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                Quét QR Code
-              </Button>
-            </Col>
-            <Col span={12}>
-              <Button
-                block
-                className="h-100 w-100"
-                icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
-                type="primary"
-                onClick={onShowPopup}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                In tem lại
-              </Button>
-            </Col>
-          </Row>
-        </Col> */}
         <Col span={24}>
           <Table
             rowClassName={(record, index) =>
               'no-hover ' + (record?.pallet_id === selectedItem?.pallet_id ? "table-row-green" : "")
             }
+            loading={loadingTable}
             pagination={false}
             loading={loadingTable}
             bordered

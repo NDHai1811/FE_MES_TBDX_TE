@@ -27,6 +27,7 @@ import React, { useState, useEffect } from "react";
 import {
   createWareHouseExport,
   deleteBuyers,
+  deleteWareHouseExport,
   getOrders,
   getUsers,
   getVehicles,
@@ -34,7 +35,7 @@ import {
 import "../style.scss";
 import dayjs from "dayjs";
 import { DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { createDeliveryNote, createExportCommand, createWareHouseFGExport, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
+import { createDeliveryNote, createExportCommand, createWareHouseFGExport, deleteWarehouseFGExport, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
@@ -231,13 +232,14 @@ const WarehouseExportPlan = () => {
     },
   ];
 
-  const deleteItem = async (key) => {
+  const deleteItem = async (record) => {
     const newData = [...data];
-    const index = newData.findIndex((item) => key === item.key);
+    const index = newData.findIndex((item) => record.id === item.id);
     if (index > -1) {
-      const res = await deleteBuyers({ id: key });
-      newData.splice(index, 1);
-      setData(newData);
+      const res = await deleteWarehouseFGExport(record.id);
+      if(res.success){
+        loadListTable();
+      }
     }
   };
 
@@ -452,8 +454,8 @@ const WarehouseExportPlan = () => {
             className="custom-card"
             extra={
               <Space>
-                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
                 <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
+                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
               </Space>
             }
           >
@@ -479,11 +481,6 @@ const WarehouseExportPlan = () => {
                     // x: '100vw',
                     y: tableHeight,
                   }}
-                  // components={{
-                  //   body: {
-                  //     cell: EditableCell,
-                  //   },
-                  // }}
                   columns={col_detailTable}
                   dataSource={data}
                   setDataSource={setData}
