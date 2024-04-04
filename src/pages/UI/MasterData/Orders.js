@@ -24,6 +24,7 @@ import {
   createOrder,
   deleteOrders,
   exportOrders,
+  getKhuon,
   getOrders,
   splitOrders,
   updateOrder,
@@ -65,13 +66,12 @@ const EditableCell = ({
           value={record?.[dataIndex]}
           options={options}
           onChange={(value) => onSelect(value, dataIndex)}
-          bordered
           showSearch
         />
       );
       break;
     default:
-      inputNode = <Input />;
+      inputNode = <Input onChange={(event)=>onChange(event.target.value, dataIndex)}/>;
   }
   const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
@@ -143,16 +143,6 @@ const PL2s = [
     phan_loai_1: 'thung'
   },
   {
-    label: "Thùng thường",
-    value: "thung-thuong",
-    phan_loai_1: 'inner'
-  },
-  {
-    label: "Thùng bế",
-    value: "thung-be",
-    phan_loai_1: 'thung'
-  },
-  {
     label: "Thùng 1 nắp",
     value: "thung-1-nap",
     phan_loai_1: 'thung'
@@ -163,6 +153,21 @@ const PL2s = [
     phan_loai_1: 'thung'
   },
   {
+    label: "Thùng bế",
+    value: "thung-be",
+    phan_loai_1: 'thung'
+  },
+  {
+    label: "Thùng thường",
+    value: "thung-thuong",
+    phan_loai_1: 'inner'
+  },
+  {
+    label: "Thùng bế",
+    value: "thung-be",
+    phan_loai_1: 'inner'
+  },
+  {
     label: "Pad U",
     value: "pad-u",
     phan_loai_1: 'pad'
@@ -170,6 +175,11 @@ const PL2s = [
   {
     label: "Pad Z, rãnh",
     value: "pad-z-ranh",
+    phan_loai_1: 'pad'
+  },
+  {
+    label: "Pad Bế",
+    value: "pad-be",
     phan_loai_1: 'pad'
   },
   {
@@ -208,6 +218,7 @@ const Orders = () => {
   const [buyers, setBuyers] = useState([]);
   const [layouts, setLayouts] = useState([]);
   const [listDRC, setListDRC] = useState([]);
+  const [listKhuonLink, setListKhuonLink] = useState([]);
   const [listCheck, setListCheck] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalPage, setTotalPage] = useState(1);
@@ -474,6 +485,14 @@ const Orders = () => {
       editable: true,
       checked: true,
       width: "5%",
+    },
+    {
+      title: "Mã khuôn",
+      dataIndex: "khuon_id",
+      key: "khuon_id",
+      align: "center",
+      width: "5%",
+      editable: true
     },
     {
       title: "Tốc độ",
@@ -884,6 +903,16 @@ const Orders = () => {
         break;
       case "phan_loai_2":
         filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1);
+        const khuon = null;
+        let formData = {...record};
+        if(record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong){
+          const khuon = listKhuonLink.find(e=>e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao);
+          if(khuon){
+            filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1 && e.value.includes('be'));
+            formData = {...formData, khuon_id: khuon?.khuon_id, phan_loai_2: filteredOptions[0]?.value}
+          }
+        }
+        form.setFieldsValue(formData);
         break;
       default:
         var options = record?.customer_specifications ?? [];
@@ -989,6 +1018,7 @@ const Orders = () => {
     getBuyerList();
     getLayouts();
     getDRCs();
+    getKhuonLink();
   }, []);
 
   const rowSelection = {
@@ -1002,16 +1032,6 @@ const Orders = () => {
     const item = data.find((value) => value.key === editingKey);
     const res = await getBuyers();
     setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
-  };
-
-  const onSelect = (value, dataIndex) => {
-    const items = data.map((val) => {
-      if (val.key === editingKey) {
-        val[dataIndex] = value;
-      }
-      return { ...val };
-    });
-    setData(items);
   };
 
   const getLayouts = async () => {
@@ -1035,6 +1055,21 @@ const Orders = () => {
         value: val.id,
       }))
     );
+  };
+
+  const getKhuonLink = async () => {
+    const res = await getKhuon();
+    setListKhuonLink(res);
+  }
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    console.log(items);
+    setData(items);
   };
 
   const onChange = (value, dataIndex) => {
