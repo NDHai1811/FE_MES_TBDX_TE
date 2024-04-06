@@ -30,7 +30,9 @@ const PopupCreateExportPlanFG = (props) => {
 	const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
 	const [data, setData] = useState([]);
-	const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1})
+	const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
+  const [totalPage, setTotalPage] = useState(1)
 	const [selectedRows, setSelectedRows] = useState([]);
   const [planParams, sePlanParams] = useState({ngay_xuat: dayjs()});
   const [messageApi, contextHolder] = message.useMessage();
@@ -219,24 +221,23 @@ const PopupCreateExportPlanFG = (props) => {
 		setLoading(true);
 		var res = await getOrders(params);
 		setData(res.data.map(e=>({...e, key: e.id})));
-    setTableParams({...tableParams, totalPage: res.totalPage})
+    setTotalPage(res.totalPage)
 		setLoading(false);
 	}
 	useEffect(()=>{
     if(Object.keys(params).length > 0){
       loadData({...params, page: 1, pageSize: 20});
-      setTableParams({...tableParams, page: 1, pageSize: 20});
     }
 	}, [params]);
 	useEffect(()=>{
     if(open){
       loadData({...params, page: 1, pageSize: 20});
-      setTableParams({...tableParams, page: 1, pageSize: 20});
     }else{
       setParams({});
       setData()
-      setTableParams({ page: 1, pageSize: 20, totalPage: 1});
     }
+    setPage(1);
+    setPageSize(20);
 	}, [open]);
 	const onDeselectOrders = (rows) => {
     setSelectedRows(prev => {
@@ -260,7 +261,6 @@ const PopupCreateExportPlanFG = (props) => {
       setOpen(false);
       setSelectedRows([]);
       setParams({});
-      setTableParams({ page: 1, pageSize: 20, totalPage: 1});
       onAfterCreate();
     }
   }
@@ -271,13 +271,14 @@ const PopupCreateExportPlanFG = (props) => {
       children: <Table size='small' bordered
         loading={loading}
         pagination={{
-          current: tableParams.page,
+          current: page,
           size: "small",
-          total: tableParams?.totalPage ?? 1,
-          pageSize: tableParams.pageSize,
+          total: totalPage,
+          pageSize: pageSize,
           showSizeChanger: true,
           onChange: (page, pageSize) => {
-            setTableParams({ ...tableParams, page: page, pageSize: pageSize });
+            setPage(page);
+            setPageSize(pageSize)
             loadData({...params, page: page, pageSize: pageSize})
           },
         }}
@@ -388,7 +389,7 @@ const PopupCreateExportPlanFG = (props) => {
 									key: '1',
 									label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
 									children: <Row gutter={[8, 0]}>
-										{columns.filter(e=>e.isSearch).map(e => {
+										{columns.filter(e=>e.isSearch).map((e, index) => {
 											let item = null;
 											if (e?.input_type === 'select') {
 												item = <Select
@@ -421,7 +422,7 @@ const PopupCreateExportPlanFG = (props) => {
 													value={params[e.dataIndex]}
 												/>
 											}
-											return e.isSearch && <Col span={2}>
+											return e.isSearch && <Col xs={8} sm={8} md={6} lg={4} xl={2} key={index}>
 												<Form.Item label={e.title} style={{ marginBottom: 8 }}>
 													{item}
 												</Form.Item>

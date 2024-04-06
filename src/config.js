@@ -8,7 +8,7 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "http://127.0.0.1:8001/api",
+    API_URL: "http://127.0.0.1:8000/api",
   },
-  baseURL: "http://127.0.0.1:8001",
+  baseURL: "http://127.0.0.1:8000",
 }

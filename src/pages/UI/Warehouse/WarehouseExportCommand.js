@@ -38,8 +38,9 @@ import { createDeliveryNote, createExportCommand, createWareHouseFGExport, delet
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
+import PopupCreateDeliveryNote from "../../../components/Popup/PopupCreateDeliveryNote";
 
-const WarehouseExport = () => {
+const WarehouseExportCommand = () => {
   document.title = "Quản lý lệnh xuất kho";
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
@@ -125,14 +126,16 @@ const WarehouseExport = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   function btn_click() {
-    loadListTable();
+    loadListTable({...params, page: 1, pageSize: 20});
+    setPage(1);
+    setPageSize(20);
   }
 
   useEffect(() => {
-    btn_click();
-  }, [page, pageSize])
+    loadListTable({...params, page: page, pageSize: pageSize});
+  }, [page, pageSize]);
 
-  const loadListTable = async () => {
+  const loadListTable = async (params) => {
     setListCheck([])
     setLoading(true);
     const res = await getDeliveryNoteList(params);
@@ -186,15 +189,16 @@ const WarehouseExport = () => {
   }, [data]);
 
   const onSave = async (record) => {
+    console.log(record);
     var res = await updateDeliveryNote(record)
     if(res.success){
-      loadListTable();
+      btn_click()
     }
   }
   const onDelete = async (record) => {
     var res = await deleteDeliveryNote(record);
     if(res.success){
-      loadListTable();
+      btn_click()
     }
   }
   const onSelect = (value, dataIndex, index) => {
@@ -220,7 +224,6 @@ const WarehouseExport = () => {
         else if(dataIndex === 'vehicle_id') {
           target = listVehicles.find(e => e.id === value);
         }
-        form.setFieldsValue({ ...e, vehicle_id: target?.id, driver_id: target?.user1 })
         return { ...e, vehicle_id: target?.id, driver_id: target?.user1 }
       } else {
         return e;
@@ -515,12 +518,15 @@ const WarehouseExport = () => {
     var res = await createDeliveryNote({ ...exportCommandParams, orders: selectedOrders });
     if (res.success) {
       setOpenMdl(false);
-      loadListTable();
+      btn_click()
     }
   }
   const extraTab = {
     right: <Button type="primary" className="tabs-extra-demo-button" onClick={onCreate}>Tạo lệnh XK</Button>,
   };
+  const onAfterCreate = () => {
+    btn_click();
+  }
   return (
     <>
       {contextHolder}
@@ -616,24 +622,17 @@ const WarehouseExport = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý lệnh xuất kho"
-            bodyStyle={{ paddingBottom: 0 }}
+            styles={{ body: {paddingBottom: 0} }}
             className="custom-card"
             extra={
               <Space>
-                <Button
-                  type="primary"
-                  onClick={()=>setOpenMdl(true)}
-                // loading={exportLoading}
-                >
-                  Tạo lệnh xuất kho
-                </Button>
+                <PopupCreateDeliveryNote listUsers={listUsers} listVehicles={listVehicles} listCustomers={listCustomers} onAfterCreate={onAfterCreate}/>
               </Space>
             }
           >
             <Spin spinning={loading}>
               <Form form={form} component={false}>
                 <EditableTable
-                  form={form}
                   size="small"
                   bordered
                   pagination={{
@@ -652,149 +651,21 @@ const WarehouseExport = () => {
                     // x: '100vw',
                     y: tableHeight,
                   }}
-                  // components={{
-                  //   body: {
-                  //     cell: EditableCell,
-                  //   },
-                  // }}
                   columns={col_detailTable}
                   dataSource={data}
                   setDataSource={setData}
                   rowSelection={rowSelection}
                   onDelete={onDelete}
                   onSelect={onSelect}
-                  onSave={onSave}
+                  onUpdate={onSave}
                 />
               </Form>
             </Spin>
           </Card>
         </Col>
       </Row>
-      <Modal
-        open={openMdl}
-        onCancel={() => setOpenMdl(false)}
-        footer={null}
-        title="Tạo lệnh xuất kho từ đơn hàng"
-        width={'98vw'}
-        height={'100vh'}
-        style={{
-          // position: 'fixed',
-          left: '0',
-          right: '0',
-          top: '5px',
-        }}
-      >
-        <Form layout="vertical">
-          <Row gutter={[8, 0]}>
-            <Col span={8}>
-              <Form.Item
-                label="Số xe"
-                className="mb-2"
-              >
-                <Select options={listVehicles}
-                  value={exportCommandParams?.vehicle_id}
-                  onSelect={(value) => {
-                    const target = listVehicles.find(e => e.id === value);
-                    setExportCommandParams({ ...exportCommandParams, vehicle_id: value, driver_id: target?.user1 });
-                  }} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Tài xế"
-                className="mb-2"
-              >
-                <Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
-                  value={exportCommandParams?.driver_id}
-                  onSelect={(value) => {
-                    const target = listVehicles.find(e => e.user1 === value);
-                    setExportCommandParams({ ...exportCommandParams, driver_id: value, vehicle_id: target?.id });
-                  }} />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Người xuất"
-                className="mb-2"
-              >
-                <Select options={listUsers}
-                  onSelect={(value) => {
-                    setExportCommandParams({ ...exportCommandParams, exporter_id: value });
-                  }} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <ConfigProvider
-            theme={{
-              components: {
-                Collapse: {
-                  headerPadding: 0,
-                  contentPadding: 0
-                },
-              },
-            }}>
-            <Collapse
-              collapsible="header"
-              defaultActiveKey={['1']}
-              ghost
-              items={[
-                {
-                  key: '1',
-                  label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
-                  children: <Row gutter={[8, 0]}>
-                    {ordersColumn.map(e => {
-                      let item = null;
-                      if (e?.input_type === 'select') {
-                        item = <Select
-                          mode={e?.mode}
-                          options={e?.options}
-                          showSearch
-                          maxTagCount={'responsive'}
-                          allowClear
-                          placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
-                          value={orderParams[e.key]}
-                        />
-                      }
-                      else if (['date', 'date_time'].includes(e?.input_type)) {
-                        item = <DatePicker
-                          className="w-100"
-                          showTime={e?.input_type === 'date_time'}
-                          needConfirm={false}
-                          placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => (!value || value.isValid()) && setOrderParams({ ...orderParams, [e.key]: value })}
-                          onSelect={(value) => setOrderParams({ ...orderParams, [e.key]: value })}
-                          value={orderParams[e.key]}
-                        />;
-                      } else {
-                        item = <Input
-                          allowClear
-                          placeholder={'Nhập ' + e.title.toLowerCase()}
-                          onChange={(value) => setOrderParams({ ...orderParams, [e.key]: value.target.value })}
-                          value={orderParams[e.key]}
-                        />
-                      }
-                      return e.isSearch && <Col span={4}>
-                        <Form.Item label={e.title} style={{ marginBottom: 8 }}>
-                          {item}
-                        </Form.Item>
-                      </Col>
-                    })}
-                  </Row>,
-                },
-              ]}
-            />
-          </ConfigProvider>
-        </Form>
-        <Tabs
-          className="mt-1"
-          type="card"
-          items={items}
-          tabBarExtraContent={extraTab}
-        />
-      </Modal>
     </>
   );
 };
 
-export default WarehouseExport;
+export default WarehouseExportCommand;

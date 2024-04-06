@@ -42,60 +42,6 @@ import EditableTable from "../../../components/Table/EditableTable";
 import PopupCreateExportPlanFG from "../../../components/Popup/PopupCreateExportPlanFG.js";
 import PopupCreateDeliveryNote from "../../../components/Popup/PopupCreateDeliveryNote.js";
 
-const EditableCell = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  onChange,
-  onSelect,
-  options,
-  ...restProps
-}) => {
-  let inputNode;
-  switch (inputType) {
-    case "number":
-      inputNode = <InputNumber />;
-      break;
-    case "select":
-      inputNode = (
-        <Select
-          value={record?.[dataIndex]}
-          options={options}
-          onChange={(value) => onSelect(value, dataIndex)}
-          optionFilterProp="label"
-          bordered
-          showSearch
-          popupMatchSelectWidth={options.length > 0 ? 200 : 0}
-        />
-      );
-      break;
-    default:
-      inputNode = <Input />;
-  }
-  const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          initialValue={record?.[dataIndex]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
-
 const WarehouseExportPlan = () => {
   document.title = "Kế hoạch xuất kho";
   const [form] = Form.useForm();
@@ -113,6 +59,7 @@ const WarehouseExportPlan = () => {
   const [listVehicles, setListVehicles] = useState([]);
   const [listUsers, setListUsers] = useState([]);
   const [listNotes, setListNote] = useState({});
+  const [listCheck, setListCheck] = useState([]);
 
   const col_detailTable = [
     {
@@ -193,6 +140,7 @@ const WarehouseExportPlan = () => {
       dataIndex: "xuong_giao",
       key: "xuong_giao",
       align: "center",
+      editable: true,
       width: 120
     },
     {
@@ -237,19 +185,19 @@ const WarehouseExportPlan = () => {
     const index = newData.findIndex((item) => record.id === item.id);
     if (index > -1) {
       const res = await deleteWarehouseFGExport(record.id);
-      if(res.success){
+      if (res.success) {
         loadListTable();
       }
     }
   };
 
-  const save = async (data) => {
+  const save = async (values) => {
     try {
-      var res = await updateWarehouseFGExport(data);
+      var res = await updateWarehouseFGExport({...values, ids: data.filter((e, i)=>listCheck.includes(i)).map(e=>e.id)});
       if (res) {
         loadListTable();
+        setListCheck([])
       }
-      form.resetFields();
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
@@ -264,7 +212,7 @@ const WarehouseExportPlan = () => {
       const res3 = await getCustomers();
       setListCustomers(res3.data);
       const res4 = await getDeliveryNoteList();
-      setListNote(res4.data.map(e=>({...e, value: e.id, label: e.id})));
+      setListNote(res4.data.map(e => ({ ...e, value: e.id, label: e.id })));
     })();
   }, []);
 
@@ -279,45 +227,10 @@ const WarehouseExportPlan = () => {
   const loadListTable = async () => {
     setLoading(true);
     const res = await getWarehouseFGExportList(params);
-    setData(
-      res.data.map((e) => {
-        return { ...e, key: e.id };
-      })
-    );
+    setData(res.data.map((e, index)=>({...e, key: index})));
     setTotalPage(res.totalPage)
     setLoading(false);
   };
-
-  const onSelect = (value, dataIndex, index) => {
-    if (dataIndex === 'tai_xe' || dataIndex === 'so_xe') {
-      onSelectDriverVehicle(value, dataIndex, index);
-    } else {
-      const items = data.map((val, i) => {
-        if (i === index) {
-          val[dataIndex] = value;
-        }
-        return { ...val };
-      });
-      setData(items);
-    }
-  };
-  const onSelectDriverVehicle = (value, dataIndex, index) => {
-    const items = data.map((e, i) => {
-      if (i === index) {
-        var target = null;
-        if (dataIndex === 'tai_xe') {
-          target = listVehicles.find(e => e.user1 === value);
-        } else {
-          target = listVehicles.find(e => e.id === value);
-        }
-        form.setFieldsValue({ ...e, so_xe: target?.id, tai_xe: target?.user1 })
-        return { ...e, so_xe: target?.id, tai_xe: target?.user1 }
-      } else {
-        return e;
-      }
-    });
-    setData(items)
-  }
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -339,8 +252,15 @@ const WarehouseExportPlan = () => {
   const onAfterCreate = async () => {
     loadListTable();
     const res4 = await getDeliveryNoteList();
-    setListNote(res4.data.map(e=>({...e, value: e.id, label: e.id})));
+    setListNote(res4.data.map(e => ({ ...e, value: e.id, label: e.id })));
   }
+  const rowSelection = {
+    selectedRowKeys: listCheck,
+    fixed: true,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys);
+    },
+  };
   return (
     <>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -348,7 +268,7 @@ const WarehouseExportPlan = () => {
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
-              bodyStyle={{ padding: 0 }}
+              styles={{ body: {padding: 0} }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -450,47 +370,42 @@ const WarehouseExportPlan = () => {
           <Card
             style={{ height: "100%" }}
             title="Kế hoạch xuất kho"
-            bodyStyle={{ paddingBottom: 0 }}
+            styles={{ body: {paddingBottom: 0} }}
             className="custom-card"
             extra={
               <Space>
-                <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
-                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
+                <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate} />
+                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate} />
               </Space>
             }
           >
-            <Spin spinning={loading}>
-              <Form form={form} component={false}>
-                <EditableTable
-                  form={form}
-                  size="small"
-                  bordered
-                  pagination={{
-                    current: page,
-                    size: "small",
-                    total: totalPage,
-                    pageSize: pageSize,
-                    showSizeChanger: true,
-                    onChange: (page, pageSize) => {
-                      setPage(page);
-                      setPageSize(pageSize);
-                      setParams({ ...params, page: page, pageSize: pageSize });
-                    },
-                  }}
-                  scroll={{
-                    // x: '100vw',
-                    y: tableHeight,
-                  }}
-                  columns={col_detailTable}
-                  dataSource={data}
-                  setDataSource={setData}
-                  // rowSelection={rowSelection}
-                  onDelete={deleteItem}
-                  onSelect={onSelect}
-                  onSave={save}
-                />
-              </Form>
-            </Spin>
+            <EditableTable
+              size="small"
+              loading={loading}
+              bordered
+              pagination={{
+                current: page,
+                size: "small",
+                total: totalPage,
+                pageSize: pageSize,
+                showSizeChanger: true,
+                onChange: (page, pageSize) => {
+                  setPage(page);
+                  setPageSize(pageSize);
+                  setParams({ ...params, page: page, pageSize: pageSize });
+                },
+              }}
+              scroll={{
+                // x: '100vw',
+                y: tableHeight,
+              }}
+              columns={col_detailTable}
+              dataSource={data}
+              setDataSource={setData}
+              rowSelection={rowSelection}
+              onDelete={deleteItem}
+              onUpdate={save}
+            />
           </Card>
         </Col>
       </Row>

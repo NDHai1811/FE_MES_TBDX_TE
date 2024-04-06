@@ -30,6 +30,9 @@ const PopupCreateDeliveryNote = (props) => {
   const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
+  const [totalPage, setTotalPage] = useState(1)
   const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 })
   const [selectedRows, setSelectedRows] = useState([]);
   const [exportCommandParams, setExportCommandParams] = useState({});
@@ -49,7 +52,7 @@ const PopupCreateDeliveryNote = (props) => {
       // isSearch: true,
       // input_type: 'select',
       // options: listUsers,
-      // render: (value) => listUsers.find(e => e.id === value)?.name
+      render: (value) => listUsers.find(e => e.id === value)?.name
     },
     {
       title: "Khách hàng",
@@ -235,7 +238,7 @@ const PopupCreateDeliveryNote = (props) => {
     setLoading(true);
     var res = await getWarehouseFGExportPlan(params);
     setData(res.data.map(e => ({ ...e, key: e.id })));
-    setTableParams({ ...tableParams, totalPage: res.totalPage })
+    setTotalPage(res.totalPage)
     setLoading(false);
   }
   useEffect(() => {
@@ -253,12 +256,12 @@ const PopupCreateDeliveryNote = (props) => {
   useEffect(() => {
     if (open) {
       loadData({ ...params, page: 1, pageSize: 20 });
-      setTableParams({ ...tableParams, page: 1, pageSize: 20 });
     } else {
       setParams({});
-      setData([])
-      setTableParams({ page: 1, pageSize: 20, totalPage: 1 });
+      setData([]);
     }
+    setPage(1);
+    setPageSize(20);
   }, [open]);
   const onDeselectOrders = (rows) => {
     setSelectedRows(prev => {
@@ -300,13 +303,14 @@ const PopupCreateDeliveryNote = (props) => {
       children: <Table size='small' bordered
         loading={loading}
         pagination={{
-          current: tableParams.page,
+          current: page,
           size: "small",
-          total: tableParams?.totalPage ?? 1,
-          pageSize: tableParams.pageSize,
+          total: totalPage ?? 1,
+          pageSize: pageSize,
           showSizeChanger: true,
           onChange: (page, pageSize) => {
-            setTableParams({ ...tableParams, page: page, pageSize: pageSize });
+            setPage(page);
+            setPageSize(pageSize)
             loadData({ ...params, page: page, pageSize: pageSize })
           },
         }}
@@ -458,11 +462,11 @@ const PopupCreateDeliveryNote = (props) => {
                   key: '1',
                   label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
                   children: <Row gutter={[8, 0]}>
-                    <Col span={6}>
+                    <Col xs={16} sm={16} md={12} lg={8} xl={6}>
                       <Form.Item label={'Người tạo KH'} style={{ marginBottom: 8 }}>
                         <Row gutter={8}>
                           <Col span={10}>
-                            <Form.Item>
+                            <Form.Item noStyle>
                               <Select
                                 style={{ width: '100%' }}
                                 options={roleList}
@@ -479,7 +483,7 @@ const PopupCreateDeliveryNote = (props) => {
                             </Form.Item>
                           </Col>
                           <Col span={14}>
-                            <Form.Item>
+                            <Form.Item noStyle>
                               <Select
                                 style={{ width: '100%' }}
                                 placeholder="Chọn người tạo KH"
@@ -496,7 +500,7 @@ const PopupCreateDeliveryNote = (props) => {
                         </Row>
                       </Form.Item>
                     </Col>
-                    {columns.filter(e => e.isSearch).map(e => {
+                    {columns.filter(e => e.isSearch).map((e, index) => {
                       let item = null;
                       if (e?.input_type === 'select') {
                         item = <Select
@@ -529,7 +533,7 @@ const PopupCreateDeliveryNote = (props) => {
                           value={params[e.dataIndex]}
                         />
                       }
-                      return e.isSearch && <Col span={2}>
+                      return e.isSearch && <Col xs={8} sm={8} md={6} lg={4} xl={2} key={index}>
                         <Form.Item label={e.title} style={{ marginBottom: 8 }}>
                           {item}
                         </Form.Item>
