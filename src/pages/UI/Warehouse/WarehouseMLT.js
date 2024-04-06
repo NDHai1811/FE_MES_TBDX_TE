@@ -176,7 +176,6 @@ const WarehouseMLT = (props) => {
     }
     setLoading(false);
   };
-  const [formImport] = Form.useForm();
   const columns = [
     {
       title: "STT",
@@ -328,7 +327,6 @@ const WarehouseMLT = (props) => {
   const handlePrint = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const [form] = Form.useForm();
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
@@ -446,13 +444,12 @@ const WarehouseMLT = (props) => {
   const rowSelectionReceipt = {
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(selectedRowKeys, selectedRows);
-      setListCheckReceipt(selectedRowKeys);
+      setListCheckReceipt(selectedRows.map(e=>e.id));
     },
     type: 'radio',
   };
   const [loadingUpload, setLoadingUpload] = useState(false);
 
-  const [formNote] = Form.useForm();
   const onSaveNote = async (record) => {
     var res = await updateGoodsReceiptNote(record);
     getReceiptNote();
@@ -468,7 +465,7 @@ const WarehouseMLT = (props) => {
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              styles={{ body: {paddingInline: 0, paddingTop: 0} }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -631,23 +628,20 @@ const WarehouseMLT = (props) => {
             }
             >
               {currentTab === '1' ?
-                <Form form={formImport}>
-                  <EditableTable
-                    form={formImport}
-                    bordered
-                    columns={columns}
-                    dataSource={importList}
-                    setDataSource={setImportList}
-                    scroll={{
-                      y: tableHeight,
-                    }}
-                    className="h-100"
-                    rowSelection={rowSelection}
-                    pagination={false}
-                    size="small"
-                    onSave={onUpdate}
-                  />
-                </Form>
+                <EditableTable
+                  bordered
+                  columns={columns}
+                  dataSource={importList}
+                  setDataSource={setImportList}
+                  scroll={{
+                    y: tableHeight,
+                  }}
+                  className="h-100"
+                  rowSelection={rowSelection}
+                  pagination={false}
+                  size="small"
+                  onUpdate={onUpdate}
+                />
                 :
                 <Table
                   bordered
@@ -675,107 +669,8 @@ const WarehouseMLT = (props) => {
           </Spin>
         </Col>
       </Row>
-      {/* <Modal
-        title={"Cập nhật"}
-        open={openMdlEdit}
-        onCancel={() => setOpenMdlEdit(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            <Col span={12} className="d-none">
-              <Form.Item name="id" className="mb-3 d-none">
-                <Input></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã cuộn"
-                name="material_id"
-                className="mb-3"
-              // rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã cuộn"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã cuộn NCC"
-                name="ma_cuon_ncc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Loại giấy"
-                name="loai_giay"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập loại giấy"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="FSC"
-                name="fsc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Khổ giấy"
-                name="kho_giay"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập khổ giấy"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Định lượng"
-                name="dinh_luong"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập định lượng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số kg"
-                name="so_kg"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số kg"></Input>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal> */}
+
       <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
-        // onOk={exportFile}
-        // okButtonProps={{loading: exportLoading}}
-        // okText={"Tải xuống"}
         footer={
           <Space>
             <Button>Huỷ</Button>
@@ -783,26 +678,22 @@ const WarehouseMLT = (props) => {
             <Button type="primary" onClick={exportFileVehicleWeightNote} loading={exportLoading1}>Phiếu cân xe</Button>
           </Space>
         }>
-        <Form form={formNote}>
-          <EditableTable
-            bordered
-            loading={loadingNotes}
-            form={formNote}
-            columns={receiptNoteColumns}
-            dataSource={receiptNote.map((e) => {
-              return { ...e, key: e.id };
-            })}
-            scroll={{
-              y: "50vh",
-            }}
-            className="h-100"
-            rowSelection={rowSelectionReceipt}
-            pagination={false}
-            size="small"
-            onSave={onSaveNote}
-            onDelete={onDeleteNote}
-          />
-        </Form>
+        <EditableTable
+          bordered
+          loading={loadingNotes}
+          columns={receiptNoteColumns}
+          dataSource={receiptNote}
+          setDataSource={setReceiptNote}
+          scroll={{
+            y: "50vh",
+          }}
+          className="h-100"
+          rowSelection={rowSelectionReceipt}
+          pagination={false}
+          size="small"
+          onUpdate={onSaveNote}
+          onDelete={onDeleteNote}
+        />
       </Modal>
     </>
   );

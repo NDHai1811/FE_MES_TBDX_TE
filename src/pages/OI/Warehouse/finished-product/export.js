@@ -278,7 +278,7 @@ const Export = (props) => {
     setLoadingTable(false)
   }
   const onFinish = async (values) => {
-    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: deliveryNoteID }
+    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: selectedItem?.delivery_note_id }
     var res = await exportPallet(params);
     if (res.success) {
       setVisible(false);

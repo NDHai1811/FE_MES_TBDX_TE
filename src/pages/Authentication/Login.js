@@ -59,9 +59,9 @@ const Login = (props) => {
               <h6 className="text-center text-primary mb-0">
                 CÔNG TY CỔ PHẦN THÁI BÌNH DƯƠNG XANH
               </h6>
-              <div className="p-2 mt-3 text-center">
+              <div className="p-2 mt-3">
                 <Form layout="vertical" onFinish={onFinish}>
-                  <Form.Item className="mb-4" name="username">
+                  <Form.Item className="mb-4" name="username" rules={[{required: true, message: 'Hãy nhập thông tin cho trường Mã nhân viên'}]}>
                     <Input
                       prefix={<UserOutlined className="site-form-item-icon" />}
                       placeholder="Nhập mã nhân viên"
@@ -73,7 +73,7 @@ const Login = (props) => {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item className="mb-4" name="password">
+                  <Form.Item className="mb-4" name="password" rules={[{required: true, message: 'Hãy nhập thông tin cho trường Mật khẩu'}]}>
                     <Input.Password
                       placeholder="Mật khẩu"
                       prefix={<LockOutlined className="site-form-item-icon" />}

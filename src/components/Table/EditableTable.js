@@ -1,11 +1,12 @@
 import { DatePicker, Form, Input, InputNumber, Select, Table } from "antd";
-import React, { useContext, useRef, useState, useEffect } from "react";
+import React, { useContext, useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import "./style.css";
 import Actions from "./Actions";
-const EditableTable = (props) => {
-  const { onDelete = null, onChange = null, onSelect = null, onSave = null, form = null, dataSource, setDataSource } = props;
+const EditableTable = forwardRef((props, ref) => {
+  const { onDelete = null, onChange = null, onSelect = null, onCreate = null, onUpdate = null, dataSource, setDataSource = null } = props;
   var editableColumns = [];
   const [editingKey, setEditingKey] = useState();
+  const [form] = Form.useForm();
   const EditableCell = ({
     editing,
     dataIndex,
@@ -67,27 +68,11 @@ const EditableTable = (props) => {
       </td>
     );
   };
-  editableColumns = [...props.columns, {
-    title: "Tác vụ",
-    dataIndex: "action",
-    key: "action",
-    align: "center",
-    fixed: "right",
-    width: 80,
-    render: (_, record) => <Actions
-      form={form}
-      onSave={onSave}
-      onDelete={onDelete}
-      record={record}
-      editingKey={editingKey}
-      setEditingKey={setEditingKey}
-      setDataSource={setDataSource}
-    />
-  }].map((col) => {
+  const mapColumns = (col) => {
     if (!col.editable) {
       return col;
     }
-    return {
+    const newCol = {
       ...col,
       onCell: (record, rowIndex) => ({
         record,
@@ -98,7 +83,7 @@ const EditableTable = (props) => {
         index: rowIndex,
         editing: record.key === editingKey,
         onChange: onChange ?? function (value, dataIndex, index) {
-          setDataSource(prev => prev.map(e => {
+          setDataSource(dataSource.map(e => {
             if (e.key === editingKey) {
               return { ...e, [dataIndex]: value }
             }
@@ -106,7 +91,7 @@ const EditableTable = (props) => {
           }))
         },
         onSelect: onSelect ?? function (value, dataIndex, index) {
-          setDataSource(prev => prev.map(e => {
+          setDataSource(dataSource.map(e => {
             if (e.key === editingKey) {
               return { ...e, [dataIndex]: value }
             }
@@ -115,18 +100,92 @@ const EditableTable = (props) => {
         },
       }),
     };
-  });
-  return (
-    <Table
-      {...props}
-      columns={editableColumns}
-      dataSource={dataSource}
-      components={{
-        body: {
-          cell: EditableCell,
-        },
-      }}
+    if(col.children && (col.children??[]).length > 0){
+      newCol.children = col.children.map(mapColumns)
+    }
+    return newCol
+  }
+  editableColumns = [...props.columns, {
+    title: "Tác vụ",
+    dataIndex: "action",
+    key: "action",
+    align: "center",
+    fixed: "right",
+    width: 80,
+    render: (_, record) => <Actions
+      form={form}
+      onDelete={onDelete}
+      record={record}
+      editingKey={editingKey}
+      setEditingKey={setEditingKey}
+      onCancel={onCancel}
     />
+  }].map(mapColumns);
+
+  const handleSave = async (record) => {
+    const row = await form?.validateFields();
+    console.log(row);
+    setDataSource(dataSource.map((e, i) => {
+      if (i === editingKey) {
+        return { ...e, ...row }
+      }
+      return e;
+    }))
+    if (isCreate) {
+      onCreate && onCreate({ ...record, ...row }, editingKey);
+    } else {
+      onUpdate && onUpdate({ ...record, ...row }, editingKey);
+    }
+    form?.resetFields();
+    setEditingKey();
+    setIsCreate(false);
+  }
+
+  const onCancel = () => {
+    form.resetFields();
+    setEditingKey();
+    if (isCreate) {
+      setDataSource(dataSource.slice(1));
+    }
+    setIsCreate(false);
+  }
+
+  const [isCreate, setIsCreate] = useState(false);
+  useImperativeHandle(ref, () => ({
+    create: (isCreate = true) => {
+      console.log(isCreate);
+      setIsCreate(isCreate);
+    }
+  }));
+  useEffect(() => {
+    if (isCreate) {
+      setDataSource(prev => [{}, ...prev]);
+      setEditingKey(0);
+    }else{
+      onCancel()
+    }
+  }, [isCreate]);
+
+  useEffect(() => {
+    const row = dataSource.find((e, i)=>i===editingKey);
+    if(row){
+      form.setFieldsValue({...row});
+    }
+  }, [dataSource]);
+  
+  return (
+    <Form form={form} component={false} onFinish={(values) => handleSave(dataSource.find((e, index) => index === editingKey), editingKey)}>
+      <Table
+        {...props}
+        columns={editableColumns}
+        dataSource={dataSource.map((e, i)=>({...e, key: i}))}
+        components={{
+          body: {
+            cell: EditableCell,
+          },
+        }}
+      />
+    </Form>
   );
-};
+});
 export default EditableTable;
