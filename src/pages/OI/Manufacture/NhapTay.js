@@ -36,7 +36,7 @@ const columns = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width:"120px",
+    width:"65px",
     render: (value, record, index) => value || "-",
   },
   {
@@ -45,6 +45,7 @@ const columns = [
     key: "mdh",
     align: "center",
     render: (value, record, index) => value || "-",
+    width:"55px",
   },
   {
     title: "MQL",
@@ -52,13 +53,15 @@ const columns = [
     key: "mql",
     align: "center",
     render: (value, record, index) => value || "-",
+    width:"30px",
   },
   {
-    title: "SL đầu ra",
+    title: "SL ra",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
     render: (value) => value || "-",
+    width:"30px",
   },
   {
     title: "Quy cách",
@@ -66,6 +69,7 @@ const columns = [
     key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
+    width:"70px",
   },
   {
     title: "Lô SX",
@@ -73,12 +77,14 @@ const columns = [
     key: "lo_sx",
     align: "center",
     render: (value, record, index) => value || "-",
+    width:"80px",
   },
   {
     title: "SL kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
+    width:"60px",
   },
   {
     title: "SL đạt",
@@ -86,6 +92,7 @@ const columns = [
     key: "sl_ok",
     align: "center",
     render: (value) => value || "-",
+    width:"40px",
   },
   {
     title: "Phán định",
@@ -93,6 +100,7 @@ const columns = [
     key: "phan_dinh",
     align: "center",
     render: (value) => (value === 1 ? "OK" : "-"),
+    width:"65px",
   },
   {
     title: "Mã layout",
@@ -100,6 +108,7 @@ const columns = [
     key: "layout_id",
     align: "center",
     render: (value) => value || "-",
+    width:"75px",
   },
 ];
 
@@ -115,14 +124,14 @@ const NhapTay = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "SL kế hoạch",
+      title: "SL KH",
       dataIndex: "dinh_muc",
       key: "dinh_muc",
       align: "center",
       render: (value) => value || "-",
     },
     {
-      title: "SL đầu ra",
+      title: "SL ra",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
@@ -373,6 +382,7 @@ const NhapTay = (props) => {
   });
 
   const rowSelection = {
+    columnWidth:'20px',
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
@@ -436,7 +446,7 @@ const NhapTay = (props) => {
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row className="mt-1" gutter={[6, 8]}>
+        <Row className="mt-1" gutter={[4, 4]}>
           <Col span={24}>
             <Table
               size="small"
@@ -459,7 +469,7 @@ const NhapTay = (props) => {
               dataSource={lotCurrent ? [lotCurrent] : []}
             />
           </Col>
-          <Col span={9}>
+          <Col span={7}>
             <DatePicker
               allowClear={false}
               placeholder="Từ ngày"
@@ -469,7 +479,7 @@ const NhapTay = (props) => {
               onChange={onChangeStartDate}
             />
           </Col>
-          <Col span={9}>
+          <Col span={7}>
             <DatePicker
               allowClear={false}
               placeholder="Đến ngày"
@@ -479,29 +489,29 @@ const NhapTay = (props) => {
               onChange={onChangeEndDate}
             />
           </Col>
-          <Col span={2}>
+          <Col span={3}>
             <Button
               size="medium"
               type="primary"
               style={{ width: "100%" }}
               onClick={() => setIsScan(1)}
-              icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
+              icon={<QrcodeOutlined style={{ fontSize: "22px" }} />}
             />
           </Col>
-          <Col span={2}>
+          <Col span={3}>
             <Button
               size="medium"
               type="primary"
               style={{ width: "100%" }}
               onClick={handlePrint}
-              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+              icon={<PrinterOutlined style={{ fontSize: "22px" }} />}
             />
             <div className="report-history-invoice">
               <TemGiayTam listCheck={listTem} ref={componentRef1} />
               <TemThanhPham listCheck={listTem} ref={componentRef2} />
             </div>
           </Col>
-          <Col span={2}>
+          <Col span={4}>
             <Button
               size="medium"
               type="primary"
@@ -514,7 +524,7 @@ const NhapTay = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: tableSize.width,
+                x: '950px',
                 y: tableSize.height,
               }}
               size="small"

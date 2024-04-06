@@ -30,7 +30,12 @@ const PopupCreateDeliveryNote = (props) => {
   const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 })
+  const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 });
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPage, setTotalPage] = useState(1);
+
   const [selectedRows, setSelectedRows] = useState([]);
   const [exportCommandParams, setExportCommandParams] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
@@ -235,7 +240,7 @@ const PopupCreateDeliveryNote = (props) => {
     setLoading(true);
     var res = await getWarehouseFGExportPlan(params);
     setData(res.data.map(e => ({ ...e, key: e.id })));
-    setTableParams({ ...tableParams, totalPage: res.totalPage })
+    setTotalPage(res.totalPage);
     setLoading(false);
   }
   useEffect(() => {
@@ -300,12 +305,14 @@ const PopupCreateDeliveryNote = (props) => {
       children: <Table size='small' bordered
         loading={loading}
         pagination={{
-          current: tableParams.page,
+          current: page,
           size: "small",
-          total: tableParams?.totalPage ?? 1,
-          pageSize: tableParams.pageSize,
+          total: totalPage,
+          pageSize: pageSize,
           showSizeChanger: true,
           onChange: (page, pageSize) => {
+            setPage(page);
+            setPageSize(pageSize);
             setTableParams({ ...tableParams, page: page, pageSize: pageSize });
             loadData({ ...params, page: page, pageSize: pageSize })
           },

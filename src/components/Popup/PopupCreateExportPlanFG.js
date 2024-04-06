@@ -25,16 +25,19 @@ import { createDeliveryNote, createWareHouseFGExport, getDeliveryNoteList, getWa
 import { DeleteOutlined } from "@ant-design/icons";
 
 const PopupCreateExportPlanFG = (props) => {
-	const {listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null} = props;
-	const [open, setOpen] = useState(false);
-	const [params, setParams] = useState({});
+  const { listUsers = [], listCustomers = [], listVehicles = [], onAfterCreate = null } = props;
+  const [open, setOpen] = useState(false);
+  const [params, setParams] = useState({});
   const [loading, setLoading] = useState(false);
-	const [data, setData] = useState([]);
-	const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1})
-	const [selectedRows, setSelectedRows] = useState([]);
-  const [planParams, sePlanParams] = useState({ngay_xuat: dayjs()});
+  const [data, setData] = useState([]);
+  const [tableParams, setTableParams] = useState({ page: 1, pageSize: 20, totalPage: 1 });
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPage, setTotalPage] = useState(1);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [planParams, sePlanParams] = useState({ ngay_xuat: dayjs() });
   const [messageApi, contextHolder] = message.useMessage();
-	const columns = [
+  const columns = [
     {
       title: "Khách hàng",
       dataIndex: "short_name",
@@ -190,7 +193,7 @@ const PopupCreateExportPlanFG = (props) => {
       input_type: 'date',
     },
   ];
-	const rowSelection = {
+  const rowSelection = {
     selectedRowKeys: [].concat(selectedRows).map(e => e.key),
     fixed: true,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -205,7 +208,7 @@ const PopupCreateExportPlanFG = (props) => {
     onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
     onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
   };
-	const selectedRowsColumns = [...columns, {
+  const selectedRowsColumns = [...columns, {
     title: 'Tác vụ',
     key: 'action',
     dataIndex: 'action',
@@ -215,30 +218,30 @@ const PopupCreateExportPlanFG = (props) => {
     render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
   }];
 
-	async function loadData(params){
-		setLoading(true);
-		var res = await getOrders(params);
-		setData(res.data.map(e=>({...e, key: e.id})));
-    setTableParams({...tableParams, totalPage: res.totalPage})
-		setLoading(false);
-	}
-	useEffect(()=>{
-    if(Object.keys(params).length > 0){
-      loadData({...params, page: 1, pageSize: 20});
-      setTableParams({...tableParams, page: 1, pageSize: 20});
+  async function loadData(params) {
+    setLoading(true);
+    var res = await getOrders(params);
+    setData(res.data.map(e => ({ ...e, key: e.id })));
+    setTotalPage(res.totalPage);
+    setLoading(false);
+  }
+  useEffect(() => {
+    if (Object.keys(params).length > 0) {
+      loadData({ ...params, page: 1, pageSize: 20 });
+      setTableParams({ ...tableParams, page: 1, pageSize: 20 });
     }
-	}, [params]);
-	useEffect(()=>{
-    if(open){
-      loadData({...params, page: 1, pageSize: 20});
-      setTableParams({...tableParams, page: 1, pageSize: 20});
-    }else{
+  }, [params]);
+  useEffect(() => {
+    if (open) {
+      loadData({ ...params, page: 1, pageSize: 20 });
+      setTableParams({ ...tableParams, page: 1, pageSize: 20 });
+    } else {
       setParams({});
       setData()
-      setTableParams({ page: 1, pageSize: 20, totalPage: 1});
+      setTableParams({ page: 1, pageSize: 20, totalPage: 1 });
     }
-	}, [open]);
-	const onDeselectOrders = (rows) => {
+  }, [open]);
+  const onDeselectOrders = (rows) => {
     setSelectedRows(prev => {
       const newArray = [...prev];
       return newArray.filter((e, index) => {
@@ -247,11 +250,11 @@ const PopupCreateExportPlanFG = (props) => {
     });
   }
   const onCreate = async () => {
-    if(!planParams.ngay_xuat){
+    if (!planParams.ngay_xuat) {
       messageApi.warning('Chưa chọn ngày xuất!');
       return 0;
     }
-    if(!selectedRows.length){
+    if (!selectedRows.length) {
       messageApi.warning('Chưa chọn đơn hàng!');
       return 0;
     }
@@ -260,11 +263,11 @@ const PopupCreateExportPlanFG = (props) => {
       setOpen(false);
       setSelectedRows([]);
       setParams({});
-      setTableParams({ page: 1, pageSize: 20, totalPage: 1});
+      setTableParams({ page: 1, pageSize: 20, totalPage: 1 });
       onAfterCreate();
     }
   }
-	const items = [
+  const items = [
     {
       label: 'Danh sách đơn hàng',
       key: 1,
@@ -277,8 +280,10 @@ const PopupCreateExportPlanFG = (props) => {
           pageSize: tableParams.pageSize,
           showSizeChanger: true,
           onChange: (page, pageSize) => {
+            setPage(page);
+            setPageSize(pageSize);
             setTableParams({ ...tableParams, page: page, pageSize: pageSize });
-            loadData({...params, page: page, pageSize: pageSize})
+            loadData({ ...params, page: page, pageSize: pageSize })
           },
         }}
         scroll={
@@ -325,35 +330,35 @@ const PopupCreateExportPlanFG = (props) => {
         )} />
     }
   ];
-	const extraTab = {
+  const extraTab = {
     right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo KHXK</Button>,
   };
-	return (
-		<React.Fragment>
+  return (
+    <React.Fragment>
       {contextHolder}
-			<Button type="primary" onClick={()=>setOpen(true)}>Tạo KHXK từ ĐH</Button>
-			<Modal
-				open={open}
-				onCancel={() => setOpen(false)}
-				footer={null}
-				title="Tạo KHXK từ đơn hàng"
-				width={'98vw'}
-				height={'100vh'}
-				style={{
-					// position: 'fixed',
-					left: '0',
-					right: '0',
-					top: '5px',
-				}}
-			>
-				<Form layout="vertical">
-					<Row gutter={[8, 0]}>
-						<Col span={8}>
-							<Form.Item
-								label="Ngày xuất"
-								className="mb-2"
-							>
-								<DatePicker
+      <Button type="primary" onClick={() => setOpen(true)}>Tạo KHXK từ ĐH</Button>
+      <Modal
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={null}
+        title="Tạo KHXK từ đơn hàng"
+        width={'98vw'}
+        height={'100vh'}
+        style={{
+          // position: 'fixed',
+          left: '0',
+          right: '0',
+          top: '5px',
+        }}
+      >
+        <Form layout="vertical">
+          <Row gutter={[8, 0]}>
+            <Col span={8}>
+              <Form.Item
+                label="Ngày xuất"
+                className="mb-2"
+              >
+                <DatePicker
                   allowClear={false}
                   showTime
                   placeholder="Ngày xuất"
@@ -367,81 +372,81 @@ const PopupCreateExportPlanFG = (props) => {
                   }}
                   value={planParams.ngay_xuat}
                 />
-							</Form.Item>
-						</Col>
-					</Row>
-					<ConfigProvider
-						theme={{
-							components: {
-								Collapse: {
-									headerPadding: 0,
-									contentPadding: 0
-								},
-							},
-						}}>
-						<Collapse
-							collapsible="header"
-							defaultActiveKey={['1']}
-							ghost
-							items={[
-								{
-									key: '1',
-									label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
-									children: <Row gutter={[8, 0]}>
-										{columns.filter(e=>e.isSearch).map(e => {
-											let item = null;
-											if (e?.input_type === 'select') {
-												item = <Select
-													mode={e?.mode}
-													options={e?.options}
-													showSearch
-													maxTagCount={'responsive'}
-													allowClear
+              </Form.Item>
+            </Col>
+          </Row>
+          <ConfigProvider
+            theme={{
+              components: {
+                Collapse: {
+                  headerPadding: 0,
+                  contentPadding: 0
+                },
+              },
+            }}>
+            <Collapse
+              collapsible="header"
+              defaultActiveKey={['1']}
+              ghost
+              items={[
+                {
+                  key: '1',
+                  label: <Divider orientation="left" orientationMargin="0" plain style={{ margin: 0 }}>Truy vấn</Divider>,
+                  children: <Row gutter={[8, 0]}>
+                    {columns.filter(e => e.isSearch).map(e => {
+                      let item = null;
+                      if (e?.input_type === 'select') {
+                        item = <Select
+                          mode={e?.mode}
+                          options={e?.options}
+                          showSearch
+                          maxTagCount={'responsive'}
+                          allowClear
                           optionFilterProp="label"
-													placeholder={'Nhập ' + e.title.toLowerCase()}
-													onChange={(value) => setParams({ ...params, [e.dataIndex]: value })}
-													value={params[e.dataIndex]}
-												/>
-											}
-											else if (['date', 'date_time'].includes(e?.input_type)) {
-												item = <DatePicker
-													className="w-100"
-													showTime={e?.input_type === 'date_time'}
-													needConfirm={false}
-													placeholder={'Nhập ' + e.title.toLowerCase()}
-													onChange={(value) => (!value || value.isValid()) && setParams({ ...params, [e.dataIndex]: value })}
-													onSelect={(value) => setParams({ ...params, [e.dataIndex]: value })}
-													value={params[e.dataIndex]}
-												/>;
-											} else {
-												item = <Input
-													allowClear
-													placeholder={'Nhập ' + e.title.toLowerCase()}
-													onChange={(value) => setParams({ ...params, [e.dataIndex]: value.target.value })}
-													value={params[e.dataIndex]}
-												/>
-											}
-											return e.isSearch && <Col span={2}>
-												<Form.Item label={e.title} style={{ marginBottom: 8 }}>
-													{item}
-												</Form.Item>
-											</Col>
-										})}
-									</Row>,
-								},
-							]}
-						/>
-					</ConfigProvider>
-				</Form>
-				<Tabs
-					className="mt-1"
-					type="card"
-					items={items}
-					tabBarExtraContent={extraTab}
-				/>
-			</Modal>
-		</React.Fragment>
-	);
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => setParams({ ...params, [e.dataIndex]: value })}
+                          value={params[e.dataIndex]}
+                        />
+                      }
+                      else if (['date', 'date_time'].includes(e?.input_type)) {
+                        item = <DatePicker
+                          className="w-100"
+                          showTime={e?.input_type === 'date_time'}
+                          needConfirm={false}
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => (!value || value.isValid()) && setParams({ ...params, [e.dataIndex]: value })}
+                          onSelect={(value) => setParams({ ...params, [e.dataIndex]: value })}
+                          value={params[e.dataIndex]}
+                        />;
+                      } else {
+                        item = <Input
+                          allowClear
+                          placeholder={'Nhập ' + e.title.toLowerCase()}
+                          onChange={(value) => setParams({ ...params, [e.dataIndex]: value.target.value })}
+                          value={params[e.dataIndex]}
+                        />
+                      }
+                      return e.isSearch && <Col span={2}>
+                        <Form.Item label={e.title} style={{ marginBottom: 8 }}>
+                          {item}
+                        </Form.Item>
+                      </Col>
+                    })}
+                  </Row>,
+                },
+              ]}
+            />
+          </ConfigProvider>
+        </Form>
+        <Tabs
+          className="mt-1"
+          type="card"
+          items={items}
+          tabBarExtraContent={extraTab}
+        />
+      </Modal>
+    </React.Fragment>
+  );
 };
 
 export default PopupCreateExportPlanFG;

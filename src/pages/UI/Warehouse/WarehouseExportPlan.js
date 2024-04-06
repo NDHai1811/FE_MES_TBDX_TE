@@ -237,7 +237,7 @@ const WarehouseExportPlan = () => {
     const index = newData.findIndex((item) => record.id === item.id);
     if (index > -1) {
       const res = await deleteWarehouseFGExport(record.id);
-      if(res.success){
+      if (res.success) {
         loadListTable();
       }
     }
@@ -264,19 +264,21 @@ const WarehouseExportPlan = () => {
       const res3 = await getCustomers();
       setListCustomers(res3.data);
       const res4 = await getDeliveryNoteList();
-      setListNote(res4.data.map(e=>({...e, value: e.id, label: e.id})));
+      setListNote(res4.data.map(e => ({ ...e, value: e.id, label: e.id })));
     })();
   }, []);
 
-  function btn_click() {
-    loadListTable();
+  function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize);
+    loadListTable({ ...params, page: page, pageSize: pageSize });
   }
 
   useEffect(() => {
-    btn_click();
+    btn_click(page, pageSize);
   }, [page, pageSize])
 
-  const loadListTable = async () => {
+  const loadListTable = async (params) => {
     setLoading(true);
     const res = await getWarehouseFGExportList(params);
     setData(
@@ -339,7 +341,7 @@ const WarehouseExportPlan = () => {
   const onAfterCreate = async () => {
     loadListTable();
     const res4 = await getDeliveryNoteList();
-    setListNote(res4.data.map(e=>({...e, value: e.id, label: e.id})));
+    setListNote(res4.data.map(e => ({ ...e, value: e.id, label: e.id })));
   }
   return (
     <>
@@ -357,7 +359,7 @@ const WarehouseExportPlan = () => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={() => { btn_click(); }}
                   >
                     Truy vấn
                   </Button>
@@ -377,7 +379,6 @@ const WarehouseExportPlan = () => {
                       style={{ width: "100%" }}
                       onChange={(value) => {
                         setParams({ ...params, start_date: value, page: 1 });
-                        setPage(1);
                       }
                       }
                       value={params.start_date}
@@ -389,8 +390,7 @@ const WarehouseExportPlan = () => {
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
                       onChange={(value) => {
-                        setParams({ ...params, end_date: value, page: 1 });
-                        setPage(1);
+                        setParams({ ...params, end_date: value });
                       }
                       }
                       value={params.end_date}
@@ -399,8 +399,9 @@ const WarehouseExportPlan = () => {
                   <Form.Item label="Khách hàng" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, customer_id: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, customer_id: e.target.value });
+                      }
                       }
                       placeholder="Nhập mã khách hàng"
                     />
@@ -408,8 +409,9 @@ const WarehouseExportPlan = () => {
                   <Form.Item label="Lệnh xuất" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, delivery_note_id: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, delivery_note_id: e.target.value });
+                      }
                       }
                       placeholder="Nhập lệnh xuất"
                     />
@@ -417,8 +419,9 @@ const WarehouseExportPlan = () => {
                   <Form.Item label="Người báo xuất" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, created_by: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, created_by: e.target.value, page: 1 });
+                      }
                       }
                       placeholder="Nhập người báo xuất"
                     />
@@ -426,8 +429,9 @@ const WarehouseExportPlan = () => {
                   <Form.Item label="Mã đơn hàng" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, mdh: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, mdh: e.target.value, page: 1 });
+                      }
                       }
                       placeholder="Nhập mã đơn hàng"
                     />
@@ -435,8 +439,9 @@ const WarehouseExportPlan = () => {
                   <Form.Item label="Mã quản lý" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, mql: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, mql: e.target.value });
+                      }
                       }
                       placeholder="Nhập mã quản lý"
                     />
@@ -454,8 +459,8 @@ const WarehouseExportPlan = () => {
             className="custom-card"
             extra={
               <Space>
-                <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
-                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate}/>
+                <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate} />
+                <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate} />
               </Space>
             }
           >
@@ -474,7 +479,6 @@ const WarehouseExportPlan = () => {
                     onChange: (page, pageSize) => {
                       setPage(page);
                       setPageSize(pageSize);
-                      setParams({ ...params, page: page, pageSize: pageSize });
                     },
                   }}
                   scroll={{
