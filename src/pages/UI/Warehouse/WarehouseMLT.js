@@ -329,7 +329,7 @@ const WarehouseMLT = (props) => {
   });
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
+      setListCheck(selectedRows.map(e=>e.id));
     },
   };
 
