@@ -107,8 +107,9 @@ const Roles = () => {
 
   const loadListTable = async (params) => {
     setLoading(true);
-    setData(await getRolesTree(params));
-    setOptions(await getRolesList(params));
+    var res = await getRolesList(params)
+    setData(res);
+    setOptions(res);
     setLoading(false);
   };
   useEffect(() => {
@@ -322,7 +323,7 @@ const Roles = () => {
                   x: "100%",
                   y: window.innerHeight*0.57,
                 }}
-                columns={col_detailTable}
+                columns={col_detailTable} 
                 dataSource={data}
                 rowSelection={rowSelection}
               />
