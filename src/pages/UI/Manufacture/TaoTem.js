@@ -166,7 +166,7 @@ const TaoTem = () => {
             key: "order_kh",
             align: "center",
             fixed: "left",
-            width: 90
+            width: 120
         },
         {
             title: "SL tem",
@@ -193,25 +193,6 @@ const TaoTem = () => {
             editable: true,
             fixed: "left",
             width: 70
-        },
-        {
-            title: "Máy in",
-            dataIndex: "machine_id",
-            key: "machine_id",
-            align: "center",
-            fixed: "left",
-            width: 70,
-            editable: true,
-        },
-        {
-            title: "Nhân viên sản xuất",
-            dataIndex: "nhan_vien_sx",
-            key: "nhan_vien_sx",
-            align: "center",
-            fixed: "left",
-            width: 150,
-            editable: true,
-            render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
             title: "GMO",
@@ -255,6 +236,25 @@ const TaoTem = () => {
             align: "center",
             editable: true,
             width: 150
+        },
+        {
+            title: "Máy in",
+            dataIndex: "machine_id",
+            key: "machine_id",
+            align: "center",
+            fixed: "left",
+            width: 70,
+            editable: true,
+        },
+        {
+            title: "Nhân viên sản xuất",
+            dataIndex: "nhan_vien_sx",
+            key: "nhan_vien_sx",
+            align: "center",
+            fixed: "left",
+            width: 150,
+            editable: true,
+            render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
             title: "Tác vụ",
