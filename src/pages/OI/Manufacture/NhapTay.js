@@ -11,6 +11,8 @@ import {
   Select,
   InputNumber,
   message,
+  Checkbox,
+  Form
 } from "antd";
 import "../style.scss";
 import {
@@ -36,7 +38,7 @@ const columns = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width:"65px",
+    width: "65px",
     render: (value, record, index) => value || "-",
   },
   {
@@ -45,7 +47,7 @@ const columns = [
     key: "mdh",
     align: "center",
     render: (value, record, index) => value || "-",
-    width:"55px",
+    width: "55px",
   },
   {
     title: "MQL",
@@ -53,15 +55,7 @@ const columns = [
     key: "mql",
     align: "center",
     render: (value, record, index) => value || "-",
-    width:"30px",
-  },
-  {
-    title: "SL ra",
-    dataIndex: "sl_dau_ra_hang_loat",
-    key: "sl_dau_ra_hang_loat",
-    align: "center",
-    render: (value) => value || "-",
-    width:"30px",
+    width: "30px",
   },
   {
     title: "Quy cách",
@@ -69,22 +63,22 @@ const columns = [
     key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
-    width:"70px",
-  },
-  {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width:"80px",
+    width: "70px",
   },
   {
     title: "SL kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
-    width:"60px",
+    width: "60px",
+  },
+  {
+    title: "SL ra",
+    dataIndex: "sl_dau_ra_hang_loat",
+    key: "sl_dau_ra_hang_loat",
+    align: "center",
+    render: (value) => value || "-",
+    width: "30px",
   },
   {
     title: "SL đạt",
@@ -92,7 +86,7 @@ const columns = [
     key: "sl_ok",
     align: "center",
     render: (value) => value || "-",
-    width:"40px",
+    width: "40px",
   },
   {
     title: "Phán định",
@@ -100,7 +94,7 @@ const columns = [
     key: "phan_dinh",
     align: "center",
     render: (value) => (value === 1 ? "OK" : "-"),
-    width:"65px",
+    width: "65px",
   },
   {
     title: "Mã layout",
@@ -108,7 +102,23 @@ const columns = [
     key: "layout_id",
     align: "center",
     render: (value) => value || "-",
-    width:"75px",
+    width: "75px",
+  },
+  {
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+    render: (value, record, index) => value || "-",
+    width: "70px",
+  },
+  {
+    title: "Bước",
+    dataIndex: "step",
+    key: "step",
+    align: "center",
+    render: (value, record, index) => value ? 'Bước' : '',
+    width: "35px",
   },
 ];
 
@@ -163,7 +173,6 @@ const NhapTay = (props) => {
   const history = useHistory();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
-  const componentRef3 = useRef();
 
   const [params, setParams] = useState({
     machine_id: machine_id,
@@ -185,19 +194,17 @@ const NhapTay = (props) => {
   const [listTem, setListTem] = useState([])
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
-  const [deviceID, setDeviceID] = useState(
-    "e9aba8d0-85da-11ee-8392-a51389126dc6"
-  );
+  const [form] = Form.useForm();
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
-  const ws = useRef(null);
 
   const onShowPopup = () => {
     setVisible(true);
-    setValue(lotCurrent?.san_luong ? lotCurrent?.san_luong : lotCurrent?.san_luong_kh);
+    console.log(lotCurrent?.san_luong ? lotCurrent?.san_luong : lotCurrent?.san_luong_kh);
+    form.setFieldsValue({ san_luong: lotCurrent?.san_luong ? lotCurrent?.san_luong : lotCurrent?.san_luong_kh, step: lotCurrent?.step });
   };
 
   const closePopup = () => {
@@ -382,7 +389,7 @@ const NhapTay = (props) => {
   });
 
   const rowSelection = {
-    columnWidth:'20px',
+    columnWidth: '20px',
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
@@ -409,6 +416,24 @@ const NhapTay = (props) => {
   const onClickRow = (record) => {
     if (record.status < 3) {
       setLotCurrent(record);
+    }
+  }
+
+  const onChangeCheckbox = (value) => {
+    if (value.target.checked) {
+      form.setFieldValue('step', 1);
+    } else {
+      form.setFieldValue('step', 0);
+    }
+  }
+
+  const onFinish = async (values) => {
+    var res = await manualInput({ ...lotCurrent, san_luong: values.san_luong, machine_id: machine_id, step: values.step });
+    if (res.success) {
+      setLotCurrent();
+      form.resetFields();
+      closePopup();
+      reloadData();
     }
   }
 
@@ -524,7 +549,7 @@ const NhapTay = (props) => {
           <Col span={24}>
             <Table
               scroll={{
-                x: '950px',
+                x: '1000px',
                 y: tableSize.height,
               }}
               size="small"
@@ -564,17 +589,41 @@ const NhapTay = (props) => {
       )}
       {visible && (
         <Modal
-          title="Sản lượng đầu ra"
+          title="Nhập thông tin"
           open={visible}
           onCancel={closePopup}
-          onOk={onConfirm}
+          footer={null}
         >
-          <InputNumber
-            value={value}
-            placeholder="Nhập sản lượng đầu ra"
-            onChange={onChangeValue}
-            style={{ width: "100%" }}
-          />
+          <Form layout={"vertical"} form={form} onFinish={onFinish}>
+            <Row gutter={[16, 0]}>
+              <Col span={18}>
+                <Form.Item label="Sản lượng đầu ra" name="san_luong">
+                  <InputNumber
+                    placeholder="Nhập sản lượng đầu ra"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item label="Bước" name="step" valuePropName={form.getFieldValue('step') ? 'checked' : ''}>
+                  <Checkbox
+                    value={1}
+                    onChange={onChangeCheckbox}
+                    placeholder="Bước"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item className="mb-0 text-right">
+                  <Button type="primary" htmlType="submit">
+                    Lưu lại
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+
         </Modal>
       )}
       {visiblePrint && (
