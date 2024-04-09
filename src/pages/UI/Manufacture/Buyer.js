@@ -106,9 +106,9 @@ const Buyer = () => {
       title: "Mã buyer",
       dataIndex: "id",
       key: "id",
-      align: "center",
       fixed: "left",
       editable: hasEditColumn("id"),
+      width:'140px'
     },
     {
       title: "Mã khách hàng",
@@ -116,6 +116,16 @@ const Buyer = () => {
       key: "customer_id",
       align: "center",
       editable: hasEditColumn("customer_id"),
+      width:'115px'
+    },
+    {
+      title: "Tên khách hàng",
+      dataIndex: "customer_name",
+      key: "customer_name",
+      render: (_, record) => {
+        return record?.customer?.name
+      },
+      width:'500px',
     },
     {
       title: "Buyer viết tắt",
@@ -123,6 +133,7 @@ const Buyer = () => {
       key: "buyer_vt",
       align: "center",
       editable: hasEditColumn("buyer_vt"),
+      width:'110px',
     },
     {
       title: "Phân loại 1",
@@ -130,6 +141,7 @@ const Buyer = () => {
       key: "phan_loai_1",
       align: "center",
       editable: hasEditColumn("phan_loai_1"),
+      width:'90px',
     },
     {
       title: "Số lớp",
@@ -137,13 +149,14 @@ const Buyer = () => {
       key: "so_lop",
       align: "center",
       editable: hasEditColumn("so_lop"),
+      width:'60px',
     },
     {
       title: "Kết cấu giấy",
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
-      align: "center",
       editable: hasEditColumn("ket_cau_giay"),
+      width:'650px',
     },
     {
       title: "Ghi chú",
@@ -158,6 +171,7 @@ const Buyer = () => {
       key: "ma_cuon_f",
       align: "center",
       editable: hasEditColumn("ma_cuon_f"),
+      width:'90px',
     },
     {
       title: "Sóng E",
@@ -165,6 +179,7 @@ const Buyer = () => {
       key: "ma_cuon_se",
       align: "center",
       editable: hasEditColumn("ma_cuon_se"),
+      width:'90px',
     },
     {
       title: "Láng E",
@@ -172,6 +187,7 @@ const Buyer = () => {
       key: "ma_cuon_le",
       align: "center",
       editable: hasEditColumn("ma_cuon_le"),
+      width:'90px',
     },
     {
       title: "Sóng B",
@@ -179,6 +195,7 @@ const Buyer = () => {
       key: "ma_cuon_sb",
       align: "center",
       editable: hasEditColumn("ma_cuon_sb"),
+      width:'90px',
     },
     {
       title: "Láng B",
@@ -186,6 +203,7 @@ const Buyer = () => {
       key: "sl",
       align: "center",
       editable: hasEditColumn("ma_cuon_lb"),
+      width:'90px',
     },
     {
       title: "Sóng C",
@@ -193,6 +211,7 @@ const Buyer = () => {
       key: "ma_cuon_sc",
       align: "center",
       editable: hasEditColumn("ma_cuon_sc"),
+      width:'90px',
     },
     {
       title: "Láng C",
@@ -200,6 +219,7 @@ const Buyer = () => {
       key: "ma_cuon_lc",
       align: "center",
       editable: hasEditColumn("ma_cuon_lc"),
+      width:'90px',
     },
     {
       title: "Hành động",
@@ -244,6 +264,7 @@ const Buyer = () => {
           </span>
         );
       },
+      width:'100px',
     },
   ];
 
@@ -411,7 +432,7 @@ const Buyer = () => {
     },
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     loadListTable(params);
   }, [page, pageSize])
   const header = document.querySelector('.custom-card .ant-table-header');
@@ -419,17 +440,17 @@ const Buyer = () => {
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-          const header = document.querySelector('.custom-card .ant-table-header');
-          const pagination = document.querySelector('.custom-card .ant-pagination');
-          const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [data]);
   return (
     <>
@@ -546,7 +567,7 @@ const Buyer = () => {
                     },
                   }}
                   scroll={{
-                    x: "240vw",
+                    x: "3200px",
                     y: tableHeight,
                   }}
                   components={{
