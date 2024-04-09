@@ -71,7 +71,7 @@ const EditableCell = ({
       );
       break;
     default:
-      inputNode = <Input onChange={(event)=>onChange(event.target.value, dataIndex)}/>;
+      inputNode = <Input onChange={(event) => onChange(event.target.value, dataIndex)} />;
   }
   const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
@@ -904,12 +904,12 @@ const Orders = () => {
       case "phan_loai_2":
         filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1);
         const khuon = null;
-        let formData = {...record};
-        if(record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong){
-          const khuon = listKhuonLink.find(e=>e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao);
-          if(khuon){
+        let formData = { ...record };
+        if (record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong) {
+          const khuon = listKhuonLink.find(e => e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao);
+          if (khuon) {
             filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1 && e.value.includes('be'));
-            formData = {...formData, khuon_id: khuon?.khuon_id, phan_loai_2: filteredOptions[0]?.value}
+            formData = { ...formData, khuon_id: khuon?.khuon_id, phan_loai_2: filteredOptions[0]?.value }
           }
         }
         form.setFieldsValue(formData);
@@ -1372,7 +1372,7 @@ const Orders = () => {
                   <Form.Item label="Ngày đặt hàng" className="mb-3">
                     <DatePicker
                       allowClear={false}
-                      placeholder="Ngày giao hàng"
+                      placeholder="Ngày đặt hàng"
                       style={{ width: "100%" }}
                       onChange={(value) => {
                         setParams({ ...params, ngay_dat_hang: value, page: 1, })
@@ -1603,10 +1603,10 @@ const Orders = () => {
                       placeholder="Nhập SIZE"
                     />
                   </Form.Item>
-                  <Form.Item label="Ngày giao hàng" className="mb-3">
+                  <Form.Item label="Ngày giao hàng trên đơn" className="mb-3">
                     <DatePicker
                       allowClear={false}
-                      placeholder="Ngày giao hàng"
+                      placeholder="Ngày giao hàng trên đơn"
                       style={{ width: "100%" }}
                       onChange={(value) => {
                         setParams({ ...params, han_giao: value, page: 1, })
@@ -1614,6 +1614,32 @@ const Orders = () => {
                       }
                       }
                       value={params.han_giao}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Ngày giao hàng sản xuất" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày giao hàng sản xuất"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, han_giao_sx: value, page: 1, })
+                        setPage(1);
+                      }
+                      }
+                      value={params.han_giao_sx}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Ngày thực hiện kế hoạch" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày thực hiện kế hoạch"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, ngay_kh: value, page: 1, })
+                        setPage(1);
+                      }
+                      }
+                      value={params.ngay_kh}
                     />
                   </Form.Item>
                   <Form.Item label="Đợt" className="mb-3">
