@@ -2,40 +2,23 @@ import {
   Col,
   Row,
   Card,
-  Table,
   Divider,
   Button,
   Form,
   Input,
-  Upload,
-  message,
   Space,
-  Spin,
-  Popconfirm,
-  Typography,
-  Select,
-  InputNumber,
   DatePicker,
-  Modal,
-  Tabs,
-  Badge,
-  Collapse,
-  ConfigProvider,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
 import {
-  createWareHouseExport,
-  deleteBuyers,
-  deleteWareHouseExport,
-  getOrders,
   getUsers,
   getVehicles,
 } from "../../../api";
 import "../style.scss";
 import dayjs from "dayjs";
 import { DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { createDeliveryNote, createExportCommand, createWareHouseFGExport, deleteWarehouseFGExport, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
+import { deleteWarehouseFGExport, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
