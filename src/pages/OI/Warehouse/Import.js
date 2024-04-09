@@ -128,7 +128,7 @@ const Import = (props) => {
   };
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/kho-nvl/" + value);
+    history.push("/oi/warehouse/kho-nvl/" + value);
   };
 
   const column2 = [
@@ -201,7 +201,7 @@ const Import = (props) => {
   }, [visible]);
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[6, 12]}>
+      <Row className="mt-1" gutter={[6, 12]}>
         <Col span={24}>
           <Table
             pagination={false}

@@ -30,6 +30,7 @@ import {
   getWarehouses,
   updateWarehouse,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Warehouses = () => {
   document.title = "Quản lý kho";
@@ -174,6 +175,7 @@ const Warehouses = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -232,7 +234,7 @@ const Warehouses = () => {
                   name="files"
                   action={baseURL + "/api/warehouses/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

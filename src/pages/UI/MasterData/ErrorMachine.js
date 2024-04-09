@@ -30,9 +30,11 @@ import {
   getErrorMachines,
   updateErrorMachines,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const ErrorMachines = () => {
   document.title = "Quản lý lỗi máy";
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -255,7 +257,7 @@ const ErrorMachines = () => {
                   name="files"
                   action={baseURL + "/api/error-machines/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);

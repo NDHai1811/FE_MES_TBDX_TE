@@ -1,17 +1,17 @@
 import React from "react";
-import { Modal, Row, Col, Table } from "antd";
+import { Modal, Row, Col, Table, Popconfirm } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
 import { useEffect } from "react";
 import {
   checkLoSX,
-  getQuantityLot,
-  getSuggestPallet,
+  getInfoPallet,
   sendStorePallet,
 } from "../../api/oi/warehouse";
 
-function PopupQuetQrNhapKho(props) {
+import { DeleteOutlined } from "@ant-design/icons";
+function PopupScanPallet(props) {
   const {
     visible,
     setVisible,
@@ -27,11 +27,10 @@ function PopupQuetQrNhapKho(props) {
   const [palletId, setPalletId] = useState("");
   const [item, setItem] = useState({});
 
-  const totalQuantity = data?.reduce((sum, val) => sum + parseInt(val?.so_luong), 0);
-
-  useEffect(() => {
-    getSuggestList();
-  }, []);
+  const totalQuantity = data?.reduce(
+    (sum, val) => sum + parseInt(val?.so_luong),
+    0
+  );
 
   useEffect(() => {
     totalQuantity > 0 &&
@@ -68,71 +67,99 @@ function PopupQuetQrNhapKho(props) {
             },
           ],
         },
+        {
+          title: "Tác vụ",
+          align: "center",
+          render: (_, record, index) => (
+            <DeleteOutlined
+              onClick={() => handleDelete(index)}
+              style={{
+                color: "red",
+                marginLeft: 8,
+                fontSize: 18,
+              }}
+            />
+          )
+        },
       ]);
   }, [totalQuantity]);
 
   useEffect(() => {
     (async () => {
       if (currentResult) {
-        const result = JSON.parse(currentResult);
-        const res = await checkLoSX({ lo_sx: result.lo_sx });
-        const isExisted = data?.some((val) => val?.lo_sx === result.lo_sx);
-        console.log(res);
-        if (!isExisted && res.success == true) {
-          setData((prevData) => [
-            ...prevData,
-            { lo_sx: result.lo_sx, so_luong: result.so_luong },
-          ]);
+        if (palletId) {
+          const result = JSON.parse(currentResult);
+          const res = await checkLoSX({ lo_sx: result.lo_sx });
+          const isExisted = data?.some((val) => val?.lo_sx === result.lo_sx);
+          console.log(res);
+          if (!isExisted && res.success == true) {
+            setData((prevData) => [
+              ...prevData,
+              { lo_sx: result.lo_sx, so_luong: result.so_luong },
+            ]);
+          }
+        } else {
+          const res = await getInfoPallet({ pallet_id: currentResult });
+          if (res.success == true) {
+            setPalletId(res?.data?.id);
+            setData(res?.data?.losxpallet);
+            setColumns([
+              {
+                title: res.data.pallet_id,
+                children: [
+                  {
+                    title: "STT",
+                    dataIndex: "index",
+                    key: "index",
+                    align: "center",
+                    render: (value, record, index) => index + 1,
+                  },
+                  {
+                    title: "Mã lô sản xuất",
+                    dataIndex: "lo_sx",
+                    key: "lo_sx",
+                    align: "center",
+                    render: (value) => value || "-",
+                  },
+                ],
+              },
+              {
+                title: `${res.data.so_luong}`,
+                align: "center",
+                children: [
+                  {
+                    title: "Số lượng",
+                    dataIndex: "so_luong",
+                    key: "so_luong",
+                    align: "center",
+                    render: (value) => value || "-",
+                  },
+                ],
+              },
+              {
+                title: "Tác vụ",
+                align: "center",
+                render: (_, record) => (
+                  <DeleteOutlined
+                    style={{
+                      color: "red",
+                      marginLeft: 8,
+                      fontSize: 18,
+                    }}
+                  />
+                )
+              },
+            ]);
+          }
         }
       }
-    })()
+    })();
   }, [currentResult]);
 
-  const getSuggestList = () => {
-    getSuggestPallet()
-      .then((res) => {
-        setItem(res.data);
-        setPalletId(res.data.pallet_id);
-        setResData?.({
-          locator_id: res.data.locator_id,
-          pallet_id: res.data.pallet_id,
-        });
-        setColumns([
-          {
-            title: res.data.pallet_id,
-            children: [
-              {
-                title: "STT",
-                dataIndex: "index",
-                key: "index",
-                align: "center",
-                render: (value, record, index) => index + 1,
-              },
-              {
-                title: "Mã lô sản xuất",
-                dataIndex: "lo_sx",
-                key: "lo_sx",
-                align: "center",
-                render: (value) => value || "-",
-              },
-            ],
-          },
-          {
-            title: `${res.data.so_luong}`,
-            align: "center",
-            children: [
-              {
-                title: "Số lượng",
-                dataIndex: "so_luong",
-                key: "so_luong",
-                align: "center",
-                render: (value) => value || "-",
-              },
-            ],
-          },
-        ]);
-      })
-      .catch((err) => console.log("Lấy danh sách đề xuất thất bại: ", err));
+  const handleDelete = (index) => {
+    const newData = [...data];
+    newData.splice(index, 1);
+    setData(newData);
   };
 
   const sendResult = () => {
@@ -151,18 +178,15 @@ function PopupQuetQrNhapKho(props) {
 
     sendStorePallet(resData)
       .then((res) => {
-        if (res.success) {
-          setSelectedItem([
-            {
-              pallet_id: item.pallet_id,
-              locator_id: item.locator_id,
-              so_luong: totalQuantity,
-            },
-          ]);
-          setListCheck([res.data]);
-          setResult?.(res.data);
-        }
-
+        setSelectedItem([
+          {
+            pallet_id: item.pallet_id,
+            locator_id: item.locator_id,
+            so_luong: totalQuantity,
+          },
+        ]);
+        setListCheck([res.data]);
+        setResult?.(res.data);
       })
       .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
   };
@@ -210,4 +234,4 @@ function PopupQuetQrNhapKho(props) {
   );
 }
 
-export default PopupQuetQrNhapKho;
+export default PopupScanPallet;

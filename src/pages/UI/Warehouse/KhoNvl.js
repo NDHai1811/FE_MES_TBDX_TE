@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DatePicker,
   Col,
@@ -14,584 +14,205 @@ import {
   Form,
   Tree,
 } from "antd";
-import { DualAxes } from "@ant-design/charts";
 import {
   exportBMCardWarehouse,
   exportSummaryWarehouse,
-  getHistoryWareHouse,
 } from "../../../api";
-import { exportWarehouse } from "../../../api/ui/export";
+import { exportWarehouse, exportWarehouseMLTLogs } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
-
-const dataDualAxes = Array.from({ length: 18 }, (_, i) => ({
-  time: `C${i + 1}`,
-  value: Math.floor(Math.random() * 14),
-}));
-
-const config = {
-  data: [dataDualAxes, dataDualAxes],
-  xField: "time",
-  yField: ["value", "value"],
-  geometryOptions: [{ geometry: "column" }, { geometry: "line", smooth: true }],
-  yAxis: {
-    value: {
-      min: 0,
-      max: 14,
-    },
-  },
-  legend: false,
-};
-
-const mockDataTable1 = [
-  {
-    title: "Số kg tồn trong kho",
-    value: 18902,
-  },
-  {
-    title: "Số cuộn tồn trong kho",
-    value: 3023,
-  },
-  {
-    title: "Số vị trí còn trống trong kho",
-    value: 30,
-  },
-];
-
-const columns1 = [
-  {
-    title: "Tiêu đề",
-    dataIndex: "title",
-    key: "title",
-    align: "center",
-    rowScope: "row",
-  },
-  {
-    title: "Số lượng",
-    dataIndex: "value",
-    key: "value",
-    align: "center",
-  },
-];
-
-const table1 = [
-  {
-    title: "STT",
-    dataIndex: "index",
-    key: "index",
-    render: (value, record, index) => index + 1,
-    align: "center",
-  },
-  {
-    title: "Kho",
-    dataIndex: "kho",
-    key: "kho",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khu vực",
-    dataIndex: "khu_vuc",
-    key: "khu_vuc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Ngày",
-    dataIndex: "ngay",
-    key: "ngay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Tên nhà cung cấp",
-    dataIndex: "ten_ncc",
-    key: "ten_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã cuộn NCC",
-    dataIndex: "ma_cuon_ncc",
-    key: "ma_cuon_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Tên khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Loại giấy",
-    dataIndex: "loai_giay",
-    key: "loai_giay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Khổ",
-    dataIndex: "kho_giay",
-    key: "kho_giay",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Định lượng",
-    dataIndex: "dinh_luong",
-    key: "dinh_luong",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Nhập kho",
-    children: [
-      {
-        title: "Thời gian nhập",
-        dataIndex: "tg_nhap",
-        key: "tg_nhap",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "SL nhập",
-        dataIndex: "sl_nhap",
-        key: "sl_nhap",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Người nhập",
-        dataIndex: "nguoi_nhap",
-        key: "nguoi_nhap",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
-  },
-  {
-    title: "Xuất kho",
-    children: [
-      {
-        title: "Ngày xuất",
-        dataIndex: "ngay_xuat",
-        key: "ngay_xuat",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "SL xuất",
-        dataIndex: "sl_xuat",
-        key: "sl_xuat",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Đầu sóng",
-        dataIndex: "dau_song",
-        key: "dau_song",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Người xuất",
-        dataIndex: "nguoi_xuat",
-        key: "nguoi_xuat",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
-  },
-  {
-    title: "Tồn kho",
-    children: [
-      {
-        title: "SL tồn",
-        dataIndex: "sl_ton",
-        key: "sl_ton",
-        align: "center",
-        render: (value) => value || "-",
-      },
-      {
-        title: "Số ngày tồn",
-        dataIndex: "so_ngay_ton",
-        key: "so_ngay_ton",
-        align: "center",
-        render: (value) => value || "-",
-      },
-    ],
-  },
-];
-
-const itemsMenu = [
-  {
-    title: "Kho nguyên vật liệu",
-    key: "0-0",
-    children: [
-      {
-        title: "Kho A",
-        key: "0-1",
-      },
-      {
-        title: "Kho B",
-        key: "0-2",
-      },
-      {
-        title: "Kho dở dang",
-        key: "0-3",
-      },
-    ],
-  },
-  {
-    title: "KV bán thành phẩm",
-    key: "1-0",
-    children: [
-      {
-        title: "KV BTP giấy tấm",
-        key: "1-1",
-      },
-      {
-        title: "KV BTP sau in",
-        key: "1-2",
-      },
-    ],
-  },
-  {
-    title: "Kho thành phẩm",
-    key: "2-0",
-    children: [
-      {
-        title: "Kho chờ nhập",
-        key: "2-1",
-      },
-      {
-        title: "Kho đã nhập",
-        key: "2-2",
-      },
-    ],
-  },
-];
+import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 
 const KhoNvl = (props) => {
-  document.title = "UI - Quản lý thành phẩm giấy";
+  document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
-
-  const dataTable1 = [
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.1",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1001",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "sC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.2",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1123",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1500",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "800",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "700",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.3",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1021",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1600",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "700",
-      dau_song: "sC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "900",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.11",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1222",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "2000",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "1000",
-      dau_song: "lC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "1000",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.22",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1112",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1900",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "900",
-      dau_song: "lC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "1000",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.34",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-2991",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1600",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "1000",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.12",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-2321",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "F",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.22",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1230",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.15",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1104",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "lC",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.17",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-2003",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "sB",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-    {
-      kho: "Nguyên vật liệu",
-      khu_vuc: "C11",
-      vi_tri: "C11.11",
-      ngay: "10/12/2023",
-      ten_ncc: "Minh Hưng",
-      ma_cuon_ncc: "23-1123",
-      khach_hang: "AN PHUOC GROUP",
-      loai_giay: "MH",
-      kho_giay: "150",
-      dinh_luong: "130",
-      tg_nhap: "10/12/2023",
-      sl_nhap: "1200",
-      nguoi_nhap: "Trần Văn Quý",
-      ngay_xuat: "11/12/2023",
-      sl_xuat: "600",
-      dau_song: "F",
-      nguoi_xuat: "Trần Văn Quý",
-      sl_ton: "600",
-      so_ngay_ton: "2",
-    },
-  ];
+  const [params, setParams] = useState({page: 1, pageSize: 20, totalPage: 1});
+  const [form] = Form.useForm();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPage, setTotalPage] = useState(1);
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportWarehouse(params);
+    const res = await exportWarehouseMLTLogs((params));
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
   async function btn_click() {
-    setLoading(false);
-    const res = await getHistoryWareHouse(params);
-    setDataTable(res);
+    setLoading(true);
+    const res = await getHistoryWareHouseMLT(params);
+    setParams({...params, totalPage: res.totalPage})
+    setDataTable(res.data);
     setLoading(false);
   }
-  const [loading, setLoading] = useState(false);
-  const [exportLoading1, setExportLoading1] = useState(false);
-  const items = [
+  useEffect(() => {
+    btn_click();
+  }, [params.page, params.pageSize])
+  const table1 = [
     {
-      key: "1",
-      label: (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={exportImportWarehouse}
-        >
-          Tổng hợp xuất nhập tồn
-        </a>
-      ),
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
+      align: "center",
     },
     {
-      key: "2",
-      label: (
-        <a target="_blank" rel="noopener noreferrer" onClick={exportBMcard}>
-          BM thẻ kho
-        </a>
-      ),
+      title: "Mã cuộn TBDX",
+      dataIndex: "material_id",
+      key: "material_id",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Tên NCC",
+      dataIndex: "ten_ncc",
+      key: "ten_ncc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Loại giấy",
+      dataIndex: "loai_giay",
+      key: "loai_giay",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "FSC",
+      dataIndex: "fsc",
+      key: "fsc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Khổ giấy (cm)",
+      dataIndex: "kho_giay",
+      key: "kho_giay",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Định lượng",
+      dataIndex: "dinh_luong",
+      key: "dinh_luong",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số kg nhập",
+      dataIndex: "so_kg_nhap",
+      key: "so_kg_nhap",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã cuộn NCC",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Mã vật tư",
+      dataIndex: "ma_vat_tu",
+      key: "ma_vat_tu",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Ngày nhập",
+      dataIndex: "tg_nhap",
+      key: "tg_nhap",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số phiếu nhập kho",
+      dataIndex: "so_phieu_nhap_kho",
+      key: "kho_giay",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl đầu (kg)",
+      dataIndex: "so_kg_dau",
+      key: "so_kg_dau",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl xuất (kg)",
+      dataIndex: "sl_xuat",
+      key: "dinh_luong",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Sl cuối (kg)",
+      dataIndex: "so_kg_cuoi",
+      key: "so_kg_cuoi",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Ngày xuất",
+      dataIndex: "tg_xuat",
+      key: "tg_xuat",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số cuộn",
+      dataIndex: "so_cuon",
+      key: "so_cuon",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Khu vực",
+      dataIndex: "khu_vuc",
+      key: "khu_vuc",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Vị trí",
+      dataIndex: "locator_id",
+      key: "locator_id",
+      align: "center",
+      render: (value) => value || "-",
     },
   ];
+  const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  async function exportImportWarehouse() {
-    setExportLoading1(true);
-    var res = await exportSummaryWarehouse(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading1(false);
+  const formSubmition = () => {
+    console.log(params);
+    params.page === 1 ? btn_click() : setParams({...params, page: 1});
   }
-  async function exportBMcard() {
-    if (!params.ten_sp) {
-      messageApi.warning("Hãy chọn sản phẩm trước");
-    } else {
-      setExportLoading1(true);
-      var res = await exportBMCardWarehouse(params);
-      if (res.success) {
-        window.location.href = baseURL + res.data;
-      }
-      setExportLoading1(false);
-    }
-  }
-
-  const onSelect = (selectedKeys, info) => {
-    console.log("selected", selectedKeys, info);
-  };
-  const onCheck = (checkedKeys, info) => {
-    console.log("onCheck", checkedKeys, info);
-  };
-
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [dataTable]);
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
@@ -602,59 +223,79 @@ const KhoNvl = (props) => {
                 <div layout="vertical">
                   <Button
                     type="primary"
+                    htmlType="submit"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={()=>formSubmition()}
                   >
                     Tìm kiếm
                   </Button>
                 </div>,
               ]}
             >
-              <Divider>Thời gian truy vấn</Divider>
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, date: [value, params.date[1]] })
-                      }
-                      value={params.date[0]}
-                      format={COMMON_DATE_FORMAT}
-                    />
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Kết thúc"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, date: [params.date[0], value] })
-                      }
-                      value={params.date[1]}
-                      format={COMMON_DATE_FORMAT}
-                    />
-                  </Space>
-                </Form>
-              </div>
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Vị trí" className="mb-3">
-                    <Input placeholder="Nhập mã vị trí" />
+                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={()=>formSubmition()}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    formSubmition();
+                  }
+                }}>
+                  <Form.Item label="Mã cuộn TBDX" className="mb-3" name={"material_id"}>
+                    <Input allowClear placeholder="Nhập mã cuộn TBDX" onChange={(event) => setParams({ ...params, material_id: event.target.value })} />
                   </Form.Item>
-                  <Form.Item label="Mã cuộn TBDX" className="mb-3">
-                    <Input placeholder="Nhập mã cuộn TBDX" />
+                  <Form.Item label="Loại giấy" className="mb-3" name={"loai_giay"}>
+                    <Input allowClear placeholder="Nhập loại giấy" onChange={(event) => setParams({ ...params, loai_giay: event.target.value })} />
                   </Form.Item>
-                  <Form.Item label="Tên NCC" className="mb-3">
-                    <Input placeholder="Nhập tên NCC" />
+                  <Form.Item label="Khổ giấy" className="mb-3" name={"kho_giay"}>
+                    <Input allowClear placeholder="Nhập khổ giấy" onChange={(event) => setParams({ ...params, kho_giay: event.target.value })} />
                   </Form.Item>
-                  <Form.Item label="Mã cuộn NCC" className="mb-3">
-                    <Input placeholder="Nhập mã cuộn NCC" />
+                  <Form.Item label="Định lượng" className="mb-3" name={"dinh_luong"}>
+                    <Input allowClear placeholder="Nhập định lượng" onChange={(event) => setParams({ ...params, dinh_luong: event.target.value })} />
                   </Form.Item>
-                  <Form.Item label="Loại giấy" className="mb-3">
-                    <Input placeholder="Nhập loại giấy" />
+                  <Form.Item label="Mã cuộn NCC" className="mb-3" name={"ma_cuon_ncc"}>
+                    <Input allowClear placeholder="Nhập mã cuộn NCC" onChange={(event) => setParams({ ...params, ma_cuon_ncc: event.target.value })} />
                   </Form.Item>
+                  <Form.Item label="Mã vật tư" className="mb-3" name={"ma_vat_tu"}>
+                    <Input allowClear placeholder="Nhập mã vật tư" onChange={(event) => setParams({ ...params, ma_vat_tu: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="Ngày nhập" className="mb-3" name={"tg_nhap"}>
+                    <DatePicker
+                      allowClear={true}
+                      placeholder="Ngày nhập"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, tg_nhap: value })
+                      }
+                      format={COMMON_DATE_FORMAT}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Số phiếu nhập kho" className="mb-3" name={"goods_receipt_note_id"}>
+                    <Input allowClear placeholder="Nhập số phiếu nhập kho" onChange={(event) => setParams({ ...params, goods_receipt_note_id: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="Số lượng cuối" className="mb-3" name={"so_kg"}>
+                    <Input allowClear placeholder="Nhập số lượng cuối" onChange={(event) => setParams({ ...params, so_kg: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="Ngày xuất" className="mb-3" name={"tg_xuat"}>
+                    <DatePicker
+                      allowClear={true}
+                      placeholder="Ngày xuất"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, tg_xuat: value })
+                      }
+                      format={COMMON_DATE_FORMAT}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Số cuộn" className="mb-3" name={"so_cuon"}>
+                    <Input allowClear placeholder="Nhập cuộn" onChange={(event) => setParams({ ...params, so_cuon: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="Khu vực" className="mb-3" name={"khu_vuc"}>
+                    <Input allowClear placeholder="Nhập khu vực" onChange={(event) => setParams({ ...params, khu_vuc: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="Vị trí" className="mb-3" name={"locator_id"}>
+                    <Input allowClear placeholder="Nhập vị trí" onChange={(event) => setParams({ ...params, locator_id: event.target.value })} />
+                  </Form.Item>
+                  <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
             </Card>
@@ -662,12 +303,12 @@ const KhoNvl = (props) => {
         </Col>
         <Col span={20}>
           <Card
+            title="Quản lý kho NVL"
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0 }}
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
-                
                 <Button
                   type="primary"
                   loading={exportLoading}
@@ -678,32 +319,29 @@ const KhoNvl = (props) => {
               </Space>
             }
           >
-            <Row style={{ alignItems: "flex-end" }} gutter={16}>
-              <Col span={8}>
-                <Table
-                  columns={columns1}
-                  dataSource={mockDataTable1}
-                  pagination={false}
-                  bordered
-                  showHeader={false}
-                  className="custom-height-table"
-                />
-              </Col>
-              <Col span={16}>
-                <DualAxes {...config} />
-              </Col>
-            </Row>
-            <Row className="mt-5">
+            <Row>
               <Table
                 size="small"
                 bordered
-                pagination={false}
+                pagination={{
+                  current: params.page,
+                  size: "small",
+                  total: params.totalPage,
+                  pageSize: params.pageSize,
+                  showSizeChanger: true,
+                  onChange: (page, pageSize) => {
+                    setPage(page);
+                    setPageSize(pageSize);
+                    setParams({ ...params, page: page, pageSize: pageSize });
+                  },
+                }}
+                loading={loading}
                 scroll={{
                   x: "130vw",
-                  y: "70vh",
+                  y: tableHeight,
                 }}
                 columns={table1}
-                dataSource={dataTable1}
+                dataSource={dataTable}
               />
             </Row>
           </Card>

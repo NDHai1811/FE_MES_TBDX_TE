@@ -1,37 +1,11 @@
 import {
-  DatePicker,
-  Col,
-  Row,
   Card,
-  Table,
-  Tag,
-  Layout,
-  Divider,
   Button,
   Form,
   Input,
-  theme,
-  Select,
-  AutoComplete,
-  Upload,
-  message,
-  Checkbox,
-  Space,
-  Modal,
-  Spin,
-  Popconfirm,
-  Badge,
 } from "antd";
 import { baseURL } from "../../config";
 import React, { useState, useRef, useEffect } from "react";
-import {
-  createUsers,
-  deleteUsers,
-  exportUsers,
-  getUserRoles,
-  getUsers,
-  updateUsers,
-} from "../../api";
 import logo from "../../assets/images/logo.jpg";
 import background1 from "../../assets/images/bg2.jpg";
 import { UserOutlined } from "@ant-design/icons";

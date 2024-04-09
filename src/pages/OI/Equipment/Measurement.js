@@ -152,7 +152,7 @@ const Measurement = (props) => {
 
   return (
     <React.Fragment>
-      <Row className="mt-3">
+      <Row className="mt-1">
         {props?.machine ? (
           <Col span={24}>
             <Table

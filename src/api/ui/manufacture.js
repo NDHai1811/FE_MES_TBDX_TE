@@ -85,8 +85,12 @@ export async function exportPreviewPlan(params) {
     const res = await axios.post("ui/manufacture/production-plan/export-preview-plan", params);
     return res;
 }
+export async function exportPreviewPlanXaLot(params) {
+    const res = await axios.post("ui/manufacture/production-plan/export-preview-plan-xa-lot", params);
+    return res;
+}
 export async function createStampFromOrder(params) {
-    const res = await axios.post("ui/manufacture/create-stamp-from-order", params);
+    const res = await axios.post("ui/manufacture/tem/create-from-order", params);
     return res;
 }
 export async function updateTem(params) {

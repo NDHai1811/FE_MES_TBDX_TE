@@ -9,23 +9,20 @@ const Header = () => {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    const name = window.location.href.split("/")[4];
-    switch (window.location.href.split("/")[3]) {
-      case "manufacture":
-        setTitle("Quản lý sản xuất");
-        break;
-      case "quality":
-        setTitle("Quản lý chất lượng");
-        break;
-      case "equipment":
-        setTitle("Quản lý thiết bị");
-        break;
-      case "warehouse":
-        setTitle(`Quản lý Kho ${name === "kho-nvl" ? "NVL" : "TP"}`);
-        break;
-      default:
-        setTitle("Quản lý sản xuất");
-        break;
+    if(window.location.pathname.includes('manufacture')){
+      setTitle("Quản lý sản xuất");
+    }
+    else if(window.location.pathname.includes('quality')){
+      setTitle("Quản lý chất lượng");
+    }
+    else if(window.location.pathname.includes('equipment')){
+      setTitle("Quản lý thiết bị");
+    }
+    else if(window.location.pathname.includes('kho-nvl')){
+      setTitle("Quản lý Kho NVL");
+    }
+    else if(window.location.pathname.includes('kho-tp')){
+      setTitle("Quản lý Kho TP");
     }
   }, [location]);
 

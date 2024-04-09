@@ -11,20 +11,17 @@ import "./layoutStyle.scss";
 const Layout = (props) => {
   return (
     <React.Fragment>
-      {window.location.pathname === "/login" && (
-        <div id="layout-wrapper" style={{ height: "100%" }}>
+      <div id="layout-wrapper" style={{ height: "100%", display: 'flex', flexFlow: 'column' }}>
+        {window.location.pathname === "/login" && (
           <div
             className="main-content"
             style={{ backgroundColor: "#e3eaf0", minHeight: "100%" }}
           >
             {props.children}
           </div>
-        </div>
-      )}
-      {!window.location.pathname.toLocaleLowerCase().includes("/ui") ? (
-        !window.location.pathname.toLocaleLowerCase().includes("/dashboard") &&
-        !window.location.pathname.toLocaleLowerCase().includes("/screen") ? (
-          <div id="layout-wrapper" style={{ height: "100%" }}>
+        )}
+        {window.location.pathname.toLocaleLowerCase().includes("/oi/") ? (
+          <>
             <Header />
             <div
               className="main-content"
@@ -33,22 +30,20 @@ const Layout = (props) => {
                 minHeight: "100%",
               }}
             >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <UserCard />
-              </div>
               <div style={{ marginBottom: 60 }}>{props.children}</div>
             </div>
             <Footer />
-          </div>
+          </>
+        ) : window.location.pathname.toLocaleLowerCase().includes("/ui/") ? (
+          <>
+            <HeaderUI />
+            <div className="content-below-header">{props.children}</div>
+          </>
         ) : (
-          <div>{props.children}</div>
-        )
-      ) : (
-        <div id="layout-wrapper" style={{ height: "100%"}}>
-          <HeaderUI />
-          <div className="content-below-header">{props.children}</div>
-        </div>
-      )}
+          props.children
+        )}
+      </div>
     </React.Fragment>
   );
 };

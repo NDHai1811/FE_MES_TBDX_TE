@@ -7,14 +7,13 @@ import { withRouter, Link } from "react-router-dom";
 import logo from "../assets/images/logo.jpg";
 import { useProfile } from "../components/hooks/UserHooks";
 import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
+import { authProtectedRoutes } from "../routes/allRoutes";
 
 const Screen = (props) => {
   document.title = "Danh sách các màn"
   const { userProfile } = useProfile();
   const { Title } = Typography;
 
-  const userPermissions = JSON.parse(window.localStorage.getItem("authUser"));
-  const isRawMaterialWarehouse = userProfile.permission.includes("kho-nvl");
   const is_warehouse = userProfile.permission.some(e=>e.includes("kho"));
   const dashboard = [
     // {
@@ -37,72 +36,55 @@ const Screen = (props) => {
   const listOI = [
     {
       title: "Sản xuất",
-      link: "/manufacture",
-      permission: "oi-sx",
+      link: "/oi/manufacture",
+      permission: "oi-manufacture",
     },
     {
-      title: "Chất lượng",
-      link: "/quality/sx",
-      permission: "oi-cl",
+      title: "Chất lượng (IOT)",
+      link: "/oi/quality/machine-iot",
+      permission: "oi-quality-machine-iot",
+    },
+    {
+      title: "Chất lượng (TC)",
+      link: "/oi/quality/machine",
+      permission: "oi-quality-machine",
+    },
+    {
+      title: "IQC",
+      link: "/oi/quality/iqc",
+      permission: "oi-quality-iqc",
     },
     {
       title: "Thiết bị",
-      link: "/equipment",
-      permission: "oi-tb",
+      link: "/oi/equipment",
+      permission: "oi-equipment",
     },
     {
       title: `Kho TP`,
-      link: `/warehouse/kho-tp/nhap`,
-      permission: "kho-tp",
+      link: `/oi/warehouse/kho-tp/nhap`,
+      permission: "oi-warehouse-tp",
     },
     {
       title: `Kho NVL`,
-      link: `/warehouse/kho-nvl/nhap`,
-      permission: "kho-nvl",
-    },
-  ];
-  const listUI = [
-    {
-      title: "Sản xuất",
-      link: "/ui/manufacture/ke-hoach-san-xuat",
-      permission: "ui-sx",
-    },
-    {
-      title: "Chất lượng",
-      link: "/ui/quality/PQC",
-      permission: "ui-cl",
-    },
-    {
-      title: "Thiết bị",
-      link: "/ui/equipment/thong-ke-loi",
-      permission: "ui-tb",
-    },
-    {
-      title: "Kho",
-      link: "/ui/warehouse/quan-ly-kho",
-      permission: "ui-kho",
-    },
-    {
-      title: "KPI",
-      link: "/ui/kpi",
-      permission: "ui-kpi",
-    },
-    {
-      title: "Master Data",
-      link: "/ui/master-data/cong-doan",
-      permission: "ui-master-data",
+      link: `/oi/warehouse/kho-nvl/nhap`,
+      permission: "oi-warehouse-nvl",
     },
   ];
   const permissionOI = (listOI ?? []).filter(
     (e) =>
-      (userProfile?.permission ?? []).includes("*") ||
-      (userProfile?.permission ?? []).includes(e.permission) || (e.permission === 'oi-kho' && is_warehouse)
+    userProfile.username === 'admin' || 
+    (userProfile?.permission ?? []).includes("*") ||
+    (userProfile?.permission ?? []).includes(e.permission) || (e.permission === 'oi-kho' && is_warehouse)
   );
-  const permissionUI = (listUI ?? []).filter(
-    (e) =>
-      (userProfile?.permission ?? []).includes("*") ||
-      (userProfile?.permission ?? []).includes(e.permission)
-  );
+  const permissionUI = [];
+  const availableUI = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && (userProfile?.username === 'admin' || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, title: e?.label, link: e.path, permission: e.permission }));
+  const uiKeys = [{title: 'Sản xuất', key: 'manufacture'}, {title: 'Chất lượng', key: 'quality'}, {title: 'Thiết bị', key: 'equipment'}, {title: 'Kho', key: 'warehouse'}, {title: 'KPI', key: 'kpi'}, {title: 'Master Data', key: 'master-data'}];
+  uiKeys.forEach(e=>{
+    const routes = availableUI.filter(r=>r.path.includes(e.key));
+    if(routes.length > 0){
+      permissionUI.push({title: e.title, link: routes[0].link, permission: routes[0].permission})
+    }
+  });
 
   const logout = () => {
     window.location.href = "/logout";
@@ -117,7 +99,7 @@ const Screen = (props) => {
           <Col md={12} lg={12} xl={8}>
             <Card className="mt-4">
               <div className="text-center mt-2">
-                <img className="mb-3 w-25" src={logo} />
+                <img className="mb-3 w-25" src={logo} alt=""/>
                 <Title level={4}>
                   CÔNG TY CỔ PHẦN THÁI BÌNH DƯƠNG XANH
                 </Title>
@@ -127,10 +109,10 @@ const Screen = (props) => {
                   {dashboard.length > 0 && (
                     <Divider style={{ margin: 0 }}>DASHBOARD</Divider>
                   )}
-                  {(dashboard ?? []).map((e) => {
+                  {(dashboard ?? []).map((e, index) => {
                     // if((userProfile.permission??[]).includes('*') || (userProfile.permission??[]).includes(e.permission)){
                     return (
-                      <Col span={12}>
+                      <Col span={12} key={index}>
                         <Link to={e.link}>
                           <Button type="primary" className="w-100">
                             {e.title}
@@ -145,12 +127,12 @@ const Screen = (props) => {
                   {permissionOI.length > 0 && (
                     <Divider style={{ margin: 0 }}>OI</Divider>
                   )}
-                  {(permissionOI ?? []).map((e) => {
+                  {(permissionOI ?? []).map((e, index) => {
                     // if((userProfile.permission??[]).includes('*') || (userProfile.permission??[]).includes(e.permission)){
                     return (
-                      <Col span={12}>
+                      <Col span={12} key={index}>
                         <Link to={e.link}>
-                          <Button type="primary" className="w-100">
+                          <Button type="primary" className="w-100" style={{paddingInline: 0}}>
                             {e.title}
                           </Button>
                         </Link>
@@ -163,12 +145,12 @@ const Screen = (props) => {
                   {permissionUI.length > 0 && (
                     <Divider style={{ margin: 0 }}>UI</Divider>
                   )}
-                  {(permissionUI ?? []).map((e) => {
+                  {(permissionUI ?? []).map((e, index) => {
                     // if((userProfile.permission??[]).includes('*') || (userProfile.permission??[]).includes(e.permission)){
                     return (
-                      <Col span={12}>
+                      <Col span={12} key={index}>
                         <Link to={e.link}>
-                          <Button type="primary" className="w-100">
+                          <Button type="primary" className="w-100" style={{paddingInline: 0}}>
                             {e.title}
                           </Button>
                         </Link>

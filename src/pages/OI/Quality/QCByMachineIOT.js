@@ -4,8 +4,6 @@ import {
   Col,
   Table,
   Spin,
-  Form,
-  InputNumber,
   DatePicker,
   Select,
 } from "antd";
@@ -17,50 +15,40 @@ import {
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
-  getQCOverall,
   getLotQCList,
-  getQCLine,
+  getQCOverall,
   sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
+import { getListMachine } from "../../../api";
 import Checksheet3 from "../../../components/Popup/Checksheet3";
 
-const PQC_OQC = (props) => {
+const QCByMachine = (props) => {
   document.title = "Kiểm tra chất lượng";
-  const { line_id } = useParams();
+  const { machine_id } = useParams();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
-  const [lineOptions, setLineOptions] = useState([]);
-  const [params, setParams] = useState({ line_id: line_id, start_date: dayjs(), end_date: dayjs() });
+  const [machineOptions, setMachineOptions] = useState([]);
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
   const [overall, setOverall] = useState([{}]);
-  const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
   const [openModalCK3, setOpenModalCK3] = useState(false);
-  useEffect(()=>{
-    if(!line_id && lineOptions.length > 0){
-      const item = lineOptions[0];
-      history.push('/oi/quality/qc/'+item?.value);
-    }else if(line_id && lineOptions.length > 0){
-      const item = lineOptions.find(e=>e.value === line_id);
-      setParams({...params, machine: item?.machine})
-    }
-  }, [line_id, lineOptions])
   const overallColumns = [
     {
-      title: "IQC/PQC/OQC",
+      title: "Máy",
       dataIndex: "cong_doan",
       key: "cong_doan",
       align: "center",
       render: () => (
         <Select
-          options={lineOptions}
-          value={line_id}
+          options={machineOptions}
+          value={machine_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
@@ -167,7 +155,7 @@ const PQC_OQC = (props) => {
       },
       render: (text, record) => {
         if (record.checked_sl_ng) {
-          return record.sl_ng;
+          return record.sl_ng_qc;
         } else {
           return "-";
         }
@@ -201,61 +189,24 @@ const PQC_OQC = (props) => {
       align: "center",
     },
     {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đầu ra",
-      dataIndex: "sl_dau_ra_hang_loat",
-      key: "sl_dau_ra_hang_loat",
-      align: "center",
-    },
-    {
-      title: "Số lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
-      align: "center",
-    },
-    {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
       align: "center",
-      render: (text, record) => {
-        if (record.checked_tinh_nang) {
-          return record.sl_tinh_nang;
-        } else {
-          return "-";
-        }
-      },
+      render: (value, record, index) => record.checked_tinh_nang ? value : "-",
     },
     {
       title: "SL lỗi ngoại quan",
       dataIndex: "sl_ngoai_quan",
       key: "sl_ngoai_quan",
       align: "center",
-      render: (text, record) => {
-        if (record.checked_ngoai_quan) {
-          return record.sl_ngoai_quan;
-        } else {
-          return "-";
-        }
-      },
+      render: (value, record, index) => record.checked_ngoai_quan ? value : "-",
     },
     {
       title: "Tổng phế",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      render: (text, record) => {
-        if (record.phan_dinh !== 0) {
-          return record.sl_ng;
-        } else {
-          return "-";
-        }
-      },
     },
     {
       title: "Phán định",
@@ -274,6 +225,30 @@ const PQC_OQC = (props) => {
             return "";
         }
       },
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+    },
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
     },
   ];
 
@@ -294,70 +269,71 @@ const PQC_OQC = (props) => {
   };
 
   const onClickRow = (event, record) => {
-    if (!record.phan_dinh) {
-      setSelectedRow(record);
-    }
+    setSelectedRow(record);
   };
+
+  useEffect(() => {
+    getListOption();
+  }, []);
 
   const getListOption = async () => {
     setLoading(true);
-    var res = await getQCLine();
-    setLineOptions(res.data);
-    setLoading(false);
-  };
+    var machine = await getListMachine({ is_iot: true });
+    if (machine.length > 0) {
+      setMachineOptions(machine);
+      setLoading(false);
+    } else {
+      history.push('/screen');
+    }
 
-  const getQcData = async () => {
-    console.log(lineOptions);
+  };
+  async function getData() {
     setLoading(true);
     var overall = await getQCOverall({ ...params });
     setOverall(overall.data);
     var res = await getLotQCList({ ...params });
     setData(res.data);
     if (res.data.length > 0) {
-      var current = res.data.find((e) => e.id === selectedRow?.id);
-      if (
-        current?.phan_dinh &&
-        current?.phan_dinh !== selectedRow?.phan_dinh
-      ) {
+      var current = res.data.find((e) => e?.id === selectedRow?.id);
+      if (current?.phan_dinh !== selectedRow?.phan_dinh) {
         setSelectedRow();
       }
     }
     setLoading(false);
-  };
-
-  useEffect(()=>{
-    getListOption();
-  }, [])
+  }
   useEffect(() => {
-    if(params.machine && params.machine?.length){
-      getQcData();
+    if (machine_id) {
+      setParams({ ...params, machine: [machine_id] })
     }
-  }, [params]);
-
-  const onChangeLine = (value) => {
-    history.push("/oi/quality/qc/" + value);
-    const item = lineOptions.find(e=>e.value === value);
-    setParams({...params, machine: item?.machine});
-  };
-  const [form1] = Form.useForm();
-  const [form2] = Form.useForm();
-  const onSubmitSLP = async (values) => {
-    if (selectedRow?.lot_id) {
-      onSubmitResult(values);
+    setSelectedRow()
+  }, [machine_id]);
+  useEffect(() => {
+    if (params?.machine?.length) {
+      getData();
     }
-    setOpenModal1(false);
-    form1.resetFields();
-  };
-  const onSubmitPhanDinh = async (values) => {
-    if (selectedRow?.lot_id) {
-      onSubmitResult(values);
+  }, [params.machine, params.end_date, params.start_date]);
+  useEffect(() => {
+    if (machineOptions.length > 0) {
+      var target = machineOptions.find((e) => e.value === machine_id);
+      if (!target) {
+        target = machineOptions[0];
+      }
+      if(target.is_iot){
+        history.push("/oi/quality/machine-iot/" + target.value);
+      }else{
+        history.push("/oi/quality/machine/" + target.value);
+      }
     }
-    setOpenModal2(false);
-    form2.resetFields();
+  }, [machineOptions]);
+  const onChangeLine = (value, option) => {
+    console.log(option);
+    setParams({ ...params, machine: value ? [value] : [] });
+    if(option.is_iot){
+      history.push("/oi/quality/machine-iot/" + value);
+    }else{
+      history.push("/oi/quality/machine/" + value);
+    }
   };
-
-  const [openModal1, setOpenModal1] = useState(false);
-  const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
     if (values?.tinh_nang) {
@@ -368,12 +344,11 @@ const PQC_OQC = (props) => {
       setSelectedRow({ ...selectedRow, checked_sl_ng: true });
     }
     var res = await sendQCResult({
-      machine_id: selectedRow?.machine_id,
-      lot_id: selectedRow?.lot_id,
+      machine_id: machine_id,
       lo_sx: selectedRow?.lo_sx,
       data: values,
     });
-    getQcData();
+    getData();
   };
   return (
     <React.Fragment>
@@ -389,13 +364,6 @@ const PQC_OQC = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-            // scroll={
-            //   window.screen.width < 720
-            //     ? {
-            //         x: window.screen.width,
-            //       }
-            //     : false
-            // }
             />
           </Col>
         </Row>
@@ -432,9 +400,8 @@ const PQC_OQC = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              onChange={(value) =>
-                value.isValid() && setParams({ ...params, start_date: value })
-              }
+              allowClear={false}
+              onChange={(value) => value.isValid() && setParams({ ...params, start_date: value })}
             />
           </Col>
           <Col span={12}>
@@ -443,9 +410,8 @@ const PQC_OQC = (props) => {
               style={{ width: "100%" }}
               format={COMMON_DATE_FORMAT}
               defaultValue={dayjs()}
-              onChange={(value) =>
-                value.isValid() && setParams({ ...params, end_date: value })
-              }
+              allowClear={false}
+              onChange={(value) => value.isValid() && setParams({ ...params, end_date: value })}
             />
           </Col>
         </Row>
@@ -456,7 +422,7 @@ const PQC_OQC = (props) => {
           }}
           scroll={{
             x: "calc(700px + 50%)",
-            y: 350,
+            y: 300,
           }}
           pagination={false}
           bordered={true}
@@ -477,32 +443,29 @@ const PQC_OQC = (props) => {
         />
       </Spin>
       <Checksheet1
-        text="tính năng"
         open={openModalCK1}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK1}
-        line_id={line_id}
-        machines={params.machine ?? []}
+        machines={[machine_id]}
       />
       <Checksheet2
-        text="ngoại quan"
         open={openModalCK2}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK2}
-        line_id={line_id}
+        machines={[machine_id]}
       />
       <Checksheet3
-        text="Số lượng phế"
+        text={'Số lượng phế'}
         open={openModalCK3}
         selectedLot={selectedRow}
         onSubmit={onSubmitResult}
         setOpen={setOpenModalCK3}
-        line_id={line_id}
+        machine_id={machine_id}
       />
     </React.Fragment>
   );
 };
 
-export default withRouter(PQC_OQC);
+export default withRouter(QCByMachine);

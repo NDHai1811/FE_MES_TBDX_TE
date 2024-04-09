@@ -5,9 +5,8 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { getExportsNVL, getTablesNvl } from "../../../api/oi/warehouse";
-import PopupNhapKhoNvl from "../../../components/Popup/PopupNhapKho";
+import { QrcodeOutlined } from "@ant-design/icons";
+import { getExportsNVL } from "../../../api/oi/warehouse";
 import PopupInTemKhoNvl from "../../../components/Popup/PopupInTemKhoNvl";
 import { getWarehouseOverall } from "../../../api/oi/warehouse";
 import PopupXuatKhoNvl from "../../../components/Popup/PopupXuatKho";
@@ -131,7 +130,7 @@ const Export2 = (props) => {
   };
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/kho-nvl/" + value);
+    history.push("/oi/warehouse/kho-nvl/" + value);
   };
 
   const column2 = [
@@ -171,13 +170,6 @@ const Export2 = (props) => {
       align: "center",
       render: (value) => value || "-",
     },
-    // {
-    //   title: "Số ngày tồn kho",
-    //   dataIndex: "so_ngay_ton",
-    //   key: "so_ngay_ton",
-    //   align: "center",
-    //   render: (value) => value || "-",
-    // },
   ];
 
   useEffect(() => {
@@ -204,7 +196,7 @@ const Export2 = (props) => {
   }, [visible, isScan]);
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[6, 12]}>
+      <Row className="mt-1" gutter={[6, 12]}>
         <Col span={24}>
           <Table
             pagination={false}

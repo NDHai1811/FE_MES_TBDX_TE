@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getErrorDetailList(params) {
     const res = await axios.get('ui/quality/table-error-detail', {params});
-    return res;
+    return res.data;
 }
 export async function getQualityOverall(params) {
     const res = await axios.get('ui/quality/overall', {params});
@@ -19,4 +19,8 @@ export async function getTrendingError(params) {
 export async function recheckQC(params) {
     const res = await axios.post("ui/quality/recheck", params );
     return res;
+}
+export async function getQCHistory(params) {
+    const res = await axios.get("ui/quality/qc-history", {params} );
+    return res.data;
 }

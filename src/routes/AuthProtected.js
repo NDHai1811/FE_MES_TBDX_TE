@@ -8,6 +8,8 @@ import { useProfile } from "../components/hooks/UserHooks";
 import { logoutUser } from "../store/actions";
 
 import { setUserProfile } from "../store/actions";
+import VerticalLayout from "../layouts/index";
+import ForbiddenPage from "../pages/ForbiddenPage";
 
 const AuthProtected = (props) => {
   const dispatch = useDispatch();
@@ -34,19 +36,33 @@ const AuthProtected = (props) => {
 };
 
 const AccessRoute = ({ component: Component, ...rest }) => {
-  return (
+  const { userProfile } = useProfile();
+  const checkPermission = (path, permission) => {
+    if(userProfile.username === 'admin'){
+      return true;
+    }
+    if (!userProfile) {
+      return false;
+    }
+    if(!permission){
+      return true;
+    }
+    return userProfile?.permission?.includes(permission);
+  }
+  return checkPermission(rest.path, rest.permission) ? (
     <Route
       {...rest}
       render={(props) => {
         return (
           <>
-            {" "}
-            <Component {...props} />{" "}
+            <VerticalLayout>
+              <Component {...props} />
+            </VerticalLayout>
           </>
         );
       }}
     />
-  );
+  ) : <ForbiddenPage />;
 };
 
 export { AuthProtected, AccessRoute };

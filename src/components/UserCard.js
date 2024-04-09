@@ -34,7 +34,7 @@ const UserCard = () => {
   var interval;
   return (
     <React.Fragment>
-      <div className="justify-content-between d-flex w-100 mt-3 align-content-center flex-wrap">
+      <div className="justify-content-between d-flex w-100 mt-1 align-content-center flex-wrap">
         <Dropdown
           menu={{ items: itemsDropdown }}
           placement="bottomLeft"

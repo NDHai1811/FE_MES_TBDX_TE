@@ -9,15 +9,14 @@ import Import from "./import";
 import Export from "./export";
 
 const WarehouseTP = (props) => {
-  document.title = "Kho";
+  document.title = "Kho thành phẩm";
   const { line } = useParams();
   const history = useHistory();
-
-  useEffect(() => {
-    if (!line) {
-      history.push("/warehouse/kho-tp/nhap");
+  useEffect(()=>{
+    if(!line){
+      history.push('/oi/warehouse/kho-tp/nhap');
     }
-  }, [line]);
+  })
   return (
     <React.Fragment>
       {line === "nhap" && <Import />}

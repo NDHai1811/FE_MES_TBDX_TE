@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function exportProduceHistory(params) {
-  const res = await axios.get("/export/produce/history", { params });
+  const res = await axios.get("/ui/export/produce/history", { params });
   return res;
 }
 
@@ -41,5 +41,14 @@ export async function exportQCHistory(params) {
 }
 export async function exportReportQC(params) {
   const res = await axios.get("/export/report-qc", { params });
+  return res;
+}
+
+export async function exportWarehouseMLTLogs(params) {
+  const res = await axios.get("/ui/export/warehouse-mlt-logs", { params });
+  return res;
+}
+export async function exportWarehouseFGLogs(params) {
+  const res = await axios.get("/ui/export/warehouse-fg-logs", { params });
   return res;
 }

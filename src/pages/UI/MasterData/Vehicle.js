@@ -37,6 +37,7 @@ import {
     updateUsers,
     updateVehicles,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Vehicle = () => {
     document.title = "Quản lý xe";
@@ -269,10 +270,12 @@ const Vehicle = () => {
         setExportLoading(false);
     };
     const rowSelection = {
+        fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
             setListCheck(selectedRowKeys);
         },
     };
+    const { userProfile } = useProfile();
     return (
         <>
             {contextHolder}
@@ -313,7 +316,7 @@ const Vehicle = () => {
                 <Col span={20}>
                     <Card
                         style={{ height: "100%" }}
-                        className="custom-card scroll"
+                        className="custom-card"
                         title="Quản lý xe"
                         extra={
                             <Space>
@@ -322,7 +325,7 @@ const Vehicle = () => {
                                     name="files"
                                     action={baseURL + "/api/vehicles/import"}
                                     headers={{
-                                        authorization: "authorization-text",
+                                        authorization: "Bearer " + userProfile.token,
                                     }}
                                     onChange={(info) => {
                                         setLoadingExport(true);

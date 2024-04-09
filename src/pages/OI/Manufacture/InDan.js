@@ -24,20 +24,11 @@ import {
   scanQrCode,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "./Tem";
-import TemIn from "./TemIn";
-import TemDan from "./TemDan";
-import {
-  COMMON_DATE_FORMAT,
-  COMMON_DATE_FORMAT_REQUEST,
-} from "../../../commons/constants";
+import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
-import { getMachines } from "../../../api/oi/equipment";
-
-const token =
-  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZXNzeXN0ZW1AZ21haWwuY29tIiwidXNlcklkIjoiNGQxYzg5NTAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2Iiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJzZXNzaW9uSWQiOiI4YWJkNTg2YS03NTM5LTQ4NjQtOTM0Yy02MjU5ZjdjNjc2NGMiLCJpc3MiOiJ0aGluZ3Nib2FyZC5pbyIsImlhdCI6MTcwMjAyNjQwOSwiZXhwIjoxNzAyMDM1NDA5LCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMzYwY2MyMjAtODVkOC0xMWVlLTgzOTItYTUxMzg5MTI2ZGM2IiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCJ9.QcJoS316OjEMLhkGhQj1O9FAawZylM4FkWIBx1ABQ6larZ6CL1BVKnY-q-SzY37jxJJSWC4Q2sNy5rCXi3hAvw";
-const url = `ws://113.176.95.167:3030/api/ws/plugins/telemetry/values?token=${token}`;
+import TemGiayTam from "./TemGiayTam";
+import TemThanhPham from "./TemThanhPham";
 
 const columns = [
   {
@@ -152,13 +143,13 @@ const InDan = (props) => {
     start_date: dayjs(),
     end_date: dayjs(),
   });
-  // const [machineOptions, setMachineOptions] = useState([]);
-  const {machineOptions = []} = props
+  const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
+  const [listTem, setListTem] = useState([]);
   const [deviceID, setDeviceID] = useState(
     "e9aba8d0-85da-11ee-8392-a51389126dc6"
   );
@@ -219,26 +210,6 @@ const InDan = (props) => {
     },
   ];
 
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     (async () => {
-  //       if (machine_id) {
-  //         reloadData();
-  //       }
-  //     })();
-  //   }
-  // }, [machine_id, machineOptions, loadData]);
-
-  // useEffect(() => {
-  //   if (machineOptions.length > 0) {
-  //     var target = machineOptions.find((e) => e.value === machine_id);
-  //     if (!target) {
-  //       target = machineOptions[0];
-  //     }
-  //     history.push("/manufacture/" + target.value);
-  //   }
-  // }, [machineOptions]);
-
   useEffect(() => {
     if (isScan === 1) {
       setIsOpenQRScanner(true);
@@ -247,19 +218,10 @@ const InDan = (props) => {
     }
   }, [isScan]);
 
-  useEffect(() => {
-    getListMachine();
-    // (async ()=>{
-    //   var res = await getTem();
-    //   setListCheck(res)
-    // })()
-  }, []);
-
   var timeout;
   useEffect(() => {
     clearTimeout(timeout)
-    const loadDataRescursive = async (params,machine_id) => {
-      console.log(params, machine_id);
+    const loadDataRescursive = async (params, machine_id) => {
       if (!machine_id) return;
       const res = await getLotByMachine(params);
       setData(res.data);
@@ -270,15 +232,15 @@ const InDan = (props) => {
       }
       if (res.success) {
         if (window.location.href.indexOf("manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
+          timeout = setTimeout(function () {
+            loadDataRescursive(params, machine_id);
+          }, 5000);
       }
     };
     loadDataRescursive(params, machine_id);
     return () => clearTimeout(timeout);
   }, [params.start_date, params.end_date, params.machine_id]);
-  
+
   const loadDataRescursive = async (params, machine_id) => {
     console.log(params, machine_id);
     if (!machine_id) return;
@@ -291,19 +253,10 @@ const InDan = (props) => {
     }
     if (res.success) {
       if (window.location.href.indexOf("manufacture") > -1)
-      timeout = setTimeout(function () {
-        loadDataRescursive(params, machine_id);
-      }, 5000);
+        timeout = setTimeout(function () {
+          loadDataRescursive(params, machine_id);
+        }, 5000);
     }
-  };
-
-  const getListMachine = () => {
-    // getMachines()
-    //   .then((res) => {
-    //     setMachineOptions(res.data);
-    //     window.localStorage.setItem('machines', JSON.stringify(res.data));
-    //   })
-    //   .catch((err) => console.log("Get list machine error: ", err));
   };
 
   const getOverAllDetail = () => {
@@ -323,13 +276,13 @@ const InDan = (props) => {
   };
 
   const onChangeLine = (value) => {
-    window.location.href = ("/manufacture/" + value);
+    window.location.href = ("/oi/manufacture/" + value);
   };
 
   const onScan = async (result) => {
     const lo_sx = JSON.parse(result).lo_sx;
     scanQrCode({ lo_sx: lo_sx, machine_id: machine_id })
-      .then((response)=>response.success && reloadData())
+      .then((response) => response.success && reloadData())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
     setIsOpenQRScanner(false);
     setIsScan(2)
@@ -343,116 +296,35 @@ const InDan = (props) => {
       return "table-row-yellow";
     }
     if (record.status === 3) {
-      return "table-row-yellow blink";
+      return "table-row-yellow";
     }
     if (record.status === 4) {
       return "table-row-grey";
     }
     return "";
   };
-  useEffect(() => {
-    if (listCheck.length > 0) {
-      if(machine_id){
-        setParams({...params, machine_id})
-      }
+  const handlePrint = async () => {
+    if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
+      } else {
+        printThanhPham();
       }
-      (async () => {
-        reloadData()
-      })();
-    }
-    setListCheck([]);
-  }, [listCheck.length]);
-
-  const handlePrint = async () => {
-    const res = await getInfoTem({ machine_id: machine_id });
-    if (res.data.length) {
-      setListCheck(res.data);
+      setListCheck([]);
+      setListTem([]);
     }
   };
 
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const printIn = useReactToPrint({
+  const printThanhPham = useReactToPrint({
     content: () => componentRef2.current,
-  });
-  const printDan = useReactToPrint({
-    content: () => componentRef3.current,
   });
 
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
     setIsScan(2);
-  };
-
-  const connectWebsocket = (deviceId, resData) => {
-    const entityId = deviceId;
-    ws.current = new WebSocket(url);
-    ws.current.onopen = function () {
-      const object = {
-        tsSubCmds: [
-          {
-            entityType: "DEVICE",
-            entityId: entityId,
-            scope: "LATEST_TELEMETRY",
-            keys: "Pre_Counter,Error_Counter",
-            cmdId: 10,
-          },
-        ],
-        historyCmds: [],
-        attrSubCmds: [],
-      };
-      const data = JSON.stringify(object);
-      ws.current.send(data);
-    };
-
-    ws.current.onmessage = async function (event) {
-      if (resData[0]?.status !== 1) {
-        return 0;
-      }
-      const receivedMsg = JSON.parse(event.data);
-      const Pre_Counter = receivedMsg.data?.Pre_Counter
-        ? parseInt(receivedMsg.data?.Pre_Counter[0][1])
-        : 0;
-      const Error_Counter = receivedMsg.data?.Error_Counter
-        ? parseInt(receivedMsg.data.Error_Counter[0][1])
-        : 0;
-      let san_luong = parseInt(resData[0]?.san_luong);
-      let sl_ok = parseInt(resData[0]?.sl_ok);
-      let sl_ng = parseInt(resData[0]?.end_ng) - parseInt(resData[0]?.start_ng);
-      if (Pre_Counter > 0) {
-        san_luong = parseInt(Pre_Counter - resData[0]?.start_sl);
-        if (Error_Counter) {
-          sl_ng = parseInt(Error_Counter - resData[0]?.start_ng);
-        }
-        sl_ok = parseInt(san_luong - sl_ng);
-        if (
-          sl_ok >= resData[0]?.dinh_muc ||
-          resData[0]?.sl_ok - Pre_Counter > 10
-        ) {
-          reloadData();
-        } else {
-          const new_data = resData.map((value, index) => {
-            if (index === 0) {
-              value.san_luong = isNaN(san_luong) ? 0 : san_luong;
-              value.sl_ok = isNaN(sl_ok) ? 0 : sl_ok;
-              return value;
-            } else {
-              return value;
-            }
-          });
-
-          setData(new_data);
-          setSelectedLot(new_data[0]);
-        }
-      }
-    };
   };
 
   const onChangeStartDate = (value) => {
@@ -475,7 +347,6 @@ const InDan = (props) => {
   }
 
   const onConfirmPrint = async () => {
-    // var res = await manualInput({ ...lotCurrent, san_luong: value, machine_id: machine_id });
     if (selectedLot.so_luong < quantity) {
       message.error('Số lượng nhập vượt quá số lượng thực tế');
     } else {
@@ -486,11 +357,44 @@ const InDan = (props) => {
       setVisiblePrint(false);
     }
   };
-
+  const rowSelection = {
+    selectedRowKeys: listCheck,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setListCheck(selectedRowKeys)
+      setListTem(selectedRows);
+    },
+    // getCheckboxProps: (record) => ({
+    //   disabled: !record?.id
+    // }),
+  };
+  const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+  const [tableSize, setTableSize] = useState(
+    {
+      width: window.innerWidth < 700 ? '300vw' : '100%',
+      height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+    }
+  );
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+      console.log(table);
+      setTableSize(
+        {
+          width: window.innerWidth < 700 ? '300vw' : '100%',
+          height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+        }
+      );
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row className="mt-3" gutter={[6, 8]}>
+        <Row className="mt-1" gutter={[6, 8]}>
           <Col span={24}>
             <Table
               size="small"
@@ -513,85 +417,77 @@ const InDan = (props) => {
               dataSource={selectedLot ? [selectedLot] : []}
             />
           </Col>
-          <Row
-            gutter={4}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            <Col span={7}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Từ ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeStartDate}
-              />
-            </Col>
-            <Col span={7}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Đến ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeEndDate}
-              />
-            </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={() => setIsScan(1)}
-                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-              />
-            </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={handlePrint}
-                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-              />
-              <div className="report-history-invoice">
-                <Tem listCheck={listCheck} ref={componentRef1} />
-                <TemIn listCheck={listCheck} ref={componentRef2} />
-                <TemDan listCheck={listCheck} ref={componentRef3} />
-              </div>
-            </Col>
-            <Col span={3}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={openMdlPrint}
-              >
-                IN TEM
-              </Button>
-            </Col>
-          </Row>
-          <Col span={24}>
-            <Table
-              scroll={{
-                x: "calc(700px + 50%)",
-                y: 300,
-              }}
-              size="small"
-              rowClassName={(record, index) =>
-                "no-hover " + rowClassName(record, index)
-              }
-              pagination={false}
-              bordered
-              columns={columns}
-              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+          <Col span={9}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Từ ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeStartDate}
             />
           </Col>
+          <Col span={9}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Đến ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeEndDate}
+            />
+          </Col>
+          <Col span={2}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={() => setIsScan(1)}
+              icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
+            />
+          </Col>
+          <Col span={2}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={handlePrint}
+              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+            />
+            <div className="report-history-invoice">
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
+            </div>
+          </Col>
+          <Col span={2}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={openMdlPrint}
+            >
+              IN TEM
+            </Button>
+          </Col>
         </Row>
+        <Col span={24} className="mt-2">
+          <Table
+            scroll={{
+              x: tableSize.width,
+              y: tableSize.height,
+            }}
+            size="small"
+            rowClassName={(record, index) =>
+              "no-hover " + rowClassName(record, index)
+            }
+            className="bottom-table"
+            rowSelection={rowSelection}
+            pagination={false}
+            bordered
+            columns={columns}
+            dataSource={data.map((e, index) => ({ ...e, key: index }))}
+          />
+        </Col>
       </Spin>
       {isOpenQRScanner && (
         <Modal
@@ -613,7 +509,7 @@ const InDan = (props) => {
         <Modal
           title="Số lượng trên tem"
           open={visiblePrint}
-          onCancel={()=>setVisiblePrint(false)}
+          onCancel={() => setVisiblePrint(false)}
           onOk={onConfirmPrint}
         >
           <InputNumber

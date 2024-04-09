@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Layout,
   Divider,
   Button,
   Table,
   Modal,
   Card,
-  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -16,73 +14,29 @@ import {
   Col,
   Row,
   Space,
-  Tree,
+  Typography,
+  Spin,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
 import { baseURL } from "../../../config";
-import EditableTable from "../../../components/Table/EditableTable";
 import dayjs from "dayjs";
 import {
   createWarehouseImport,
-  deleteWarehouseImport,
+  deleteGoodsReceiptNote,
+  exportVehicleWeightTicket,
   exportWarehouseTicket,
+  getGoodsReceiptNote,
   getListPlanMaterialExport,
   getListPlanMaterialImport,
+  updateGoodsReceiptNote,
   updateWarehouseImport,
 } from "../../../api/ui/warehouse";
 import TemNVL from "./TemNVL";
-
-const { TabPane } = Tabs;
-
-const itemsMenu = [
-  {
-    title: "Kho nguyên vật liệu",
-    key: "0-0",
-    children: [
-      {
-        title: "Kho A",
-        key: "0-1",
-      },
-      {
-        title: "Kho B",
-        key: "0-2",
-      },
-      {
-        title: "Kho dở dang",
-        key: "0-3",
-      },
-    ],
-  },
-  {
-    title: "KV bán thành phẩm",
-    key: "1-0",
-    children: [
-      {
-        title: "KV BTP giấy tấm",
-        key: "1-1",
-      },
-      {
-        title: "KV BTP sau in",
-        key: "1-2",
-      },
-    ],
-  },
-  {
-    title: "Kho thành phẩm",
-    key: "2-0",
-    children: [
-      {
-        title: "Kho chờ nhập",
-        key: "2-1",
-      },
-      {
-        title: "Kho đã nhập",
-        key: "2-2",
-      },
-    ],
-  },
-];
+import { useProfile } from "../../../components/hooks/UserHooks";
+import EditableTable from "../../../components/Table/EditableTable";
+import { EditOutlined } from "@ant-design/icons";
+import Actions from "../../../components/Table/Actions";
 
 const columns1 = [
   {
@@ -129,7 +83,14 @@ const columns1 = [
     align: "center",
   },
   {
-    title: "Khổ",
+    title: "FSC",
+    dataIndex: "fsc",
+    key: "fsc",
+    align: "center",
+    render: (value) => value ? "X" : ""
+  },
+  {
+    title: "Khổ giấy",
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
@@ -141,9 +102,27 @@ const columns1 = [
     align: "center",
   },
   {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
+    title: "Số ký nhập",
+    dataIndex: "so_kg_nhap",
+    key: "so_kg_nhap",
+    align: "center",
+  },
+  {
+    title: "Số ký ban đầu",
+    dataIndex: "so_kg_ban_dau",
+    key: "so_kg_ban_dau",
+    align: "center",
+  },
+  {
+    title: "Số ký xuất",
+    dataIndex: "so_kg_xuat",
+    key: "so_kg_xuat",
+    align: "center",
+  },
+  {
+    title: "Số ký còn lại",
+    dataIndex: "so_kg_con_lai",
+    key: "so_kg_con_lai",
     align: "center",
   },
   {
@@ -158,9 +137,13 @@ const columns1 = [
     key: "time_need",
     align: "center",
   },
+  {
+    title: "Ca làm việc",
+    dataIndex: "ca_sx",
+    key: "ca_sx",
+    align: "center",
+  },
 ];
-
-const { Sider } = Layout;
 const WarehouseMLT = (props) => {
   document.title = "UI - Quản lý giấy cuộn";
 
@@ -174,52 +157,91 @@ const WarehouseMLT = (props) => {
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [importList, setImportList] = useState([]);
   const [exportList, setExportList] = useState([]);
-  const onChangeChecbox = (e) => {
-    if (e.target.checked) {
-      if (!listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) => [...oldArray, e.target.value]);
-      }
-    } else {
-      if (listCheck.includes(e.target.value)) {
-        setListCheck((oldArray) =>
-          oldArray.filter((datainput) => datainput !== e.target.value)
-        );
-      }
-    }
-  };
+  const [editingKey, setEditingKey] = useState();
   useEffect(() => {
-    console.log(importList, listCheck);
     const new_data = importList.filter((datainput) =>
       listCheck.includes(datainput.id)
     );
-    console.log(new_data);
     setListMaterialCheck(new_data);
-  }, [listCheck]);
+  }, [listCheck, importList]);
 
-  const getExportList = () => {
-    getListPlanMaterialExport()
-      .then((res) => setExportList(res.data))
-      .catch((err) =>
-        console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
-      );
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteWarehouseImport({ id: listCheck });
-      setListCheck([]);
-      getImportList();
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
+  const [exportParams, setExportParams] = useState({ page: 1, pageSize: 20, totalPage: 1 });
+  const getExportList = async () => {
+    setLoading(true);
+    setImportList([])
+    var res = await getListPlanMaterialExport({ ...params, ...exportParams });
+    if (res.success) {
+      setExportList(res.data.data);
+      setExportParams({ ...exportParams, totalPage: res.data.totalPage })
     }
+    setLoading(false);
   };
-
   const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      align: "center",
+      render: (value, item, index) => (index + 1),
+    },
     {
       title: "Mã cuộn TBDX",
       dataIndex: "material_id",
       key: "material_id",
       align: "center",
+    },
+
+    {
+      title: "Tên NCC",
+      dataIndex: "ten_ncc",
+      key: "ten_ncc",
+      align: "center",
+    },
+    {
+      title: "Loại giấy",
+      dataIndex: "loai_giay",
+      key: "loai_giay",
+      align: "center",
+      width: '8%',
+      editable: true,
+    },
+    {
+      title: "FSC",
+      dataIndex: "fsc",
+      key: "fsc",
+      align: "center",
+      render: (value, item, index) => (value === 1 ? "X" : ""),
+      width: '5%',
+      editable: true,
+    },
+    {
+      title: "Khổ giấy",
+      dataIndex: "kho_giay",
+      key: "kho_giay",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Định lượng",
+      dataIndex: "dinh_luong",
+      key: "dinh_luong",
+      align: "center",
+      editable: true,
+    },
+    {
+      title: "Số ký nhập",
+      dataIndex: "so_kg",
+      key: "so_kg",
+      align: "center",
+      width: '6%',
+      editable: true,
+    },
+    {
+      title: "Mã cuộn NCC",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+      editable: true
     },
     {
       title: "Mã vật tư",
@@ -228,49 +250,16 @@ const WarehouseMLT = (props) => {
       align: "center",
     },
     {
-      title: "Tên nhà cung cấp",
-      dataIndex: "ten_ncc",
-      key: "ten_ncc",
+      title: "Ngày nhập",
+      dataIndex: "created_at",
+      key: "created_at",
       align: "center",
+      render: (value, item, index) => dayjs(value).format('DD-MM-YYYY'),
     },
     {
-      title: "Mã cuộn nhà cung cấp",
-      dataIndex: "ma_cuon_ncc",
-      key: "ma_cuon_ncc",
-      align: "center",
-    },
-    {
-      title: "Số kg",
-      dataIndex: "so_kg",
-      key: "so_kg",
-      align: "center",
-      width: '6%'
-    },
-    {
-      title: "Loại giấy",
-      dataIndex: "loai_giay",
-      key: "loai_giay",
-      align: "center",
-      width: '8%'
-    },
-    {
-      title: "FSC",
-      dataIndex: "fsc",
-      key: "fsc",
-      align: "center",
-      render: (value, item, index) => (value === 1 ? "X" : ""),
-      width: '5%'
-    },
-    {
-      title: "Khổ giấy",
-      dataIndex: "kho_giay",
-      key: "kho_giay",
-      align: "center",
-    },
-    {
-      title: "Định lượng",
-      dataIndex: "dinh_luong",
-      key: "dinh_luong",
+      title: "Số phiếu nhập kho",
+      dataIndex: "goods_receipt_note_id",
+      key: "goods_receipt_note_id",
       align: "center",
     },
     {
@@ -282,72 +271,33 @@ const WarehouseMLT = (props) => {
         value === 0 ? "Chưa kiểm tra" : value === 1 ? "OK" : "NG",
     },
   ];
-  const mergedKey = "khach_hang";
-  const mergeColumn = [
-    "ma_cuon_tbdx",
-    "ma_vat_tu",
-    "ten_ncc",
-    "ma_cuon_ncc",
-    "so_kg",
-    "loai_giay",
-    "kho_giay",
-    "dinh_luong",
-    "ok_ng",
-  ];
-  const mergeValue = mergeColumn.map((e) => {
-    return { key: e, set: new Set() };
-  });
+  const onUpdate = async (record) => {
+    setLoading(true);
+    var res = await updateWarehouseImport(record);
+    await btn_click();
+    setLoading(false)
+  }
+  const onChange = async (record) => {
 
-  const isEditing = (col, record) =>
-    col.editable === true && listCheck.includes(record.id);
+  }
+  const onSelect = async (record) => {
 
-  const onCell = (record, e) => {
-    const props = {
-      record,
-      ...e,
-      editable: isEditing(e, record),
-      handleSave,
-    };
-
-    if (!mergeColumn.includes(e.key)) {
-      return props;
-    }
-
-    const set = mergeValue.find((s) => s.key === e.key)?.set;
-    if (set?.has(record[mergedKey])) {
-      return { rowSpan: 0, ...props };
-    }
-
-    const rowCount = importList.filter(
-      (data) => data[mergedKey] === record[mergedKey]
-    ).length;
-    set?.add(record[mergedKey]);
-    return { rowSpan: rowCount, ...props };
-  };
-
-  const customColumns = columns.map((e) => ({
-    ...e,
-    onCell: (record) => onCell(record, e),
-  }));
-
-  const handleSave = async (row) => {
-    setImportList((prev) => prev.map((e) => (e.id === row.id ? row : e)));
-  };
+  }
 
   const getImportList = async () => {
+    setExportList([]);
+    setLoading(true);
     const res = await getListPlanMaterialImport(params);
-    setImportList(res.data);
+    setImportList(res.data.map((e) => {
+      return { ...e, key: e.id };
+    }));
+    setLoading(false);
   };
 
   useEffect(() => {
-    (async () => {
-      if (currentTab === "1") {
-        getImportList();
-      } else {
-        getExportList();
-      }
-    })();
-  }, [currentTab]);
+    btn_click();
+  }, [currentTab, exportParams.page, exportParams.pageSize]);
+
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
@@ -364,25 +314,12 @@ const WarehouseMLT = (props) => {
     });
   };
 
-  const btn_click = () => {
+  const btn_click = async () => {
+    console.log(exportParams);
     if (currentTab === "1") {
       getImportList();
     } else {
       getExportList();
-    }
-  };
-
-  const [titleMdlEdit, setTitleMdlEdit] = useState("Cập nhật");
-  const onEdit = () => {
-    if (listCheck.length > 1) {
-      message.info("Chỉ chọn 1 bản ghi để chỉnh sửa");
-    } else if (listCheck.length == 0) {
-      message.info("Chưa chọn bản ghi cần chỉnh sửa");
-    } else {
-      const result = importList.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue(result);
-      setOpenMdlEdit(true);
-      setTitleMdlEdit("Cập nhật");
     }
   };
   const componentRef1 = useRef();
@@ -390,93 +327,137 @@ const WarehouseMLT = (props) => {
   const handlePrint = useReactToPrint({
     content: () => componentRef1.current,
   });
-
-  const onInsert = () => {
-    setTitleMdlEdit("Thêm mới");
-    form.resetFields();
-    setOpenMdlEdit(true);
-  };
-  const [form] = Form.useForm();
-  const onFinish = async (values) => {
-    if (values.id) {
-      const res = await updateWarehouseImport(values);
-    } else {
-      const res = await createWarehouseImport(values);
-    }
-    setOpenMdlEdit(false);
-    getImportList();
-  };
-
-  const onSelect = (selectedKeys, info) => {
-    console.log("selected", selectedKeys, info);
-  };
-  const onCheck = (checkedKeys, info) => {
-    console.log("onCheck", checkedKeys, info);
-  };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
+      setListCheck(selectedRows.map(e=>e.id));
     },
   };
 
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [importList, exportList]);
   const tabsMenu = [
     {
       key: "1",
       label: "Nhập dữ liệu nhập kho",
-      children: [
-        <Table
-          bordered
-          columns={columns}
-          dataSource={importList.map((e) => {
-            return { ...e, key: e.id };
-          })}
-          scroll={{
-            y: window.innerHeight * 0.60,
-          }}
-          className="h-100"
-          rowSelection={rowSelection}
-          pagination={false}
-          size="small"
-        />,
-      ],
     },
     {
       key: "2",
       label: "Theo dõi xuất hàng",
-      children: [
-        <Table
-          bordered
-          columns={columns1}
-          dataSource={exportList}
-          scroll={{
-            x: "100vw",
-            y: "50vh",
-          }}
-          className="h-100"
-          pagination={false}
-          size="small"
-        />,
-      ],
     },
   ];
   const [exportLoading, setExportLoading] = useState(false);
-  const exportFile = async () => {
+  const exportFileReceiptNote = async () => {
     setExportLoading(true);
-    var material_ids = [];
-    importList.forEach((e) => {
-      if (listCheck.includes(e.id)) {
-        material_ids.push(e.material_id);
+    if (listCheckReceipt.length) {
+      const res = await exportWarehouseTicket({ id: listCheckReceipt[0] });
+      if (res.success) {
+        window.location.href = baseURL + res.data;
       }
-    });
-    const res = await exportWarehouseTicket({
-      ...params,
-      material_ids: material_ids,
-    });
-    if (res.success) {
-      window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
+  const [exportLoading1, setExportLoading1] = useState(false);
+  const exportFileVehicleWeightNote = async () => {
+    setExportLoading1(true);
+    if (listCheckReceipt.length) {
+      const res = await exportVehicleWeightTicket({ id: listCheckReceipt[0] });
+      if (res.success) {
+        window.location.href = baseURL + res.data;
+      }
+    }
+    setExportLoading1(false);
+  };
+  const { userProfile } = useProfile();
+  const [openExportModal, setOpenExportModal] = useState(false);
+  const [receiptNote, setReceiptNote] = useState([]);
+  const [listCheckReceipt, setListCheckReceipt] = useState([]);
+  const [loadingNotes, setLoadingNotes] = useState(false);
+  const getReceiptNote = async () => {
+    setLoadingNotes(true);
+    var res = await getGoodsReceiptNote();
+    setReceiptNote(res);
+    setLoadingNotes(false);
+  }
+  const receiptNoteColumns = [
+    {
+      title: "Mã phiếu",
+      dataIndex: "id",
+      key: "id",
+      align: "center",
+      width: 100
+    },
+
+    {
+      title: "Tên nhà cung cấp",
+      dataIndex: "supplier_name",
+      key: "supplier_name",
+      align: "center",
+      width: 250
+    },
+    {
+      title: "Số xe",
+      dataIndex: "vehicle_number",
+      key: "vehicle_number",
+      align: "center",
+      width: 120
+    },
+    {
+      title: "Khối lượng tổng",
+      dataIndex: "total_weight",
+      key: "total_weight",
+      align: "center",
+      editable: true
+    },
+    {
+      title: "Khối lượng xe",
+      dataIndex: "vehicle_weight",
+      key: "vehicle_weight",
+      align: "center",
+      editable: true
+    },
+    {
+      title: "Khối lượng hàng",
+      dataIndex: "material_weight",
+      key: "material_weight",
+      align: "center",
+      editable: true
+    },
+  ];
+  useEffect(() => {
+    openExportModal && getReceiptNote()
+  }, [openExportModal]);
+  const rowSelectionReceipt = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(selectedRowKeys, selectedRows);
+      setListCheckReceipt(selectedRows.map(e=>e.id));
+    },
+    type: 'radio',
+  };
+  const [loadingUpload, setLoadingUpload] = useState(false);
+
+  const onSaveNote = async (record) => {
+    var res = await updateGoodsReceiptNote(record);
+    getReceiptNote();
+  }
+  const onDeleteNote = async (record) => {
+    var res = await deleteGoodsReceiptNote(record);
+    getReceiptNote();
+  }
   return (
     <>
       {contextHolder}
@@ -484,7 +465,7 @@ const WarehouseMLT = (props) => {
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              styles={{ body: {paddingInline: 0, paddingTop: 0} }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -529,45 +510,46 @@ const WarehouseMLT = (props) => {
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
                   <Form.Item
-                    label={currentTab === "1" ? "Mã cuộn TBDX" : "Máy"}
+                    label={"Mã cuộn TBDX"}
                     className="mb-3"
                   >
                     <Input
-                      placeholder={
-                        currentTab === "1" ? "Nhập mã cuộn TBDX" : "Nhập máy"
-                      }
+                      placeholder={"Nhập mã cuộn TBDX"}
                       onChange={(e) =>
                         setParams({ ...params, material_id: e.target.value })
                       }
                     />
                   </Form.Item>
-                  <Form.Item
-                    label={currentTab === "1" ? "Mã cuộn NCC" : "Mã vật tư"}
+                  {currentTab === '1' && <Form.Item
+                    label={"Mã cuộn NCC"}
                     className="mb-3"
                   >
                     <Input
-                      placeholder={
-                        currentTab === "1"
-                          ? "Nhập mã cuộn NCC"
-                          : "Nhập mã vật tư"
-                      }
+                      placeholder={"Nhập mã cuộn NCC"}
                       onChange={(e) =>
                         setParams({ ...params, ma_cuon_ncc: e.target.value })
                       }
                     />
-                  </Form.Item>
+                  </Form.Item>}
                   <Form.Item
-                    label={currentTab === "1" ? "Loại giấy" : "Mã cuộn TBDX"}
+                    label={"Loại giấy"}
                     className="mb-3"
                   >
                     <Input
-                      placeholder={
-                        currentTab === "1"
-                          ? "Nhập loại giấy"
-                          : "Nhập mã cuộn TBDX"
-                      }
+                      placeholder={"Nhập loại giấy"}
                       onChange={(e) =>
                         setParams({ ...params, loai_giay: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label={"Mã vật tư"}
+                    className="mb-3"
+                  >
+                    <Input
+                      placeholder={"Nhập mã vật tư"}
+                      onChange={(e) =>
+                        setParams({ ...params, ma_vat_tu: e.target.value })
                       }
                     />
                   </Form.Item>
@@ -577,51 +559,51 @@ const WarehouseMLT = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Card style={{ height: '100%' }} className="custom-card scroll">
-            <Tabs
-              defaultActiveKey="1"
-              onChange={(activeKey) => setCurrentTab(activeKey)}
-              items={tabsMenu}
-              tabBarExtraContent={
-                currentTab === "1" ? (
-                  <Space>
-                    <Button
-                      type="primary"
-                      onClick={exportFile}
-                      loading={exportLoading}
-                    >
-                      Xuất phiếu nhập kho
-                    </Button>
-                    <Upload
-                      showUploadList={false}
-                      name="file"
-                      action={baseURL + "/api/upload-nhap-kho-nvl"}
-                      headers={{
-                        authorization: "authorization-text",
-                      }}
-                      onChange={(info) => {
-                        setLoading(true);
-                        if (info.file.status === "error") {
-                          error();
-                          setLoading(false);
-                        } else if (info.file.status === "done") {
-                          if (info.file.response.success === true) {
-                            getImportList();
-                            success();
-                            setLoading(false);
-                          } else {
-                            getImportList();
-                            message.error(info.file.response.message);
-                            setLoading(false);
-                          }
-                        }
-                      }}
-                    >
-                      <Button type="primary" loading={loading}>
-                        Upload excel
+          <Spin spinning={loading}>
+            <Card style={{ height: '100%' }} className="custom-card" title={
+              <Tabs
+                onChange={(activeKey) => setCurrentTab(activeKey)}
+                items={tabsMenu}
+                tabBarExtraContent={
+                  currentTab === "1" ? (
+                    <Space>
+                      <Button
+                        type="primary"
+                        onClick={() => setOpenExportModal(true)}
+                      // loading={exportLoading}
+                      >
+                        Xuất phiếu nhập kho
                       </Button>
-                    </Upload>
-                    <Button type="primary" onClick={deleteRecord}>
+                      <Upload
+                        showUploadList={false}
+                        name="file"
+                        action={baseURL + "/api/upload-nhap-kho-nvl"}
+                        headers={{
+                          authorization: "Bearer " + userProfile.token,
+                        }}
+                        onChange={(info) => {
+                          setLoadingUpload(true);
+                          if (info.file.status === "error") {
+                            error();
+                            setLoadingUpload(false);
+                          } else if (info.file.status === "done") {
+                            if (info.file.response.success === true) {
+                              success();
+                              setLoadingUpload(false);
+                              btn_click();
+                            } else {
+                              message.error(info.file.response.message);
+                              setLoadingUpload(false);
+                              btn_click();
+                            }
+                          }
+                        }}
+                      >
+                        <Button type="primary" loading={loadingUpload}>
+                          Upload excel
+                        </Button>
+                      </Upload>
+                      {/* <Button type="primary" onClick={deleteRecord}>
                       Xóa
                     </Button>
                     <Button type="primary" onClick={onEdit}>
@@ -629,119 +611,89 @@ const WarehouseMLT = (props) => {
                     </Button>
                     <Button type="primary" onClick={onInsert}>
                       Thêm
-                    </Button>
-                    <Button type="primary" onClick={handlePrint}>
-                      In tem NVL
-                    </Button>
-                    <div className="report-history-invoice">
-                      <TemNVL
-                        listCheck={listMaterialCheck}
-                        ref={componentRef1}
-                      />
-                    </div>
-                  </Space>
-                ) : null
+                    </Button> */}
+                      <Button type="primary" onClick={handlePrint}>
+                        In tem NVL
+                      </Button>
+                      <div className="report-history-invoice">
+                        <TemNVL
+                          listCheck={listMaterialCheck}
+                          ref={componentRef1}
+                        />
+                      </div>
+                    </Space>
+                  ) : null
+                }
+              ></Tabs>
+            }
+            >
+              {currentTab === '1' ?
+                <EditableTable
+                  bordered
+                  columns={columns}
+                  dataSource={importList}
+                  setDataSource={setImportList}
+                  scroll={{
+                    y: tableHeight,
+                  }}
+                  className="h-100"
+                  rowSelection={rowSelection}
+                  pagination={false}
+                  size="small"
+                  onUpdate={onUpdate}
+                />
+                :
+                <Table
+                  bordered
+                  columns={columns1}
+                  dataSource={exportList}
+                  scroll={{
+                    x: "100vw",
+                    y: tableHeight,
+                  }}
+                  className="h-100"
+                  pagination={{
+                    current: exportParams.page,
+                    size: "small",
+                    total: exportParams.totalPage,
+                    pageSize: exportParams.pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setExportParams({ ...exportParams, page: page, pageSize: pageSize });
+                    },
+                  }}
+                  size="small"
+                />
               }
-            ></Tabs>
-          </Card>
+            </Card>
+          </Spin>
         </Col>
       </Row>
-      <Modal
-        title={titleMdlEdit}
-        open={openMdlEdit}
-        onCancel={() => setOpenMdlEdit(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            <Col span={12} className="d-none">
-              <Form.Item name="id" className="mb-3 d-none">
-                <Input></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã cuộn"
-                name="material_id"
-                className="mb-3"
-              // rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã cuộn"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Mã cuộn NCC"
-                name="ma_cuon_ncc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập mã cuộn nhà cung cấp"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Loại giấy"
-                name="loai_giay"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập loại giấy"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="FSC"
-                name="fsc"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder=""></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Khổ giấy"
-                name="kho_giay"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập khổ giấy"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Định lượng"
-                name="dinh_luong"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập định lượng"></Input>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Số kg"
-                name="so_kg"
-                className="mb-3"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="Nhập số kg"></Input>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
+
+      <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
+        footer={
+          <Space>
+            <Button>Huỷ</Button>
+            <Button type="primary" onClick={exportFileReceiptNote} loading={exportLoading}>Phiếu nhập kho</Button>
+            <Button type="primary" onClick={exportFileVehicleWeightNote} loading={exportLoading1}>Phiếu cân xe</Button>
+          </Space>
+        }>
+        <EditableTable
+          bordered
+          loading={loadingNotes}
+          columns={receiptNoteColumns}
+          dataSource={receiptNote}
+          setDataSource={setReceiptNote}
+          scroll={{
+            y: "50vh",
+          }}
+          className="h-100"
+          rowSelection={rowSelectionReceipt}
+          pagination={false}
+          size="small"
+          onUpdate={onSaveNote}
+          onDelete={onDeleteNote}
+        />
       </Modal>
     </>
   );

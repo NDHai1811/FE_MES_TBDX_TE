@@ -12,21 +12,20 @@ import {
     Input,
     InputNumber,
     Typography,
-    Popconfirm
+    Checkbox
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getCustomers } from "../../../api/ui/main";
 import {
     createProductPlan,
-    exportKHSX,
     exportPreviewPlan,
+    exportPreviewPlanXaLot,
     getListProductPlan,
     getOrderList,
     handleOrder,
     handlePlan,
 } from "../../../api/ui/manufacture";
 import dayjs from "dayjs";
-import { getOrders } from "../../../api";
 import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
 import { EditOutlined } from "@ant-design/icons";
@@ -44,14 +43,14 @@ const TaoKeHoachSanXuat = () => {
     const [loadingPlans, setLoadingPlans] = useState(false);
     const [previewPlan, setPreviewPlan] = useState([])
     const [openMdlOrder, setOpenMdlOrder] = useState(false);
-    const [openMdlPlan, setOpenMdlPlan] = useState(false);
     const [listPlan, setListPlan] = useState([]);
     const [formUpdate] = Form.useForm();
-
+    const [editingKey, setEditingKey] = useState("");
+    const isEditing = (record) => record.key === editingKey;
     const loadListOrders = async () => {
         setLoadingOrders(true);
         const res = await getOrderList(orderParams);
-        setData(res.data);
+        setData(res.data.map(e => ({ ...e, key: e.id })));
         setLoadingOrders(false);
     };
 
@@ -68,7 +67,10 @@ const TaoKeHoachSanXuat = () => {
         setLoadingBtn(true);
         const res = await createProductPlan({ data: previewPlan });
         if (res.success) {
-            window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
+            setTimeout(function () {
+                window.location.href = '/ui/manufacture/ke-hoach-san-xuat';
+            }, 1000);
+
         }
         setLoadingBtn(false);
     };
@@ -94,46 +96,18 @@ const TaoKeHoachSanXuat = () => {
         setLoadingPlans(true)
         const res = await handleOrder(inp);
         if (res.success) {
-            setPreviewPlan(res.data);
+            setPreviewPlan(res.data.map((e, index) => ({ ...e, key: index })));
             setOpenMdlOrder(false);
-            setLoadingPlans(false);
         }
-
-
-    };
-    const insertLSX = async () => {
-        if (listCheck.length <= 0) {
-            message.info('Cần chọn ít nhất 1 lô sản xuất');
-            return;
-        }
-        if (!planParams.machine_id) {
-            message.info('Cần chọn máy');
-            return;
-        }
-        if (!planParams.start_date) {
-            message.info('Cần chọn thời gian bắt đầu');
-            return;
-        }
-        const inp = {
-            plan_id: listCheck,
-            machine_id: planParams.machine_id,
-            start_time: dayjs(planParams.start_date).format('YYYY-MM-DD HH:mm:ss'),
-        }
-        setLoadingPlans(true)
-        const res = await handlePlan(inp);
-        if (res.success) {
-            setPreviewPlan(res.data);
-            setOpenMdlPlan(false);
-            setLoadingPlans(false);
-        }
+        setLoadingPlans(false);
     };
 
     useEffect(() => {
         (async () => {
             const res1 = await getMachineList();
-            setListMachines(res1.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+            setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })))
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })))
+            setListCustomers(res2.data)
         })();
     }, []);
 
@@ -153,12 +127,38 @@ const TaoKeHoachSanXuat = () => {
         }
 
     }
-    const onUpdate = async () => {
+    const onUpdate = async (record) => {
         const row = await formUpdate.validateFields();
-        const item = data.find((val) => val.key === editingKey);
+        var thu_tu_cu = record.thu_tu_uu_tien;
+        var thu_tu_moi = row.thu_tu_uu_tien;
+        const items = [...previewPlan].map((val) => {
+            var element = {...val};
+            if(thu_tu_moi == val.thu_tu_uu_tien){
+                element = { ...val, thu_tu_uu_tien: thu_tu_cu };
+            }
+            if (val.key === editingKey) {
+                element = { ...val, ...row };
+            }
+            return element;
+        });
+        const inp = {
+            order_id: listCheck,
+            machine_id: planParams.machine_id,
+            start_time: dayjs(planParams.start_date).format('YYYY-MM-DD HH:mm:ss'),
+            plans: items,
+        }
+        setLoadingPlans(true)
+        const res = await handlePlan(inp);
+        if (res.success) {
+            setPreviewPlan(res.data.map((e, index) => ({ ...e, key: index })));
+            setOpenMdlOrder(false);
+        }
+        setLoadingPlans(false);
+        setEditingKey();
+        formUpdate.resetFields();
     };
     const onChange = (value, dataIndex) => {
-        const items = data.map((val) => {
+        const items = previewPlan.map((val) => {
             if (val.key === editingKey) {
                 val[dataIndex] = value;
             }
@@ -173,6 +173,8 @@ const TaoKeHoachSanXuat = () => {
             key: 'thu_tu_uu_tien',
             align: 'center',
             fixed: 'left',
+            editable: true,
+            width: '5%'
         },
         {
             title: 'Khách hàng',
@@ -215,6 +217,20 @@ const TaoKeHoachSanXuat = () => {
             title: 'Số lượng',
             dataIndex: 'sl_kh',
             key: 'sl_kh',
+            align: 'center',
+            editable: true
+        },
+        {
+            title: 'Tốc độ',
+            dataIndex: 'toc_do',
+            key: 'toc_do',
+            align: 'center',
+            editable: true
+        },
+        {
+            title: 'TG đổi model',
+            dataIndex: 'tg_doi_model',
+            key: 'tg_doi_model',
             align: 'center',
             editable: true
         },
@@ -289,9 +305,22 @@ const TaoKeHoachSanXuat = () => {
             width: '5%'
         },
         {
+            title: 'Khổ',
+            dataIndex: 'kho',
+            key: 'kho',
+            align: 'center',
+            width: '5%'
+        },
+        {
             title: 'Ghi chú TBDX',
             dataIndex: 'note_2',
             key: 'note_2',
+            align: 'center',
+        },
+        {
+            title: 'Kết cấu giấy',
+            dataIndex: 'ket_cau_giay',
+            key: 'ket_cau_giay',
             align: 'center',
         },
         {
@@ -301,9 +330,15 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         },
         {
-            title: 'Ghi chú khách',
+            title: 'Ghi chú khách hàng',
             dataIndex: 'note_1',
             key: 'note_1',
+            align: 'center',
+        },
+        {
+            title: 'Đợt',
+            dataIndex: 'dot',
+            key: 'dot',
             align: 'center',
         },
         {
@@ -313,103 +348,30 @@ const TaoKeHoachSanXuat = () => {
             align: 'center',
         }
     ];
-    const col_detailTable_plan = [
-        {
-            title: 'Lô sản xuất',
-            dataIndex: 'lo_sx',
-            key: 'lo_sx',
-            align: 'center',
-            fixed: 'left'
-        },
-        {
-            title: 'Hạn giao SX',
-            dataIndex: 'han_giao_sx',
-            key: 'han_giao_sx',
-            align: 'center',
-        },
-        {
-            title: 'Khách hàng',
-            dataIndex: 'khach_hang',
-            key: 'khach_hang',
-            align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
-            title: 'Đơn hàng',
-            dataIndex: 'order',
-            key: 'order',
-            align: 'center',
-        },
-        {
-            title: 'Mã quản lý',
-            dataIndex: 'mql',
-            key: 'mql',
-            align: 'center',
-        },
-        {
-            title: 'Dài',
-            dataIndex: 'dai',
-            key: 'dai',
-            align: 'center',
-        },
-        {
-            title: 'Rộng',
-            dataIndex: 'rong',
-            key: 'rong',
-            align: 'center',
-        },
-        {
-            title: 'Cao',
-            dataIndex: 'cao',
-            key: 'cao',
-            align: 'center',
-        },
-        {
-            title: 'Mã đơn hàng',
-            dataIndex: 'mdh',
-            key: 'mdh',
-            align: 'center',
-        },
-        {
-            title: 'Số lượng',
-            dataIndex: 'sl',
-            key: 'sl',
-            align: 'center',
-        },
-        {
-            title: 'Size',
-            dataIndex: 'size',
-            key: 'size',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú 1',
-            dataIndex: 'note_1',
-            key: 'note_1',
-            align: 'center',
-        },
-        {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'ngay_dat_hang',
-            key: 'ngay_dat_hang',
-            align: 'center',
-        },
-        {
-            title: 'Ghi chú 2',
-            dataIndex: 'note_2',
-            key: 'note_2',
-            align: 'center',
-        }
-    ];
+    const headerCheckbox = () => (
+        <Checkbox
+            checked={listCheck.length === data.length}
+            indeterminate={
+                listCheck.length > 0 && listCheck.length < data.length
+            }
+            onChange={toggleSelectAll}
+        />
+    );
     const rowSelection = {
+        selectedRowKeys: listCheck,
         onChange: (selectedRowKeys, selectedRows) => {
             setListCheck(selectedRowKeys);
         },
+        fixed: true,
+        columnTitle: headerCheckbox
+    };
+
+
+
+    const toggleSelectAll = () => {
+        setListCheck((keys) =>
+            keys.length === data.length ? [] : data.map((r) => r.key)
+        );
     };
 
     useEffect(() => {
@@ -422,17 +384,24 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
-            console.log(lsxParams);
             loadListPlans();
         })()
     }, [lsxParams]);
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () => {
-        setExportLoading(true);
-        const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
-        if (res.success) {
-            window.location.href = baseURL + res.data;
+        setExportLoading(false);
+        if(planParams.line_id === '30'){
+            const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
+            if (res.success) {
+                window.location.href = baseURL + res.data;
+            }
+        }else if(planParams.line_id === '33'){
+            const res = await exportPreviewPlanXaLot({ plans: previewPlan, start_time: planParams.start_date });
+            if (res.success) {
+                window.location.href = baseURL + res.data;
+            }
         }
+        
         setExportLoading(false);
     };
 
@@ -476,7 +445,6 @@ const TaoKeHoachSanXuat = () => {
                         style={{
                             margin: 0,
                         }}
-                        initialValue={record?.[dataIndex]}
                     >
                         {inputNode}
                     </Form.Item>
@@ -486,40 +454,38 @@ const TaoKeHoachSanXuat = () => {
             </td>
         );
     };
-    const [editingKey, setEditingKey] = useState("");
-    const isEditing = (record) => record.key === editingKey;
-    const mergedColumns = [...columnKHSX, 
-        {
-            title: "Tác vụ",
-            dataIndex: "action",
-            key: "action",
-            align: "center",
-            fixed: "right",
-            render: (_, record) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-                        <Typography.Link
-                            onClick={() => onUpdate(record)}
-                            style={{
-                                marginRight: 8,
-                            }}
-                        >
-                            Lưu
-                        </Typography.Link>
-                        <a onClick={cancel}>Hủy</a>
-                    </span>
-                ) : (
-                    <span>
-                        <EditOutlined
-                            style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
-                            disabled={editingKey !== ""}
-                            onClick={() => edit(record)}
-                        />
-                    </span>
-                );
-            },
-        }
+    const mergedColumns = [...columnKHSX,
+    {
+        title: "Tác vụ",
+        dataIndex: "action",
+        key: "action",
+        align: "center",
+        fixed: "right",
+        render: (_, record) => {
+            const editable = isEditing(record);
+            return editable ? (
+                <>
+                    <Typography.Link
+                        onClick={() => onUpdate(record)}
+                        style={{
+                            marginRight: 8,
+                        }}
+                    >
+                        Lưu
+                    </Typography.Link>
+                    <a onClick={cancel}>Hủy</a>
+                </>
+            ) : (
+                <>
+                    <EditOutlined
+                        style={{ color: "#1677ff", fontSize: 18 }}
+                        disabled={editingKey !== ""}
+                        onClick={() => edit(record)}
+                    />
+                </>
+            );
+        },
+    }
     ].map((col) => {
         if (!col.editable) {
             return col;
@@ -537,7 +503,7 @@ const TaoKeHoachSanXuat = () => {
         };
     });
     const edit = (record) => {
-        form.setFieldsValue({
+        formUpdate.setFieldsValue({
             ...record,
         });
         setEditingKey(record.key);
@@ -551,9 +517,15 @@ const TaoKeHoachSanXuat = () => {
         }
         setEditingKey("");
     };
+    const [lineId, setLineId] = useState();
+    useEffect(() => {
+        const line_id = listMachines.find(e => planParams?.machine_id === e.id)?.line_id;
+        console.log(line_id);
+        setLineId(line_id);
+    }, [planParams.machine_id])
     return (
         <>
-            <Row style={{ padding: "8px", height: "90vh" }} gutter={[8, 8]}>
+            <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
                 <Col span={24}>
                     <Card
                         style={{ height: "100%" }}
@@ -572,9 +544,9 @@ const TaoKeHoachSanXuat = () => {
                                         className="mb-3"
                                         rules={[{ required: true }]}
                                     >
-                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={value => {
-                                            setPlanParams({ ...planParams, machine_id: value });
-                                            setOrderParams({ ...orderParams, machine_id: value });
+                                        <Select showSearch placeholder="Chọn máy" options={listMachines} onChange={(value, option) => {
+                                            setPlanParams({ ...planParams, machine_id: value, line_id: option.line_id });
+                                            setOrderParams({ ...orderParams, machine_id: value, line_id: option.line_id });
                                         }}
                                             optionFilterProp="label" />
                                     </Form.Item>
@@ -608,13 +580,13 @@ const TaoKeHoachSanXuat = () => {
                         <Form form={formUpdate}>
                             <Table size='small' bordered
                                 pagination={false}
-                                columns={planParams?.machine_id?.includes('P') ? mergedColumns : columnKHSX}
+                                columns={(lineId) ? mergedColumns : columnKHSX}
                                 components={{
                                     body: {
                                         cell: EditableCell,
                                     },
                                 }}
-                                dataSource={previewPlan.map((e, index)=>({...e, key: index}))} 
+                                dataSource={previewPlan}
                             />
                         </Form>
                     </Card >
@@ -629,7 +601,7 @@ const TaoKeHoachSanXuat = () => {
             >
                 <Form layout="vertical">
                     <Row gutter={[16, 16]}>
-                        <Col span={6}>
+                        <Col span={4}>
                             <Form.Item
                                 label="Khách hàng"
                                 className="mb-3"
@@ -652,7 +624,7 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        <Col span={4}>
                             <Form.Item
                                 label="MDH"
                                 className="mb-3"
@@ -665,8 +637,29 @@ const TaoKeHoachSanXuat = () => {
                                     onChange={(value) => {
                                         setOrderParams({ ...orderParams, mdh: value });
                                     }}
-                                    open={false}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
                                     placeholder="Nhập mã đơn hàng"
+                                    options={[]}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Đợt"
+                                className="mb-3"
+                            >
+                                <Select
+                                    mode="tags"
+                                    allowClear
+                                    showSearch
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, dot: value });
+                                    }}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
+                                    placeholder="Nhập đợt"
                                     options={[]}
                                 />
                             </Form.Item>
@@ -708,7 +701,7 @@ const TaoKeHoachSanXuat = () => {
                 <Button type="primary" className="mb-1" onClick={insertOrder}>Thêm đơn hàng</Button>
                 <Table size='small' bordered
                     loading={loadingOrders}
-                    pagination={false}
+                    pagination={true}
                     scroll={
                         {
                             x: '130vw',
@@ -717,88 +710,8 @@ const TaoKeHoachSanXuat = () => {
                     }
                     rowSelection={rowSelection}
                     columns={col_detailTable}
-                    dataSource={data.map(e => ({ ...e, key: e.id }))} />
+                    dataSource={data} />
             </Modal>
-            {/* <Modal
-                title={'Danh sách lô sản xuất'}
-                open={openMdlPlan}
-                onCancel={() => setOpenMdlPlan(false)}
-                footer={null}
-                width={'80vw'}
-            >
-                <Form layout="vertical">
-                    <Row gutter={[16, 16]}>
-                        <Col span={8}>
-                            <Form.Item
-                                label="Khách hàng"
-                                className="mb-3"
-                            >
-                                <Select
-                                    allowClear
-                                    showSearch
-                                    placeholder="Chọn khách hàng"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setLSXParams({ ...lsxParams, customer_id: value })
-                                    }
-                                    // filterOption={(input, option) =>
-                                    //     (option?.label ?? "")
-                                    //         .toLowerCase()
-                                    //         .includes(input.toLowerCase())
-                                    // }
-                                    popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
-                                    options={listCustomers}
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item
-                                label="Bắt đầu"
-                                className="mb-3"
-                            >
-                                <DatePicker
-                                    allowClear={false}
-                                    placeholder="Bắt đầu"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setLSXParams({ ...lsxParams, start_date: value })
-                                    }
-                                    value={lsxParams.start_date}
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item
-                                label="Kết thúc"
-                                className="mb-3"
-                            >
-                                <DatePicker
-                                    allowClear={false}
-                                    placeholder="Kết thúc"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setLSXParams({ ...lsxParams, end_date: value })
-                                    }
-                                    value={lsxParams.end_date}
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                </Form>
-                <Button type="primary" className="mb-1" onClick={insertLSX}>Thêm lô sản xuất</Button>
-                <Table size='small' bordered
-                    loading={loadingPlans}
-                    pagination={false}
-                    scroll={
-                        {
-                            x: '130vw',
-                            y: '60vh'
-                        }
-                    }
-                    rowSelection={rowSelection}
-                    columns={col_detailTable_plan}
-                    dataSource={listPlan.map(e => ({ ...e, key: e.id }))} />
-            </Modal> */}
         </>
     );
 };

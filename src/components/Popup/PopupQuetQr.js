@@ -53,6 +53,7 @@ function PopupQuetQr(props) {
     const index = data.findIndex((item) =>
       Object.values(item).some((val) => val === "")
     );
+    console.log(data, index);
     const newData = data.map((val, i) => {
       if (index === i) {
         const emptyKey = Object.keys(val).find((key) => val[key] === "");
@@ -63,11 +64,12 @@ function PopupQuetQr(props) {
 
         if (emptyKey === "vi_tri") {
           // if (result === checkData[index]?.vi_tri) {
-          const isLocation = checkData?.some((val) => val?.vi_tri === result);
+          const isLocation = checkData?.some((val) => val?.vi_tri === result && val.isDone === false);
+          console.log(checkData, isLocation, result);
           if (isLocation) {
             val.vi_tri = result;
           } else {
-            messageAlert("Mã vị trí không đúng, Vui lòng quét lại");
+            message.info("Mã vị trí không đúng, Vui lòng quét lại");
           }
         } else if (emptyKey === lastedEmptyKey) {
           const itemByIndex = data.find((it, itIndex) => itIndex === index);
@@ -100,7 +102,7 @@ function PopupQuetQr(props) {
           val[emptyKey] = result;
           setCheckData(
             checkData.map((it, itemIndex) => {
-              if (itemIndex === index) {
+              if (it.vi_tri === itemByIndex.vi_tri) {
                 it.isDone = true;
               }
               return { ...it };
@@ -149,14 +151,7 @@ function PopupQuetQr(props) {
 
   const getMappingList = async () => {
     try {
-      // const res = await getEquipmentMappingList({ lo_sx: loSx });
-      const res = {
-        data: {
-          label: ["Vị trí", "Mã cuộn"],
-          key: ["vi_tri", "ma_cuon"],
-          position: ["S010501", "S010302"],
-        },
-      };
+      const res = await getEquipmentMappingList({ lo_sx: loSx });
       const keys = res.data.key;
       const columns = res.data.label.map((item, index) => {
         const key = keys[index];
@@ -178,10 +173,7 @@ function PopupQuetQr(props) {
         return result;
       });
       setData(list);
-
-      // const checkData = res.data?.position?.map((val, index) => ({
-      //   vi_tri: val,
-      // }));
+      console.log()
       setCheckData(
         res.data?.position?.map((val) => ({ vi_tri: val, isDone: false }))
       );
@@ -197,6 +189,10 @@ function PopupQuetQr(props) {
   const cancel = () => {
     setVisible(false);
   };
+
+  useEffect(()=>{
+    console.log(data);
+  }, [data])
 
   return (
     <div>

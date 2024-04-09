@@ -37,40 +37,37 @@ const PrintTemplate = ({ detail }) => {
                                         type="svg"
                                     />
                                     <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM TỔ DÁN</h3>
-                                        {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
+                                        <h3 style={{ marginLeft: "8px", fontSize: '32px', marginTop: '38px' }}>TEM THÀNH PHẨM</h3>
                                     </div>
                                     <div className="flex-column">
                                         <img src={logolight} width={110} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
-                                        {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
                                     </div>
-                                    {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td ><b>Khách hàng</b></td>
-                            <td> <span style={{ marginLeft: '10px' }}>{detail.khach_hang}</span></td>
+                            <td><b>Khách hàng</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.khach_hang}</span></td>
                             <td><b>Số Đ.H:</b></td>
                             <td><span style={{ marginLeft: '10px' }}>{detail.mdh}</span></td>
                         </tr>
                         <tr>
                             <td><b>Quy cách</b></td>
-                            <td className="text-center" colSpan={3}><b>{detail.quy_cach}</b></td>
+                            <td className="text-center" colSpan={3}><b>{detail.quy_cach_kh}</b></td>
                         </tr>
                         <tr>
                             <td><b>Số lượng</b></td>
                             <td ><span style={{ marginLeft: '10px' }}>{detail.so_luong}</span></td>
                             <td><b>MQL TBDX</b></td>
-                            <td ><span style={{ marginLeft: '10px' }}>{detail.mql}</span></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.mql}</span></td>
                         </tr>
                         <tr>
-                            <td><b>Order:</b></td>
-                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.order}</span></td>
+                            <td><b>Order</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.order_kh}</span></td>
                         </tr>
                         <tr>
-                            <td><b>GMO</b></td>
-                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.gmo}</span></td>
+                            <td><b>TMO</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.tmo}</span></td>
                         </tr>
                         <tr>
                             <td><b>PO</b></td>
@@ -95,8 +92,18 @@ const PrintTemplate = ({ detail }) => {
                         <tr>
                             <td><b>N.Viên S.X</b></td>
                             <td><span style={{ marginLeft: '10px' }}>{detail.nhan_vien_sx}</span></td>
-                            <td ><b>Máy in:</b></td>
+                            <td ><b>Máy:</b></td>
                             <td><span style={{ marginLeft: '10px' }}>{detail.machine_id}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Nơi giao</b></td>
+                            <td colSpan={3}><span style={{ marginLeft: '10px' }}>{detail.xuong_giao}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Đợt</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.dot}</span></td>
+                            <td><b>SLG SX</b></td>
+                            <td><span style={{ marginLeft: '10px' }}>{detail.slg_sx}</span></td>
                         </tr>
                         <tr>
                             <td><b>Ghi chú</b></td>
@@ -109,8 +116,22 @@ const PrintTemplate = ({ detail }) => {
         </div>
     );
 };
-export default class TemIn extends React.Component {
+export default class TemThanhPham extends React.Component {
     render() {
+        // function resize() {
+        //     let td = document.querySelectorAll(".print-only tr td");
+        //     let target = Array.from(td).filter(td => td.querySelector('span')).map(td=>{
+        //         let span = td.querySelector("span");
+        //         if(span){
+        //             td.style.fontSize = "" + parseInt(100/span.innerHTML) + 'px';
+        //             let style = window.getComputedStyle(td, null).getPropertyValue('font-size');
+        //             let fontSize = parseFloat(style);
+        //             console.log(fontSize);
+        //         }
+        //     });
+        // }
+        // resize();
+        // window.addEventListener('beforeprint', resize);
         let printingPages = [];
         const { listCheck } = this.props;
         // for (const detail of listCheck) {

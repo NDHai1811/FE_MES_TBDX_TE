@@ -24,11 +24,12 @@ import {
   createOrder,
   deleteOrders,
   exportOrders,
+  getKhuon,
   getOrders,
   splitOrders,
   updateOrder,
 } from "../../../api";
-import { DeleteOutlined, EditOutlined, LinkOutlined, CopyOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
@@ -39,6 +40,7 @@ import {
   getListLayout,
 } from "../../../api/ui/manufacture";
 import "../style.scss";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -64,13 +66,12 @@ const EditableCell = ({
           value={record?.[dataIndex]}
           options={options}
           onChange={(value) => onSelect(value, dataIndex)}
-          bordered
           showSearch
         />
       );
       break;
     default:
-      inputNode = <Input />;
+      inputNode = <Input onChange={(event)=>onChange(event.target.value, dataIndex)}/>;
   }
   const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
@@ -142,16 +143,6 @@ const PL2s = [
     phan_loai_1: 'thung'
   },
   {
-    label: "Thùng thường",
-    value: "thung-thuong",
-    phan_loai_1: 'inner'
-  },
-  {
-    label: "Thùng bế",
-    value: "thung-be",
-    phan_loai_1: 'thung'
-  },
-  {
     label: "Thùng 1 nắp",
     value: "thung-1-nap",
     phan_loai_1: 'thung'
@@ -162,6 +153,21 @@ const PL2s = [
     phan_loai_1: 'thung'
   },
   {
+    label: "Thùng bế",
+    value: "thung-be",
+    phan_loai_1: 'thung'
+  },
+  {
+    label: "Thùng thường",
+    value: "thung-thuong",
+    phan_loai_1: 'inner'
+  },
+  {
+    label: "Thùng bế",
+    value: "thung-be",
+    phan_loai_1: 'inner'
+  },
+  {
     label: "Pad U",
     value: "pad-u",
     phan_loai_1: 'pad'
@@ -169,6 +175,11 @@ const PL2s = [
   {
     label: "Pad Z, rãnh",
     value: "pad-z-ranh",
+    phan_loai_1: 'pad'
+  },
+  {
+    label: "Pad Bế",
+    value: "pad-be",
     phan_loai_1: 'pad'
   },
   {
@@ -197,23 +208,29 @@ const Orders = () => {
   const [form] = Form.useForm();
   const [params, setParams] = useState({
     page: 1,
-    pageSize: 10,
+    pageSize: 20,
   });
   const [editingKey, setEditingKey] = useState("");
+  const [isSidebar, setIsSidebar] = useState(true);
   const [splitKey, setSplitKey] = useState("");
   const [data, setData] = useState([]);
   const isEditing = (record) => record.key === editingKey;
   const [buyers, setBuyers] = useState([]);
   const [layouts, setLayouts] = useState([]);
   const [listDRC, setListDRC] = useState([]);
+  const [listKhuonLink, setListKhuonLink] = useState([]);
   const [listCheck, setListCheck] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [isOpenMdl, setIsOpenMdl] = useState(false);
   const [rowUpdate, setRowUpdate] = useState({});
   const [listParams, setListParams] = useState([]);
+  const [loadingExport, setLoadingExport] = useState(false);
+  const [loadingExport1, setLoadingExport1] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
   const [inputData, setInputData] = useState([
     {
       so_luong: 0,
@@ -223,16 +240,16 @@ const Orders = () => {
   ]);
   const optionChecks = [
     {
-      label: 'Dài',
-      value: 'dai',
+      label: 'L',
+      value: 'length',
     },
     {
-      label: 'Rộng',
-      value: 'rong',
+      label: 'W',
+      value: 'width',
     },
     {
-      label: 'Cao',
-      value: 'cao',
+      label: 'H',
+      value: 'height',
     },
     {
       label: 'Khổ',
@@ -303,6 +320,10 @@ const Orders = () => {
       value: 'so_met_toi',
     },
     {
+      label: 'Đợt',
+      value: 'dot',
+    },
+    {
       label: 'Mã layout',
       value: 'layout_id',
     },
@@ -311,7 +332,7 @@ const Orders = () => {
       value: 'layout_type',
     }
   ];
-  const checkAll = optionChecks.length === listParams.length;
+  const checkAll = listParams.length > 0 ? optionChecks.length === listParams.length : false;
   const indeterminate = listParams.length > 0 && listParams.length < optionChecks.length;
   const onCheckAllChange = (e) => {
     const arr = optionChecks.map((value) => value.value);
@@ -337,7 +358,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "2%",
+      width: 100,
     },
     {
       title: "MDH",
@@ -347,7 +368,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.6%",
+      width: 100,
     },
     {
       title: "L",
@@ -357,7 +378,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.2%",
+      width: 50,
     },
     {
       title: "W",
@@ -367,7 +388,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.2%",
+      width: 50,
     },
     {
       title: "H",
@@ -377,7 +398,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: "1.2%",
+      width: 50,
     },
     {
       title: "Kích thước ĐH",
@@ -387,6 +408,7 @@ const Orders = () => {
       editable: true,
       fixed: "left",
       checked: true,
+      width: 140
     },
     {
       title: "MQL",
@@ -395,7 +417,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "1%",
+      width: 50,
       fixed: "left",
     },
     {
@@ -403,7 +425,7 @@ const Orders = () => {
       dataIndex: "sl",
       key: "sl",
       align: "center",
-      width: "1.2%",
+      width: 60,
       editable: true,
       checked: true,
       fixed: "left",
@@ -413,7 +435,7 @@ const Orders = () => {
       dataIndex: "unit",
       key: "unit",
       align: "center",
-      width: "1.2%",
+      width: 60,
       editable: true,
       checked: true,
     },
@@ -422,16 +444,16 @@ const Orders = () => {
       dataIndex: "kich_thuoc_chuan",
       key: "kich_thuoc_chuan",
       align: "center",
-      width: "2.5%",
       editable: true,
       checked: true,
+      width: 100
     },
     {
       title: "Phân loại 1",
       dataIndex: "phan_loai_1",
       key: "phan_loai_1",
       align: "center",
-      width: "2%",
+      width: 90,
       editable: true,
       checked: true,
       render: (value) => PL1s.find((e) => e.value === value)?.label,
@@ -441,7 +463,7 @@ const Orders = () => {
       dataIndex: "quy_cach_drc",
       key: "quy_cach_drc",
       align: "center",
-      width: "5%",
+      width: 120,
       editable: true,
       checked: true,
     },
@@ -450,7 +472,7 @@ const Orders = () => {
       dataIndex: "phan_loai_2",
       key: "phan_loai_2",
       align: "center",
-      width: "4%",
+      width: 140,
       editable: true,
       checked: true,
       render: (value) => PL2s.find((e) => e.value === value)?.label,
@@ -463,6 +485,14 @@ const Orders = () => {
       editable: true,
       checked: true,
       width: "5%",
+    },
+    {
+      title: "Mã khuôn",
+      dataIndex: "khuon_id",
+      key: "khuon_id",
+      align: "center",
+      width: "5%",
+      editable: true
     },
     {
       title: "Tốc độ",
@@ -488,6 +518,27 @@ const Orders = () => {
       key: "note_3",
       align: "center",
       editable: true,
+      checked: true,
+    },
+    {
+      title: "Dài",
+      dataIndex: "dai",
+      key: "dai",
+      align: "center",
+      checked: true,
+    },
+    {
+      title: "Rộng",
+      dataIndex: "rong",
+      key: "rong",
+      align: "center",
+      checked: true,
+    },
+    {
+      title: "Cao",
+      dataIndex: "cao",
+      key: "cao",
+      align: "center",
       checked: true,
     },
     {
@@ -731,12 +782,12 @@ const Orders = () => {
       checked: true,
     },
     {
-      title: "Ngày lập KH",
+      title: "Ngày thực hiện KH",
       dataIndex: "ngay_kh",
       key: "ngay_kh",
       align: "center",
       width: '2%',
-      render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.created_at).format('DD-MM-YYYY') : '',
+      render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.thoi_gian_bat_dau).format('DD-MM-YYYY') : '',
     },
     {
       title: "Tác vụ",
@@ -749,19 +800,17 @@ const Orders = () => {
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
-          <span>
+          <span className="d-flex justify-content-evenly flex-wrap">
             <Button
               onClick={() => onUpdate(record)}
               size="small"
               type="primary"
-              style={{
-                marginRight: 5,
-              }}
+              style={{ margin: 2, }}
             >
               Lưu
             </Button>
             <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-              <Button size="small" type="primary" danger >Hủy</Button>
+              <Button size="small" type="primary" danger style={{ margin: 2, }}>Hủy</Button>
             </Popconfirm>
           </span>
         ) : (
@@ -853,7 +902,17 @@ const Orders = () => {
         filteredOptions = PL1s;
         break;
       case "phan_loai_2":
-        filteredOptions = PL2s.filter(e=>e?.phan_loai_1 === record?.phan_loai_1);
+        filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1);
+        const khuon = null;
+        let formData = {...record};
+        if(record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong){
+          const khuon = listKhuonLink.find(e=>e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao);
+          if(khuon){
+            filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1 && e.value.includes('be'));
+            formData = {...formData, khuon_id: khuon?.khuon_id, phan_loai_2: filteredOptions[0]?.value}
+          }
+        }
+        form.setFieldsValue(formData);
         break;
       default:
         var options = record?.customer_specifications ?? [];
@@ -867,9 +926,9 @@ const Orders = () => {
             value: e.drc_id,
             label: e.drc_id + " (" + e.drc.description + ")",
           }));
-        if (filteredOptions.length <= 0) {
-          filteredOptions = listDRC;
-        }
+        // if (filteredOptions.length <= 0) {
+        //   filteredOptions = listDRC;
+        // }
         break;
     }
     return filteredOptions;
@@ -897,7 +956,7 @@ const Orders = () => {
         {mergedColumns
           .filter((col) => col.key !== "action")
           .map((col) => (
-            <Col span={4}>
+            <Col span={4} key={col.key}>
               <Checkbox value={col.dataIndex}>{col.title}</Checkbox>
             </Col>
           ))}
@@ -945,6 +1004,7 @@ const Orders = () => {
       {
         so_luong: 0,
         ngay_giao: "",
+        dot: 1,
         xuong_giao: "",
       },
     ]);
@@ -958,13 +1018,8 @@ const Orders = () => {
     getBuyerList();
     getLayouts();
     getDRCs();
+    getKhuonLink();
   }, []);
-
-  // useEffect(() => {
-  //   if (editingKey) {
-  //     getBuyerList();
-  //   }
-  // }, [editingKey]);
 
   const rowSelection = {
     selectedRowKeys: listCheck,
@@ -973,38 +1028,23 @@ const Orders = () => {
     },
   };
 
-  const removeAccents = (str) => {
-    if (str) {
-      return PL1s.find((e) => e.value === str)?.label;
-    } else {
-      return "";
-    }
-  };
-
   const getBuyerList = async () => {
     const item = data.find((value) => value.key === editingKey);
     const res = await getBuyers();
     setBuyers(res.map((val) => ({ label: val.id, value: val.id })));
   };
 
-  const onSelect = (value, dataIndex) => {
-    const items = data.map((val) => {
-      if (val.key === editingKey) {
-        val[dataIndex] = value;
-      }
-      return { ...val };
-    });
-    // if (dataIndex === "phan_loai_1") {
-    //   getBuyerList();
-    // }
-    setData(items);
-  };
-
   const getLayouts = async () => {
     const res = await getListLayout();
-    setLayouts(
-      res.map((val) => ({ label: val.layout_id, value: val.layout_id }))
-    );
+    const check_arr = [];
+    const result = [];
+    res.map((val) => {
+      if (!check_arr.includes(val.layout_id)) {
+        check_arr.push(val.layout_id);
+        result.push({ label: val.layout_id, value: val.layout_id });
+      }
+    })
+    setLayouts(result);
   };
 
   const getDRCs = async () => {
@@ -1015,6 +1055,21 @@ const Orders = () => {
         value: val.id,
       }))
     );
+  };
+
+  const getKhuonLink = async () => {
+    const res = await getKhuon();
+    setListKhuonLink(res);
+  }
+  const onSelect = (value, dataIndex) => {
+    const items = data.map((val) => {
+      if (val.key === editingKey) {
+        val[dataIndex] = value;
+      }
+      return { ...val };
+    });
+    console.log(items);
+    setData(items);
   };
 
   const onChange = (value, dataIndex) => {
@@ -1164,10 +1219,6 @@ const Orders = () => {
     message.success('Xoá thành công');
   };
 
-  const [loadingExport, setLoadingExport] = useState(false);
-  const [loadingExport1, setLoadingExport1] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
     const res = await exportOrders(params);
@@ -1208,7 +1259,17 @@ const Orders = () => {
             />
           </div>
         </Col>
-        <Col span={12}>
+        <Col span={3}>
+          <div>
+            <p3 style={{ display: "block" }}>Đợt</p3>
+            <Input
+              placeholder="Nhập đợt"
+              onChange={(e) => onChangeDot(e.target.value, index)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        </Col>
+        <Col span={9}>
           <div>
             <p3 style={{ display: "block" }}>Nơi giao</p3>
             <Input
@@ -1252,13 +1313,41 @@ const Orders = () => {
     setInputData(items);
   };
 
+  const onChangeDot = (value, index) => {
+    const items = inputData.map((val, i) => {
+      if (i === index) {
+        val.dot = value;
+      }
+      return { ...val };
+    });
+    setInputData(items);
+  };
+  const { userProfile } = useProfile();
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
-        <Col span={4}>
+      <div style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 60px)', display: 'flex', gap: 4 }}>
+        <div className={isSidebar ? 'ant-col ant-col-4' : 'ant-col-0'}>
           <div className="slide-bar">
             <Card
+              style={{ height: "100%" }}
               bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
               actions={[
@@ -1274,12 +1363,25 @@ const Orders = () => {
               ]}
             >
               <Divider>Tìm kiếm</Divider>
-              <div className="mb-3">
+              <div className="mb-3" >
                 <Form
-                  style={{ margin: "0 5px" }}
+                  style={{ margin: "0 15px" }}
                   layout="vertical"
                   onFinish={btn_click}
                 >
+                  <Form.Item label="Ngày đặt hàng" className="mb-3">
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Ngày giao hàng"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, ngay_dat_hang: value, page: 1, })
+                        setPage(1);
+                      }
+                      }
+                      value={params.ngay_dat_hang}
+                    />
+                  </Form.Item>
                   <Form.Item label="Mã khách hàng" className="mb-3">
                     <Input
                       allowClear
@@ -1325,6 +1427,20 @@ const Orders = () => {
                       open={false}
                       tokenSeparators={[',']}
                       options={[]}
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          mql: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập MQL"
                     />
                   </Form.Item>
                   <Form.Item label="L" className="mb-3">
@@ -1395,20 +1511,6 @@ const Orders = () => {
                         setPage(1);
                       }}
                       placeholder="Nhập order"
-                    />
-                  </Form.Item>
-                  <Form.Item label="MQL" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          mql: e.target.value,
-                          page: 1,
-                        });
-                        setPage(1);
-                      }}
-                      placeholder="Nhập MQL"
                     />
                   </Form.Item>
                   <Form.Item label="PO" className="mb-3">
@@ -1506,8 +1608,10 @@ const Orders = () => {
                       allowClear={false}
                       placeholder="Ngày giao hàng"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, han_giao: value })
+                      onChange={(value) => {
+                        setParams({ ...params, han_giao: value, page: 1, })
+                        setPage(1);
+                      }
                       }
                       value={params.han_giao}
                     />
@@ -1517,8 +1621,10 @@ const Orders = () => {
                       allowClear={false}
                       placeholder="Đợt"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, dot: value.target.value })
+                      onChange={(value) => {
+                        setParams({ ...params, dot: value.target.value, page: 1, });
+                        setPage(1);
+                      }
                       }
                       value={params.dot}
                     />
@@ -1542,13 +1648,12 @@ const Orders = () => {
               </div>
             </Card>
           </div>
-        </Col>
-        <Col span={20}>
+        </div>
+        <div className='w-100 overflow-auto px-1'>
           <Card
-            style={{ height: "100%" }}
-            title="Quản lý đơn hàng"
-            bodyStyle={{ paddingBottom: 0 }}
-            className="custom-card scroll"
+            style={{ display: 'block', height: "100%", overflow: 'hidden' }}
+            title={<><Button type="text" onClick={() => setIsSidebar(!isSidebar)} size="small" icon={isSidebar ? <LeftOutlined /> : <RightOutlined />}></Button><span style={{ fontSize: '16px', marginLeft: '6px' }}>Quản lý đơn hàng</span></>}
+            className="custom-card"
             extra={
               <Space>
                 <Popover content={content} title="Ẩn/Hiện cột" trigger="click">
@@ -1585,7 +1690,7 @@ const Orders = () => {
                   name="files"
                   action={baseURL + "/api/orders/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -1624,8 +1729,9 @@ const Orders = () => {
                 bordered
                 pagination={{
                   current: page,
-                  size: "default",
+                  size: "small",
                   total: totalPage,
+                  pageSize: pageSize,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
                     setPage(page);
@@ -1641,7 +1747,7 @@ const Orders = () => {
                 rowClassName="editable-row"
                 scroll={{
                   x: "380vw",
-                  y: window.innerHeight * 0.5,
+                  y: tableHeight,
                 }}
                 columns={mergedColumns.filter(
                   (column) => !hideData.includes(column.key)
@@ -1650,8 +1756,8 @@ const Orders = () => {
               />
             </Form>
           </Card>
-        </Col>
-      </Row>
+        </div>
+      </div>
       <Modal
         title="Tách đơn hàng"
         open={isModalVisible}
@@ -1685,9 +1791,9 @@ const Orders = () => {
         >
           <Row>
             {
-              optionChecks.map(option =>
+              optionChecks.map((option, index) =>
               (
-                <Col span={24}>
+                <Col span={24} key={index}>
                   <Checkbox value={option.value} >{option.label}</Checkbox>
                 </Col>
               )

@@ -14,6 +14,7 @@ import {
   message,
   Popconfirm,
   Tree,
+  Input,
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { Pie, DualAxes, Line } from "@ant-design/plots";
@@ -27,6 +28,7 @@ import {
 import { baseURL } from "../../../config";
 import {
   getErrorDetailList,
+  getQCHistory,
   getQualityOverall,
   getTopError,
   getTrendingError,
@@ -40,7 +42,10 @@ const QualityPQC = (props) => {
   const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
   const [listNameProducts, setListNameProducts] = useState([]);
-  const [params, setParams] = useState({ date: [dayjs(), dayjs()] });
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs(), page: 1, pageSize: 20 });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   useEffect(() => {
     (async () => {
       const res1 = await getLines();
@@ -52,26 +57,7 @@ const QualityPQC = (props) => {
       const res2 = await getUIItemMenu();
       setItemMenu(res2.data);
     })();
-    btn_click();
   }, []);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     var res = await getDataFilterUI({ khach_hang: params.khach_hang });
-  //     if (res.success) {
-  //       setListNameProducts(
-  //         res.data.product.map((e) => {
-  //           return { ...e, label: e.name, value: e.id };
-  //         })
-  //       );
-  //       setListLoSX(
-  //         Object.values(res.data.lo_sx).map((e) => {
-  //           return { label: e, value: e };
-  //         })
-  //       );
-  //     }
-  //   })();
-  // }, [params.khach_hang]);
 
   useEffect(() => {
     if (listLines.length > 0) setSelectedLine(listLines[1].id);
@@ -86,7 +72,7 @@ const QualityPQC = (props) => {
   };
 
   const [data, setData] = useState();
-  const [dataTable2, setDataTable2] = useState();
+  const [dataTable, setDataTable] = useState();
   const [dataLineChart, setDataLineChart] = useState([]);
   const [dataPieChart, setDataPieChart] = useState([]);
   const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
@@ -140,46 +126,15 @@ const QualityPQC = (props) => {
     },
   };
 
-  async function btnNG_click(record) {
-    const errors = record.errors;
-    console.log(errors);
-    if (!errors || errors.length <= 0) return;
-    else {
-      setDataPieChart_NG(
-        Object.keys(errors).map((item, i) => {
-          return {
-            error: errors[item].name,
-            value: errors[item].value,
-          };
-        })
-      );
-      setDataDetailError([
-        ...Object.keys(errors).map((item, i) => {
-          return {
-            name: errors[item].name,
-            value: errors[item].value,
-          };
-        }),
-      ]);
-      showModal();
-    }
-  }
   const [messageApi, contextHolder] = message.useMessage();
-  const onChangeChecbox = (e, record) => {
-    if (e.target.checked) {
-      setSelectedLot(record.lot_id);
-    } else {
-      setSelectedLot();
-    }
-  };
 
-  const columnsDetail = [
+  const columns = [
     {
       title: "STT",
       dataIndex: "index",
       key: "index",
       align: "center",
-      render: (value, record, index) => index + 1,
+      render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
       fixed: "left",
     },
     {
@@ -197,8 +152,8 @@ const QualityPQC = (props) => {
     },
     {
       title: "Đơn hàng",
-      dataIndex: "order_id",
-      key: "order_id",
+      dataIndex: "mdh",
+      key: "mdh",
       align: "center",
     },
     {
@@ -208,29 +163,23 @@ const QualityPQC = (props) => {
       align: "center",
     },
     {
-      title: "Lot sản xuất",
-      dataIndex: "lot_id",
-      key: "lot_id",
-      align: "center",
-    },
-    {
       title: "Quy cách",
       dataIndex: "quy_cach",
       key: "quy_cach",
       align: "center",
     },
-    {
-      title: "TG BĐ",
-      dataIndex: "thoi_gian_bat_dau",
-      key: "thoi_gian_bat_dau",
-      align: "center",
-    },
-    {
-      title: "TG KT",
-      dataIndex: "thoi_gian_ket_thuc",
-      key: "thoi_gian_ket_thuc",
-      align: "center",
-    },
+    // {
+    //   title: "TG BĐ",
+    //   dataIndex: "thoi_gian_bat_dau",
+    //   key: "thoi_gian_bat_dau",
+    //   align: "center",
+    // },
+    // {
+    //   title: "TG KT",
+    //   dataIndex: "thoi_gian_ket_thuc",
+    //   key: "thoi_gian_ket_thuc",
+    //   align: "center",
+    // },
     {
       title: "Sản lượng đếm được",
       dataIndex: "sl_dau_ra_hang_loat",
@@ -286,9 +235,10 @@ const QualityPQC = (props) => {
       dataIndex: "cho_phep_tai_kiem",
       key: "cho_phep_tai_kiem",
       align: "center",
+      width: 100,
       render: (value, record) => (
         <Popconfirm
-          disabled={record.phan_dinh !== 2}
+          disabled={record?.phan_dinh !== 2}
           title="Tái kiểm"
           description="Cho phép tái kiểm lot này?"
           okText="Có"
@@ -296,7 +246,7 @@ const QualityPQC = (props) => {
           onConfirm={() => recheck(record.id)}
           cancelText="Không"
         >
-          <Button disabled={record.phan_dinh !== 2}>Tái kiểm</Button>
+          <Button disabled={record?.phan_dinh !== 2}>Tái kiểm</Button>
         </Popconfirm>
       ),
     },
@@ -305,79 +255,42 @@ const QualityPQC = (props) => {
   const recheck = async (id) => {
     var res = await recheckQC({ id });
   };
-  const [dataDetail, setDataDetail] = useState([]);
 
   function btn_click() {
     (async () => {
       setLoading(true);
-      const res1 = await getErrorDetailList(params);
-      setDataDetail(res1.data);
-      const res2 = await getQualityOverall(params);
-      setSummaryData(res2.data);
-      const res3 = await getTopError(params);
-      setDataPieChart(
-        Object.keys(res3.data ?? {}).map((key) => {
-          return res3.data[key];
-        })
-      );
-      const res4 = await getTrendingError(params);
-      var line_data = [];
-      Object.keys(res4.data ?? {}).map((key) => {
-        Object.keys(res4.data[key] ?? {}).map((error_key) => {
-          line_data.push({
-            date: key,
-            error: error_key,
-            value: res4.data[key][error_key],
-          });
-        });
-      });
-      setDataLineChart(line_data);
+      const res1 = await getQCHistory(params);
+      setDataTable(res1.data);
+      setTotalPage(res1.totalPage);
+      // const res2 = await getQualityOverall(params);
+      // setSummaryData(res2.data);
+      // const res3 = await getTopError(params);
+      // setDataPieChart(
+      //   Object.keys(res3.data ?? {}).map((key) => {
+      //     return res3.data[key];
+      //   })
+      // );
+      // const res4 = await getTrendingError(params);
+      // var line_data = [];
+      // Object.keys(res4.data ?? {}).map((key) => {
+      //   Object.keys(res4.data[key] ?? {}).map((error_key) => {
+      //     line_data.push({
+      //       date: key,
+      //       error: error_key,
+      //       value: res4.data[key][error_key],
+      //     });
+      //   });
+      // });
+      // setDataLineChart(line_data);
       setLoading(false);
     })();
   }
 
   useEffect(() => {
-    if (!data) return;
-    setDataTable2(data.table);
-
-    let res_lineChart = [];
-    let res_pieChart = {};
-    Object.keys(data.chart).forEach(function (key) {
-      Object.keys(data.chart[key]).forEach(function (key_c) {
-        let data_L = {
-          date: key,
-          error: key_c,
-          value: data.chart[key][key_c],
-        };
-        res_lineChart.push(data_L);
-        if (!res_pieChart[key_c]) {
-          res_pieChart[key_c] = data.chart[key][key_c];
-        } else res_pieChart[key_c] += data.chart[key][key_c];
-      });
-    });
-    res_pieChart = Object.fromEntries(
-      Object.entries(res_pieChart).sort(([, a], [, b]) => b - a)
-    );
-    let sorted_resPieChart = [];
-    let sort_i = 0;
-    for (let item in res_pieChart) {
-      sorted_resPieChart[item] = res_pieChart[item];
-      sort_i++;
-      if (sort_i >= 5) break;
-    }
-
-    setDataLineChart(res_lineChart);
-    setDataPieChart(
-      Object.keys(sorted_resPieChart).map((item, i) => {
-        return {
-          error: item,
-          value: sorted_resPieChart[item],
-        };
-      })
-    );
-  }, [data]);
+    btn_click();
+  }, [page, pageSize])
   const [exportLoading, setExportLoading] = useState(false);
-  const [selectedLot, setSelectedLot] = useState();
+
   const exportFile = async () => {
     setExportLoading(true);
     const res = await exportPQC(params);
@@ -388,21 +301,7 @@ const QualityPQC = (props) => {
   };
 
   const [loading, setLoading] = useState(false);
-  const [columnDetailError, setColumnDetailError] = useState([
-    {
-      title: "Tên lỗi",
-      key: "name",
-      dataIndex: "name",
-      align: "center",
-    },
-    {
-      title: "Số lượng",
-      key: "value",
-      dataIndex: "value",
-      align: "center",
-    },
-  ]);
-  const [dataDetailError, setDataDetailError] = useState([]);
+
   const [exportLoading1, setExportLoading1] = useState(false);
   const exportFileDetail = async () => {
     setExportLoading1(true);
@@ -429,60 +328,6 @@ const QualityPQC = (props) => {
     }
     setExportLoading2(false);
   };
-  const summaryTable = [
-    {
-      title: "Sản lượng đếm được",
-      key: "san_luong_dem_duoc",
-      dataIndex: "san_luong_dem_duoc",
-      align: "center",
-      render: (value) => value ?? 0,
-    },
-    {
-      title: "Lỗi ngoại quan",
-      key: "sl_ngoai_quan",
-      dataIndex: "sl_ngoai_quan",
-      align: "center",
-      render: (value) => value ?? 0,
-    },
-    {
-      title: "Lỗi tính năng",
-      key: "sl_tinh_nang",
-      dataIndex: "sl_tinh_nang",
-      align: "center",
-      render: (value) => value ?? 0,
-    },
-    {
-      title: "Tỷ lệ lỗi",
-      key: "ti_le_loi",
-      dataIndex: "ti_le_loi",
-      align: "center",
-      render: (value) => value ?? 0,
-    },
-    {
-      title: "Số phế",
-      key: "sl_ng",
-      dataIndex: "sl_ng",
-      align: "center",
-      render: (value) => value ?? 0,
-    },
-    {
-      title: "Tỷ lệ phế",
-      key: "ti_le_ng",
-      dataIndex: "ti_le_ng",
-      align: "center",
-      render: (value) => value ?? 0,
-    },
-  ];
-  const [summaryData, setSummaryData] = useState([
-    {
-      san_luong_dem_duoc: 1000,
-      sl_ngoai_quan: 10,
-      sl_tinh_nang: 5,
-      sl_ng: 10,
-      ti_le_loi: "2%",
-      ti_le_ng: "1%",
-    },
-  ]);
 
   const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
@@ -491,6 +336,24 @@ const QualityPQC = (props) => {
     );
     setParams({ ...params, machine: filteredKeys });
   };
+
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [dataTable]);
   return (
     <React.Fragment>
       {contextHolder}
@@ -536,18 +399,18 @@ const QualityPQC = (props) => {
                       placeholder="Bắt đầu"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [value, params.date[1]] })
+                        setParams({ ...params, start_date: value })
                       }
-                      value={params.date[0]}
+                      value={params.start_date}
                     />
                     <DatePicker
                       allowClear={false}
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [params.date[0], value] })
+                        setParams({ ...params, end_date: value })
                       }
-                      value={params.date[1]}
+                      value={params.end_date}
                     />
                   </Space>
                 </Form>
@@ -555,106 +418,57 @@ const QualityPQC = (props) => {
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Máy" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập máy"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
-                    />
-                  </Form.Item>
                   <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          customer_id: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập khách hàng"
-                      onChange={(value) =>
-                        setParams({ ...params, khach_hang: value })
-                      }
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listCustomers}
                     />
                   </Form.Item>
-                  <Form.Item label="Đơn hàng" className="mb-3">
+                  <Form.Item label="MĐH" className="mb-3">
                     <Select
                       allowClear
                       showSearch
                       onChange={(value) => {
-                        setParams({ ...params, ten_sp: value });
+                        setParams({ ...params, mdh: value });
                       }}
-                      placeholder="Nhập đơn hàng"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listNameProducts}
+                      open={false}
+                      suffixIcon={null}
+                      mode="tags"
+                      placeholder="Nhập mã đơn hàng"
+                      options={[]}
                     />
                   </Form.Item>
-                  <Form.Item label="Lô Sản xuất" className="mb-3">
-                    <Select
+                  <Form.Item label="Lô sản xuất" className="mb-3">
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          lo_sx: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập lô sản xuất"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
                     />
                   </Form.Item>
                   <Form.Item label="Quy cách" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          quy_cach: e.target.value,
+                          page: 1,
+                        });
+                      }}
                       placeholder="Nhập quy cách"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
-                    />
-                  </Form.Item>
-                  <Form.Item label="Lỗi" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập lỗi"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
                     />
                   </Form.Item>
                 </Form>
@@ -663,8 +477,8 @@ const QualityPQC = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Row gutter={[8, 8]}>
-            <Col span={16}>
+          <Row gutter={[8, 8]} style={{ height: '100%' }}>
+            {/* <Col span={16}>
               <Card
                 title="Biểu đồ xu hướng lỗi"
                 style={{ height: "100%", padding: "0px" }}
@@ -681,12 +495,12 @@ const QualityPQC = (props) => {
               >
                 <Pie {...configPieChart} />
               </Card>
-            </Col>
+            </Col> */}
             <Col span={24}>
               <Card
-                title="Bảng chi tiết lỗi"
+                title="Danh sách kiểm tra QC"
+                className="custom-card"
                 style={{ height: "100%", padding: "0px" }}
-                bodyStyle={{ padding: 12 }}
                 extra={
                   <Space>
                     <Button type="primary" onClick={showModalBC}>
@@ -709,19 +523,29 @@ const QualityPQC = (props) => {
                   </Space>
                 }
               >
-                <Spin spinning={loading}>
-                  <Table
-                    bordered
-                    size="small"
-                    columns={columnsDetail}
-                    dataSource={dataDetail}
-                    pagination={false}
-                    scroll={{
-                      x: "120vw",
-                      y: window.innerHeight * 0.35,
-                    }}
-                  />
-                </Spin>
+                <Table
+                  loading={loading}
+                  bordered
+                  size="small"
+                  columns={columns}
+                  dataSource={dataTable}
+                  pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    },
+                  }}
+                  scroll={{
+                    x: "120vw",
+                    y: tableHeight,
+                  }}
+                />
               </Card>
             </Col>
           </Row>

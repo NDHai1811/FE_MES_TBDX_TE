@@ -28,6 +28,7 @@ import { getBuyers } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "../style.scss";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -60,11 +61,18 @@ const EditableCell = ({
 
 const Buyer = () => {
   document.title = "Quản lý Buyer";
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 20,
+  });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [data, setData] = useState([]);
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -348,10 +356,11 @@ const Buyer = () => {
     setLoading(true);
     const res = await getBuyers(params);
     setData(
-      res.reverse().map((e) => {
+      res.data.reverse().map((e) => {
         return { ...e, key: e.id };
       })
     );
+    setTotalPage(res.totalPage);
     setLoading(false);
   };
 
@@ -402,31 +411,50 @@ const Buyer = () => {
     },
   };
 
+  useEffect(()=>{
+    loadListTable(params);
+  }, [page, pageSize])
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+          const header = document.querySelector('.custom-card .ant-table-header');
+          const pagination = document.querySelector('.custom-card .ant-pagination');
+          const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [data]);
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)', overflow: 'hidden' }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ padding: 0 }}
+              style={{ height: '100%' }}
               className="custom-card scroll"
               actions={[
-                <div layout="vertical">
-                  <Button
-                    type="primary"
-                    style={{ width: "80%" }}
-                    onClick={btn_click}
-                  >
-                    Truy vấn
-                  </Button>
-                </div>,
+
+                <Button
+                  type="primary"
+                  style={{ width: "80%" }}
+                  onClick={btn_click}
+                >
+                  Truy vấn
+                </Button>
+
               ]}
             >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
-                  style={{ margin: "0 15px" }}
                   layout="vertical"
                 // onFinish={btn_click}
                 >
@@ -456,8 +484,8 @@ const Buyer = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            bodyStyle={{ paddingBottom: 0 }}
-            className="custom-card scroll"
+            bodyStyle={{ paddingBottom: 0, height: '100%' }}
+            className="custom-card"
             title="Quản lý Buyer"
             extra={
               <Space>
@@ -466,7 +494,7 @@ const Buyer = () => {
                   name="files"
                   action={baseURL + "/api/upload-buyer"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -501,14 +529,25 @@ const Buyer = () => {
             }
           >
             <Spin spinning={loading}>
-              <Form form={form} component={false}>
+              <Form form={form} component={false} style={{ height: '100%' }}>
                 <Table
                   size="small"
                   bordered
-                  pagination={{ position: ["bottomRight"] }}
+                  pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    },
+                  }}
                   scroll={{
-                    x: "130vw",
-                    y: "50vh",
+                    x: "240vw",
+                    y: tableHeight,
                   }}
                   components={{
                     body: {

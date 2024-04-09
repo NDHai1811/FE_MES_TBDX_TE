@@ -13,21 +13,22 @@ import {
     Spin,
     Modal,
     Select,
-    DatePicker,
-    Popconfirm,
     Typography,
+    InputNumber,
+    Tabs,
+    Badge,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
-import { createStampFromOrder, getOrderList, getTems, updateTem } from "../../../api/ui/manufacture";
+import { createStampFromOrder, getTems, updateTem } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { useReactToPrint } from "react-to-print";
-import TemIn from "../../OI/Manufacture/TemIn";
-import dayjs from "dayjs";
 import { getOrders, getUsers } from "../../../api";
 import { getCustomers } from "../../../api/ui/main";
 import { getMachineList } from "../../../api/ui/machine";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useProfile } from "../../../components/hooks/UserHooks";
+import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
 
 const EditableCell = ({
     editing,
@@ -37,8 +38,30 @@ const EditableCell = ({
     record,
     index,
     children,
+    onSelect,
+    options,
     ...restProps
 }) => {
+    let inputNode;
+    switch (inputType) {
+        case "number":
+            inputNode = <InputNumber />;
+            break;
+        case "select":
+            inputNode = (
+                <Select
+                    value={record?.[dataIndex]}
+                    options={options}
+                    onChange={(value) => onSelect(value, dataIndex)}
+                    bordered
+                    popupMatchSelectWidth={options.length > 0 ? 200 : 0}
+                    showSearch
+                />
+            );
+            break;
+        default:
+            inputNode = <Input />;
+    }
     return (
         <td {...restProps}>
             {editing ? (
@@ -49,7 +72,7 @@ const EditableCell = ({
                     }}
                     initialValue={record?.[dataIndex]}
                 >
-                    <Input />
+                    {inputNode}
                 </Form.Item>
             ) : (
                 children
@@ -60,28 +83,31 @@ const EditableCell = ({
 
 const TaoTem = () => {
     document.title = "Tạo tem sản xuất";
+    const { userProfile } = useProfile();
     const [listCheck, setListCheck] = useState([]);
+    const [listTem, setListTem] = useState([]);
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const [orders, setOrders] = useState([])
     const [loadingExport, setLoadingExport] = useState(false);
     const [loading, setLoading] = useState(false);
     const [editingKey, setEditingKey] = useState("");
-    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 50 });
+    const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 20 });
     const componentRef1 = useRef();
     const [totalPage, setTotalPage] = useState(1);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(50);
+    const [pageSize, setPageSize] = useState(20);
     const [params, setParams] = useState({ show: 'new' });
     const optionsDisplay = [
         { value: 'new', label: 'Mới' },
         { value: 'all', label: 'Tất cả' },
-    ]
+    ];
     const isEditing = (record) => record.key === editingKey;
     const onUpdate = async () => {
         const item = data.find((val) => val.key === editingKey);
         const row = await form.validateFields();
-        const res = await updateTem({ ...item, ...row });
+        console.log({ ...item, ...row });
+        const res = await updateTem({ ...item, ...row, ids: listCheck });
         if (res) {
             form.resetFields();
             loadListTable();
@@ -90,6 +116,15 @@ const TaoTem = () => {
             //   setListCheck([]);
             // }
         }
+    };
+    const onSelect = (value, dataIndex) => {
+        const items = data.map((val) => {
+            if (val.key === editingKey) {
+                val[dataIndex] = value;
+            }
+            return { ...val };
+        });
+        setData(items);
     };
     const cancel = () => {
         setEditingKey("");
@@ -107,91 +142,119 @@ const TaoTem = () => {
             key: "lo_sx",
             align: "center",
             fixed: "left",
+            width: 120
         },
         {
             title: "Khách hàng",
             dataIndex: "khach_hang",
             key: "khach_hang",
             align: "center",
+            fixed: "left",
+            width: 100,
         },
         {
             title: "Đơn hàng TBDX",
             dataIndex: "mdh",
             key: "mdh",
             align: "center",
+            fixed: "left",
+            width: 100
         },
         {
-            title: "Đơn hàng khách hàng",
-            dataIndex: "order",
-            key: "order",
+            title: "Đơn hàng KH",
+            dataIndex: "order_kh",
+            key: "order_kh",
             align: "center",
+            fixed: "left",
+            width: 120
         },
         {
-            title: "Số lượng tem",
+            title: "SL tem",
             dataIndex: "sl_tem",
             key: "sl_tem",
             align: "center",
+            fixed: "left",
             editable: true,
+            width: 60
         },
         {
             title: "MQL",
             dataIndex: "mql",
             key: "mql",
             align: "center",
+            fixed: "left",
+            width: 60
         },
         {
             title: "Số lượng",
             dataIndex: "so_luong",
             key: "so_luong",
             align: "center",
+            editable: true,
+            fixed: "left",
+            width: 70
         },
         {
             title: "GMO",
             dataIndex: "gmo",
             key: "gmo",
             align: "center",
+            width: 150
         },
         {
             title: "PO",
             dataIndex: "po",
             key: "po",
             align: "center",
+            width: 150
         },
         {
             title: "STYLE",
             dataIndex: "style",
             key: "style",
             align: "center",
+            width: 150
         },
         {
             title: "STYLE NO",
             dataIndex: "style",
             key: "style",
-            align: "center",
+            align: "center",    
+            width: 150
         },
         {
             title: "COLOR",
             dataIndex: "color",
             key: "color",
             align: "center",
+            width: 150
         },
         {
             title: "Ghi chú",
             dataIndex: "note",
             key: "note",
             align: "center",
+            editable: true,
+            width: 150
         },
         {
             title: "Máy in",
             dataIndex: "machine_id",
             key: "machine_id",
             align: "center",
+            fixed: "left",
+            width: 70,
+            editable: true,
         },
         {
             title: "Nhân viên sản xuất",
             dataIndex: "nhan_vien_sx",
             key: "nhan_vien_sx",
             align: "center",
+            fixed: "left",
+            width: 150,
+            editable: true,
+            render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
             title: "Tác vụ",
@@ -200,6 +263,7 @@ const TaoTem = () => {
             checked: true,
             align: "center",
             fixed: "right",
+            width: 50,
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -217,7 +281,7 @@ const TaoTem = () => {
                 ) : (
                     <span>
                         <EditOutlined
-                            style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+                            style={{ color: "#1677ff", fontSize: 18}}
                             disabled={editingKey !== ""}
                             onClick={() => edit(record)}
                         />
@@ -234,9 +298,9 @@ const TaoTem = () => {
             const res1 = await getMachineList();
             setListMachines(res1.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
             const res2 = await getCustomers();
-            setListCustomers(res2.data.map((e) => ({ ...e, label: e.name, value: e.id })));
+            setListCustomers(res2.data);
             const res3 = await getUsers();
-            setListUsers(res3.map((e) => ({ ...e, label: e.name, value: e.username })));
+            setListUsers(res3.map((e) => ({ ...e, label: e.name, value: e.id })));
         })();
     }, []);
 
@@ -264,6 +328,16 @@ const TaoTem = () => {
     const options = (dataIndex) => {
         var record = data.find(e => e.id === editingKey);
         let filteredOptions = [];
+        switch (dataIndex) {
+            case 'nhan_vien_sx':
+                filteredOptions = listUsers;
+                break;
+            case 'machine_id':
+                filteredOptions = listMachines;
+                break;
+            default:
+                break;
+        }
         return filteredOptions;
     }
     const print = useReactToPrint({
@@ -285,10 +359,14 @@ const TaoTem = () => {
     };
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRows, selectedRowKeys);
-            setListCheck(selectedRows);
+            setListCheck(selectedRowKeys);
         },
     };
+    useEffect(() => {
+        setListTem([...data].filter(e => listCheck.includes(e.key)).map(e => {
+            return { ...e, nhan_vien_sx: listUsers.find(user => user?.value == e?.nhan_vien_sx)?.label };
+        }));
+    }, [listCheck, data])
     const mergedColumns = col_detailTable.map((col) => {
         if (!col.editable) {
             return col;
@@ -297,9 +375,10 @@ const TaoTem = () => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: "text",
+                inputType: (col.dataIndex === "nhan_vien_sx" || col.dataIndex === "machine_id") ? 'select' : "text",
                 dataIndex: col.dataIndex,
                 title: col.title,
+                onSelect,
                 editing: isEditing(record),
                 options: options(col.dataIndex)
             })
@@ -311,7 +390,7 @@ const TaoTem = () => {
     const searchOrder = async () => {
         setLoadingOrders(true);
         const res = await getOrders(orderParams);
-        setOrders(res.data);
+        setOrders(res.data.map(e => ({ ...e, key: e.id })));
         setTotalPage(res.totalPage);
         setLoadingOrders(false);
     }
@@ -324,60 +403,110 @@ const TaoTem = () => {
             dataIndex: "short_name",
             key: "short_name",
             align: "center",
+            width: '120px',
+            fixed: "left",
         },
         {
-            title: "Đơn hàng TBDX",
+            title: "MDH",
             dataIndex: "mdh",
             key: "mdh",
             align: "center",
+            width: '100px',
+            fixed: "left",
         },
         {
-            title: "Đơn hàng khách hàng",
+            title: "Order",
             dataIndex: "order",
             key: "order",
             align: "center",
+            width: '120px',
+            fixed: "left",
         },
         {
             title: "MQL",
             dataIndex: "mql",
             key: "mql",
             align: "center",
+            width: '50px',
+            fixed: "left",
         },
         {
             title: "Số lượng",
             dataIndex: "sl",
             key: "sl",
             align: "center",
+            width: '80px',
+            fixed: "left",
+        },
+        {
+            title: "Kích thước",
+            dataIndex: "kich_thuoc",
+            key: "kich_thuoc",
+            align: "center",
+            width:'150px'
+        },
+        {
+            title: "Dài",
+            dataIndex: "length",
+            key: "length",
+            align: "center",
+            width: '50px'
+        },
+        {
+            title: "Rộng",
+            dataIndex: "width",
+            key: "width",
+            align: "center",
+            width: '55px'
+        },
+        {
+            title: "Cao",
+            dataIndex: "height",
+            key: "height",
+            align: "center",
+            width: '50px'
         },
         {
             title: "GMO",
             dataIndex: "gmo",
             key: "gmo",
             align: "center",
+            width: '180px'
         },
         {
             title: "PO",
             dataIndex: "po",
             key: "po",
             align: "center",
+            width: '240px'
         },
         {
             title: "STYLE",
             dataIndex: "style",
             key: "style",
             align: "center",
+            width: '180px'
         },
         {
             title: "STYLE NO",
             dataIndex: "style",
             key: "style",
             align: "center",
+            width: '180px'
         },
         {
             title: "COLOR",
             dataIndex: "color",
             key: "color",
             align: "center",
+            width: '180px'
+        },
+        {
+            title: "Đợt",
+            dataIndex: "dot",
+            key: "dot",
+            align: "center",
+            width: '70px'
         },
         {
             title: "Ghi chú",
@@ -386,20 +515,47 @@ const TaoTem = () => {
             align: "center",
         },
     ];
-    const [orderChecked, setOrderChecked] = useState([])
+    const selectOrdersColumns = [...ordersColumn, {
+        title: 'Tác vụ',
+        key: 'action',
+        dataIndex: 'action',
+        align: 'center',
+        fixed: 'right',
+        width: 60,
+        render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
+    }];
+    const [orderChecked, setOrderChecked] = useState([]);
+    const [selectedOrders, setSelectedOrders] = useState([]);
     const orderRowSelection = {
-        selectedRowKeys: orderChecked,
+        selectedRowKeys: [].concat(selectedOrders).map(e => e.key),
+        fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(selectedRows, selectedRowKeys);
             setOrderChecked(selectedRowKeys);
+            setSelectedOrders(prev => {
+                const newArray = [...prev, ...selectedRows];
+                return newArray.filter((e, index) => {
+                    return index === newArray.findIndex(o => e.key === o.key);
+                });
+            });
         },
+        onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
+        onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
     };
+    const onDeselectOrders = (rows) => {
+        setSelectedOrders(prev => {
+            const newArray = [...prev];
+            return newArray.filter((e, index) => {
+                return !rows.some(o => o.key === e.key)
+            });
+        });
+    }
     const createStamp = async () => {
+        const order_ids = [...selectedOrders].map(e => e.id)
         if (!orderParams.machine_id) {
             messageApi.info('Chưa chọn máy');
             return 0;
         }
-        if (orderChecked.length <= 0) {
+        if (order_ids.length <= 0) {
             messageApi.info('Chưa chọn đơn hàng');
             return 0;
         }
@@ -407,16 +563,101 @@ const TaoTem = () => {
             messageApi.info('Chưa chọn nhân viên');
             return 0;
         }
-        var res = await createStampFromOrder({ order_ids: orderChecked, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
+        var res = await createStampFromOrder({ order_ids: order_ids, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
         if (res.success) {
             setOpenModal(false);
             setOrderChecked([]);
+            setSelectedOrders([]);
             loadListTable();
         }
     }
     useEffect(() => {
         openModal && searchOrder()
     }, [openModal, orderParams]);
+    const tableRef = useRef();
+    const header = document.querySelector('.custom-card .ant-table-header');
+    const pagination = document.querySelector('.custom-card .ant-pagination');
+    const card = document.querySelector('.custom-card .ant-card-body');
+    const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    useEffect(() => {
+        const handleWindowResize = () => {
+            const header = document.querySelector('.custom-card .ant-table-header');
+            const pagination = document.querySelector('.custom-card .ant-pagination');
+            const card = document.querySelector('.custom-card .ant-card-body');
+            setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+        };
+        handleWindowResize();
+        window.addEventListener('resize', handleWindowResize);
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    }, [data]);
+    const items = [
+        {
+            label: 'Danh sách đơn hàng',
+            key: 1,
+            children: <Table size='small' bordered
+                loading={loadingOrders}
+                pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                        setPage(page);
+                        setPageSize(pageSize);
+                        setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+                    },
+                }}
+                scroll={
+                    {
+                        x: '2200px',
+                        y: '42vh'
+                    }
+                }
+                tableLayout="fixed"
+                rowSelection={orderRowSelection}
+                columns={ordersColumn}
+                dataSource={orders} />
+        },
+        {
+            label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedOrders.length} showZero color="#1677ff" overflowCount={999} /></Space>,
+            key: 2,
+            children: <Table size='small' bordered
+                pagination={false}
+                loading={loadingOrders}
+                scroll={
+                    {
+                        x: '2200px',
+                        y: '42vh'
+                    }
+                }
+                tableLayout="fixed"
+                columns={selectOrdersColumns}
+                dataSource={selectedOrders}
+                summary={() => (
+                    <Table.Summary fixed>
+                        <Table.Summary.Row>
+                            {selectOrdersColumns.map((e, index) => {
+                                if (index === 0) {
+                                    return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
+                                } else if (index === 4) {
+                                    return <Table.Summary.Cell align="center" index={index}>{
+                                        selectedOrders.reduce((sum, { sl }) => sum + parseInt(sl), 0)
+                                    }</Table.Summary.Cell>
+                                } else {
+                                    return <Table.Summary.Cell index={index} />
+                                }
+                            })}
+                        </Table.Summary.Row>
+                    </Table.Summary>
+                )} />
+        }
+    ];
+    const extraTab = {
+        right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => createStamp()}>Tạo tem</Button>,
+    };
     return (
         <>
             {contextHolder}
@@ -454,6 +695,22 @@ const TaoTem = () => {
                                                 });
                                             }}
                                             value={params.show}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="Máy" className="mb-3">
+                                        <Select
+                                            options={listMachines}
+                                            onChange={(value) => {
+                                                setParams({
+                                                    ...params,
+                                                    machine_id: value,
+                                                    page: 1,
+                                                });
+                                            }}
+                                            allowClear
+                                            showSearch
+                                            optionFilterProp="label"
+                                            value={params.machine_id}
                                         />
                                     </Form.Item>
                                     <Form.Item label="Lô sản xuất" className="mb-3">
@@ -505,14 +762,14 @@ const TaoTem = () => {
                 <Col span={20}>
                     <Card
                         title="Quản lý tạo tem"
-                        className="custom-card scroll"
+                        className="custom-card"
                         extra={
                             <Space>
                                 <Button
                                     size="medium"
                                     type="primary"
                                     style={{ width: "100%" }}
-                                    onClick={() => setOpenModal(true)}
+                                    onClick={() => { setOpenModal(true); setOrderParams({ page: 1, pageSize: 20 }) }}
                                 >
                                     Tạo từ ĐH
                                 </Button>
@@ -528,7 +785,7 @@ const TaoTem = () => {
                                     name="files"
                                     action={baseURL + "/api/upload-tem"}
                                     headers={{
-                                        authorization: "authorization-text",
+                                        authorization: "Bearer " + userProfile.token,
                                     }}
                                     onChange={(info) => {
                                         setLoadingExport(true);
@@ -561,12 +818,13 @@ const TaoTem = () => {
                         <Spin spinning={loading}>
                             <Form form={form} component={false}>
                                 <Table
+                                    ref={tableRef}
                                     pagination={false}
                                     size="small"
                                     bordered
                                     scroll={{
-                                        y: "70vh",
-                                        x: "120vw"
+                                        y: tableHeight,
+                                        x: "100vw"
                                     }}
                                     components={{
                                         body: {
@@ -584,18 +842,28 @@ const TaoTem = () => {
                 </Col>
             </Row>
             <div className="report-history-invoice">
-                <TemIn listCheck={listCheck} ref={componentRef1} />
+                <TemThanhPham listCheck={listTem} ref={componentRef1} />
             </div>
-            <Modal open={openModal} onCancel={() => setOpenModal(false)} title="Tạo tem từ đơn hàng" width={1200}
-                okText={'Tạo tem'}
-                onOk={() => createStamp()}
+            <Modal
+                open={openModal}
+                onCancel={() => setOpenModal(false)}
+                footer={null}
+                title="Tạo tem từ đơn hàng"
+                width={'98vw'}
+                height={'100vh'}
+                style={{
+                    position: 'fixed',
+                    left: '0',
+                    right: '0',
+                    top: '5px'
+                }}
             >
                 <Form layout="vertical">
-                    <Row gutter={[8, 8]}>
+                    <Row gutter={[8, 0]}>
                         <Col span={6}>
                             <Form.Item
                                 label="Máy"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     allowClear
@@ -612,13 +880,38 @@ const TaoTem = () => {
                                             .includes(input.toLowerCase())
                                     }
                                     options={listMachines}
+                                    value={orderParams.machine_id}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item
+                                label="Nhân viên sản xuất"
+                                className="mb-2"
+                            >
+                                <Select
+                                    allowClear
+                                    showSearch
+                                    placeholder="Chọn người sản xuất"
+                                    style={{ width: "100%" }}
+                                    onChange={(value) =>
+                                        setOrderParams({ ...orderParams, nhan_vien_sx: value })
+                                    }
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? "")
+                                            .toLowerCase()
+                                            .includes(input.toLowerCase())
+                                    }
+                                    popupMatchSelectWidth={listUsers.length > 0 ? 400 : 0}
+                                    options={listUsers}
+                                    value={orderParams.nhan_vien_sx}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
                                 label="Khách hàng"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     allowClear
@@ -637,13 +930,14 @@ const TaoTem = () => {
                                     }
                                     popupMatchSelectWidth={listCustomers.length > 0 ? 400 : 0}
                                     options={listCustomers}
+                                    value={orderParams.short_name}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
                                 label="MDH"
-                                className="mb-3"
+                                className="mb-2"
                             >
                                 <Select
                                     mode="tags"
@@ -654,61 +948,123 @@ const TaoTem = () => {
                                         setOrderParams({ ...orderParams, mdh: value, page: 1 });
                                         setPage(1);
                                     }}
-                                    open={false}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
                                     placeholder="Nhập mã đơn hàng"
                                     options={[]}
+                                    value={orderParams.mdh}
                                 />
                             </Form.Item>
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                label="Nhân viên sản xuất"
+                                label="MQL"
                                 className="mb-3"
                             >
                                 <Select
+                                    mode="tags"
                                     allowClear
                                     showSearch
-                                    placeholder="Chọn người sản xuất"
-                                    style={{ width: "100%" }}
-                                    onChange={(value) =>
-                                        setOrderParams({ ...orderParams, nhan_vien_sx: value })
-                                    }
-                                    filterOption={(input, option) =>
-                                        (option?.label ?? "")
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
-                                    }
-                                    popupMatchSelectWidth={listUsers.length > 0 ? 400 : 0}
-                                    options={listUsers}
+                                    suffixIcon={null}
+                                    onChange={(value) => {
+                                        setOrderParams({ ...orderParams, mql: value, page: 1 });
+                                        setPage(1);
+                                    }}
+                                    notFoundContent={null}
+                                    maxTagCount={'responsive'}
+                                    placeholder="Nhập MQL"
+                                    options={[]}
+                                    value={orderParams.mql}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item
+                                label="Kích thước"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            kich_thuoc: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập kích thước"
+                                    value={orderParams.kich_thuoc}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Dài"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            length: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập dài"
+                                    value={orderParams.length}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Rộng"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            width: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập rộng"
+                                    value={orderParams.width}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item
+                                label="Cao"
+                                className="mb-3"
+                            >
+                                <Input
+                                    allowClear
+                                    onChange={(e) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            height: e.target.value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Nhập cao"
+                                    value={orderParams.height}
                                 />
                             </Form.Item>
                         </Col>
                     </Row>
                 </Form>
-                <Table size='small' bordered
-                    loading={loadingOrders}
-                    pagination={{
-                        current: page,
-                        size: "default",
-                        total: totalPage,
-                        pageSize: 50,
-                        showSizeChanger: true,
-                        onChange: (page, pageSize) => {
-                            setPage(page);
-                            setPageSize(pageSize);
-                            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
-                        },
-                    }}
-                    scroll={
-                        {
-                            x: '130vw',
-                            y: '60vh'
-                        }
-                    }
-                    tableLayout="fixed"
-                    rowSelection={orderRowSelection}
-                    columns={ordersColumn}
-                    dataSource={orders.map(e => ({ ...e, key: e.id }))} />
+                <Tabs
+                    type="card"
+                    items={items}
+                    tabBarExtraContent={extraTab}
+                />
             </Modal>
         </>
     );

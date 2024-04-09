@@ -9,68 +9,42 @@ import {
   InputNumber,
   Radio,
   DatePicker,
-  Select,
 } from "antd";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
 import {
-  useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import {
   getIQCOverall,
-  getQCOverall,
   getLotIQCList,
-  getLotQCList,
   getQCLine,
   sendIQCResult,
-  sendQCResult,
 } from "../../../api/oi/quality";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
-import { useRef } from "react";
 
 const IQC = (props) => {
   document.title = "Kiểm tra chất lượng";
   const { line_id } = useParams();
-  const history = useHistory();
-  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
   const [lineOptions, setLineOptions] = useState([]);
   const [params, setParams] = useState({ line_id: line_id, start_date: dayjs(), end_date: dayjs() });
-  const [overall, setOverall] = useState([]);
-  const { userProfile } = useProfile();
+  const [overall, setOverall] = useState([{}]);
   const [openModalCK1, setOpenModalCK1] = useState(false);
   const [openModalCK2, setOpenModalCK2] = useState(false);
-  useEffect(() => {
-    if (!line_id && lineOptions.length > 0) {
-      const item = lineOptions[0];
-      history.push('/quality/qc/' + item?.value);
-    }
-  }, [line_id, lineOptions])
-  const onChangeLine = (value) => {
-    history.push('/quality/qc/' + value)
-  }
   const overallColumns = [
     {
-      title: "IQC/PQC/OQC",
+      title: "Công đoạn",
       dataIndex: "cong_doan",
       key: "cong_doan",
       align: "center",
-      render: () => (
-        <Select
-          options={lineOptions}
-          value={line_id}
-          onChange={onChangeLine}
-          style={{ width: "100%" }}
-          bordered={false}
-        />
-      ),
+      render: () => "IQC",
     },
     {
       title: "Số lượng kiểm tra",
@@ -275,23 +249,20 @@ const IQC = (props) => {
   };
 
   async function getData() {
-    if (line_id) {
-      setLoading(true);
-      var overall = await getIQCOverall({ ...params });
-      setOverall(overall.data);
-      var res = await getLotIQCList({ ...params });
-      setData(res.data);
-      if (res.data.length > 0) {
-        var current = res.data.find((e) => e.id === selectedRow?.id);
-        if (
-          current?.iqc &&
-          current?.iqc !== selectedRow?.iqc
-        ) {
-          setSelectedRow();
-        }
+    setLoading(true);
+    var overall = await getIQCOverall({ ...params });
+    setOverall(overall.data);
+    var res = await getLotIQCList({ ...params });
+    setData(res.data);
+    if (res.data.length > 0) {
+      var current = res.data.find((e) => e.id === selectedRow?.id);
+      if (
+        current?.iqc &&
+        current?.iqc !== selectedRow?.iqc
+      ) {
+        setSelectedRow();
       }
     }
-
     setLoading(false);
   }
 
@@ -301,7 +272,7 @@ const IQC = (props) => {
   
   useEffect(() => {
     getData();
-  }, [params]);
+  }, [params.start_date, params.end_date]);
 
   const [form1] = Form.useForm();
   const [form2] = Form.useForm();
@@ -342,7 +313,7 @@ const IQC = (props) => {
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row gutter={[6, 8]} className="mt-3">
+        <Row gutter={[6, 8]} className="mt-1">
           <Col span={24}>
             <Table
               locale={{ emptyText: "Trống" }}
@@ -392,6 +363,7 @@ const IQC = (props) => {
               onChange={(value) =>
                 value.isValid() && setParams({ ...params, start_date: value })
               }
+              onSelect={(value) => setParams({ ...params, start_date: value })}
             />
           </Col>
           <Col span={12}>
@@ -403,6 +375,7 @@ const IQC = (props) => {
               onChange={(value) =>
                 value.isValid() && setParams({ ...params, end_date: value })
               }
+              onSelect={(value) => setParams({ ...params, end_date: value })}
             />
           </Col>
         </Row>

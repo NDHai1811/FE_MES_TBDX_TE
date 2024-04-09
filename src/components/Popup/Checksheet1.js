@@ -9,6 +9,7 @@ import {
   InputNumber,
   Input,
   message,
+  Select,
 } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
@@ -19,7 +20,7 @@ const Checksheet1 = (props) => {
     text,
     selectedLot,
     onSubmit,
-    machine_id = null,
+    machines = [],
     line_id = null,
     open,
     setOpen,
@@ -49,7 +50,7 @@ const Checksheet1 = (props) => {
         }
         const error = checksheet.find((e) => e.id === key);
         console.log(error);
-        if(values["tinh_nang"][error.id]){
+        if (values["tinh_nang"][error.id]) {
           values["tinh_nang"][error.id].name = error?.name;
         }
       });
@@ -60,9 +61,9 @@ const Checksheet1 = (props) => {
   useEffect(() => {
     if (selectedLot) {
       (async () => {
-        if (machine_id) {
+        if (machines.length > 0) {
           var res = await getChecksheetList({
-            machine: [machine_id],
+            machine: machines,
             lo_sx: selectedLot?.lo_sx,
           });
           setChecksheet(res.data);
@@ -70,7 +71,7 @@ const Checksheet1 = (props) => {
           var res = await getIQCChecksheetList({
             line_id: line_id,
             lo_sx: selectedLot?.lo_sx,
-            ma_ncc: selectedLot?.loai_giay+selectedLot?.dinh_luong,
+            ma_ncc: selectedLot?.loai_giay + selectedLot?.dinh_luong,
           });
           setChecksheet(res.data);
         }
@@ -104,7 +105,7 @@ const Checksheet1 = (props) => {
                 {text}
             </Button> */}
       <Modal
-        title={"Kiểm tra " + text}
+        title={"Kiểm tra " + (text ?? "")}
         open={open}
         onCancel={closeModal}
         footer={
@@ -124,7 +125,7 @@ const Checksheet1 = (props) => {
             <Button onClick={() => setOpen(false)}>Huỷ</Button>
           </Space>
         }
-        width={500}
+        style={{ top: 8 }}
       >
         <Form
           form={form}

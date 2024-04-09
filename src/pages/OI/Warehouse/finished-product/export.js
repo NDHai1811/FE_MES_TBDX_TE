@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Table, Button, Modal, Select, Input, Form } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Row, Col, Table, Modal, Select, Input, Form, Button, message } from "antd";
 import "../../style.scss";
 import {
   useHistory,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { warehousExportTPData } from "../mock-data";
+import { downloadDeliveryNote, exportPallet, getDeliveryNoteList, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
+import { DownloadOutlined, QrcodeOutlined } from "@ant-design/icons";
 import ScanQR from "../../../../components/Scanner";
-import PopupQuetQrNhapKho from "../../../../components/Popup/PopupQuetQrNhapKho";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
-import { exportPallet, getWarehouseFGExportLogs, getWarehouseFGOverall } from "../../../../api/oi/warehouse";
+import { baseURL } from "../../../../config";
 
 const exportColumns = [
   {
@@ -69,12 +68,18 @@ const options = [
 
 const Export = (props) => {
   document.title = "Kho thành phẩm";
+  const SCAN_TIME_OUT = 1000;
   const { line } = useParams();
   const history = useHistory();
   const [selectedItem, setSelectedItem] = useState();
   const [overall, setOverall] = useState([{}]);
   const [visible, setVisible] = useState(false);
+  const [isOpenQRScanner, setIsOpenQRScanner] = useState();
+  const [deliveryNoteList, setDeliveryNote] = useState([]);
+  const [deliveryNoteID, setDeliveryNoteID] = useState();
+  const [loadingTable, setLoadingTable] = useState(false);
   const [form] = Form.useForm();
+  const scanRef = useRef();
   const column2 = [
     {
       title: "Kho",
@@ -120,13 +125,29 @@ const Export = (props) => {
       render: (value) => value || "-",
     },
   ];
-
   const columnDetail = [
+    {
+      title: "Lệnh xuất kho",
+      dataIndex: "lenh_xuat_kho",
+      key: "lenh_xuat_kho",
+      align: "center",
+      width: '25%',
+      render: () => (
+        <Select
+          options={deliveryNoteList}
+          allowClear
+          onChange={onChangeDeliveryNote}
+          style={{ width: "100%" }}
+          bordered={false}
+        />
+      ),
+    },
     {
       title: "Vị trí",
       dataIndex: "locator_id",
       key: "locator_id",
       align: "center",
+      width: '25%',
       render: (value) => value || "-",
     },
     {
@@ -134,6 +155,7 @@ const Export = (props) => {
       dataIndex: "pallet_id",
       key: "pallet_id",
       align: "center",
+      width: '25%',
       render: (value) => value || "-",
     },
     {
@@ -141,11 +163,12 @@ const Export = (props) => {
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
+      width: '25%',
       render: (value) => value || "-",
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedItem && setVisible(true);
+            selectedItem && selectedItem?.lo_sx?.length > 0 && setVisible(true);
           },
           style: {
             cursor: 'pointer'
@@ -157,9 +180,9 @@ const Export = (props) => {
 
   const lsxColumns = [
     {
-      title: "Lô SX",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
       align: "center",
       render: (value) => value || "-",
     },
@@ -192,7 +215,27 @@ const Export = (props) => {
   ]
 
   const onChangeLine = (value) => {
-    history.push("/warehouse/kho-tp/" + value);
+    history.push("/oi/warehouse/kho-tp/" + value);
+  };
+
+  const onChangeDeliveryNote = async (value) => {
+    setDeliveryNoteID(value);
+  }
+
+  const loadDataTable = async () => {
+    setLoadingTable(true);
+    const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
+    if (res.success) {
+      setData(res.data);
+    }
+    setLoadingTable(false);
+  }
+  useEffect(() => {
+    loadDataTable()
+  }, [deliveryNoteID]);
+
+  const handleCloseMdl = () => {
+    setIsOpenQRScanner(false);
   };
 
   const onSelectItem = (val) => {
@@ -205,26 +248,61 @@ const Export = (props) => {
   useEffect(() => {
     loadData()
   }, []);
-
+  const onScan = async (result) => {
+    console.log(result);
+    if (scanRef.current) {
+      clearTimeout(scanRef.current);
+    }
+    scanRef.current = setTimeout(() => {
+      const current_data = data.find((element) => {
+        return element.pallet_id == result;
+      })
+      if (current_data) {
+        onSelectItem(current_data);
+      } else {
+        message.info('Mã pallet không khớp');
+        onSelectItem({});
+      }
+    }, SCAN_TIME_OUT);
+  };
   const loadData = async () => {
-    var res = await getWarehouseFGExportLogs();
-    setData(res.data);
     var res2 = await getWarehouseFGOverall();
     setOverall([res2.data])
+    var res3 = await getDeliveryNoteList();
+    const arr = [];
+    res3.data.map((value) => {
+      return arr.push({ 'label': value.id, 'value': value.id });
+    });
+    setDeliveryNote(arr);
     setSelectedItem();
+    setLoadingTable(false)
   }
   const onFinish = async (values) => {
-    const params = {pallet_id: selectedItem?.pallet_id, lo_sx: values}
+    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: selectedItem?.delivery_note_id }
     var res = await exportPallet(params);
-    if(res.success){
+    if (res.success) {
       setVisible(false);
       form.resetFields();
       loadData();
+      loadDataTable();
     }
+  }
+  const [isDownloading, setIsDownloading] = useState(false)
+  const onDownloadDeliveryNote = async () => {
+    if (!deliveryNoteID) {
+      message.warning('Chưa chọn lệnh xuất kho')
+      return 0;
+    }
+    setIsDownloading(true);
+    var res = await downloadDeliveryNote({ delivery_note_id: deliveryNoteID });
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setIsDownloading(false);
   }
   return (
     <React.Fragment>
-      <Row className="mt-3" gutter={[4, 12]}>
+      <Row className="mt-1" gutter={[4, 12]}>
         <Col span={24}>
           <Table
             pagination={false}
@@ -244,65 +322,74 @@ const Export = (props) => {
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
-            dataSource={selectedItem ? [selectedItem] : []}
+            dataSource={selectedItem ? [selectedItem] : [{}]}
           />
         </Col>
-        {/* <Col span={24}>
-          <Row gutter={8}>
-            <Col span={12}>
-              <Button
-                block
-                className="h-100 w-100"
-                icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
-                type="primary"
-                onClick={() => setIsScan(true)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                Quét QR Code
-              </Button>
-            </Col>
-            <Col span={12}>
-              <Button
-                block
-                className="h-100 w-100"
-                icon={<PrinterOutlined style={{ fontSize: "20px" }} />}
-                type="primary"
-                onClick={onShowPopup}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                In tem lại
-              </Button>
-            </Col>
-          </Row>
-        </Col> */}
+        <Col span={12}>
+          <Button
+            block
+            className="h-100 w-100"
+            icon={<QrcodeOutlined style={{ fontSize: "20px" }} />}
+            type="primary"
+            onClick={() => setIsOpenQRScanner(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Quét tem gộp
+          </Button>
+        </Col>
+        <Col span={12}>
+          <Button
+            block
+            className="h-100 w-100"
+            icon={<DownloadOutlined style={{ fontSize: "20px" }} />}
+            type="primary"
+            loading={isDownloading}
+            onClick={onDownloadDeliveryNote}
+          >
+            Tải phiếu xuất hàng
+          </Button>
+        </Col>
         <Col span={24}>
           <Table
             rowClassName={(record, index) =>
               'no-hover ' + (record?.pallet_id === selectedItem?.pallet_id ? "table-row-green" : "")
             }
+            loading={loadingTable}
             pagination={false}
             bordered
-            scroll={{y: '30vh'}}
+            scroll={{ y: '30vh' }}
             className="mb-4"
             size="small"
             columns={exportColumns}
             dataSource={data}
-            onRow={(record) => {
-              return {
-                onClick: () => onSelectItem(record),
-              };
-            }}
+          // onRow={(record) => {
+          //   return {
+          //     onClick: () => onSelectItem(record),
+          //   };
+          // }}
           />
         </Col>
       </Row>
+      {isOpenQRScanner && (
+        <Modal
+          title="Quét QR"
+          open={isOpenQRScanner}
+          onCancel={handleCloseMdl}
+          footer={null}
+        >
+          <ScanQR
+            isScan={isOpenQRScanner}
+            onResult={(res) => {
+              onScan(res);
+              setIsOpenQRScanner(false);
+            }}
+          />
+        </Modal>
+      )}
       {visible && (
         <Modal
           title="Danh sách lô cần xuất"

@@ -34,6 +34,7 @@ import {
   getRolesTree,
   getRolesList,
 } from "../../../api";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Roles = () => {
   document.title = "Quản lý bộ phận";
@@ -106,8 +107,9 @@ const Roles = () => {
 
   const loadListTable = async (params) => {
     setLoading(true);
-    setData(await getRolesTree(params));
-    setOptions(await getRolesList(params));
+    var res = await getRolesList(params)
+    setData(res);
+    setOptions(res);
     setLoading(false);
   };
   useEffect(() => {
@@ -200,6 +202,7 @@ const Roles = () => {
       setListCheck(selectedRows);
     },
   };
+  const { userProfile } = useProfile();
   return (
     <>
       {contextHolder}
@@ -249,7 +252,7 @@ const Roles = () => {
                   name="files"
                   action={baseURL + "/api/roles/import"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -320,7 +323,7 @@ const Roles = () => {
                   x: "100%",
                   y: window.innerHeight*0.57,
                 }}
-                columns={col_detailTable}
+                columns={col_detailTable} 
                 dataSource={data}
                 rowSelection={rowSelection}
               />
@@ -356,7 +359,9 @@ const Roles = () => {
                       {!e.isTrueFalse ? (
                         e.select ? (
                           <Select
+                            optionFilterProp="label"
                             allowClear
+                            maxTagCount={3}
                             mode={e.select.mode}
                             options={e.select.options}
                           />

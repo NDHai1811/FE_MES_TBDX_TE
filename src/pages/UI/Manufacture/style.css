@@ -36,16 +36,28 @@
     }
 }
 
-.ant-card-actions{
+.ant-card-actions {
     position: 'sticky';
     bottom: 0;
 }
-.slide-bar{
+
+.slide-bar {
     height: 100%;
 }
-.custom-card .ant-card-body{
-    height: calc(100vh * 0.78);
+
+.custom-card .ant-card-body {
+    height: calc(100vh - 140px);
 }
-.custom-card.scroll .ant-card-body{
+
+.custom-card.scroll .ant-card-body {
     overflow: auto;
+}
+
+.tabs-extra-demo-button {
+    margin-right: 16px;
+}
+
+.ant-row-rtl .tabs-extra-demo-button {
+    margin-right: 0;
+    margin-left: 16px;
 }

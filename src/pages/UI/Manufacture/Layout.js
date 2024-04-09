@@ -28,6 +28,7 @@ import { createLayouts, deleteLayouts, updateLayouts } from "../../../api";
 import TemLayout from "./TemLayout";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
+import { useProfile } from "../../../components/hooks/UserHooks";
 
 const EditableCell = ({
   editing,
@@ -60,12 +61,18 @@ const EditableCell = ({
 
 const Layout = () => {
   const componentRef1 = useRef();
-  const [listCustomers, setListCustomers] = useState([]);
+  const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [form] = Form.useForm();
-  const [params, setParams] = useState({});
   const [editingKey, setEditingKey] = useState("");
   const [type, setType] = useState("");
+  const [params, setParams] = useState({
+    page: 1,
+    pageSize: 20,
+  });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [keys, setKeys] = useState([
     "machine_layout_id",
     "customer_id",
@@ -676,14 +683,15 @@ const Layout = () => {
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getListLayout(params);
-    setData(res.map((val, index) => ({ ...val, key: index })));
+    setData(res.data.map((val, index) => ({ ...val, key: index })));
+    setTotalPage(res.totalPage);
     setLoading(false);
   };
   useEffect(() => {
     (async () => {
       loadListTable(params);
     })();
-  }, []);
+  }, [params]);
   useEffect(() => {
     if (listCheck.length > 0) {
       print();
@@ -708,15 +716,31 @@ const Layout = () => {
 
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [data]);
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
+      <Row style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)' }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0, height: 'calc(100vh - 145px)' }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -738,8 +762,10 @@ const Layout = () => {
                   <Form.Item label="Máy" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, machine_id: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, machine_id: e.target.value, page: 1 });
+                        setPage(1);
+                      }
                       }
                       placeholder="Nhập máy"
                     />
@@ -747,8 +773,10 @@ const Layout = () => {
                   <Form.Item label="Khách hàng" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, customer_id: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, customer_id: e.target.value, page: 1 });
+                        setPage(1);
+                      }
                       }
                       placeholder="Nhập khách hàng"
                     />
@@ -756,8 +784,10 @@ const Layout = () => {
                   <Form.Item label="Mã layout" className="mb-3">
                     <Input
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, layout_id: e.target.value })
+                      onChange={(e) => {
+                        setParams({ ...params, layout_id: e.target.value });
+                        setPage(1);
+                      }
                       }
                       placeholder="Nhập mã layout"
                     />
@@ -779,7 +809,7 @@ const Layout = () => {
                   name="files"
                   action={baseURL + "/api/upload-layout"}
                   headers={{
-                    authorization: "authorization-text",
+                    authorization: "Bearer " + userProfile.token,
                   }}
                   onChange={(info) => {
                     setLoadingExport(true);
@@ -818,10 +848,21 @@ const Layout = () => {
                 <Table
                   size="small"
                   bordered
-                  pagination={false}
+                  pagination={{
+                    current: page,
+                    size: "small",
+                    total: totalPage,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    onChange: (page, pageSize) => {
+                      setPage(page);
+                      setPageSize(pageSize);
+                      setParams({ ...params, page: page, pageSize: pageSize });
+                    },
+                  }}
                   scroll={{
                     x: "280vw",
-                    y: window.innerHeight * 0.50,
+                    y: tableHeight,
                   }}
                   components={{
                     body: {

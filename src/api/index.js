@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function getListMachine(params) {
-  const res = await axios.get("/machine/list", params);
+  const res = await axios.get("/oi/machine/list", params);
   return res.data;
 }
 export async function storePallet(params) {
@@ -66,10 +66,6 @@ export async function getListLsxUseMaterial(params) {
 }
 export async function splitBarrel(params) {
   const res = await axios.post("/barrel/split", params);
-  return res.data;
-}
-export async function getHistoryWareHouse(params) {
-  const res = await axios.get("/warehouse/history", { params: params });
   return res.data;
 }
 export async function deletePallet(params) {
@@ -531,112 +527,112 @@ export async function exportMaintenance(params) {
 }
 
 //Orders
-export async function getOrders(params){
-    const res = await axios.get('/orders/list', {params});
-    return res.data;
+export async function getOrders(params) {
+  const res = await axios.get('/orders/list', { params });
+  return res.data;
 }
-export async function createOrder(params){
-    const res = await axios.post('/orders/create', params);
-    return res.data;
+export async function createOrder(params) {
+  const res = await axios.post('/orders/create', params);
+  return res.data;
 }
-export async function updateOrder(params){
-    const res = await axios.patch('/orders/update', params);
-    return res.data;
+export async function updateOrder(params) {
+  const res = await axios.patch('/orders/update', params);
+  return res.data;
 }
-export async function deleteOrders(params){
-    const res = await axios.delete('/orders/delete', {params});
-    return res.data;
+export async function deleteOrders(params) {
+  const res = await axios.delete('/orders/delete', { params });
+  return res.data;
 }
-export async function exportOrders(params){
-    const res = await axios.get('/orders/export', {params});
-    return res;
+export async function exportOrders(params) {
+  const res = await axios.get('/orders/export', { params });
+  return res;
 }
-export async function splitOrders(params){
+export async function splitOrders(params) {
   const res = await axios.post('/orders/split', params);
   return res;
 }
 
 //Buyers
-export async function getBuyers(params){
-  const res = await axios.get('/buyers/list', {params});
+export async function getBuyers(params) {
+  const res = await axios.get('/buyers/list', { params });
   return res.data;
 }
-export async function createBuyers(params){
+export async function createBuyers(params) {
   const res = await axios.post('/buyers/create', params);
   return res.data;
 }
-export async function updateBuyers(params){
+export async function updateBuyers(params) {
   const res = await axios.patch('/buyers/update', params);
   return res.data;
 }
-export async function deleteBuyers(params){
-  const res = await axios.delete('/buyers/delete', {params});
+export async function deleteBuyers(params) {
+  const res = await axios.delete('/buyers/delete', { params });
   return res.data;
 }
 
 //Layouts
-export async function getLayouts(params){
-  const res = await axios.get('/layouts/list', {params});
+export async function getLayouts(params) {
+  const res = await axios.get('/layouts/list', { params });
   return res.data;
 }
-export async function createLayouts(params){
+export async function createLayouts(params) {
   const res = await axios.post('/layouts/create', params);
   return res.data;
 }
-export async function updateLayouts(params){
+export async function updateLayouts(params) {
   const res = await axios.patch('/layouts/update', params);
   return res.data;
 }
-export async function deleteLayouts(params){
-  const res = await axios.delete('/layouts/delete', {params});
+export async function deleteLayouts(params) {
+  const res = await axios.delete('/layouts/delete', { params });
   return res.data;
 }
 
 //Customer
-export async function getCustomer(params){
-  const res = await axios.get('/customer/list', {params});
+export async function getCustomer(params) {
+  const res = await axios.get('/customer/list', { params });
   return res.data;
 }
-export async function createCustomer(params){
+export async function createCustomer(params) {
   const res = await axios.post('/customer/create', params);
   return res.data;
 }
-export async function updateCustomer(params){
+export async function updateCustomer(params) {
   const res = await axios.patch('/customer/update', params);
   return res.data;
 }
-export async function deleteCustomer(params){
-  const res = await axios.delete('/customer/delete', {params});
+export async function deleteCustomer(params) {
+  const res = await axios.delete('/customer/delete', { params });
   return res.data;
 }
-export async function exportCustomer(params){
-  const res = await axios.get('/customer/export', {params});
+export async function exportCustomer(params) {
+  const res = await axios.get('/customer/export', { params });
   return res;
 }
 
 //Vehicles
-export async function getVehicles(params){
-  const res = await axios.get('/vehicles/list', {params});
+export async function getVehicles(params) {
+  const res = await axios.get('/vehicles/list', { params });
   return res.data;
 }
-export async function createVehicles(params){
+export async function createVehicles(params) {
   const res = await axios.post('/vehicles/create', params);
   return res.data;
 }
-export async function updateVehicles(params){
+export async function updateVehicles(params) {
   const res = await axios.patch('/vehicles/update', params);
   return res.data;
 }
-export async function deleteVehicles(params){
-  const res = await axios.delete('/vehicles/delete', {params});
+export async function deleteVehicles(params) {
+  const res = await axios.delete('/vehicles/delete', { params });
   return res.data;
 }
-export async function exportVehicles(params){
-  const res = await axios.get('/vehicles/export', {params});
+export async function exportVehicles(params) {
+  const res = await axios.get('/vehicles/export', { params });
   return res;
 }
 
-export async function getTem(params){
-  const res = await axios.get('/intem', {params});
+export async function getTem(params) {
+  const res = await axios.get('/intem', { params });
   return res.data;
 }

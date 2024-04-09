@@ -5,7 +5,6 @@ import {
   Row,
   Card,
   Table,
-  Layout,
   Divider,
   Button,
   Form,
@@ -106,7 +105,7 @@ const columns3 = [
     dataIndex: "index",
     key: "index",
     align: "center",
-    width: "1.5%",
+    width: "3%",
     render: (value, record, index) => index + 1,
   },
   {
@@ -114,22 +113,14 @@ const columns3 = [
     dataIndex: "ngay_sx",
     key: "ngay_sx",
     align: "center",
-    width: "3.5%",
-  },
-  {
-    title: "Công đoạn",
-    dataIndex: "line",
-    key: "line",
-    align: "center",
-    width: "3%",
-    render: (value) => value?.name,
+    width: "6%",
   },
   {
     title: "Máy",
     dataIndex: "machine_id",
     key: "machine_id",
     align: "center",
-    width: "2%",
+    width: "4%",
   },
   {
     title: "Khách hàng",
@@ -143,26 +134,14 @@ const columns3 = [
     dataIndex: "mdh",
     key: "mdh",
     align: "center",
-    width: "4%",
+    width: "6%",
   },
   {
     title: "MQL",
     dataIndex: "mql",
     key: "mql",
     align: "center",
-    width: "2%",
-  },
-  {
-    title: "Lô sản xuất",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-  },
-  {
-    title: "Mã layout",
-    dataIndex: "layout_id",
-    key: "layout_id",
-    align: "center",
+    width: "3%",
   },
   {
     title: "Quy cách",
@@ -171,115 +150,39 @@ const columns3 = [
     align: "center",
   },
   {
-    title: "Kế hoạch",
-    children: [
-      {
-        title: "Thời gian bắt đầu",
-        dataIndex: "thoi_gian_bat_dau_kh",
-        key: "thoi_gian_bat_dau_kh",
-        align: "center",
-      },
-      {
-        title: "Thời gian kết thúc",
-        dataIndex: "thoi_gian_ket_thuc_kh",
-        key: "thoi_gian_ket_thuc_kh",
-        align: "center",
-      },
-      {
-        title: "Số lượng đầu vào",
-        dataIndex: "sl_dau_vao_kh",
-        key: "sl_dau_vao_kh",
-        align: "center",
-      },
-      {
-        title: "Số lượng đầu ra",
-        dataIndex: "sl_dau_ra_kh",
-        key: "sl_dau_ra_kh",
-        align: "center",
-      },
-      {
-        title: "Cycle time lý thuyết",
-        dataIndex: "cycle_time_kh",
-        key: "cycle_time_kh",
-        align: "center",
-      },
-    ],
-  },
-  {
-    title: "Thực tế",
-    children: [
-      {
-        title: "Thời gian bắt đầu",
-        dataIndex: "thoi_gian_bat_dau",
-        key: "thoi_gian_bat_dau",
-        align: "center",
-      },
-      {
-        title: "Thời gian kết thúc",
-        dataIndex: "thoi_gian_ket_thuc",
-        key: "thoi_gian_ket_thuc",
-        align: "center",
-      },
-      {
-        title: "Sản lượng đầu vào",
-        dataIndex: "sl_dau_vao_hang_loat",
-        key: "sl_dau_vao_hang_loat",
-        align: "center",
-      },
-      {
-        title: "Sản lượng đầu ra",
-        dataIndex: "sl_dau_ra_hang_loat",
-        key: "sl_dau_ra_hang_loat",
-        align: "center",
-      },
-      {
-        title: "Sản lượng sau QC",
-        dataIndex: "sl_ok",
-        key: "sl_ok",
-        align: "center",
-      },
-      {
-        title: "Số lượng phế",
-        dataIndex: "sl_phe",
-        key: "sl_phe",
-        align: "center",
-      },
-      {
-        title: "Tỉ lệ đầu ra/Đầu vào",
-        dataIndex: "ty_le_dau_ra_vao",
-        key: "ty_le_dau_ra_vao",
-        align: "center",
-      },
-      {
-        title: "Cycle time",
-        dataIndex: "cycle_time_tt",
-        key: "cycle_time_tt",
-        align: "center",
-      },
-    ],
-  },
-  {
-    title: "Chênh lệch",
-    dataIndex: "chenh_lech",
-    key: "chenh_lech",
+    title: "Thời gian bắt đầu",
+    dataIndex: "thoi_gian_bat_dau",
+    key: "thoi_gian_bat_dau",
     align: "center",
   },
   {
-    title: "Tỷ lệ đạt (%)",
-    dataIndex: "ty_le_ok",
-    key: "ty_le_ok",
+    title: "Thời gian kết thúc",
+    dataIndex: "thoi_gian_ket_thuc",
+    key: "thoi_gian_ket_thuc",
     align: "center",
   },
   {
-    title: "TT thực tế",
-    dataIndex: "tt_thuc_te",
-    key: "tt_thuc_te",
+    title: "Sản lượng đầu ra",
+    dataIndex: "sl_dau_ra_hang_loat",
+    key: "sl_dau_ra_hang_loat",
     align: "center",
   },
   {
-    title: "Leadtime",
-    dataIndex: "lead_time",
-    key: "lead_time",
+    title: "Sản lượng sau QC",
+    dataIndex: "sl_ok",
+    key: "sl_ok",
+    align: "center",
+  },
+  {
+    title: "Số lượng phế",
+    dataIndex: "sl_phe",
+    key: "sl_phe",
+    align: "center",
+  },
+  {
+    title: "Đợt",
+    dataIndex: "dot",
+    key: "dot",
     align: "center",
   },
   {
@@ -288,21 +191,35 @@ const columns3 = [
     key: "user_name",
     align: "center",
   },
+  {
+    title: "Lô sản xuất",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
+  },
 ];
 
 const LichSuSanXuat = (props) => {
   document.title = "UI - Lịch sử sản xuất";
   const [params, setParams] = useState({
+    page: 1,
+    pageSize: 20,
     start_date: dayjs(),
-    end_date: dayjs(),
+    end_date: dayjs()
   });
+  const [totalPage, setTotalPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   useEffect(() => {
     (async () => {
       const res1 = await getUIItemMenu();
       setItemMenu(res1.data);
     })();
-    btn_click();
+    // btn_click();
   }, []);
+  useEffect(() => {
+    btn_click();
+  }, [params]);
 
   const [dataTable1, setDataTable1] = useState([]);
   const [dataTable2, setDataTable2] = useState([]);
@@ -311,16 +228,17 @@ const LichSuSanXuat = (props) => {
   function btn_click() {
     (async () => {
       setLoading(true);
-      const res1 = await getProduceOverall(params);
-      const res2 = await getProducePercent(params);
+      // const res1 = await getProduceOverall(params);
+      // const res2 = await getProducePercent(params);
       const res3 = await getProduceTable(params);
-      setDataTable1(res1.data);
-      setDataTable2(
-        Object.keys(res2.data ?? {}).map((key) => {
-          return { ...res2.data[key], lo_sx: key };
-        })
-      );
-      setDataTable3(res3.data);
+      // setDataTable1(res1.data);
+      // setDataTable2(
+      //   Object.keys(res2.data ?? {}).map((key) => {
+      //     return { ...res2.data[key], lo_sx: key };
+      //   })
+      // );
+      setTotalPage(res3.data.totalPage);
+      setDataTable3(res3.data.data);
       setLoading(false);
     })();
   }
@@ -350,13 +268,33 @@ const LichSuSanXuat = (props) => {
     );
     setParams({ ...params, machine: filteredKeys });
   };
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+      const handleWindowResize = () => {
+        const header = document.querySelector('.custom-card .ant-table-header');
+        const pagination = document.querySelector('.custom-card .ant-pagination');
+        const card = document.querySelector('.custom-card .ant-card-body');
+          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      };
+      handleWindowResize();
+      window.addEventListener('resize', handleWindowResize);
+      return () => {
+          window.removeEventListener('resize', handleWindowResize);
+      };
+  }, [dataTable3]);
+  useEffect(()=>{
+    console.log(tableHeight);
+  }, [tableHeight])
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: "100%", marginBottom: 10 }}
+              // style={{ height: "100%", marginBottom: 10 }}
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
               className="custom-card scroll"
               actions={[
@@ -393,8 +331,10 @@ const LichSuSanXuat = (props) => {
                       allowClear={false}
                       placeholder="Bắt đầu"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, start_date: value })
+                      onChange={(value) => {
+                        setParams({ ...params, start_date: value, page: 1 });
+                        setPage(1);
+                      }
                       }
                       value={params.start_date}
                     />
@@ -402,8 +342,10 @@ const LichSuSanXuat = (props) => {
                       allowClear={false}
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, end_date: value })
+                      onChange={(value) => {
+                        setParams({ ...params, end_date: value, page: 1 });
+                        setPage(1);
+                      }
                       }
                       value={params.end_date}
                     />
@@ -419,9 +361,10 @@ const LichSuSanXuat = (props) => {
                       onChange={(e) => {
                         setParams({
                           ...params,
-                          short_name: e.target.value,
+                          customer_id: e.target.value,
                           page: 1,
                         });
+                        setPage(1);
                       }}
                       placeholder="Nhập khách hàng"
                     />
@@ -431,7 +374,8 @@ const LichSuSanXuat = (props) => {
                       allowClear
                       showSearch
                       onChange={(value) => {
-                        setParams({ ...params, mdh: value });
+                        setParams({ ...params, mdh: value, page: 1 });
+                        setPage(1);
                       }}
                       open={false}
                       suffixIcon={null}
@@ -449,21 +393,9 @@ const LichSuSanXuat = (props) => {
                           lo_sx: e.target.value,
                           page: 1,
                         });
+                        setPage(1);
                       }}
                       placeholder="Nhập lô sản xuất"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Máy" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          machine_id: e.target.value,
-                          page: 1,
-                        });
-                      }}
-                      placeholder="Nhập máy"
                     />
                   </Form.Item>
                   <Form.Item label="Quy cách" className="mb-3">
@@ -475,8 +407,23 @@ const LichSuSanXuat = (props) => {
                           quy_cach: e.target.value,
                           page: 1,
                         });
+                        setPage(1);
                       }}
                       placeholder="Nhập quy cách"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Đợt" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          dot: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập đợt"
                     />
                   </Form.Item>
                 </Form>
@@ -488,16 +435,16 @@ const LichSuSanXuat = (props) => {
           <Card
             style={{ height: "100%" }}
             title="Lịch sử sản xuất"
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <Space>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={reportProduceHistory}
                   loading={exportLoading2}
                 >
                   Xuất báo cáo
-                </Button>
+                </Button> */}
                 <Button
                   type="primary"
                   onClick={exportFile}
@@ -509,34 +456,45 @@ const LichSuSanXuat = (props) => {
             }
           >
             <Spin spinning={loading}>
-              <Table
-                className="mb-3"
+              {/* <Table
+                className="mb-2"
                 size="small"
                 bordered
                 locale={{ emptyText: "Trống" }}
                 pagination={false}
                 columns={columns1}
                 dataSource={dataTable1}
-              />
-              <Table
-                className="mb-3"
+              /> */}
+              {/* <Table
+                className="mb-2"
                 size="small"
                 bordered
                 locale={{ emptyText: "Trống" }}
                 pagination={false}
                 columns={columns2}
                 scroll={{
-                  y: window.innerHeight * 0.10,
+                  y: window.innerHeight * 0.05,
                 }}
                 dataSource={dataTable2}
-              />
+              /> */}
               <Table
                 size="small"
                 bordered
-                pagination={false}
+                pagination={{
+                  current: page,
+                  size: "small",
+                  total: totalPage,
+                  pageSize: pageSize,
+                  showSizeChanger: true,
+                  onChange: (page, pageSize) => {
+                    setPage(page);
+                    setPageSize(pageSize);
+                    setParams({ ...params, page: page, pageSize: pageSize });
+                  },
+                }}
                 scroll={{
-                  x: "200vw",
-                  y: window.innerHeight * 0.30,
+                  x: "120vw",
+                  y: tableHeight,
                 }}
                 columns={columns3}
                 dataSource={dataTable3}

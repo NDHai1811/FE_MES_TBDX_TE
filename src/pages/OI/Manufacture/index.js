@@ -14,14 +14,6 @@ const Manufacture = () => {
   const { machine_id } = useParams();
   const history = useHistory();
   const [IOTList, setIOTList] = useState([])
-
-  // const userPermissions = JSON.parse(
-  //   window.localStorage.getItem("authUser")
-  // ).permission;
-
-  // const isWave = userPermissions?.some((val) => val === "oi-sx-song");
-  // const isPrintStick = userPermissions?.some((val) => val === "oi-sx-in-dan");
-  // const isHandInput = userPermissions?.some((val) => val === "oi-sx-nhap-tay");
   const [machineOptions, setMachineOptions] = useState([]);
   const getListMachine = async () => {
     var res = await getMachines()
@@ -36,7 +28,7 @@ const Manufacture = () => {
       if (!target) {
         target = machineOptions[0];
       }
-      history.push("/manufacture/" + target.value);
+      history.push("/oi/manufacture/" + target.value);
       var iot_machine = [];
       (machineOptions).forEach(element => {
         if(element?.is_iot){
@@ -57,7 +49,6 @@ const Manufacture = () => {
         <InDan machineOptions={machineOptions}/> : 
         <NhapTay machineOptions={machineOptions}/>
       }
-      {/* {(machine_id === "P15" || machine_id === "P06") && <InDan />} */}
     </React.Fragment>
   );
 };

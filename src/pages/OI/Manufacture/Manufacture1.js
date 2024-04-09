@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+import { PrinterOutlined } from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -7,9 +7,7 @@ import {
   Table,
   Spin,
   DatePicker,
-  Modal,
   Select,
-  InputNumber,
 } from "antd";
 import "../style.scss";
 import {
@@ -19,20 +17,19 @@ import {
 import {
   getOverAll,
   getLotByMachine,
-  getInfoTem,
-  scanQrCode,
+  startStopProduce,
+  getTrackingStatus,
+  getCurrentManufacturing,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
-import Tem from "./Tem";
-import TemIn from "./TemIn";
-import TemDan from "./TemDan";
 import {
   COMMON_DATE_FORMAT,
-  COMMON_DATE_FORMAT_REQUEST,
 } from "../../../commons/constants";
 import dayjs from "dayjs";
-import ScanQR from "../../../components/Scanner";
-
+import TemGiayTam from "./TemGiayTam";
+import TemThanhPham from "./TemThanhPham";
+import { getTem } from "../../../api";
+import TemTest from "./TemTest";
 
 const columns = [
   {
@@ -79,8 +76,8 @@ const columns = [
   },
   {
     title: "SL kế hoạch",
-    dataIndex: "dinh_muc",
-    key: "dinh_muc",
+    dataIndex: "san_luong_kh",
+    key: "san_luong_kh",
     align: "center",
   },
   {
@@ -117,8 +114,8 @@ const Manufacture1 = (props) => {
     },
     {
       title: "Sản lượng kế hoạch",
-      dataIndex: "dinh_muc",
-      key: "dinh_muc",
+      dataIndex: "san_luong_kh",
+      key: "san_luong_kh",
       align: "center",
       render: (value) => value,
     },
@@ -156,19 +153,17 @@ const Manufacture1 = (props) => {
   });
   const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
-  const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
-  const [listTem, setListTem] = useState([])
+  const [listTem, setListTem] = useState([]);
+  const [isPause, setIsPasue] = useState(true);
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
-  const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
-  const [isScan, setIsScan] = useState(0);
-  const ws = useRef(null);
 
   const reloadData = async () => {
+    getListLotDetail();
     getOverAllDetail();
   };
   const overallColumns = [
@@ -214,47 +209,48 @@ const Manufacture1 = (props) => {
   ];
 
   useEffect(() => {
-    if (machineOptions.length > 0) {
-      (async () => {
-        if (machine_id) {
-          reloadData();
-        }
-      })();
-    }
-  }, [machine_id, machineOptions, loadData]);
+    (async () => {
+      var res = await getTrackingStatus({ machine_id: machine_id });
+      if (res.success) {
+        setIsPasue(!res.data?.status)
+      }
+      // var tem = await getTem();
+      // setListTem(tem)
+    })();
+  }, []);
 
   useEffect(() => {
-    if (isScan === 1) {
-      setIsOpenQRScanner(true);
-    } else if (isScan === 2) {
-      setIsOpenQRScanner(false);
-    }
-  }, [isScan]);
-
+    reloadData();
+  }, [params, machine_id]);
 
   var timeout;
+  const loadDataRescursive = async (machine_id, selectedLot) => {
+    if (!machine_id || isPause) return;
+    const res = await getCurrentManufacturing({ machine_id });
+    console.log(selectedLot?.lo_sx, res.data?.lo_sx);
+    if (selectedLot?.lo_sx !== res.data?.lo_sx) {
+      reloadData();
+    }
+    setData(prev => prev.map(e => {
+      if (e?.lo_sx === res.data?.lo_sx) {
+        return { ...e, ...res.data }
+      }
+      return e;
+    }))
+    setSelectedLot(res.data);
+    if (res.success) {
+      if (window.location.href.indexOf("/oi/manufacture") > -1)
+        timeout = setTimeout(function () {
+          loadDataRescursive(machine_id, selectedLot);
+        }, 3000);
+    }
+  };
   useEffect(() => {
-    clearTimeout(timeout)
-    const loadDataRescursive = async (params, machine_id) => {
-      console.log(params, machine_id);
-      if (!machine_id) return;
-      const res = await getLotByMachine(params);
-      setData(res.data);
-      if (res.data[0]?.status === 1) {
-        setSelectedLot(res.data[0]);
-      } else {
-        setSelectedLot(null);
-      }
-      if (res.success) {
-        if (window.location.href.indexOf("manufacture") > -1)
-          timeout = setTimeout(function () {
-            loadDataRescursive(params, machine_id);
-          }, 5000);
-      }
-    };
-    loadDataRescursive(params, machine_id);
+    clearTimeout(timeout);
+    console.log('changed lo_sx', selectedLot);
+    !isPause && loadDataRescursive(machine_id, selectedLot, isPause);
     return () => clearTimeout(timeout);
-  }, [params.start_date, params.end_date, params.machine_id]);
+  }, [isPause, selectedLot?.lo_sx]);
 
 
 
@@ -269,19 +265,13 @@ const Manufacture1 = (props) => {
   };
 
   const getListLotDetail = async () => {
-    const res = await getLotByMachine(params);
     setLoading(true);
-    return res.data;
+    const res = await getLotByMachine(params);
+    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })))
   };
 
   const onChangeLine = (value) => {
-    window.location.href = ("/manufacture/" + value);
-  };
-
-  const onScan = async (result) => {
-    scanQrCode({ lot_id: result, machine_id: machine_id })
-      .then(reloadData())
-      .catch((err) => console.log("Quét mã qr thất bại: ", err));
+    window.location.href = ("/oi/manufacture/" + value);
   };
 
   const rowClassName = (record, index) => {
@@ -292,7 +282,7 @@ const Manufacture1 = (props) => {
       return "table-row-yellow";
     }
     if (record.status === 3) {
-      return "table-row-yellow blink";
+      return "table-row-yellow";
     }
     if (record.status === 4) {
       return "table-row-grey";
@@ -304,10 +294,8 @@ const Manufacture1 = (props) => {
     if (listTem.length > 0) {
       if (machine_id === "S01") {
         print();
-      } else if (machine_id == "P06" || machine_id == "P15") {
-        printIn();
-      } else if (machine_id == "D05" || machine_id == "D06") {
-        printDan();
+      } else {
+        printThanhPham();
       }
       setListCheck([]);
       setListTem([]);
@@ -317,17 +305,10 @@ const Manufacture1 = (props) => {
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
-  const printIn = useReactToPrint({
+  const printThanhPham = useReactToPrint({
     content: () => componentRef2.current,
   });
-  const printDan = useReactToPrint({
-    content: () => componentRef3.current,
-  });
 
-  const handleCloseMdl = () => {
-    setIsOpenQRScanner(false);
-    setIsScan(2);
-  };
 
   const onChangeStartDate = (value) => {
     setParams({ ...params, start_date: value });
@@ -347,10 +328,46 @@ const Manufacture1 = (props) => {
 
   };
 
+  const onClickRow = (record) => {
+    record.status <= 1 && isPause && setSelectedLot(record);
+  }
+
+  const onClickBtn = async () => {
+    var res = await startStopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: !isPause, machine_id: machine_id });
+    if (res.success) {
+      setIsPasue(!isPause);
+      reloadData();
+    }
+  }
+  const tableRef = useRef();
+  const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+  const [tableSize, setTableSize] = useState(
+    {
+      width: window.innerWidth < 700 ? '300vw' : '100%',
+      height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+    }
+  );
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
+      console.log(table);
+      setTableSize(
+        {
+          width: window.innerWidth < 700 ? '300vw' : '100%',
+          height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+        }
+      );
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <React.Fragment>
       <Spin spinning={loading}>
-        <Row className="mt-3" gutter={[6, 8]}>
+        <Row className="mt-1" gutter={[6, 8]}>
           <Col span={24}>
             <Table
               size="small"
@@ -371,86 +388,74 @@ const Manufacture1 = (props) => {
               locale={{ emptyText: "Trống" }}
               columns={currentColumns}
               dataSource={selectedLot ? [selectedLot] : []}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: (event) => { tableRef.current?.scrollTo({ key: selectedLot?.lo_sx }); },
+                };
+              }}
             />
           </Col>
-          <Row
-            gutter={4}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            <Col span={9}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Từ ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeStartDate}
-              />
-            </Col>
-            <Col span={9}>
-              <DatePicker
-                allowClear={false}
-                placeholder="Đến ngày"
-                style={{ width: "100%" }}
-                format={COMMON_DATE_FORMAT}
-                defaultValue={dayjs()}
-                onChange={onChangeEndDate}
-              />
-            </Col>
-            <Col span={6}>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={handlePrint}
-                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-              />
-              <div className="report-history-invoice">
-                <Tem listCheck={listTem} ref={componentRef1} />
-                <TemIn listCheck={listTem} ref={componentRef2} />
-                <TemDan listCheck={listTem} ref={componentRef3} />
-              </div>
-            </Col>
-          </Row>
+          <Col span={6}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Từ ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeStartDate}
+            />
+          </Col>
+          <Col span={6}>
+            <DatePicker
+              allowClear={false}
+              placeholder="Đến ngày"
+              style={{ width: "100%" }}
+              format={COMMON_DATE_FORMAT}
+              defaultValue={dayjs()}
+              onChange={onChangeEndDate}
+            />
+          </Col>
+          <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+          <Col span={6}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              onClick={handlePrint}
+              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+            />
+            <div className="report-history-invoice">
+              {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
+            </div>
+          </Col>
           <Col span={24}>
             <Table
               scroll={{
-                x: "calc(700px + 50%)",
-                y: 300,
+                x: tableSize.width,
+                y: tableSize.height,
               }}
               size="small"
               rowClassName={(record, index) =>
                 "no-hover " + rowClassName(record, index)
               }
+              className="bottom-table"
+              ref={tableRef}
               pagination={false}
               bordered
               columns={columns}
               rowSelection={rowSelection}
-              dataSource={data.map((e, index) => ({ ...e, key: index }))}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: (event) => { onClickRow(record) },
+                };
+              }}
+              dataSource={data}
             />
           </Col>
         </Row>
       </Spin>
-      {isOpenQRScanner && (
-        <Modal
-          title="Quét QR"
-          open={isOpenQRScanner}
-          onCancel={handleCloseMdl}
-          footer={null}
-        >
-          <ScanQR
-            isScan={isOpenQRScanner}
-            onResult={(res) => {
-              onScan(res);
-              setIsOpenQRScanner(false);
-            }}
-          />
-        </Modal>
-      )}
     </React.Fragment>
   );
 };

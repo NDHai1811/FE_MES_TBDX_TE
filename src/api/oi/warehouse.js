@@ -40,6 +40,15 @@ export const sendStorePallet = async (params) => {
   return await axios.post("/oi/warehouse/fg/store-pallet", params);
 };
 
+export const checkLoSX = async (params) => {
+  return await axios.get("/oi/warehouse/fg/check-losx", { params });
+};
+
+export const getInfoPallet = async (params) => {
+  return await axios.get("/oi/warehouse/fg/info-pallet", { params });
+};
+
+
 export const importData = async (params) => {
   return await axios.post("/oi/warehouse/fg/import/save", params);
 };
@@ -69,9 +78,15 @@ export const saveExportsNVL = async (params) => {
 export const getWarehouseTpLogs = async () => {
   return await axios.get("oi/warehouse/fg/import/logs");
 };
-export const getWarehouseFGExportLogs = async () => {
-  return await axios.get("oi/warehouse/fg/export/logs");
+export const getWarehouseFGExportLogs = async (params) => {
+  return await axios.get("oi/warehouse/fg/export/logs", { params });
 };
 export const exportPallet = async (params) => {
   return await axios.post("oi/warehouse/fg/export/handle-export-pallet", params);
+};
+export const getDeliveryNoteList = async (params) => {
+  return await axios.get("oi/warehouse/fg/export/list-delivery-note", { params });
+};
+export const downloadDeliveryNote = async (params) => {
+  return await axios.get("oi/warehouse/fg/export/download-delivery-note", { params });
 };

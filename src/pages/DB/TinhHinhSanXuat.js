@@ -136,9 +136,8 @@ const TinhHinhSanXuat = () => {
   return (
     <React.Fragment>
       {/* <ReactFullscreen> */}
-        {({ ref, onRequest, onExit }) => (
+        {/* {({ ref, onRequest, onExit }) => ( */}
           <Layout
-            ref={ref}
             style={{ height: "100vh", backgroundColor: "#e3eaf0" }}
           >
             <Row
@@ -165,7 +164,7 @@ const TinhHinhSanXuat = () => {
                 TÌNH HÌNH SẢN XUẤT
               </div>
               <div>
-                {isFullCreen ? (
+                {/* {isFullCreen ? (
                   <FullscreenExitOutlined
                     style={{ fontSize: "30px" }}
                     onClick={() => {
@@ -181,7 +180,7 @@ const TinhHinhSanXuat = () => {
                       setIsFullScreen(true);
                     }}
                   />
-                )}
+                )} */}
                 <Link to={"/screen"} style={{ margin: "auto 0" }}>
                   <CloseOutlined
                     className="text-white"
@@ -194,20 +193,20 @@ const TinhHinhSanXuat = () => {
                 </Link>
               </div>
             </Row>
-            <Row style={{ padding: "15px", height: "100%" }} gutter={[8, 8]}>
+            <Row style={{ padding: "15px", height: "100%" }}>
               <Col span={24} style={{ height: "100%" }}>
                 <Table
                   className="mt-3 table-db"
                   bordered
                   pagination={false}
-                  scroll={{ x: "100%", y: "100vh" }}
+                  scroll={{ x: "100%", y: "100%" }}
                   columns={colTable}
                   dataSource={dataTable}
                 />
               </Col>
             </Row>
           </Layout>
-        )}
+        {/* )} */}
       {/* </ReactFullscreen> */}
     </React.Fragment>
   );
