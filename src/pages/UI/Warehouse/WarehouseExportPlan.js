@@ -186,7 +186,7 @@ const WarehouseExportPlan = () => {
     if (index > -1) {
       const res = await deleteWarehouseFGExport(record.id);
       if (res.success) {
-        loadListTable();
+        loadListTable(params);
       }
     }
   };
@@ -195,7 +195,7 @@ const WarehouseExportPlan = () => {
     try {
       var res = await updateWarehouseFGExport({...values, ids: data.filter((e, i)=>listCheck.includes(i)).map(e=>e.id)});
       if (res) {
-        loadListTable();
+        loadListTable(params);
         setListCheck([])
       }
     } catch (errInfo) {
@@ -228,7 +228,7 @@ const WarehouseExportPlan = () => {
 
   const loadListTable = async (params) => {
     setLoading(true);
-    const res = await getWarehouseFGExportList(params);
+    const res = await getWarehouseFGExportList({...params, page: page, pageSize: pageSize});
     setData(res.data.map((e, index)=>({...e, key: index})));
     setTotalPage(res.totalPage)
     setLoading(false);
@@ -252,7 +252,7 @@ const WarehouseExportPlan = () => {
   }, [data]);
   const [listCustomers, setListCustomers] = useState([]);
   const onAfterCreate = async () => {
-    loadListTable();
+    loadListTable(params);
     const res4 = await getDeliveryNoteList();
     setListNote(res4.data.map(e => ({ ...e, value: e.id, label: e.id })));
   }
