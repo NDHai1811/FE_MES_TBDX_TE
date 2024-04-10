@@ -20,6 +20,7 @@ import {
   createBuyers,
   createOrder,
   deleteBuyers,
+  exportBuyers,
   exportOrders,
   updateBuyers,
   updateOrder,
@@ -108,7 +109,7 @@ const Buyer = () => {
       key: "id",
       fixed: "left",
       editable: hasEditColumn("id"),
-      width:'140px'
+      width: '240px'
     },
     {
       title: "Mã khách hàng",
@@ -116,7 +117,7 @@ const Buyer = () => {
       key: "customer_id",
       align: "center",
       editable: hasEditColumn("customer_id"),
-      width:'115px'
+      width: '115px'
     },
     {
       title: "Tên khách hàng",
@@ -125,7 +126,7 @@ const Buyer = () => {
       render: (_, record) => {
         return record?.customer?.name
       },
-      width:'500px',
+      width: '350px',
     },
     {
       title: "Buyer viết tắt",
@@ -133,7 +134,7 @@ const Buyer = () => {
       key: "buyer_vt",
       align: "center",
       editable: hasEditColumn("buyer_vt"),
-      width:'110px',
+      width: '160px',
     },
     {
       title: "Phân loại 1",
@@ -141,7 +142,7 @@ const Buyer = () => {
       key: "phan_loai_1",
       align: "center",
       editable: hasEditColumn("phan_loai_1"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Số lớp",
@@ -149,14 +150,14 @@ const Buyer = () => {
       key: "so_lop",
       align: "center",
       editable: hasEditColumn("so_lop"),
-      width:'60px',
+      width: '60px',
     },
     {
       title: "Kết cấu giấy",
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       editable: hasEditColumn("ket_cau_giay"),
-      width:'650px',
+      width: '650px',
     },
     {
       title: "Ghi chú",
@@ -171,7 +172,7 @@ const Buyer = () => {
       key: "ma_cuon_f",
       align: "center",
       editable: hasEditColumn("ma_cuon_f"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Sóng E",
@@ -179,7 +180,7 @@ const Buyer = () => {
       key: "ma_cuon_se",
       align: "center",
       editable: hasEditColumn("ma_cuon_se"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Láng E",
@@ -187,7 +188,7 @@ const Buyer = () => {
       key: "ma_cuon_le",
       align: "center",
       editable: hasEditColumn("ma_cuon_le"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Sóng B",
@@ -195,7 +196,7 @@ const Buyer = () => {
       key: "ma_cuon_sb",
       align: "center",
       editable: hasEditColumn("ma_cuon_sb"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Láng B",
@@ -203,7 +204,7 @@ const Buyer = () => {
       key: "sl",
       align: "center",
       editable: hasEditColumn("ma_cuon_lb"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Sóng C",
@@ -211,7 +212,7 @@ const Buyer = () => {
       key: "ma_cuon_sc",
       align: "center",
       editable: hasEditColumn("ma_cuon_sc"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Láng C",
@@ -219,7 +220,7 @@ const Buyer = () => {
       key: "ma_cuon_lc",
       align: "center",
       editable: hasEditColumn("ma_cuon_lc"),
-      width:'90px',
+      width: '90px',
     },
     {
       title: "Hành động",
@@ -264,7 +265,7 @@ const Buyer = () => {
           </span>
         );
       },
-      width:'100px',
+      width: '100px',
     },
   ];
 
@@ -370,6 +371,8 @@ const Buyer = () => {
   }, []);
 
   function btn_click() {
+    setPage(1);
+    setParams({ ...params, page: 1, pageSize: 20 });
     loadListTable(params);
   }
 
@@ -419,7 +422,7 @@ const Buyer = () => {
 
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportOrders(params);
+    const res = await exportBuyers(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -497,6 +500,33 @@ const Buyer = () => {
                       placeholder="Nhập mã khách hàng"
                     />
                   </Form.Item>
+                  <Form.Item label="Tên khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_name: e.target.value })
+                      }
+                      placeholder="Nhập tên khách hàng"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Phân loại 1" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, phan_loai_1: e.target.value })
+                      }
+                      placeholder="Nhập phân loại 1"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Số lớp" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, so_lop: e.target.value })
+                      }
+                      placeholder="Nhập số lớp"
+                    />
+                  </Form.Item>
                 </Form>
               </div>
             </Card>
@@ -510,6 +540,9 @@ const Buyer = () => {
             title="Quản lý Buyer"
             extra={
               <Space>
+                <Button type="primary" loading={exportLoading} onClick={exportFile}>
+                  Xuất file
+                </Button>
                 <Upload
                   showUploadList={false}
                   name="files"
@@ -536,7 +569,6 @@ const Buyer = () => {
                   }}
                 >
                   <Button
-                    style={{ marginLeft: "15px" }}
                     type="primary"
                     loading={loadingExport}
                   >
@@ -567,7 +599,7 @@ const Buyer = () => {
                     },
                   }}
                   scroll={{
-                    x: "3200px",
+                    x: "2700px",
                     y: tableHeight,
                   }}
                   components={{

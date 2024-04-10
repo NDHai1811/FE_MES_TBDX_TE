@@ -569,6 +569,10 @@ export async function deleteBuyers(params) {
   const res = await axios.delete('/buyers/delete', { params });
   return res.data;
 }
+export async function exportBuyers(params) {
+  const res = await axios.get('/buyers/export', { params });
+  return res;
+}
 
 //Layouts
 export async function getLayouts(params) {
