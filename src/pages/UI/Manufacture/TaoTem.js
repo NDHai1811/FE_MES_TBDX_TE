@@ -219,7 +219,7 @@ const TaoTem = () => {
             title: "STYLE NO",
             dataIndex: "style",
             key: "style",
-            align: "center",    
+            align: "center",
             width: 150
         },
         {
@@ -281,7 +281,7 @@ const TaoTem = () => {
                 ) : (
                     <span>
                         <EditOutlined
-                            style={{ color: "#1677ff", fontSize: 18}}
+                            style={{ color: "#1677ff", fontSize: 18 }}
                             disabled={editingKey !== ""}
                             onClick={() => edit(record)}
                         />
@@ -443,7 +443,7 @@ const TaoTem = () => {
             dataIndex: "kich_thuoc",
             key: "kich_thuoc",
             align: "center",
-            width:'150px'
+            width: '150px'
         },
         {
             title: "Dài",
@@ -741,16 +741,17 @@ const TaoTem = () => {
                                         />
                                     </Form.Item>
                                     <Form.Item label="MQL" className="mb-3">
-                                        <Input
+                                        <Select
                                             allowClear
-                                            onChange={(e) => {
-                                                setParams({
-                                                    ...params,
-                                                    mql: e.target.value,
-                                                    page: 1,
-                                                });
+                                            showSearch
+                                            onChange={(value) => {
+                                                setParams({ ...params, mql: value });
                                             }}
-                                            placeholder="Nhập mã quản lý"
+                                            open={false}
+                                            suffixIcon={null}
+                                            mode="tags"
+                                            placeholder="Nhập MQL"
+                                            options={[]}
                                         />
                                     </Form.Item>
                                     <Button hidden htmlType="submit"></Button>

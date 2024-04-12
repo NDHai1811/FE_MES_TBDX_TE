@@ -27,7 +27,7 @@ import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState({page: 1, pageSize: 20, totalPage: 1});
+  const [params, setParams] = useState({ page: 1, pageSize: 20, totalPage: 1 });
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -44,7 +44,7 @@ const KhoNvl = (props) => {
   async function btn_click() {
     setLoading(true);
     const res = await getHistoryWareHouseMLT(params);
-    setParams({...params, totalPage: res.totalPage})
+    setParams({ ...params, totalPage: res.totalPage })
     setDataTable(res.data);
     setLoading(false);
   }
@@ -58,6 +58,8 @@ const KhoNvl = (props) => {
       key: "index",
       render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
       align: "center",
+      fixed: "left",
+      width:'50px'
     },
     {
       title: "Mã cuộn TBDX",
@@ -65,6 +67,7 @@ const KhoNvl = (props) => {
       key: "material_id",
       align: "center",
       render: (value) => value || "-",
+      fixed: "left",
     },
     {
       title: "Tên NCC",
@@ -72,6 +75,7 @@ const KhoNvl = (props) => {
       key: "ten_ncc",
       align: "center",
       render: (value) => value || "-",
+      width:'120px'
     },
     {
       title: "Loại giấy",
@@ -79,6 +83,7 @@ const KhoNvl = (props) => {
       key: "loai_giay",
       align: "center",
       render: (value) => value || "-",
+      width:'80px'
     },
     {
       title: "FSC",
@@ -86,6 +91,7 @@ const KhoNvl = (props) => {
       key: "fsc",
       align: "center",
       render: (value) => value || "-",
+      width:'60px'
     },
     {
       title: "Khổ giấy (cm)",
@@ -93,6 +99,7 @@ const KhoNvl = (props) => {
       key: "kho_giay",
       align: "center",
       render: (value) => value || "-",
+      width:'115px'
     },
     {
       title: "Định lượng",
@@ -100,6 +107,7 @@ const KhoNvl = (props) => {
       key: "dinh_luong",
       align: "center",
       render: (value) => value || "-",
+      width:'90px'
     },
     {
       title: "Số kg nhập",
@@ -107,6 +115,7 @@ const KhoNvl = (props) => {
       key: "so_kg_nhap",
       align: "center",
       render: (value) => value || "-",
+      width:'100px'
     },
     {
       title: "Mã cuộn NCC",
@@ -135,6 +144,7 @@ const KhoNvl = (props) => {
       key: "kho_giay",
       align: "center",
       render: (value) => value || "-",
+      width:'140px'
     },
     {
       title: "Sl đầu (kg)",
@@ -170,6 +180,7 @@ const KhoNvl = (props) => {
       key: "so_cuon",
       align: "center",
       render: (value) => value || "-",
+      width:'70px'
     },
     {
       title: "Khu vực",
@@ -190,24 +201,24 @@ const KhoNvl = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const formSubmition = () => {
     console.log(params);
-    params.page === 1 ? btn_click() : setParams({...params, page: 1});
+    params.page === 1 ? btn_click() : setParams({ ...params, page: 1 });
   }
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .ant-table-header');
-        const pagination = document.querySelector('.custom-card .ant-pagination');
-        const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [dataTable]);
   return (
     <>
@@ -225,7 +236,7 @@ const KhoNvl = (props) => {
                     type="primary"
                     htmlType="submit"
                     style={{ width: "80%" }}
-                    onClick={()=>formSubmition()}
+                    onClick={() => formSubmition()}
                   >
                     Tìm kiếm
                   </Button>
@@ -234,12 +245,12 @@ const KhoNvl = (props) => {
             >
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={()=>formSubmition()}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    formSubmition();
-                  }
-                }}>
+                <Form style={{ margin: "0 15px" }} layout="vertical" form={form} onFinish={() => formSubmition()}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      formSubmition();
+                    }
+                  }}>
                   <Form.Item label="Mã cuộn TBDX" className="mb-3" name={"material_id"}>
                     <Input allowClear placeholder="Nhập mã cuộn TBDX" onChange={(event) => setParams({ ...params, material_id: event.target.value })} />
                   </Form.Item>
@@ -337,7 +348,7 @@ const KhoNvl = (props) => {
                 }}
                 loading={loading}
                 scroll={{
-                  x: "130vw",
+                  x: "2000px",
                   y: tableHeight,
                 }}
                 columns={table1}

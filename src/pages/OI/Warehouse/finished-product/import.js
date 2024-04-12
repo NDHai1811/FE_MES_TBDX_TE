@@ -197,7 +197,14 @@ const Import = (props) => {
       ),
     },
     {
-      title: "Sl nhập",
+      title: "Tổng pallet tạo",
+      dataIndex: "sl_pallet_tao",
+      key: "sl_pallet_tao",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Tổng số pallet nhập",
       dataIndex: "sl_nhap",
       key: "sl_nhap",
       align: "center",
@@ -207,20 +214,6 @@ const Import = (props) => {
       title: "Sl xuất",
       dataIndex: "sl_xuat",
       key: "sl_xuat",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
-      title: "Sl tồn",
-      dataIndex: "sl_ton",
-      key: "sl_ton",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
-      title: "Số ngày tồn kho",
-      dataIndex: "so_ngay_ton",
-      key: "so_ngay_ton",
       align: "center",
       render: (value) => value || "-",
     },
@@ -306,11 +299,9 @@ const Import = (props) => {
             y: 300,
           }}
           rowClassName={(record, index) =>
-            record.status === 1
-              ? "table-row-yellow"
-              : record.status === 2
-                ? "table-row-grey"
-                : ""
+            record.is_location === 1
+              ? "table-row-grey"
+              : ""
           }
           size="small"
           pagination={false}
@@ -368,7 +359,7 @@ const Import = (props) => {
               <Button
                 block
                 className="h-100 w-100"
-                
+
                 type="primary"
                 onClick={() => setIsScan(true)}
                 style={{
