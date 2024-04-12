@@ -273,19 +273,19 @@ const LichSuSanXuat = (props) => {
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .ant-table-header');
-        const pagination = document.querySelector('.custom-card .ant-pagination');
-        const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [dataTable3]);
-  useEffect(()=>{
+  useEffect(() => {
     console.log(tableHeight);
   }, [tableHeight])
   return (
@@ -381,6 +381,21 @@ const LichSuSanXuat = (props) => {
                       suffixIcon={null}
                       mode="tags"
                       placeholder="Nhập mã đơn hàng"
+                      options={[]}
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, mql: value, page: 1 });
+                        setPage(1);
+                      }}
+                      open={false}
+                      suffixIcon={null}
+                      mode="tags"
+                      placeholder="Nhập MQL"
                       options={[]}
                     />
                   </Form.Item>

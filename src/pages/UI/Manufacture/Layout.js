@@ -180,7 +180,7 @@ const Layout = () => {
   };
   const col_detailTable = [
     {
-      title: "Mã khách hàng",
+      title: "Khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
@@ -721,17 +721,17 @@ const Layout = () => {
   const card = document.querySelector('.custom-card .ant-card-body');
   const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
   useEffect(() => {
-      const handleWindowResize = () => {
-        const header = document.querySelector('.custom-card .ant-table-header');
-        const pagination = document.querySelector('.custom-card .ant-pagination');
-        const card = document.querySelector('.custom-card .ant-card-body');
-          setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
-      };
-      handleWindowResize();
-      window.addEventListener('resize', handleWindowResize);
-      return () => {
-          window.removeEventListener('resize', handleWindowResize);
-      };
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, [data]);
   return (
     <>
