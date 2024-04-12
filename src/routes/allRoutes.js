@@ -57,6 +57,7 @@ import EmptyPage from "../pages/EmptyPage";
 import QCByMachineIOT from "../pages/OI/Quality/QCByMachineIOT";
 import IQC from "../pages/OI/Quality/IQC";
 import WarehouseExportCommand from "../pages/UI/Warehouse/WarehouseExportCommand";
+import MachineAssignment from "../pages/UI/MasterData/MachineAssignment";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -95,6 +96,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/san-xuat/material", component: Materials, label: 'Quản lý NVL', permission: 'ui-master-data-san-xuat-material' },
   { path: "/ui/master-data/san-xuat/customer", component: Customer },
   { path: "/ui/master-data/to-chuc/users", component: Users, label: 'Quản lý người dùng', permission: 'ui-master-data-to-chuc-users' },
+  { path: "/ui/master-data/to-chuc/assign-machine", component: MachineAssignment, label: 'Phân bổ máy cho tài khoản', permission: 'ui-master-data-machine-assignment' },
   { path: "/ui/master-data/to-chuc/roles", component: Roles, label: 'Quản lý bộ phận', permission: 'ui-master-data-to-chuc-roles' },
   { path: "/ui/master-data/to-chuc/permissions", component: Permissions, label: 'Quản lý phân quyền', permission: 'ui-master-data-to-chuc-permissions' },
   // { path: "/ui/master-data/kho/warehouse", component: Warehouses, label: 'Quản lý kho', permission: 'ui-master-data-kho-warehouse' },
@@ -102,7 +104,6 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/kho/vehicle", component: Vehicle, label: 'Quản lý phương tiện', permission: 'ui-master-data-kho-vehicle' },
   { path: "/ui/master-data/kho/khuon", component: Khuon, label: 'Quản lý khuôn', permission: 'ui-master-data-kho-khuon' },
   { path: "/ui/master-data/bao-tri/maintenance", component: Maintenance, label: 'Bảo trì', permission: 'ui-master-data-bao-tri-maintenance' },
-
   { path: "/ui/master-data/bao-tri/maintenance/create", component: CreateMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/master-data/bao-tri/maintenance/edit/:maintenanceId", component: EditMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
 
