@@ -640,3 +640,21 @@ export async function getTem(params) {
   const res = await axios.get('/intem', { params });
   return res.data;
 }
+
+//MachineAssignment
+export async function getMachineAssignment(params) {
+  const res = await axios.get('/machine-assignment/list', { params });
+  return res.data;
+}
+export async function createMachineAssignment(params) {
+  const res = await axios.post('/machine-assignment/create', params);
+  return res.data;
+}
+export async function updateMachineAssignment(params) {
+  const res = await axios.patch('/machine-assignment/update', params);
+  return res.data;
+}
+export async function deleteMachineAssignment(params) {
+  const res = await axios.post('/machine-assignment/delete', params);
+  return res.data;
+}

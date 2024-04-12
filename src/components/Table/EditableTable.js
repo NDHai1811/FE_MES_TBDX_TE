@@ -77,22 +77,23 @@ const EditableTable = forwardRef((props, ref) => {
       onCell: (record, rowIndex) => ({
         record,
         inputType: col.inputType,
-        options: col.options ?? [],
+        options: typeof col.options === 'function' ? col.options(record, rowIndex) : (col.options ?? []),
         dataIndex: col.dataIndex,
         title: col.title,
         index: rowIndex,
         editing: record.key === editingKey,
         onChange: onChange ?? function (value, dataIndex, index) {
-          setDataSource(dataSource.map(e => {
-            if (e.key === editingKey) {
+          setDataSource(dataSource.map((e, i) => {
+            if (i === editingKey) {
               return { ...e, [dataIndex]: value }
             }
             return { ...e };
           }))
         },
         onSelect: onSelect ?? function (value, dataIndex, index) {
-          setDataSource(dataSource.map(e => {
-            if (e.key === editingKey) {
+          console.log(value, dataIndex, index);
+          setDataSource(dataSource.map((e, i) => {
+            if (i === editingKey) {
               return { ...e, [dataIndex]: value }
             }
             return { ...e };
