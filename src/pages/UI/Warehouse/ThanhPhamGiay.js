@@ -341,6 +341,18 @@ const ThanhPhamGiay = (props) => {
                   <Form.Item label="Đơn hàng" className="mb-3">
                     <Input placeholder="Nhập đơn hàng" onChange={(event) => setParams({ ...params, mdh: event.target.value })} />
                   </Form.Item>
+                  <Form.Item label="Kích thước" className="mb-3">
+                    <Input placeholder="Nhập kích thước" onChange={(event) => setParams({ ...params, kich_thuoc: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="L" className="mb-3">
+                    <Input placeholder="Nhập L" onChange={(event) => setParams({ ...params, length: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="W" className="mb-3">
+                    <Input placeholder="Nhập W" onChange={(event) => setParams({ ...params, width: event.target.value })} />
+                  </Form.Item>
+                  <Form.Item label="H" className="mb-3">
+                    <Input placeholder="Nhập H" onChange={(event) => setParams({ ...params, height: event.target.value })} />
+                  </Form.Item>
                   <Form.Item label="MQL" className="mb-3">
                     <Input placeholder="Nhập MQL" onChange={(event) => setParams({ ...params, mql: event.target.value })} />
                   </Form.Item>
@@ -356,7 +368,7 @@ const ThanhPhamGiay = (props) => {
                   <Form.Item label="Số ngày tồn max" className="mb-3">
                     <Input placeholder="Nhập SL tồn max" onChange={(event) => setParams({ ...params, so_ngay_ton_max: event.target.value })} />
                   </Form.Item>
-                  
+
                 </div>
               </Card>
             </Form>

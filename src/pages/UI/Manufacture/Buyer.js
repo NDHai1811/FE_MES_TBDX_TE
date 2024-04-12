@@ -87,7 +87,7 @@ const Buyer = () => {
     "phan_loai_1",
     "so_lop",
     "ket_cau_giay",
-    "note",
+    "ghi_chu",
     "ma_cuon_f",
     "ma_cuon_se",
     "ma_cuon_le",
@@ -124,9 +124,9 @@ const Buyer = () => {
       dataIndex: "customer_name",
       key: "customer_name",
       render: (_, record) => {
-        return record?.customer?.name
+        return record?.customershort?.short_name
       },
-      width: '350px',
+      width: '200px',
     },
     {
       title: "Buyer viết tắt",
@@ -161,10 +161,10 @@ const Buyer = () => {
     },
     {
       title: "Ghi chú",
-      dataIndex: "note",
-      key: "note",
+      dataIndex: "ghi_chu",
+      key: "ghi_chu",
       align: "center",
-      editable: hasEditColumn("note"),
+      editable: hasEditColumn("ghi_chu"),
     },
     {
       title: "Mặt F",
@@ -289,7 +289,7 @@ const Buyer = () => {
         buyer_vt: "",
         phan_loai_1: "",
         ket_cau_giay: "",
-        note: "",
+        ghi_chu: "",
         ma_cuon_f: "",
         ma_cuon_se: "",
         ma_cuon_le: "",
@@ -500,13 +500,13 @@ const Buyer = () => {
                       placeholder="Nhập mã khách hàng"
                     />
                   </Form.Item>
-                  <Form.Item label="Tên khách hàng" className="mb-3">
+                  <Form.Item label="Tên khách hàng viết tắt" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>
                         setParams({ ...params, customer_name: e.target.value })
                       }
-                      placeholder="Nhập tên khách hàng"
+                      placeholder="Nhập tên khách hàng viết tắt"
                     />
                   </Form.Item>
                   <Form.Item label="Phân loại 1" className="mb-3">
@@ -599,7 +599,7 @@ const Buyer = () => {
                     },
                   }}
                   scroll={{
-                    x: "2700px",
+                    x: "2550px",
                     y: tableHeight,
                   }}
                   components={{
