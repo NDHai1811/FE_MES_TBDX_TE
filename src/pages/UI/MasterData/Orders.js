@@ -238,6 +238,8 @@ const Orders = () => {
       xuong_giao: "",
     },
   ]);
+  const defaulEditableColumns = ['short_name','mdh','length','width','height','kich_thuoc','mql','sl','unit','kich_thuoc_chuan','phan_loai_1','phan_loai_2','quy_cach_drc','buyer_id','khuon_id','toc_do','tg_doi_model','note_3','so_ra','kho','kho_tong','dai_tam','so_dao','so_met_toi','layout_type','layout_id','order','slg','slt','tmo','po','style','style_no','color','item','rm','size','price','into_money','xuong_giao','note_1','han_giao','han_giao_sx','nguoi_dat_hang','ngay_dat_hang','note_2','dot']
+  const [editableColumns, setEditableColumns] = useState(defaulEditableColumns)
   const optionChecks = [
     {
       label: 'L',
@@ -843,7 +845,7 @@ const Orders = () => {
   ];
 
   const mergedColumns = colDetailTable.map((col) => {
-    if (!col.editable) {
+    if (!editableColumns.includes(col.dataIndex)) {
       return col;
     }
     return {
@@ -914,7 +916,7 @@ const Orders = () => {
         }
         form.setFieldsValue(formData);
         break;
-      default:
+      case 'quy_cach_drc':
         var options = record?.customer_specifications ?? [];
         filteredOptions = options
           .filter(
@@ -924,11 +926,13 @@ const Orders = () => {
           )
           .map((e) => ({
             value: e.drc_id,
-            label: e.drc_id + " (" + e.drc.description + ")",
+            label: e.drc_id + (e.drc?.description ? " (" + e.drc?.description + ")" : ""),
           }));
         // if (filteredOptions.length <= 0) {
         //   filteredOptions = listDRC;
         // }
+        break;
+      default:
         break;
     }
     return filteredOptions;
@@ -1141,6 +1145,11 @@ const Orders = () => {
         return { ...e, key: e.id };
       })
     );
+    if(res?.editableColumns){
+      setEditableColumns(res.editableColumns);
+    }else{
+      setEditableColumns(defaulEditableColumns);
+    }
     setTotalPage(res.totalPage);
     setLoading(false);
   };
