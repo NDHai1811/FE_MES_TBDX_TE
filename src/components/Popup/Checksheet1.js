@@ -4,12 +4,12 @@ import {
   Row,
   Col,
   Button,
-  Radio,
+  Select,
   Space,
   InputNumber,
   Input,
   message,
-  Select,
+  Tooltip,
 } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
@@ -32,29 +32,19 @@ const Checksheet1 = (props) => {
   // const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [checksheet, setChecksheet] = useState([]);
+  const [formData, setFormData] = useState([])
 
-  const onFinish = async (values) => {
-    console.log(values);
+  const onFinish = () => {
+    console.log(formData);
     if (selectedLot) {
-      Object.keys(values["tinh_nang"]).forEach((key) => {
-        const isNullish = Object.values(values["tinh_nang"][key]).every(
-          (value) => {
-            if (!value) {
-              return true;
-            }
-            return false;
-          }
-        );
-        if (isNullish) {
-          delete values["tinh_nang"][key];
-        }
-        const error = checksheet.find((e) => e.id === key);
-        console.log(error);
-        if (values["tinh_nang"][error.id]) {
-          values["tinh_nang"][error.id].name = error?.name;
+      formData.forEach((e, index) => {
+        if (!e.value && !e.result) {
+          formData.splice(index, 1);
         }
       });
       closeModal();
+      const values = {tinh_nang: formData}
+      console.log(values);
       onSubmit(values);
     }
   };
@@ -66,66 +56,88 @@ const Checksheet1 = (props) => {
             machine: machines,
             lo_sx: selectedLot?.lo_sx,
           });
-          setChecksheet(res.data);
+          setFormData(res.data);
+          setChecksheet(res.data)
         } else {
           var res = await getIQCChecksheetList({
             line_id: line_id,
             lo_sx: selectedLot?.lo_sx,
             ma_ncc: selectedLot?.loai_giay + selectedLot?.dinh_luong,
           });
-          setChecksheet(res.data);
+          setFormData(res.data);
+          setChecksheet(res.data)
         }
       })();
     }
   }, [selectedLot]);
   useEffect(() => {
     form.resetFields();
-  }, [checksheet]);
+    setFormData(checksheet);
+  }, [selectedLot, open]);
   const [messageApi, contextHolder] = message.useMessage();
   const onSubmitFail = ({ values, errorFields, outOfDate }) => {
     // console.log(values, errorFields, outOfDate);
     messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
   };
+  const between = (x, min, max) => {
+    if(max){
+      return x >= min && x <= max;
+    }
+    else{
+      return x >= min;
+    }
+  }
+  const onChangeData = (value, key) => {
+    console.log(value, key);
+    setFormData(prev=>prev.map(e=>{
+      if(e.id === key){
+        var result = value ? 1 : 0;
+        if(value){
+          if(e.deteminer_value && e.deteminer_value.toLowerCase() === value.toLowerCase()){
+            result = 2;
+          }
+          if(e.hasOwnProperty('min') && e.hasOwnProperty('max')){
+            if(between(value, e.min, e.max)) result = 1;
+            else result = 2;
+          }
+        }
+        return {...e, value: value, result: result}
+      }
+      return e;
+    }))
+  }
   return (
     <React.Fragment>
       {contextHolder}
-      {/* <Button
-                disabled={!selectedLot?.lot_id}
-                danger={selectedLot?.phan_dinh === 2}
-                size="large"
-                className="w-100 text-wrap h-100"
-                onClick={
-                    !selectedLot?.phan_dinh
-                        ? () => {
-                            setOpen(true);
-                        }
-                        : null
-                }
-            >
-                {text}
-            </Button> */}
       <Modal
         title={"Kiểm tra " + (text ?? "")}
         open={open}
         onCancel={closeModal}
+        centered
+        bodyStyle={{maxHeight: 500, overflowX:'hidden', overflowY: 'auto', paddingRight:8}}
         footer={
           <Space>
-            <Button
-              onClick={() => {
-                onSubmit({ tinh_nang: [] });
-                closeModal();
-              }}
-              type="primary"
-            >
-              Duyệt
-            </Button>
-            <Button onClick={() => form.submit()} type="primary">
-              Lưu
-            </Button>
+            <Tooltip title="Lô không có lỗi lầm gì, duyệt để bỏ qua kiểm tra">
+              <Button
+                onClick={() => {
+                  onSubmit({ tinh_nang: [] });
+                  closeModal();
+                }}
+                type="primary"
+              >
+                Duyệt
+              </Button>
+            </Tooltip>
+            <Tooltip title="Lưu lại các chỉ tiêu đã kiểm tra">
+              <Button onClick={() => form.submit()} type="primary">
+                Lưu
+              </Button>
+            </Tooltip>
             <Button onClick={() => setOpen(false)}>Huỷ</Button>
           </Space>
         }
-        style={{ top: 8 }}
+        width={500}
+        style={{ top: 8}}
       >
         <Form
           form={form}
@@ -133,7 +145,7 @@ const Checksheet1 = (props) => {
           colon={false}
           onFinishFailed={onSubmitFail}
         >
-          <Form.List name={"tinh_nang"}>
+          {/* <Form.List name={"tinh_nang"}>
             {(fields, { add, remove }, { errors }) =>
               (checksheet ?? []).map((e, index) => {
                 if (e.input) {
@@ -295,6 +307,71 @@ const Checksheet1 = (props) => {
                     </Row>
                   );
                 }
+              })
+            }
+          </Form.List> */}
+          <Form.List name={"tinh_nang"}>
+            {(fields, { add, remove }, { errors }) =>
+              (formData ?? []).map((e, index) => {
+                var inputNode;
+                var className = "text-center h-100 d-flex align-items-center justify-content-center w-100 borderd"
+                switch (e.input_type) {
+                  case 'select':
+                    inputNode = <Select options={(e.options ?? []).map(o=>({value: o, label: o}))} className={className} placeholder="Chọn giá trị"
+                    onSelect={(value)=>onChangeData(value, e.id)}/>;
+                    break;
+                  case 'inputnumber':
+                    inputNode = <InputNumber min={0} className={className} placeholder="Nhập số" onChange={(value)=>onChangeData(value, e.id)}/>;
+                    break;
+                  default:
+                    break;
+                }
+                return (
+                  <Row gutter={8} className={index === 0 ? "" : "mt-2"}>
+                    <Col
+                      span={12}
+                      style={{ paddingInline: 4 }}
+                      className="d-flex justify-content-center flex-wrap align-items-lg-center"
+                    >
+                      <div
+                        className="d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center p-2"
+                        style={{
+                          backgroundColor: "#EBEBEB",
+                          height: "100%",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {e.name}
+                        {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
+                      </div>
+                      <Form.Item
+                        noStyle
+                        name={[e.id, "name"]}
+                        hidden
+                        initialValue={e.name}
+                        shouldUpdate={true}
+                      ></Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item
+                        noStyle
+                        name={[e.id, "value"]}
+                        rules={[{ required: true }]}
+                      >
+                        {inputNode}
+                      </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                      <Form.Item
+                        noStyle
+                      >
+                        <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center" style={!e.result ? "" : e.result === 1 ? {backgroundColor: "#55c32a",color: "white"} : {backgroundColor: "#fb4b50",color: "white"}} >
+                          {!e.result ? "OK/NG" : e.result === 1 ? "OK" : "NG"}
+                        </Button>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
               })
             }
           </Form.List>

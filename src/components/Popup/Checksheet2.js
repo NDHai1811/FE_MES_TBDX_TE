@@ -4,7 +4,7 @@ import {
   Row,
   Col,
   Button,
-  Divider,
+  Tooltip,
   Radio,
   Space,
   InputNumber,
@@ -38,39 +38,31 @@ const Checksheet2 = (props) => {
   const [form] = Form.useForm();
   const [checksheet, setChecksheet] = useState([]);
 
-  const onFinish = async (values) => {
+  const onFinish = async () => {
     if (selectedLot) {
-      Object.keys(values["ngoai_quan"] ?? {}).forEach((key) => {
-        const isNullish = Object.values(values["ngoai_quan"][key]).every(
-          (value) => {
-            if (!value) {
-              return true;
-            }
-            return false;
-          }
-        );
-        if (isNullish) {
-          delete values["ngoai_quan"][key];
-        }
-        const error = errorsList.find(e=>e.id === key);
-        if(values["ngoai_quan"][error.id]){
-          values["ngoai_quan"][error.id].name = error?.name;
+      errorsList.forEach((e, index) => {
+        if (!e.value && !e.result) {
+          errorsList.splice(index, 1);
         }
       });
-      if (!values.ngoai_quan) {
-        messageApi.error("Không có dữ liệu lỗi ngoại quan");
-        return 0;
-      }
+      const values = { ngoai_quan: errorsList }
       closeModal();
       onSubmit(values);
     }
   };
   useEffect(() => {
     form.resetFields();
+    setErrorsList(checksheet);
+  }, [open]);
+  useEffect(() => {
     setErrorsList([]);
-  }, [line]);
+    setChecksheet([]);
+  }, [selectedLot, line]);
   const [errorsList, setErrorsList] = useState([]);
   const onScan = async (result) => {
+    if(errorsList.some(e=>e.id?.toLowerCase() === result.toLowerCase())){
+      return 0;
+    }
     var res = await scanError({
       error_id: result,
       lo_sx: selectedLot.lo_sx,
@@ -79,6 +71,7 @@ const Checksheet2 = (props) => {
     });
     if (res.success) {
       setErrorsList([...errorsList, res.data]);
+      setChecksheet([...errorsList, res.data])
     }
   };
   const [messageApi, contextHolder] = message.useMessage();
@@ -89,49 +82,69 @@ const Checksheet2 = (props) => {
 
   const deleteError = (id) => {
     const ngoai_quan = form.getFieldValue('ngoai_quan');
-    if(ngoai_quan){
+    if (ngoai_quan) {
       delete ngoai_quan[id]
     }
     console.log(ngoai_quan);
     form.setFieldValue('ngoai_quan', ngoai_quan)
-    setErrorsList(prev=>prev.filter(e=>e.id !== id))
+    setErrorsList(prev => prev.filter(e => e.id !== id))
   }
+  const between = (x, min, max) => {
+    if (max) {
+      return x >= min && x <= max;
+    }
+    else {
+      return x >= min;
+    }
+  }
+  const onChangeData = (value, key) => {
+    console.log(value, key);
+    setErrorsList(prev => prev.map(e => {
+      if (e.id === key) {
+        var result = value ? 1 : 0;
+        if (value) {
+          if (e.hasOwnProperty('min') && e.hasOwnProperty('max')) {
+            if (between(value, e.min, e.max)) result = 1;
+            else result = 2;
+          }
+        }
+        if(e.input_type){
+          return { ...e, value: value, result: value }
+        }
+        return { ...e, value: value, result: result }
+      }
+      return e;
+    }))
+  }
+  useEffect(()=>{
+    console.log(errorsList);
+  }, [errorsList])
   return (
     <React.Fragment>
       {contextHolder}
-      {/* <Button
-        disabled={!selectedLot?.lot_id}
-        danger={selectedLot?.phan_dinh === 2}
-        size="large"
-        className="w-100 text-wrap h-100"
-        onClick={
-          !selectedLot?.phan_dinh
-            ? () => {
-              setOpen(true);
-            }
-            : null
-        }
-      >
-        {text}
-      </Button> */}
       <Modal
         title={"Kiểm tra " + (text ?? "")}
         open={open}
         onCancel={closeModal}
+        bodyStyle={{ maxHeight: 500, overflowX: 'hidden', overflowY: 'auto', paddingRight: 8 }}
         footer={
           <Space>
-            <Button
-              onClick={() => {
-                onSubmit({ ngoai_quan: [] });
-                closeModal();
-              }}
-              type="primary"
-            >
-              Duyệt
-            </Button>
-            <Button onClick={() => form.submit()} type="primary">
-              Lưu
-            </Button>
+            <Tooltip title="Lô không có lỗi lầm gì, duyệt để bỏ qua kiểm tra">
+              <Button
+                onClick={() => {
+                  onSubmit({ ngoai_quan: [] });
+                  closeModal();
+                }}
+                type="primary"
+              >
+                Duyệt
+              </Button>
+            </Tooltip>
+            <Tooltip title="Lưu lại các chỉ tiêu đã kiểm tra">
+              <Button onClick={() => form.submit()} type="primary">
+                Lưu
+              </Button>
+            </Tooltip>
             <Button onClick={() => setOpen(false)}>Huỷ</Button>
           </Space>
         }
@@ -154,7 +167,7 @@ const Checksheet2 = (props) => {
                 return (
                   <Row gutter={8} className={index === 0 ? "" : "mt-2"}>
                     <Col
-                      span={12}
+                      span={11}
                       style={{ paddingInline: 4 }}
                       className="d-flex justify-content-center flex-wrap align-items-lg-center"
                     >
@@ -168,92 +181,61 @@ const Checksheet2 = (props) => {
                       >
                         {e.name}
                       </div>
-                      <Form.Item noStyle name={[e.id, "name"]} hidden><Input/></Form.Item>
+                      <Form.Item noStyle name={[e.id, "name"]} hidden><Input /></Form.Item>
                     </Col>
-                    <Col span={6}>
-                      <Form.Item
-                        noStyle
-                        name={[e.id, "value"]}
-                        rules={[{ required: true }]}
-                      >
-                        <InputNumber
+                    {e.input_type === 'radio' ?
+                      <Col span={12}>
+                        <Form.Item
+                          noStyle
+                          name={[e.id, "value"]}
+                          rules={[{ required: true }]}
+                        >
+                          <Radio.Group 
+                          size="large"
+                          name={e.id}
                           className=" text-center h-100 d-flex align-items-center justify-content-center"
-                          inputMode="numeric"
-                          placeholder="Nhập số"
-                          min={0}
-                          style={{ width: "100%" }}
-                          onChange={(value) =>
-                            form.setFieldValue(
-                              ["ngoai_quan", e.id, "result"],
-                              !e?.max ?
-                                value >=
-                                parseFloat(e.min)
-                                ? 1
-                                : 2
-                              :
-                                parseFloat(value) >=
-                                parseFloat(e.min) &&
-                                value <=
-                                parseFloat(e.max)
-                                ? 1
-                                : 2
-                            )
-                          }
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={5}>
-                      <Form.Item
-                        noStyle
-                        shouldUpdate={(prevVal, curVal) => true}
-                      >
-                        {({ getFieldValue }) => (
+                          onChange={(event)=>onChangeData(event.target.value, e.id)} optionType="button" buttonStyle="solid">
+                            <Radio value={1} className="w-100" style={e.result === 1 && {backgroundColor: "#55c32a",color: "white"}}>OK</Radio>
+                            <Radio value={2} className="w-100" style={e.result === 2 && {backgroundColor: "#fb4b50",color: "white"}}>NG</Radio>
+                          </Radio.Group>
+                        </Form.Item>
+                      </Col>
+                      :
+                      <>
+                        <Col span={6}>
                           <Form.Item
-                            rules={[{ required: true }]}
-                            name={[e.id, "result"]}
                             noStyle
-                            className="w-100 h-100"
+                            name={[e.id, "value"]}
+                            rules={[{ required: true }]}
                           >
-                            {!getFieldValue(["ngoai_quan", e.id, "value"]) ? (
-                              <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
-                                OK/NG
-                              </Button>
-                            ) : getFieldValue([
-                                "ngoai_quan",
-                                e.id,
-                                "result",
-                              ]) === 1 ? (
-                              <Button
-                                className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
-                                style={{
-                                  backgroundColor: "#55c32a",
-                                  color: "white",
-                                }}
-                              >
-                                OK
-                              </Button>
-                            ) : (
-                              <Button
-                                className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
-                                style={{
-                                  backgroundColor: "#fb4b50",
-                                  color: "white",
-                                }}
-                              >
-                                NG
-                              </Button>
-                            )}
+                            <InputNumber
+                              className=" text-center h-100 d-flex align-items-center justify-content-center"
+                              inputMode="numeric"
+                              placeholder="Nhập số"
+                              min={0}
+                              style={{ width: "100%" }}
+                              onChange={(value) => onChangeData(value, e.id)}
+                            />
                           </Form.Item>
-                        )}
-                      </Form.Item>
-                    </Col>
+                        </Col>
+                        <Col span={6}>
+                          <Form.Item
+                            noStyle
+                          >
+                            <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center" style={!e.result ? "" : e.result === 1 ? { backgroundColor: "#55c32a", color: "white" } : { backgroundColor: "#fb4b50", color: "white" }} >
+                              {!e.result ? "OK/NG" : e.result === 1 ? "OK" : "NG"}
+                            </Button>
+                          </Form.Item>
+                        </Col>
+                      </>
+                    }
                     <Col span={1} className="d-flex justify-content-center">
                       <Form.Item
                         noStyle
                         name={[e.id, "value"]}
                         rules={[{ required: true }]}
                       >
-                        <CloseOutlined className="h-100" onClick={()=>deleteError(e.id)}/>
+                        <CloseOutlined className="h-100" onClick={() => deleteError(e.id)} />
                       </Form.Item>
                     </Col>
                   </Row>

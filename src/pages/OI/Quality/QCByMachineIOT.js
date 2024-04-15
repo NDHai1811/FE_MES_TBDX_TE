@@ -278,7 +278,7 @@ const QCByMachine = (props) => {
 
   const getListOption = async () => {
     setLoading(true);
-    var machine = await getListMachine({ is_iot: true });
+    var machine = await getListMachine({ is_iot: 1 });
     if (machine.length > 0) {
       setMachineOptions(machine);
       setLoading(false);
