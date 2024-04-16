@@ -370,7 +370,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 100,
+      width: 115,
     },
     {
       title: "L",
@@ -380,7 +380,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 50,
+      width: 60,
     },
     {
       title: "W",
@@ -390,7 +390,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 50,
+      width: 60,
     },
     {
       title: "H",
@@ -400,7 +400,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 50,
+      width: 60,
     },
     {
       title: "Kích thước ĐH",

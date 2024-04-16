@@ -90,14 +90,14 @@ const WarehouseExportPlan = () => {
       width: 80
     },
     {
-      title: "Mã đơn hàng",
+      title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
-      width: 80,
+      width: 90,
     },
     {
-      title: "Mã quản lý",
+      title: "MQL",
       dataIndex: "mql",
       key: "mql",
       align: "center",
@@ -176,7 +176,7 @@ const WarehouseExportPlan = () => {
 
   const save = async (values) => {
     try {
-      var res = await updateWarehouseFGExport({...values, ids: data.filter((e, i)=>listCheck.includes(i)).map(e=>e.id)});
+      var res = await updateWarehouseFGExport({ ...values, ids: data.filter((e, i) => listCheck.includes(i)).map(e => e.id) });
       if (res) {
         loadListTable(params);
         setListCheck([])
@@ -211,8 +211,8 @@ const WarehouseExportPlan = () => {
 
   const loadListTable = async (params) => {
     setLoading(true);
-    const res = await getWarehouseFGExportList({...params, page: page, pageSize: pageSize});
-    setData(res.data.map((e, index)=>({...e, key: index})));
+    const res = await getWarehouseFGExportList({ ...params, page: page, pageSize: pageSize });
+    setData(res.data.map((e, index) => ({ ...e, key: index })));
     setTotalPage(res.totalPage)
     setLoading(false);
   };
@@ -253,7 +253,7 @@ const WarehouseExportPlan = () => {
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
-              styles={{ body: {padding: 0} }}
+              styles={{ body: { padding: 0 } }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -329,24 +329,24 @@ const WarehouseExportPlan = () => {
                       placeholder="Nhập người báo xuất"
                     />
                   </Form.Item>
-                  <Form.Item label="Mã đơn hàng" className="mb-3">
+                  <Form.Item label="MDH" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) => {
                         setParams({ ...params, mdh: e.target.value, page: 1 });
                       }
                       }
-                      placeholder="Nhập mã đơn hàng"
+                      placeholder="Nhập MDH"
                     />
                   </Form.Item>
-                  <Form.Item label="Mã quản lý" className="mb-3">
+                  <Form.Item label="MQL" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) => {
                         setParams({ ...params, mql: e.target.value });
                       }
                       }
-                      placeholder="Nhập mã quản lý"
+                      placeholder="Nhập MQL"
                     />
                   </Form.Item>
                 </Form>
@@ -358,7 +358,7 @@ const WarehouseExportPlan = () => {
           <Card
             style={{ height: "100%" }}
             title="Kế hoạch xuất kho"
-            styles={{ body: {paddingBottom: 0} }}
+            styles={{ body: { paddingBottom: 0 } }}
             className="custom-card"
             extra={
               <Space>
