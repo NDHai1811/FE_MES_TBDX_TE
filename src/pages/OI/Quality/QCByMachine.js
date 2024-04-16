@@ -194,36 +194,71 @@ const QCByMachine = (props) => {
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
+      width: 100
     },
     {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
+      width: 80
     },
     {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
+      width: 100
+    },
+    {
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      render: (value) => value ?? "-",
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      render: (value) => value ?? "-",
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      render: (value) => value ?? "-",
+    },
+    {
+      title: "Kích thước",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+      render: (value) => value ?? "-",
+      width: 160
     },
     {
       title: "MQL",
       dataIndex: "mql",
       key: "mql",
       align: "center",
+      width: 50
     },
     {
-      title: "Sản lượng đầu ra",
+      title: "SL đầu ra",
       dataIndex: "san_luong",
       key: "san_luong",
       align: "center",
+      width: 80
     },
     {
-      title: "Sản lượng đạt",
+      title: "SL đạt",
       dataIndex: "sl_ok",
       key: "sl_ok",
       align: "center",
+      width: 80
     },
     {
       title: "SL lỗi tính năng",
@@ -231,6 +266,7 @@ const QCByMachine = (props) => {
       key: "sl_loi",
       align: "center",
       render: (value, record, index) => record.checked_tinh_nang ? value : "-",
+      width: 80
     },
     {
       title: "SL lỗi ngoại quan",
@@ -238,12 +274,14 @@ const QCByMachine = (props) => {
       key: "sl_ngoai_quan",
       align: "center",
       render: (value, record, index) => record.checked_ngoai_quan ? value : "-",
+      width: 80
     },
     {
       title: "Tổng phế",
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
+      width: 80
     },
     {
       title: "Phán định",
@@ -291,7 +329,7 @@ const QCByMachine = (props) => {
 
   const getListOption = async () => {
     setLoading(true);
-    var machine = await getListMachine();
+    var machine = await getListMachine({is_iot: 0});
     setMachineOptions(machine);
     setLoading(false);
   };
@@ -462,6 +500,7 @@ const QCByMachine = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
+            x: '1200px',
             y: 300,
           }}
           pagination={false}
