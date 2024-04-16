@@ -470,6 +470,15 @@ const Orders = () => {
       checked: true,
     },
     {
+      title: "Mã buyer",
+      dataIndex: "buyer_id",
+      key: "buyer_id",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: "5%",
+    },
+    {
       title: "Phân loại 2",
       dataIndex: "phan_loai_2",
       key: "phan_loai_2",
@@ -478,15 +487,6 @@ const Orders = () => {
       editable: true,
       checked: true,
       render: (value) => PL2s.find((e) => e.value === value)?.label,
-    },
-    {
-      title: "Mã buyer",
-      dataIndex: "buyer_id",
-      key: "buyer_id",
-      align: "center",
-      editable: true,
-      checked: true,
-      width: "5%",
     },
     {
       title: "Mã khuôn",
