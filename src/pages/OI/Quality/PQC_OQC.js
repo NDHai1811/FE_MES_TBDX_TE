@@ -389,13 +389,6 @@ const PQC_OQC = (props) => {
               size="small"
               className="custom-table"
               style={{ borderRadius: 12 }}
-            // scroll={
-            //   window.screen.width < 720
-            //     ? {
-            //         x: window.screen.width,
-            //       }
-            //     : false
-            // }
             />
           </Col>
         </Row>

@@ -28,6 +28,7 @@ import {
   getQCHistory,
   recheckQC,
 } from "../../../api/ui/quality";
+import { getMachineList } from "../../../api/ui/machine";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
@@ -37,6 +38,7 @@ const QualityPQC = (props) => {
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [listMachines, setListMachines] = useState([]);
   useEffect(() => {
     (async () => {
       const res1 = await getLines();
@@ -47,6 +49,8 @@ const QualityPQC = (props) => {
       );
       const res2 = await getUIItemMenu();
       setItemMenu(res2.data);
+      const res3 = await getMachineList();
+      setListMachines(res3.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
     })();
   }, []);
 
@@ -63,57 +67,6 @@ const QualityPQC = (props) => {
   };
 
   const [dataTable, setDataTable] = useState();
-  const [dataLineChart, setDataLineChart] = useState([]);
-  const [dataPieChart, setDataPieChart] = useState([]);
-
-  const configPieChart = {
-    data: dataPieChart,
-    height: 100,
-    angleField: "value",
-    colorField: "name",
-    radius: 0.5,
-    innerRadius: 0.6,
-    label: {
-      type: "outer",
-      offset: "120%",
-      content: ({ name, percent }) =>
-        `${name}` + " " + `${(percent * 100).toFixed(0)}%`,
-      style: {
-        textAlign: "center",
-        fontSize: 14,
-      },
-    },
-    legend: false,
-    interactions: [
-      {
-        type: "element-selected",
-      },
-      {
-        type: "element-active",
-      },
-    ],
-    statistic: {
-      title: false,
-      content: false,
-    },
-  };
-  const configLineChart = {
-    data: dataLineChart,
-    height: 100,
-    xField: "date",
-    yField: "value",
-    seriesField: "error",
-    legend: {
-      position: "top",
-    },
-    smooth: true,
-    animation: {
-      appear: {
-        animation: "path-in",
-        duration: 5000,
-      },
-    },
-  };
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -268,34 +221,6 @@ const QualityPQC = (props) => {
   };
 
   const [loading, setLoading] = useState(false);
-
-  const [exportLoading1, setExportLoading1] = useState(false);
-  const exportFileDetail = async () => {
-    setExportLoading1(true);
-    const res = await exportQCHistory(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading1(false);
-  };
-  const [isModalBCOpen, setIsModalBCOpen] = useState(false);
-  const showModalBC = () => {
-    setIsModalBCOpen(true);
-  };
-  const closeModalBC = () => {
-    setIsModalBCOpen(false);
-  };
-  const [formExportReport] = Form.useForm();
-  const [exportLoading2, setExportLoading2] = useState(false);
-  const exportReport = async (values) => {
-    setExportLoading2(true);
-    const res = await exportReportQC(values);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading2(false);
-  };
-
   const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
     const filteredKeys = selectedKeys.filter(
@@ -439,16 +364,22 @@ const QualityPQC = (props) => {
                     />
                   </Form.Item>
                   <Form.Item label="Máy" className="mb-3">
-                    <Input
+                    <Select
                       allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          machine_id: e.target.value,
-                          page: 1,
-                        });
-                      }}
-                      placeholder="Nhập máy"
+                      showSearch
+                      placeholder="Chọn máy"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, machine_id: value, page: 1 })
+                      }
+                      }
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={listMachines}
+                      value={params.machine_id}
                     />
                   </Form.Item>
                   <Form.Item label="MQL" className="mb-3">
