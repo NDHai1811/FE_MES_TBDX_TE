@@ -93,7 +93,7 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center" style={{ fontWeight: '700', fontSize: '26px' }}>{detail.thu_tu_uu_tien}</td>
             </tr>
             <tr>
-              <td colSpan={4} style={{ fontSize: '12px'}}>GHI CHÚ TBDX</td>
+              <td colSpan={4} style={{ fontSize: '12px' }}>GHI CHÚ TBDX</td>
               <td colSpan={1} style={{ fontSize: '12px' }} className="text-center">ĐỢT</td>
             </tr>
             <tr>
@@ -105,6 +105,10 @@ const PrintTemplate = ({ detail }) => {
               <td className="text-center" style={{ fontSize: '12px', fontWeight: '700' }} colSpan={2}>{detail.thoi_gian_bat_dau}</td>
               <td className="text-center" style={{ fontSize: '12px' }}>CA SX</td>
               <td style={{ fontSize: '12px', fontWeight: '700' }}>{detail.ca_sx}</td>
+            </tr>
+            <tr>
+              <td className="text-center" colSpan={1} style={{ fontSize: '12px' }}>MQL ĐÃ CHẠY</td>
+              <td className="text-center" colSpan={4} style={{ fontWeight: '700', fontSize: '26px' }}>{detail.mql}</td>
             </tr>
           </tbody>
         </table>

@@ -14,7 +14,6 @@ import UIManufactureLSSX from "../pages/UI/Manufacture/LichSuSanXuat";
 import UIQualityPQC from "../pages/UI/Quality/PQC";
 import UIEquipment1 from "../pages/UI/Equipment/Equipment1";
 import UIEquipment2 from "../pages/UI/Equipment/Equipment2";
-import QuanLyKhuonFilm from "../pages/UI/Equipment/QuanLyKhuonFilm";
 import UIKPI from "../pages/UI/KPI";
 import WarehouseExportPlan from "../pages/UI/Warehouse/WarehouseExportPlan";
 import ThanhPhamGiay from "../pages/UI/Warehouse/ThanhPhamGiay";
@@ -43,7 +42,6 @@ import CreateMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import EditMaintenance from "../pages/UI/MasterData/Maintenance/form";
 import ChangePassword from "../pages/Authentication/ChangePassword";
 import QCByMachine from "../pages/OI/Quality/QCByMachine";
-import QCByLine from "../pages/OI/Quality/QCByLine";
 import Orders from "../pages/UI/MasterData/Orders";
 import Layout from "../pages/UI/Manufacture/Layout";
 import Buyer from "../pages/UI/Manufacture/Buyer";
@@ -76,7 +74,6 @@ const authProtectedRoutes = [
   // { path: "/ui/quality/oqc", component: UIQualityOQC },
   { path: "/ui/equipment/thong-ke-loi", component: UIEquipment1, label: 'Thống kê lỗi', permission: 'ui-equipment-thong-ke-loi' },
   { path: "/ui/equipment/thong-so-may", component: UIEquipment2, label: 'Thông số máy', permission: 'ui-equipment-thong-so-may' },
-  { path: "/ui/equipment/quan-ly-khuon-film", component: QuanLyKhuonFilm, label: 'Quản lý khuôn/film', permission: 'ui-equipment-quan-ly-khuon-film' },
   { path: "/ui/warehouse/quan-ly-kho-tp", component: ThanhPhamGiay, label: 'Quản lý kho thành phẩm', permission: 'ui-warehouse-quan-ly-kho-tp' },
   { path: "/ui/warehouse/ke-hoach-xuat-kho", component: WarehouseExportPlan, label: 'Kế hoạch xuất kho', permission: 'ui-warehouse-ke-hoach-xuat-kho' },
   { path: "/ui/warehouse/quan-ly-lenh-xuat-kho", component: WarehouseExportCommand, label: 'Quản lý lệnh xuất kho', permission: 'ui-warehouse-quan-ly-lenh-xuat-kho' },

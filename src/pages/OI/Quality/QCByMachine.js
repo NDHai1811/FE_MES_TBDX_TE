@@ -94,7 +94,7 @@ const QCByMachine = (props) => {
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
-      width: "30%",
+      width: "26%",
     },
     {
       title: "Kiểm tra tính năng",
@@ -201,43 +201,14 @@ const QCByMachine = (props) => {
       dataIndex: "khach_hang",
       key: "khach_hang",
       align: "center",
-      width: 80
+      width: 90
     },
     {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
-      width: 100
-    },
-    {
-      title: "L",
-      dataIndex: "length",
-      key: "length",
-      align: "center",
-      render: (value) => value ?? "-",
-    },
-    {
-      title: "W",
-      dataIndex: "width",
-      key: "width",
-      align: "center",
-      render: (value) => value ?? "-",
-    },
-    {
-      title: "H",
-      dataIndex: "height",
-      key: "height",
-      align: "center",
-      render: (value) => value ?? "-",
-    },
-    {
-      title: "Kích thước",
-      dataIndex: "quy_cach",
-      key: "quy_cach",
-      align: "center",
-      render: (value) => value ?? "-",
-      width: 160
+      width: 95
     },
     {
       title: "MQL",
@@ -245,6 +216,38 @@ const QCByMachine = (props) => {
       key: "mql",
       align: "center",
       width: 50
+    },
+    {
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      render: (value) => value ?? "-",
+      width: 40
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      render: (value) => value ?? "-",
+      width: 40
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      render: (value) => value ?? "-",
+      width: 40
+    },
+    {
+      title: "Kích thước",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+      render: (value) => value ?? "-",
+      width: 110
     },
     {
       title: "SL đầu ra",
@@ -258,7 +261,7 @@ const QCByMachine = (props) => {
       dataIndex: "sl_ok",
       key: "sl_ok",
       align: "center",
-      width: 80
+      width: 70
     },
     {
       title: "SL lỗi tính năng",
@@ -281,13 +284,14 @@ const QCByMachine = (props) => {
       dataIndex: "sl_ng",
       key: "sl_ng",
       align: "center",
-      width: 80
+      width: 60
     },
     {
       title: "Phán định",
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
+      width: 90,
       render: (value) => {
         switch (value) {
           case 0:
@@ -329,7 +333,7 @@ const QCByMachine = (props) => {
 
   const getListOption = async () => {
     setLoading(true);
-    var machine = await getListMachine({is_iot: 0});
+    var machine = await getListMachine({ is_iot: 0 });
     setMachineOptions(machine);
     setLoading(false);
   };
@@ -500,7 +504,7 @@ const QCByMachine = (props) => {
             return "no-hover " + rowClassName(record, index);
           }}
           scroll={{
-            x: '1200px',
+            x: '1000px',
             y: 300,
           }}
           pagination={false}

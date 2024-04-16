@@ -112,9 +112,6 @@ const TaoTem = () => {
             form.resetFields();
             loadListTable();
             setEditingKey("");
-            // if (listCheck.length > 0) {
-            //   setListCheck([]);
-            // }
         }
     };
     const onSelect = (value, dataIndex) => {

@@ -300,7 +300,7 @@ const Import = (props) => {
           }}
           rowClassName={(record, index) =>
             record.is_location === 1
-              ? "table-row-grey"
+              ? "table-row-green"
               : ""
           }
           size="small"
