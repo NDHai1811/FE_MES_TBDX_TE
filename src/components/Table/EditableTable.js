@@ -18,20 +18,22 @@ const EditableTable = forwardRef((props, ref) => {
     onChange,
     onSelect,
     options,
+    inputProps,
     ...restProps
   }) => {
     let inputNode;
     switch (inputType) {
       case "number":
-        inputNode = <InputNumber />;
+        inputNode = <InputNumber {...inputProps}/>;
         break;
       case "select":
         inputNode = (
           <Select
+            {...inputProps}
             value={record?.[dataIndex]}
             options={options}
             optionFilterProp="label"
-            onChange={(value) => onSelect(value, dataIndex, index)}
+            // onChange={(value) => onSelect(value, dataIndex, index)}
             showSearch
           />
         );
@@ -39,16 +41,17 @@ const EditableTable = forwardRef((props, ref) => {
       case "date":
         inputNode = (
           <DatePicker
+            {...inputProps}
             value={record?.[dataIndex]}
             options={options}
-            onSelect={(value) => onSelect(value, dataIndex, index)}
-            onChange={(value) => value.isValid() && onChange(value, dataIndex, index)}
+            // onSelect={(value) => onSelect(value, dataIndex, index)}
+            // onChange={(value) => value.isValid() && onChange(value, dataIndex, index)}
             showSearch
           />
         );
         break;
       default:
-        inputNode = <Input />;
+        inputNode = <Input {...inputProps}/>;
         break;
     }
     return (
@@ -76,6 +79,7 @@ const EditableTable = forwardRef((props, ref) => {
       ...col,
       onCell: (record, rowIndex) => ({
         record,
+        inputProps: col.inputProps,
         inputType: col.inputType,
         options: typeof col.options === 'function' ? col.options(record, rowIndex) : (col.options ?? []),
         dataIndex: col.dataIndex,
@@ -91,7 +95,6 @@ const EditableTable = forwardRef((props, ref) => {
           }))
         },
         onSelect: onSelect ?? function (value, dataIndex, index) {
-          console.log(value, dataIndex, index);
           setDataSource(dataSource.map((e, i) => {
             if (i === editingKey) {
               return { ...e, [dataIndex]: value }

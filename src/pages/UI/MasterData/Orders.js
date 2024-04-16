@@ -503,7 +503,6 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "2%",
     },
     {
       title: "Thời gian thay model",
@@ -512,7 +511,6 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "2%",
     },
     {
       title: "Ghi chú sóng",
@@ -521,6 +519,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 150
     },
     {
       title: "Dài",

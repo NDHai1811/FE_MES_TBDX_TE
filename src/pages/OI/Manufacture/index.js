@@ -16,8 +16,12 @@ const Manufacture = () => {
   const [IOTList, setIOTList] = useState([])
   const [machineOptions, setMachineOptions] = useState([]);
   const getListMachine = async () => {
-    var res = await getMachines()
-    setMachineOptions(res.data);
+    var res = await getMachines();
+    if (res.data.length > 0) {
+      setMachineOptions(res.data);
+    } else {
+      history.push('/screen');
+    }
   };
   useEffect(()=>{
     getListMachine();

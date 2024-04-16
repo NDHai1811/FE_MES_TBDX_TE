@@ -65,13 +65,13 @@ const MachineAssignment = () => {
         },
         {
             title: "Tên nhân viên",
-            dataIndex: "user_id",
-            key: "user_id",
+            dataIndex: "name",
+            key: "name",
             align: "center",
-            render: (_, record)=>userList.find(e=>e.id === record?.user_id)?.name,
-            editable: true,
-            inputType: 'select',
-            options: userList
+            // render: (_, record)=>userList.find(e=>e.id === record?.user_id)?.name,
+            // editable: true,
+            // inputType: 'select',
+            // options: userList
         },
         {
             title: "Tổ",
@@ -81,17 +81,19 @@ const MachineAssignment = () => {
             render: (value) => lineList.find(e => e.id === value)?.name,
             editable: true,
             inputType: 'select',
-            options: lineList
+            options: lineList,
         },
         {
             title: "Máy",
             dataIndex: "machine_id",
             key: "machine_id",
             align: "center",
-            render: (value) => machineList.find(e => e.id === value)?.name,
+            render: (value) => (value??[]).join(', '),
             editable: true,
             inputType: 'select',
-            options: (record) => machineList.filter(e => e.line_id === record?.line_id),
+            options: machineList,
+            inputProps: {mode: 'multiple', },
+            width: 200
         },
     ];
 
@@ -131,7 +133,7 @@ const MachineAssignment = () => {
     useEffect(() => {
         (async () => {
             var machine = await getMachines();
-            setMachineList(machine.map(e => ({ ...e, value: e.id, label: e.name })));
+            setMachineList(machine.map(e => ({ ...e, value: e.id, label: e.name + ' ('+e.id+')' })));
             var line = await getLine();
             setLineList(line.map(e => ({ ...e, value: e.id, label: e.name })))
             var users = await getUsers();
@@ -240,11 +242,11 @@ const MachineAssignment = () => {
                         bodyStyle={{ paddingBottom: 0 }}
                         className="custom-card scroll"
                         title="Phân bổ máy cho tài khoản"
-                        extra={
-                            <Space>
-                                <Button type="primary" onClick={clickToCreate}>Thêm</Button>
-                            </Space>
-                        }
+                        // extra={
+                        //     <Space>
+                        //         <Button type="primary" onClick={clickToCreate}>Thêm</Button>
+                        //     </Space>
+                        // }
                     >
                         <EditableTable
                             ref={tableRef}
@@ -267,10 +269,10 @@ const MachineAssignment = () => {
                                     loadListTable({ ...params, page: page, pageSize: pageSize });
                                 },
                             }}
-                            onSelect={onSelect}
-                            onCreate={onCreate}
+                            // onSelect={onSelect}
+                            // onCreate={onCreate}
                             onUpdate={onUpdate}
-                            onDelete={onDelete}
+                            // onDelete={onDelete}
                         />
                     </Card>
                 </Col>
