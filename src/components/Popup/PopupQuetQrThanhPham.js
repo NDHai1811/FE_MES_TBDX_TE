@@ -45,7 +45,7 @@ function PopupQuetQrThanhPham(props) {
       const newData = data.map((val) => {
         if (!val.pallet_id) {
           val.pallet_id = currentData;
-        } else if (!val.locator_id) {
+        } else {
           val.locator_id = currentData;
         }
         return { ...val };

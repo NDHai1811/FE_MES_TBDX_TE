@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Modal, Select, Input, Form, Button, message } from "antd";
+import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -9,6 +9,7 @@ import { downloadDeliveryNote, exportPallet, getDeliveryNoteList, getWarehouseFG
 import { DownloadOutlined, QrcodeOutlined } from "@ant-design/icons";
 import ScanQR from "../../../../components/Scanner";
 import { baseURL } from "../../../../config";
+import dayjs from "dayjs";
 
 const exportColumns = [
   {
@@ -80,6 +81,7 @@ const Export = (props) => {
   const [loadingTable, setLoadingTable] = useState(false);
   const [form] = Form.useForm();
   const scanRef = useRef();
+  const [params, setParams] = useState({start_date: dayjs(), end_date: dayjs()})
   const column2 = [
     {
       title: "Kho",
@@ -217,7 +219,7 @@ const Export = (props) => {
 
   const loadDataTable = async () => {
     setLoadingTable(true);
-    const res = await getWarehouseFGExportLogs({ 'delivery_note_id': deliveryNoteID });
+    const res = await getWarehouseFGExportLogs({ ...params, delivery_note_id: deliveryNoteID });
     if (res.success) {
       setData(res.data);
     }
@@ -259,9 +261,9 @@ const Export = (props) => {
     }, SCAN_TIME_OUT);
   };
   const loadData = async () => {
-    var res2 = await getWarehouseFGOverall();
+    var res2 = await getWarehouseFGOverall(params);
     setOverall([res2.data])
-    var res3 = await getDeliveryNoteList();
+    var res3 = await getDeliveryNoteList(params);
     const arr = [];
     res3.data.map((value) => {
       return arr.push({ 'label': value.id, 'value': value.id });
@@ -293,6 +295,10 @@ const Export = (props) => {
     }
     setIsDownloading(false);
   }
+  useEffect(()=>{
+    loadData();
+    loadDataTable();
+  }, [params])
   return (
     <React.Fragment>
       <Row className="mt-1" gutter={[4, 12]}>
@@ -318,7 +324,27 @@ const Export = (props) => {
             dataSource={selectedItem ? [selectedItem] : [{}]}
           />
         </Col>
-        <Col span={12}>
+        <Col span={6}>
+          <DatePicker
+            allowClear={false}
+            placeholder="Từ ngày"
+            style={{ width: "100%" }}
+            format={'DD/MM/YYYY'}
+            defaultValue={params.start_date}
+            onChange={(value)=>value && value?.isValid() && setParams({...params, start_date: value})}
+          />
+        </Col>
+        <Col span={6}>
+          <DatePicker
+            allowClear={false}
+            placeholder="Đến ngày"
+            style={{ width: "100%" }}
+            format={'DD/MM/YYYY'}
+            defaultValue={params.end_date}
+            onChange={(value)=>value && value?.isValid() && setParams({...params, end_date: value})}
+          />
+        </Col>
+        <Col span={6}>
           <Button
             block
             className="h-100 w-100"
@@ -334,7 +360,7 @@ const Export = (props) => {
             Quét tem gộp
           </Button>
         </Col>
-        <Col span={12}>
+        <Col span={6}>
           <Button
             block
             className="h-100 w-100"

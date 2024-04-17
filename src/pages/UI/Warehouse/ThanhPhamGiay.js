@@ -409,7 +409,7 @@ const ThanhPhamGiay = (props) => {
                 },
               }}
               scroll={{
-                x: "130vw",
+                x: "1800px",
                 y: tableHeight,
               }}
               columns={table}

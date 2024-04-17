@@ -24,8 +24,8 @@ export const getWarehouseOverall = async () => {
   return await axios.get("oi/warehouse/mlt/import/overall");
 };
 
-export const getWarehouseFGOverall = async () => {
-  return await axios.get("oi/warehouse/fg/overall");
+export const getWarehouseFGOverall = async (params) => {
+  return await axios.get("oi/warehouse/fg/overall", {params});
 };
 
 export const getSuggestPallet = async () => {
