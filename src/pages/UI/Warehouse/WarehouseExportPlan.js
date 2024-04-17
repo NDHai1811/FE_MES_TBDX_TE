@@ -254,6 +254,7 @@ const WarehouseExportPlan = () => {
             <Card
               style={{ height: "100%" }}
               styles={{ body: { padding: 0 } }}
+              bodyStyle={{padding: 0}}
               className="custom-card scroll"
               actions={[
                 <div

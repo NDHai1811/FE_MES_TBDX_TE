@@ -168,9 +168,21 @@ const IQC = (props) => {
       align: "center",
     },
     {
+      title: "Loại giấy",
+      dataIndex: "loai_giay",
+      key: "loai_giay",
+      align: "center",
+    },
+    {
       title: "Định lượng",
       dataIndex: "dinh_luong",
       key: "dinh_luong",
+      align: "center",
+    },
+    {
+      title: "Khổ giấy",
+      dataIndex: "kho_giay",
+      key: "kho_giay",
       align: "center",
     },
     {
