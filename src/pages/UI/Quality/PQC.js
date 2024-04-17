@@ -10,14 +10,12 @@ import {
   Select,
   Table,
   Space,
-  Spin,
   message,
   Popconfirm,
   Tree,
   Input,
 } from "antd";
 import React, { useState, useEffect } from "react";
-import { Pie, DualAxes, Line } from "@ant-design/plots";
 import { getLines, getUIItemMenu } from "../../../api/ui/main";
 import dayjs from "dayjs";
 import {
@@ -27,25 +25,20 @@ import {
 } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import {
-  getErrorDetailList,
   getQCHistory,
-  getQualityOverall,
-  getTopError,
-  getTrendingError,
   recheckQC,
 } from "../../../api/ui/quality";
+import { getMachineList } from "../../../api/ui/machine";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
   const [listLines, setListLines] = useState([]);
-  const [listLoSX, setListLoSX] = useState([]);
-  const [listCustomers, setListCustomers] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
-  const [listNameProducts, setListNameProducts] = useState([]);
   const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs(), page: 1, pageSize: 20 });
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [listMachines, setListMachines] = useState([]);
   useEffect(() => {
     (async () => {
       const res1 = await getLines();
@@ -56,6 +49,8 @@ const QualityPQC = (props) => {
       );
       const res2 = await getUIItemMenu();
       setItemMenu(res2.data);
+      const res3 = await getMachineList();
+      setListMachines(res3.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
     })();
   }, []);
 
@@ -71,60 +66,7 @@ const QualityPQC = (props) => {
     setIsModalOpen(false);
   };
 
-  const [data, setData] = useState();
   const [dataTable, setDataTable] = useState();
-  const [dataLineChart, setDataLineChart] = useState([]);
-  const [dataPieChart, setDataPieChart] = useState([]);
-  const [dataPieChart_NG, setDataPieChart_NG] = useState([]);
-
-  const configPieChart = {
-    data: dataPieChart,
-    height: 100,
-    angleField: "value",
-    colorField: "name",
-    radius: 0.5,
-    innerRadius: 0.6,
-    label: {
-      type: "outer",
-      offset: "120%",
-      content: ({ name, percent }) =>
-        `${name}` + " " + `${(percent * 100).toFixed(0)}%`,
-      style: {
-        textAlign: "center",
-        fontSize: 14,
-      },
-    },
-    legend: false,
-    interactions: [
-      {
-        type: "element-selected",
-      },
-      {
-        type: "element-active",
-      },
-    ],
-    statistic: {
-      title: false,
-      content: false,
-    },
-  };
-  const configLineChart = {
-    data: dataLineChart,
-    height: 100,
-    xField: "date",
-    yField: "value",
-    seriesField: "error",
-    legend: {
-      position: "top",
-    },
-    smooth: true,
-    animation: {
-      appear: {
-        animation: "path-in",
-        duration: 5000,
-      },
-    },
-  };
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -136,6 +78,7 @@ const QualityPQC = (props) => {
       align: "center",
       render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
       fixed: "left",
+      width: '50px'
     },
     {
       title: "Máy",
@@ -143,6 +86,7 @@ const QualityPQC = (props) => {
       key: "machine_id",
       align: "center",
       fixed: "left",
+      width: '80px'
     },
     {
       title: "Khách hàng",
@@ -151,35 +95,25 @@ const QualityPQC = (props) => {
       align: "center",
     },
     {
-      title: "Đơn hàng",
+      title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
+      width: '100px'
     },
     {
-      title: "Lô sản xuất",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
-      align: "center",
-    },
-    {
-      title: "Quy cách",
+      title: "Kích thước chuẩn",
       dataIndex: "quy_cach",
       key: "quy_cach",
       align: "center",
     },
-    // {
-    //   title: "TG BĐ",
-    //   dataIndex: "thoi_gian_bat_dau",
-    //   key: "thoi_gian_bat_dau",
-    //   align: "center",
-    // },
-    // {
-    //   title: "TG KT",
-    //   dataIndex: "thoi_gian_ket_thuc",
-    //   key: "thoi_gian_ket_thuc",
-    //   align: "center",
-    // },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      width: '50px'
+    },
     {
       title: "Sản lượng đếm được",
       dataIndex: "sl_dau_ra_hang_loat",
@@ -231,6 +165,12 @@ const QualityPQC = (props) => {
         value === 1 ? "OK" : value === 2 ? "NG" : "waiting",
     },
     {
+      title: "Lô sản xuất",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+    },
+    {
       title: "Cho phép tái kiểm",
       dataIndex: "cho_phep_tai_kiem",
       key: "cho_phep_tai_kiem",
@@ -262,26 +202,6 @@ const QualityPQC = (props) => {
       const res1 = await getQCHistory(params);
       setDataTable(res1.data);
       setTotalPage(res1.totalPage);
-      // const res2 = await getQualityOverall(params);
-      // setSummaryData(res2.data);
-      // const res3 = await getTopError(params);
-      // setDataPieChart(
-      //   Object.keys(res3.data ?? {}).map((key) => {
-      //     return res3.data[key];
-      //   })
-      // );
-      // const res4 = await getTrendingError(params);
-      // var line_data = [];
-      // Object.keys(res4.data ?? {}).map((key) => {
-      //   Object.keys(res4.data[key] ?? {}).map((error_key) => {
-      //     line_data.push({
-      //       date: key,
-      //       error: error_key,
-      //       value: res4.data[key][error_key],
-      //     });
-      //   });
-      // });
-      // setDataLineChart(line_data);
       setLoading(false);
     })();
   }
@@ -301,34 +221,6 @@ const QualityPQC = (props) => {
   };
 
   const [loading, setLoading] = useState(false);
-
-  const [exportLoading1, setExportLoading1] = useState(false);
-  const exportFileDetail = async () => {
-    setExportLoading1(true);
-    const res = await exportQCHistory(params);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading1(false);
-  };
-  const [isModalBCOpen, setIsModalBCOpen] = useState(false);
-  const showModalBC = () => {
-    setIsModalBCOpen(true);
-  };
-  const closeModalBC = () => {
-    setIsModalBCOpen(false);
-  };
-  const [formExportReport] = Form.useForm();
-  const [exportLoading2, setExportLoading2] = useState(false);
-  const exportReport = async (values) => {
-    setExportLoading2(true);
-    const res = await exportReportQC(values);
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading2(false);
-  };
-
   const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
     const filteredKeys = selectedKeys.filter(
@@ -458,7 +350,7 @@ const QualityPQC = (props) => {
                       placeholder="Nhập lô sản xuất"
                     />
                   </Form.Item>
-                  <Form.Item label="Quy cách" className="mb-3">
+                  <Form.Item label="Kích thước chuẩn" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) => {
@@ -471,6 +363,77 @@ const QualityPQC = (props) => {
                       placeholder="Nhập quy cách"
                     />
                   </Form.Item>
+                  <Form.Item label="Máy" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      placeholder="Chọn máy"
+                      style={{ width: "100%" }}
+                      onChange={(value) => {
+                        setParams({ ...params, machine_id: value, page: 1 })
+                      }
+                      }
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={listMachines}
+                      value={params.machine_id}
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          mql: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập MQL"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tỉ lệ lỗi" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          ti_le_loi: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập tỉ lệ lỗi"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tỉ lệ phế" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          ti_le_phe: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập tỉ lệ phế"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Phán định" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          phan_dinh: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập phán định"
+                    />
+                  </Form.Item>
                 </Form>
               </div>
             </Card>
@@ -478,24 +441,6 @@ const QualityPQC = (props) => {
         </Col>
         <Col span={20}>
           <Row gutter={[8, 8]} style={{ height: '100%' }}>
-            {/* <Col span={16}>
-              <Card
-                title="Biểu đồ xu hướng lỗi"
-                style={{ height: "100%", padding: "0px" }}
-                bodyStyle={{ padding: 12, height: 100 }}
-              >
-                <Line {...configLineChart} />
-              </Card>
-            </Col>
-            <Col span={8}>
-              <Card
-                title="5 lỗi công đoạn"
-                style={{ height: "100%", padding: "0px" }}
-                bodyStyle={{ padding: 12, height: 100 }}
-              >
-                <Pie {...configPieChart} />
-              </Card>
-            </Col> */}
             <Col span={24}>
               <Card
                 title="Danh sách kiểm tra QC"
@@ -503,16 +448,6 @@ const QualityPQC = (props) => {
                 style={{ height: "100%", padding: "0px" }}
                 extra={
                   <Space>
-                    <Button type="primary" onClick={showModalBC}>
-                      Báo cáo
-                    </Button>
-                    <Button
-                      type="primary"
-                      loading={exportLoading1}
-                      onClick={exportFileDetail}
-                    >
-                      Bảng kiểm tra
-                    </Button>
                     <Button
                       type="primary"
                       loading={exportLoading}
@@ -551,44 +486,6 @@ const QualityPQC = (props) => {
           </Row>
         </Col>
       </Row>
-      <Modal
-        title="Báo cáo"
-        open={isModalBCOpen}
-        onCancel={closeModalBC}
-        okText="Xuất báo cáo"
-        cancelText="Huỷ"
-        okButtonProps={{ loading: exportLoading2 }}
-        onOk={() => formExportReport.submit()}
-      >
-        <Form
-          layout="vertical"
-          form={formExportReport}
-          onFinish={exportReport}
-          initialValues={{
-            day: dayjs(),
-            week: dayjs(),
-            month: dayjs(),
-            year: dayjs(),
-          }}
-        >
-          <Form.Item label={"Ngày"} name={"day"} rules={[{ required: true }]}>
-            <DatePicker style={{ width: "100%" }}></DatePicker>
-          </Form.Item>
-          <Form.Item label={"Tuần"} name={"week"} rules={[{ required: true }]}>
-            <DatePicker picker="week" style={{ width: "100%" }}></DatePicker>
-          </Form.Item>
-          <Form.Item
-            label={"Tháng"}
-            name={"month"}
-            rules={[{ required: true }]}
-          >
-            <DatePicker picker="month" style={{ width: "100%" }}></DatePicker>
-          </Form.Item>
-          <Form.Item label={"Năm"} name={"year"} rules={[{ required: true }]}>
-            <DatePicker picker="year" style={{ width: "100%" }}></DatePicker>
-          </Form.Item>
-        </Form>
-      </Modal>
     </React.Fragment>
   );
 };

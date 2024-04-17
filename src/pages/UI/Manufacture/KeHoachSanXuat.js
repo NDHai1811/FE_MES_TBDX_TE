@@ -742,7 +742,11 @@ const KeHoachSanXuat = () => {
                     },
                   }}
                   rowSelection={rowSelection}
-                  rowClassName="editable-row"
+                  rowClassName={(record, index) =>
+                    record.ordering % 2 === 0
+                      ? "table-row-grey editable-row"
+                      : "editable-row"
+                  }
                   columns={mergedColumns}
                   dataSource={data}
                 />

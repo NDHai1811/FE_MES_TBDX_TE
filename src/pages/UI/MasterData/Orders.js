@@ -238,9 +238,9 @@ const Orders = () => {
       xuong_giao: "",
     },
   ]);
-  const defaulEditableColumns = ['short_name','mdh','length','width','height','kich_thuoc','mql','sl','unit','kich_thuoc_chuan','phan_loai_1','phan_loai_2','quy_cach_drc','buyer_id','khuon_id','toc_do','tg_doi_model','note_3','so_ra','kho','kho_tong','dai_tam','so_dao','so_met_toi','layout_type','layout_id','order','slg','slt','tmo','po','style','style_no','color','item','rm','size','price','into_money','xuong_giao','note_1','han_giao','han_giao_sx','nguoi_dat_hang','ngay_dat_hang','note_2','dot']
+  const defaulEditableColumns = ['short_name', 'mdh', 'length', 'width', 'height', 'kich_thuoc', 'mql', 'sl', 'unit', 'kich_thuoc_chuan', 'phan_loai_1', 'phan_loai_2', 'quy_cach_drc', 'buyer_id', 'khuon_id', 'toc_do', 'tg_doi_model', 'note_3', 'so_ra', 'kho', 'kho_tong', 'dai_tam', 'so_dao', 'so_met_toi', 'layout_type', 'layout_id', 'order', 'slg', 'slt', 'tmo', 'po', 'style', 'style_no', 'color', 'item', 'rm', 'size', 'price', 'into_money', 'xuong_giao', 'note_1', 'han_giao', 'han_giao_sx', 'nguoi_dat_hang', 'ngay_dat_hang', 'note_2', 'dot']
   const [editableColumns, setEditableColumns] = useState(defaulEditableColumns)
-  const optionChecks = [
+  const [optionChecks, setOptionChecks] = useState([
     {
       label: 'L',
       value: 'length',
@@ -333,7 +333,7 @@ const Orders = () => {
       label: 'Chia máy + P8',
       value: 'layout_type',
     }
-  ];
+  ]);
   const checkAll = listParams.length > 0 ? optionChecks.length === listParams.length : false;
   const indeterminate = listParams.length > 0 && listParams.length < optionChecks.length;
   const onCheckAllChange = (e) => {
@@ -370,7 +370,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 100,
+      width: 115,
     },
     {
       title: "L",
@@ -380,7 +380,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 50,
+      width: 60,
     },
     {
       title: "W",
@@ -390,7 +390,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 50,
+      width: 60,
     },
     {
       title: "H",
@@ -400,7 +400,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 50,
+      width: 60,
     },
     {
       title: "Kích thước ĐH",
@@ -470,6 +470,15 @@ const Orders = () => {
       checked: true,
     },
     {
+      title: "Mã buyer",
+      dataIndex: "buyer_id",
+      key: "buyer_id",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: "5%",
+    },
+    {
       title: "Phân loại 2",
       dataIndex: "phan_loai_2",
       key: "phan_loai_2",
@@ -478,15 +487,6 @@ const Orders = () => {
       editable: true,
       checked: true,
       render: (value) => PL2s.find((e) => e.value === value)?.label,
-    },
-    {
-      title: "Mã buyer",
-      dataIndex: "buyer_id",
-      key: "buyer_id",
-      align: "center",
-      editable: true,
-      checked: true,
-      width: "5%",
     },
     {
       title: "Mã khuôn",
@@ -503,7 +503,6 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "2%",
     },
     {
       title: "Thời gian thay model",
@@ -512,7 +511,6 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "2%",
     },
     {
       title: "Ghi chú sóng",
@@ -521,6 +519,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 150
     },
     {
       title: "Dài",
@@ -1145,9 +1144,10 @@ const Orders = () => {
         return { ...e, key: e.id };
       })
     );
-    if(res?.editableColumns){
+    if (res?.editableColumns) {
       setEditableColumns(res.editableColumns);
-    }else{
+      setOptionChecks(optionChecks.filter(option => res.editableColumns.includes(option.value)));
+    } else {
       setEditableColumns(defaulEditableColumns);
     }
     setTotalPage(res.totalPage);

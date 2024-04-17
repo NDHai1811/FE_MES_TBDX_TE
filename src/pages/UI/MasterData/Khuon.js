@@ -103,7 +103,7 @@ const Khuon = () => {
       dataIndex: "phan_loai_1",
       align: "center",
       editable: true,
-      render: (value)=>PL1s.find(e=>e.value === value)?.label ?? ""
+      render: (value) => PL1s.find(e => e.value === value)?.label ?? ""
     },
     {
       title: "Mã buyer",
@@ -194,7 +194,7 @@ const Khuon = () => {
   ];
 
   function btn_click() {
-    loadListTable({...params, page: 1, pageSize: 20});
+    loadListTable({ ...params, page: 1, pageSize: 20 });
     setPage(1);
     setPageSize(20);
   }
@@ -333,8 +333,27 @@ const Khuon = () => {
                       placeholder="Nhập mã khuôn"
                     />
                   </Form.Item>
+                  <Form.Item label="Tên khách hàng rút gọn" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, customer_id: e.target.value })
+                      }
+                      placeholder="Nhập tên khách hàng rút gọn"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Kích thước chuẩn" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, kich_thuoc: e.target.value })
+                      }
+                      placeholder="Nhập kích thước chuẩn"
+                    />
+                  </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
+
               </div>
             </Card>
           </div>
