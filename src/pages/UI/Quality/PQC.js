@@ -127,12 +127,6 @@ const QualityPQC = (props) => {
       align: "center",
     },
     {
-      title: "Tỷ lệ lỗi",
-      dataIndex: "ty_le_loi",
-      key: "ty_le_loi",
-      align: "center",
-    },
-    {
       title: "Số phế",
       dataIndex: "sl_phe",
       key: "sl_phe",
@@ -196,19 +190,23 @@ const QualityPQC = (props) => {
     var res = await recheckQC({ id });
   };
 
-  function btn_click() {
-    (async () => {
-      setLoading(true);
-      const res1 = await getQCHistory(params);
-      setDataTable(res1.data);
-      setTotalPage(res1.totalPage);
-      setLoading(false);
-    })();
+  const loadData = async (params) => {
+    setLoading(true);
+    const res1 = await getQCHistory(params);
+    setDataTable(res1.data);
+    setTotalPage(res1.totalPage);
+    setLoading(false);
+  }
+
+  function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize)
+    loadData({...params, page: page, pageSize: pageSize})
   }
 
   useEffect(() => {
     btn_click();
-  }, [page, pageSize])
+  }, [params])
   const [exportLoading, setExportLoading] = useState(false);
 
   const exportFile = async () => {
@@ -262,7 +260,7 @@ const QualityPQC = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={()=>btn_click()}
                   >
                     Truy vấn
                   </Button>
@@ -473,7 +471,7 @@ const QualityPQC = (props) => {
                     onChange: (page, pageSize) => {
                       setPage(page);
                       setPageSize(pageSize);
-                      setParams({ ...params, page: page, pageSize: pageSize });
+                      btn_click(page, pageSize);
                     },
                   }}
                   scroll={{
