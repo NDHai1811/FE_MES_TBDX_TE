@@ -91,7 +91,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/san-xuat/cong-doan", component: Line, label: 'Quản lý công đoạn', permission: 'ui-master-data-san-xuat-cong-doan' },
   { path: "/ui/master-data/san-xuat/error-machines", component: ErrorMachines, label: 'Quản lý lỗi máy', permission: 'ui-master-data-san-xuat-error-machines' },
   { path: "/ui/master-data/san-xuat/material", component: Materials, label: 'Quản lý NVL', permission: 'ui-master-data-san-xuat-material' },
-  { path: "/ui/master-data/san-xuat/customer", component: Customer },
+  { path: "/ui/master-data/san-xuat/customer", component: Customer, label: "Quản lý khách hàng" },
   { path: "/ui/master-data/to-chuc/users", component: Users, label: 'Quản lý người dùng', permission: 'ui-master-data-to-chuc-users' },
   { path: "/ui/master-data/to-chuc/assign-machine", component: MachineAssignment, label: 'Phân bổ máy cho tài khoản', permission: 'ui-master-data-machine-assignment' },
   { path: "/ui/master-data/to-chuc/roles", component: Roles, label: 'Quản lý bộ phận', permission: 'ui-master-data-to-chuc-roles' },
