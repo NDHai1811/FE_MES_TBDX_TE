@@ -184,7 +184,7 @@ const Layout = () => {
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
-      width: "3.5%",
+      width: "170px",
       editable: hasEditColumn("customer_id"),
     },
     {
@@ -192,7 +192,7 @@ const Layout = () => {
       dataIndex: "machine_layout_id",
       key: "machine_layout_id",
       align: "center",
-      width: "6%",
+      width: "170px",
       editable: hasEditColumn("machine_layout_id"),
     },
     {
@@ -201,6 +201,7 @@ const Layout = () => {
       key: "machine_id",
       align: "center",
       editable: hasEditColumn("machine_name"),
+      width: "80px",
     },
     {
       title: "Mã layout",
@@ -218,11 +219,11 @@ const Layout = () => {
       editable: hasEditColumn("toc_do"),
     },
     {
-      title: "Thời gian đổi model(phút)",
+      title: "TG đổi model(phút)",
       dataIndex: "tg_doi_model",
       key: "tg_doi_model",
       align: "center",
-      width: "4%",
+      width: "100px",
       editable: hasEditColumn("tg_doi_model"),
     },
     {
@@ -236,7 +237,7 @@ const Layout = () => {
           dataIndex: "ma_film_1",
           key: "ma_film_1",
           align: "center",
-          width: "6%",
+          width: "190px",
           editable: hasEditColumn("ma_film_1"),
         },
         {
@@ -244,6 +245,7 @@ const Layout = () => {
           dataIndex: "ma_muc_1",
           key: "ma_muc_1",
           align: "center",
+          width: "100px",
           editable: hasEditColumn("ma_muc_1"),
         },
         {
@@ -287,7 +289,7 @@ const Layout = () => {
           dataIndex: "ma_film_2",
           key: "ma_film_2",
           align: "center",
-          width: "6%",
+          width: "190px",
           editable: hasEditColumn("ma_film_2"),
         },
         {
@@ -295,6 +297,7 @@ const Layout = () => {
           dataIndex: "ma_muc_2",
           key: "ma_muc_2",
           align: "center",
+          width: "120px",
           editable: hasEditColumn("ma_muc_2"),
         },
         {
@@ -338,7 +341,7 @@ const Layout = () => {
           dataIndex: "ma_film_3",
           key: "ma_film_3",
           align: "center",
-          width: "6%",
+          width: "190px",
           editable: hasEditColumn("ma_film_3"),
         },
         {
@@ -346,6 +349,7 @@ const Layout = () => {
           dataIndex: "ma_muc_3",
           key: "ma_muc_3",
           align: "center",
+          width: "120px",
           editable: hasEditColumn("ma_muc_3"),
         },
         {
@@ -389,7 +393,7 @@ const Layout = () => {
           dataIndex: "ma_film_4",
           key: "ma_film_4",
           align: "center",
-          width: "6%",
+          width: "190px",
           editable: hasEditColumn("ma_film_4"),
         },
         {
@@ -397,6 +401,7 @@ const Layout = () => {
           dataIndex: "ma_muc_4",
           key: "ma_muc_4",
           align: "center",
+          width: "120px",
           editable: hasEditColumn("ma_muc_4"),
         },
         {
@@ -440,7 +445,7 @@ const Layout = () => {
           dataIndex: "ma_film_5",
           key: "ma_film_5",
           align: "center",
-          width: "6%",
+          width: "190px",
           editable: hasEditColumn("ma_film_5"),
         },
         {
@@ -448,6 +453,7 @@ const Layout = () => {
           dataIndex: "ma_muc_5",
           key: "ma_muc_5",
           align: "center",
+          width: "120px",
           editable: hasEditColumn("ma_muc_5"),
         },
         {
@@ -749,7 +755,7 @@ const Layout = () => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={()=>btn_click()}
                   >
                     Truy vấn
                   </Button>

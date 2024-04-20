@@ -24,6 +24,7 @@ import dayjs from "dayjs";
 import {
   createWarehouseImport,
   deleteGoodsReceiptNote,
+  deleteWarehouseImport,
   exportVehicleWeightTicket,
   exportWarehouseTicket,
   getGoodsReceiptNote,
@@ -277,6 +278,11 @@ const WarehouseMLT = (props) => {
     await btn_click();
     setLoading(false)
   }
+  const onDelete = async (ids) => {
+    const res = await deleteWarehouseImport({ id: ids });
+    setListCheck([]);
+    getImportList();
+  };
   const onChange = async (record) => {
 
   }
@@ -328,8 +334,9 @@ const WarehouseMLT = (props) => {
     content: () => componentRef1.current,
   });
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRows.map(e=>e.id));
+      setListCheck(selectedRowKeys);
     },
   };
 
@@ -444,7 +451,7 @@ const WarehouseMLT = (props) => {
   const rowSelectionReceipt = {
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(selectedRowKeys, selectedRows);
-      setListCheckReceipt(selectedRows.map(e=>e.id));
+      setListCheckReceipt(selectedRows.map(e => e.id));
     },
     type: 'radio',
   };
@@ -465,7 +472,8 @@ const WarehouseMLT = (props) => {
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              styles={{ body: {paddingInline: 0, paddingTop: 0} }}
+              styles={{ body: { paddingInline: 0, paddingTop: 0 } }}
+              bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -603,10 +611,7 @@ const WarehouseMLT = (props) => {
                           Upload excel
                         </Button>
                       </Upload>
-                      {/* <Button type="primary" onClick={deleteRecord}>
-                      Xóa
-                    </Button>
-                    <Button type="primary" onClick={onEdit}>
+                      {/* <Button type="primary" onClick={onEdit}>
                       Sửa
                     </Button>
                     <Button type="primary" onClick={onInsert}>
@@ -614,6 +619,9 @@ const WarehouseMLT = (props) => {
                     </Button> */}
                       <Button type="primary" onClick={handlePrint}>
                         In tem NVL
+                      </Button>
+                      <Button type="primary" onClick={() => onDelete(importList.filter((e,i)=>listCheck.includes(i)).map(e => e.id))}>
+                        Xóa
                       </Button>
                       <div className="report-history-invoice">
                         <TemNVL
@@ -641,6 +649,7 @@ const WarehouseMLT = (props) => {
                   pagination={false}
                   size="small"
                   onUpdate={onUpdate}
+                  onDelete={(record) => onDelete([record.id])}
                 />
                 :
                 <Table

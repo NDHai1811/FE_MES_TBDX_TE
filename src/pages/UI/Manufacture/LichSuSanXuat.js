@@ -197,6 +197,13 @@ const columns3 = [
     key: "lo_sx",
     align: "center",
   },
+  {
+    title: "Bước",
+    dataIndex: "step",
+    key: "step",
+    align: "center",
+    render: (value) => value ? 'Bước' : '',
+  },
 ];
 
 const LichSuSanXuat = (props) => {
