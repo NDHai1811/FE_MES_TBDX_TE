@@ -17,18 +17,14 @@ import {
 } from "antd";
 import React, { useState, useEffect } from "react";
 import { getLines, getUIItemMenu } from "../../../api/ui/main";
-import dayjs from "dayjs";
 import {
-  exportPQC,
   exportQCHistory,
-  exportReportQC,
-} from "../../../api/ui/export";
-import { baseURL } from "../../../config";
-import {
   getQCHistory,
   recheckQC,
 } from "../../../api/ui/quality";
 import { getMachineList } from "../../../api/ui/machine";
+import { baseURL } from "../../../config";
+import dayjs from "dayjs";
 
 const QualityPQC = (props) => {
   document.title = "UI - PQC";
@@ -211,7 +207,7 @@ const QualityPQC = (props) => {
 
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportPQC(params);
+    const res = await exportQCHistory(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
