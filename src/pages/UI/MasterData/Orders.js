@@ -907,7 +907,7 @@ const Orders = () => {
         const khuon = null;
         let formData = { ...record };
         if (record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong) {
-          const khuon = listKhuonLink.find(e => e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao);
+          const khuon = listKhuonLink.find(e => e.customer_id == record.short_name && e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao && e?.pad_xe_ranh == record?.note_3);
           if (khuon) {
             filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1 && e.value.includes('be'));
             formData = { ...formData, khuon_id: khuon?.khuon_id, phan_loai_2: filteredOptions[0]?.value }

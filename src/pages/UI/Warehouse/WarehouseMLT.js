@@ -160,8 +160,8 @@ const WarehouseMLT = (props) => {
   const [exportList, setExportList] = useState([]);
   const [editingKey, setEditingKey] = useState();
   useEffect(() => {
-    const new_data = importList.filter((datainput) =>
-      listCheck.includes(datainput.id)
+    const new_data = importList.filter((_, index) =>
+      listCheck.includes(index)
     );
     setListMaterialCheck(new_data);
   }, [listCheck, importList]);

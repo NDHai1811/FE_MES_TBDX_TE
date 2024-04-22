@@ -162,8 +162,8 @@ const Khuon = () => {
       editable: true
     },
     {
-      title: "Ghi chú Buyer",
-      dataIndex: "buyer_note",
+      title: "Pad xẻ rãnh",
+      dataIndex: "pad_xe_ranh",
       align: "center",
       editable: true
     },
@@ -308,7 +308,7 @@ const Khuon = () => {
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} styles={{ body: { padding: 0 } }} className="custom-card" actions={[
+            <Card style={{ height: "100%" }} styles={{ body: { padding: 0 } }} bodyStyle={{padding: 0}} className="custom-card" actions={[
               <Button
                 type="primary"
                 onClick={btn_click}
