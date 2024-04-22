@@ -27,7 +27,7 @@ import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 
 const QualityPQC = (props) => {
-  document.title = "UI - PQC";
+  document.title = "UI - Quality";
   const [listLines, setListLines] = useState([]);
   const [selectedLine, setSelectedLine] = useState();
   const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs(), page: 1, pageSize: 20 });
@@ -45,8 +45,8 @@ const QualityPQC = (props) => {
       );
       const res2 = await getUIItemMenu();
       setItemMenu(res2.data);
-      const res3 = await getMachineList();
-      setListMachines(res3.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
+      // const res3 = await getMachineList();
+      // setListMachines(res3.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
     })();
   }, []);
 
@@ -170,13 +170,13 @@ const QualityPQC = (props) => {
         <Popconfirm
           disabled={record?.phan_dinh !== 2}
           title="Tái kiểm"
-          description="Cho phép tái kiểm lot này?"
+          description="Cho phép tái kiểm lô này?"
           okText="Có"
           placement="topRight"
           onConfirm={() => recheck(record.id)}
           cancelText="Không"
         >
-          <Button disabled={record?.phan_dinh !== 2}>Tái kiểm</Button>
+          <Button type="primary" disabled={record?.phan_dinh !== 2}>Tái kiểm</Button>
         </Popconfirm>
       ),
     },
@@ -184,6 +184,7 @@ const QualityPQC = (props) => {
 
   const recheck = async (id) => {
     var res = await recheckQC({ id });
+    btn_click(page, pageSize);
   };
 
   const loadData = async (params) => {
@@ -197,12 +198,8 @@ const QualityPQC = (props) => {
   function btn_click(page = 1, pageSize = 20) {
     setPage(page);
     setPageSize(pageSize)
-    loadData({...params, page: page, pageSize: pageSize})
+    loadData({ ...params, page: page, pageSize: pageSize })
   }
-
-  useEffect(() => {
-    btn_click();
-  }, [params])
   const [exportLoading, setExportLoading] = useState(false);
 
   const exportFile = async () => {
@@ -256,15 +253,15 @@ const QualityPQC = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={()=>btn_click()}
+                    onClick={() => btn_click()}
                   >
                     Truy vấn
                   </Button>
                 </div>
               ]}
             >
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
+              <Form style={{ margin: "0 15px" }} layout="vertical" onFinish={() => btn_click()}>
+                <div className="mb-3">
                   <Divider>Công đoạn</Divider>
                   <Form.Item className="mb-3">
                     <Tree
@@ -273,37 +270,35 @@ const QualityPQC = (props) => {
                       treeData={itemsMenu}
                     />
                   </Form.Item>
-                </Form>
-              </div>
-              <Divider>Thời gian truy vấn</Divider>
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, start_date: value })
-                      }
-                      value={params.start_date}
-                    />
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Kết thúc"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, end_date: value })
-                      }
-                      value={params.end_date}
-                    />
-                  </Space>
-                </Form>
-              </div>
-              <Divider>Điều kiện truy vấn</Divider>
-              <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
+                </div>
+                <Divider>Thời gian truy vấn</Divider>
+                <div className="mb-3">
+                  <Form style={{ margin: "0 15px" }} layout="vertical">
+                    {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                      <DatePicker
+                        allowClear={false}
+                        placeholder="Bắt đầu"
+                        style={{ width: "100%" }}
+                        onChange={(value) =>
+                          setParams({ ...params, start_date: value })
+                        }
+                        value={params.start_date}
+                      />
+                      <DatePicker
+                        allowClear={false}
+                        placeholder="Kết thúc"
+                        style={{ width: "100%" }}
+                        onChange={(value) =>
+                          setParams({ ...params, end_date: value })
+                        }
+                        value={params.end_date}
+                      />
+                    </Space>
+                  </Form>
+                </div>
+                <Divider>Điều kiện truy vấn</Divider>
+                <div className="mb-3">
                   <Form.Item label="Khách hàng" className="mb-3">
                     <Input
                       allowClear
@@ -328,6 +323,21 @@ const QualityPQC = (props) => {
                       suffixIcon={null}
                       mode="tags"
                       placeholder="Nhập mã đơn hàng"
+                      options={[]}
+                    />
+                  </Form.Item>
+                  <Form.Item label="MQL" className="mb-3">
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, mql: value, page: 1 });
+                        setPage(1);
+                      }}
+                      open={false}
+                      suffixIcon={null}
+                      mode="tags"
+                      placeholder="Nhập MQL"
                       options={[]}
                     />
                   </Form.Item>
@@ -357,79 +367,33 @@ const QualityPQC = (props) => {
                       placeholder="Nhập quy cách"
                     />
                   </Form.Item>
-                  <Form.Item label="Máy" className="mb-3">
+                  <Form.Item label="Phán định" className="mb-3">
                     <Select
                       allowClear
-                      showSearch
-                      placeholder="Chọn máy"
-                      style={{ width: "100%" }}
+                      options={[
+                        { value: '1', label: "OK" },
+                        { value: '2', label: "NG" },
+                      ]}
                       onChange={(value) => {
-                        setParams({ ...params, machine_id: value, page: 1 })
-                      }
-                      }
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listMachines}
-                      value={params.machine_id}
-                    />
-                  </Form.Item>
-                  <Form.Item label="MQL" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
                         setParams({
                           ...params,
-                          mql: e.target.value,
+                          phan_dinh: value,
                           page: 1,
                         });
                       }}
-                      placeholder="Nhập MQL"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Tỉ lệ lỗi" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
+                      onSelect={(value) => {
                         setParams({
                           ...params,
-                          ti_le_loi: e.target.value,
-                          page: 1,
-                        });
-                      }}
-                      placeholder="Nhập tỉ lệ lỗi"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Tỉ lệ phế" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          ti_le_phe: e.target.value,
-                          page: 1,
-                        });
-                      }}
-                      placeholder="Nhập tỉ lệ phế"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Phán định" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
-                        setParams({
-                          ...params,
-                          phan_dinh: e.target.value,
+                          phan_dinh: value,
                           page: 1,
                         });
                       }}
                       placeholder="Nhập phán định"
                     />
                   </Form.Item>
-                </Form>
-              </div>
+                </div>
+                <Button hidden htmlType="submit"></Button>
+              </Form>
             </Card>
           </div>
         </Col>
@@ -465,8 +429,6 @@ const QualityPQC = (props) => {
                     pageSize: pageSize,
                     showSizeChanger: true,
                     onChange: (page, pageSize) => {
-                      setPage(page);
-                      setPageSize(pageSize);
                       btn_click(page, pageSize);
                     },
                   }}

@@ -26,6 +26,7 @@ import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import Checksheet2 from "../../../components/Popup/Checksheet2";
 import dayjs from "dayjs";
 import Checksheet1 from "../../../components/Popup/Checksheet1";
+import Checksheet4 from "../../../components/Popup/Checksheet4";
 
 const IQC = (props) => {
   document.title = "Kiểm tra chất lượng";
@@ -495,7 +496,7 @@ const IQC = (props) => {
         setOpen={setOpenModalCK1}
         line_id={line_id}
       />
-      <Checksheet2
+      <Checksheet4
         text="ngoại quan"
         open={openModalCK2}
         selectedLot={selectedRow}

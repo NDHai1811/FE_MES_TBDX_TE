@@ -58,7 +58,7 @@ const EditableCell = ({
   let inputNode;
   switch (inputType) {
     case "number":
-      inputNode = <InputNumber />;
+      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)}/>;
       break;
     case "select":
       inputNode = (
@@ -904,16 +904,12 @@ const Orders = () => {
         break;
       case "phan_loai_2":
         filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1);
-        const khuon = null;
-        let formData = { ...record };
         if (record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong) {
           const khuon = listKhuonLink.find(e => e.customer_id == record.short_name && e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao && e?.pad_xe_ranh == record?.note_3);
           if (khuon) {
             filteredOptions = PL2s.filter(e => e?.phan_loai_1 === record?.phan_loai_1 && e.value.includes('be'));
-            formData = { ...formData, khuon_id: khuon?.khuon_id, phan_loai_2: filteredOptions[0]?.value }
           }
         }
-        form.setFieldsValue(formData);
         break;
       case 'quy_cach_drc':
         var options = record?.customer_specifications ?? [];
@@ -1068,10 +1064,22 @@ const Orders = () => {
     const items = data.map((val) => {
       if (val.key === editingKey) {
         val[dataIndex] = value;
+        if (val?.buyer_id && val?.phan_loai_1 && val?.dai && val?.rong) {
+          const khuon = listKhuonLink.find(e => {
+            if(e.customer_id == val.short_name && e.buyer_id == val.buyer_id && e.phan_loai_1 == val.phan_loai_1 && e.dai == val.dai && e.rong == val.rong && e?.cao == val?.cao && ((!e?.pad_xe_ranh && !val?.note_3) || e?.pad_xe_ranh == val?.note_3)){
+              return true
+            }
+            return false;
+          });
+          if (khuon) {
+            val = { ...val, khuon_id: khuon?.khuon_id }
+          }else{
+            val = { ...val, khuon_id: null }
+          }
+        }
       }
       return { ...val };
     });
-    console.log(items);
     setData(items);
   };
 
@@ -1079,10 +1087,22 @@ const Orders = () => {
     const items = data.map((val) => {
       if (val.key === editingKey) {
         val[dataIndex] = value;
+        if (val?.buyer_id && val?.phan_loai_1 && val?.dai && val?.rong) {
+          const khuon = listKhuonLink.find(e => {
+            if(e.customer_id == val.short_name && e.buyer_id == val.buyer_id && e.phan_loai_1 == val.phan_loai_1 && e.dai == val.dai && e.rong == val.rong && e?.cao == val?.cao && ((!e?.pad_xe_ranh && !val?.note_3) || e?.pad_xe_ranh == val?.note_3)){
+              return true
+            }
+            return false;
+          });
+          if (khuon) {
+            val = { ...val, khuon_id: khuon?.khuon_id }
+          }else{
+            val = { ...val, khuon_id: null }
+          }
+        }
       }
       return { ...val };
     });
-    console.log(items);
     setData(items);
   };
 
@@ -1126,18 +1146,18 @@ const Orders = () => {
   };
 
   const cancel = () => {
-    if (typeof editingKey === "number") {
-      const newData = [...data];
-      newData.shift();
-      setData(newData);
-    }
+    // if (typeof editingKey === "number") {
+    //   const newData = [...data];
+    //   newData.shift();
+    //   setData(newData);
+    // }
+    loadListTable(params);
     setEditingKey("");
   };
 
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getOrders(params);
-    console.log(res);
     setTotalPage(res.totalPage);
     setData(
       res.data.map((e) => {
@@ -1349,6 +1369,25 @@ const Orders = () => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [data]);
+  const onFormValuesChange = (changedValues, allValues) => {
+    if(editingKey){
+      const record = data.find(e=>e.id ===editingKey);
+      let formData = { ...record };
+      if (record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong) {
+        const khuon = listKhuonLink.find(e => e.customer_id == record.short_name && e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao && e?.pad_xe_ranh == record?.note_3);
+        if (khuon) {
+          formData = { ...formData, khuon_id: khuon?.khuon_id, phan_loai_2: null }
+          setData(prev=>prev.map(e=>{
+            if(e.id === editingKey){
+              return {...e, khuon_id: khuon?.khuon_id, phan_loai_2: null};
+            }
+            return {...e};
+          }))
+        }
+      }
+      form.setFieldsValue(formData);
+    }
+  }
   return (
     <>
       {contextHolder}

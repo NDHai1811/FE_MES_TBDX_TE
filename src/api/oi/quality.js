@@ -47,6 +47,10 @@ export async function getIQCChecksheetList(params) {
   return await axios.get("/oi/iqc/checksheet/list", { params: params });
 }
 
+export async function getIQCErrorList(params) {
+  return await axios.get("/oi/iqc/error/list", { params: params });
+}
+
 export async function sendIQCResult(params) {
   return await axios.post("/oi/iqc/save-result", params );
 }

@@ -14,12 +14,12 @@ import {
 import React, { useState } from "react";
 import "./popupStyle.scss";
 import { useEffect } from "react";
-import { scanError } from "../../api/oi/quality";
+import { getIQCErrorList, scanError } from "../../api/oi/quality";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import ScanButton from "../Button/ScanButton";
 import { CloseOutlined } from "@ant-design/icons";
 
-const Checksheet2 = (props) => {
+const Checksheet4 = (props) => {
   const { line } = useParams();
   const {
     text,
@@ -54,26 +54,18 @@ const Checksheet2 = (props) => {
     form.resetFields();
     setErrorsList(checksheet);
   }, [open]);
-  useEffect(() => {
-    setErrorsList([]);
-    setChecksheet([]);
-  }, [selectedLot, line]);
+  
   const [errorsList, setErrorsList] = useState([]);
-  const onScan = async (result) => {
-    if(errorsList.some(e=>e.id?.toLowerCase() === result.toLowerCase())){
-      return 0;
-    }
-    var res = await scanError({
-      error_id: result,
-      lo_sx: selectedLot.lo_sx,
-      machine_id: selectedLot.machine_id,
-      ma_vat_tu: selectedLot?.ma_vat_tu
-    });
+  const getErrorList = async () => {
+    var res = await getIQCErrorList();
     if (res.success) {
-      setErrorsList([...errorsList, res.data]);
-      setChecksheet([...errorsList, res.data])
+      setErrorsList(res.data);
+      setChecksheet(res.data);
     }
   };
+  useEffect(() => {
+    getErrorList();
+  }, [selectedLot, line]);
   const [messageApi, contextHolder] = message.useMessage();
   const onSubmitFail = ({ values, errorFields, outOfDate }) => {
     // console.log(values, errorFields, outOfDate);
@@ -116,9 +108,6 @@ const Checksheet2 = (props) => {
       return e;
     }))
   }
-  useEffect(()=>{
-    console.log(errorsList);
-  }, [errorsList])
   return (
     <React.Fragment>
       {contextHolder}
@@ -151,10 +140,6 @@ const Checksheet2 = (props) => {
         }
         width={500}
       >
-        <ScanButton
-          placeholder={"Nhập mã lỗi hoặc quét mã QR"}
-          onScan={onScan}
-        />
         <Form
           form={form}
           onFinish={onFinish}
@@ -168,7 +153,7 @@ const Checksheet2 = (props) => {
                 return (
                   <Row gutter={8} className={index === 0 ? "" : "mt-2"}>
                     <Col
-                      span={11}
+                      span={12}
                       style={{ paddingInline: 4 }}
                       className="d-flex justify-content-center flex-wrap align-items-lg-center"
                     >
@@ -230,15 +215,6 @@ const Checksheet2 = (props) => {
                         </Col>
                       </>
                     }
-                    <Col span={1} className="d-flex justify-content-center">
-                      <Form.Item
-                        noStyle
-                        name={[e.id, "value"]}
-                        rules={[{ required: true }]}
-                      >
-                        <CloseOutlined className="h-100" onClick={() => deleteError(e.id)} />
-                      </Form.Item>
-                    </Col>
                   </Row>
                 );
               })
@@ -253,4 +229,4 @@ const Checksheet2 = (props) => {
   );
 };
 
-export default Checksheet2;
+export default Checksheet4;

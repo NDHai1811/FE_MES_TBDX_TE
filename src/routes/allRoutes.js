@@ -11,7 +11,7 @@ import WarehouseTP from "../pages/OI/Warehouse/finished-product";
 import UITaoKeHoachSanXuat from "../pages/UI/Manufacture/TaoKeHoachSanXuat";
 import UIManufactureKHSX from "../pages/UI/Manufacture/KeHoachSanXuat";
 import UIManufactureLSSX from "../pages/UI/Manufacture/LichSuSanXuat";
-import UIQualityPQC from "../pages/UI/Quality/PQC";
+import UIQualityPQC from "../pages/UI/Quality";
 import UIEquipment1 from "../pages/UI/Equipment/Equipment1";
 import UIEquipment2 from "../pages/UI/Equipment/Equipment2";
 import UIKPI from "../pages/UI/KPI";
@@ -70,7 +70,7 @@ const authProtectedRoutes = [
   { path: "/ui/manufacture/layout", component: Layout, label: "Layout", permission: 'ui-manufacture-layout' },
   { path: "/ui/manufacture/don-hang", component: Orders, label: "Đơn hàng", permission: 'ui-manufacture-don-hang' },
   { path: "/ui/manufacture/buyer", component: Buyer, label: "Buyer", permission: 'ui-manufacture-buyer' },
-  { path: "/ui/quality/pqc", component: UIQualityPQC, label: 'Chất lượng', permission: 'ui-quality-pqc' },
+  { path: "/ui/quality", component: UIQualityPQC, label: 'Chất lượng', permission: 'ui-quality-pqc' },
   // { path: "/ui/quality/oqc", component: UIQualityOQC },
   { path: "/ui/equipment/thong-ke-loi", component: UIEquipment1, label: 'Thống kê lỗi', permission: 'ui-equipment-thong-ke-loi' },
   { path: "/ui/equipment/thong-so-may", component: UIEquipment2, label: 'Thông số máy', permission: 'ui-equipment-thong-so-may' },
