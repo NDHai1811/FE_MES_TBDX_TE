@@ -10,6 +10,7 @@ import {
   Input,
   message,
   Tooltip,
+  Radio,
 } from "antd";
 import React, { useState } from "react";
 import "./popupStyle.scss";
@@ -43,7 +44,7 @@ const Checksheet1 = (props) => {
         }
       });
       closeModal();
-      const values = {tinh_nang: formData}
+      const values = { tinh_nang: formData }
       console.log(values);
       onSubmit(values);
     }
@@ -80,28 +81,32 @@ const Checksheet1 = (props) => {
     messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
   };
   const between = (x, min, max) => {
-    if(max){
+    if (max) {
       return x >= min && x <= max;
     }
-    else{
+    else {
       return x >= min;
     }
   }
   const onChangeData = (value, key) => {
     console.log(value, key);
-    setFormData(prev=>prev.map(e=>{
-      if(e.id === key){
+    setFormData(prev => prev.map(e => {
+      if (e.id === key) {
         var result = value ? 1 : 0;
-        if(value){
-          if(e.deteminer_value && e.deteminer_value.toLowerCase() === value.toLowerCase()){
+        if (value) {
+          if (e.deteminer_value && e.deteminer_value.toLowerCase() === value.toLowerCase()) {
             result = 2;
           }
-          if(e.hasOwnProperty('min') && e.hasOwnProperty('max')){
-            if(between(value, e.min, e.max)) result = 1;
+          if (e.hasOwnProperty('min') && e.hasOwnProperty('max')) {
+            if (between(value, e.min, e.max)) result = 1;
             else result = 2;
           }
         }
-        return {...e, value: value, result: result}
+        if(!e.user_decide){
+          return { ...e, value: value, result: result }
+        }else{
+          return { ...e, value: value }
+        }
       }
       return e;
     }))
@@ -114,7 +119,7 @@ const Checksheet1 = (props) => {
         open={open}
         onCancel={closeModal}
         centered
-        bodyStyle={{maxHeight: 500, overflowX:'hidden', overflowY: 'auto', paddingRight:8}}
+        bodyStyle={{ maxHeight: 500, overflowX: 'hidden', overflowY: 'auto', paddingRight: 8 }}
         footer={
           <Space>
             <Tooltip title="Lô không có lỗi lầm gì, duyệt để bỏ qua kiểm tra">
@@ -137,7 +142,7 @@ const Checksheet1 = (props) => {
           </Space>
         }
         width={500}
-        style={{ top: 8}}
+        style={{ top: 8 }}
       >
         <Form
           form={form}
@@ -317,11 +322,11 @@ const Checksheet1 = (props) => {
                 var className = "text-center h-100 d-flex align-items-center justify-content-center w-100 borderd"
                 switch (e.input_type) {
                   case 'select':
-                    inputNode = <Select options={(e.options ?? []).map(o=>({value: o, label: o}))} className={className} placeholder="Chọn giá trị"
-                    onSelect={(value)=>onChangeData(value, e.id)}/>;
+                    inputNode = <Select options={(e.options ?? []).map(o => ({ value: o, label: o }))} className={className} placeholder="Chọn giá trị"
+                      onSelect={(value) => onChangeData(value, e.id)} />;
                     break;
                   case 'inputnumber':
-                    inputNode = <InputNumber min={0} className={className} placeholder="Nhập số" onChange={(value)=>onChangeData(value, e.id)}/>;
+                    inputNode = <InputNumber min={0} className={className} placeholder="Nhập số" onChange={(value) => onChangeData(value, e.id)} />;
                     break;
                   default:
                     break;
@@ -361,15 +366,48 @@ const Checksheet1 = (props) => {
                         {inputNode}
                       </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    {e.user_decide ?
+                      <Col span={6}>
+                        <Form.Item
+                          noStyle
+                          name={[e.id, "result"]}
+                          rules={[{ required: true }]}
+                        >
+                          <Radio.Group 
+                          size="large"
+                          name={e.id}
+                          className=" text-center h-100 d-flex align-items-center justify-content-center"
+                          onChange={(event)=>setFormData(prev=>prev.map(row=>{
+                            if(e.id === row.id){
+                              return {...row, result: event.target.value}
+                            }
+                            return {...row}
+                          }))} optionType="button">
+                            <Radio value={1} className="text-center h-100 d-flex align-items-center justify-content-center" style={e.result === 1 ? {backgroundColor: "#55c32a",color: "white"} : ""}>OK</Radio>
+                            <Radio value={2} className="text-center h-100 d-flex align-items-center justify-content-center" style={e.result === 2 ? {backgroundColor: "#fb4b50",color: "white"} : ""}>NG</Radio>
+                          </Radio.Group>
+                        </Form.Item>
+                      </Col>
+                      :
+                      <Col span={6}>
+                        <Form.Item
+                          noStyle
+                        >
+                          <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center" style={!e.result ? "" : e.result === 1 ? { backgroundColor: "#55c32a", color: "white" } : { backgroundColor: "#fb4b50", color: "white" }} >
+                            {!e.result ? "OK/NG" : e.result === 1 ? "OK" : "NG"}
+                          </Button>
+                        </Form.Item>
+                      </Col>
+                    }
+                    {/* <Col span={6}>
                       <Form.Item
                         noStyle
                       >
-                        <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center" style={!e.result ? "" : e.result === 1 ? {backgroundColor: "#55c32a",color: "white"} : {backgroundColor: "#fb4b50",color: "white"}} >
+                        <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center" style={!e.result ? "" : e.result === 1 ? { backgroundColor: "#55c32a", color: "white" } : { backgroundColor: "#fb4b50", color: "white" }} >
                           {!e.result ? "OK/NG" : e.result === 1 ? "OK" : "NG"}
                         </Button>
                       </Form.Item>
-                    </Col>
+                    </Col> */}
                   </Row>
                 );
               })

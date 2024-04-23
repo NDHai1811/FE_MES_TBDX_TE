@@ -71,16 +71,6 @@ const Checksheet4 = (props) => {
     // console.log(values, errorFields, outOfDate);
     messageApi.error("Chưa hoàn thành chỉ tiêu kiểm tra");
   };
-
-  const deleteError = (id) => {
-    const ngoai_quan = form.getFieldValue('ngoai_quan');
-    if (ngoai_quan) {
-      delete ngoai_quan[id]
-    }
-    console.log(ngoai_quan);
-    form.setFieldValue('ngoai_quan', ngoai_quan)
-    setErrorsList(prev => prev.filter(e => e.id !== id))
-  }
   const between = (x, min, max) => {
     if (max) {
       return x >= min && x <= max;

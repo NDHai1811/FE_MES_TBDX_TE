@@ -110,6 +110,7 @@ const ScanButton = (props) => {
               setValue(res);
               onScan(res);
               setIsOpenModal(false);
+              setIsScan(2);
             }}
           />
         </Modal>
