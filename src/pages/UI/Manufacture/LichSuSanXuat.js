@@ -292,9 +292,6 @@ const LichSuSanXuat = (props) => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [dataTable3]);
-  useEffect(() => {
-    console.log(tableHeight);
-  }, [tableHeight])
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>

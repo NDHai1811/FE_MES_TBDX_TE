@@ -110,16 +110,18 @@ const Mapping = () => {
   }, [params.machine_id, params.start_date, params.end_date]);
 
   const getLogs = async () => {
-    setLoading(true)
-    var res = await getEquipmentLogs(params)
-    setLogs(res.data.data);
-    const newColumns = res.data.columns.map((val) => ({
-      ...val,
-      render: (value) => value || "-",
-      align: "center",
-    }));
-    setTableColumns(columns1.concat(newColumns));
-    setLoading(false);
+    if(params.machine_id){
+      setLoading(true)
+      var res = await getEquipmentLogs(params)
+      setLogs(res.data.data);
+      const newColumns = res.data.columns.map((val) => ({
+        ...val,
+        render: (value) => value || "-",
+        align: "center",
+      }));
+      setTableColumns(columns1.concat(newColumns));
+      setLoading(false);
+    }
   };
 
   const disabledStartDate = (current) => {
