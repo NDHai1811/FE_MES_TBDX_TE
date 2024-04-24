@@ -129,6 +129,13 @@ const PopupCreateDeliveryNote = (props) => {
       width: 70,
     },
     {
+      title: "Tồn kho",
+      dataIndex: "sl_ton",
+      key: "sl_ton",
+      align: "center",
+      width: 70,
+    },
+    {
       title: "TMO",
       dataIndex: "tmo",
       key: "tmo",
