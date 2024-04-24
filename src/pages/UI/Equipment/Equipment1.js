@@ -12,19 +12,22 @@ import {
   Space,
   Spin,
   Tree,
+  Input,
 } from "antd";
 import { Column } from "@ant-design/plots";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Pie } from "@ant-design/charts";
 import { exportMachineError } from "../../../api/ui/export";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import "../style.scss";
 import {
+  exportMachineErrorList,
   getErrorMachineFrenquency,
   getMachineErrorList,
   getMachinePerformance,
 } from "../../../api/ui/machine";
+import { getUIItemMenu } from "../../../api/ui/main";
 
 const columnTable = [
   {
@@ -45,11 +48,19 @@ const columnTable = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
+    render: (value) => value || "-",
   },
   {
-    title: "Đơn hàng",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    title: "MĐH",
+    dataIndex: "mdh",
+    key: "mdh",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "MQL",
+    dataIndex: "mql",
+    key: "mql",
     align: "center",
     render: (value) => value || "-",
   },
@@ -124,12 +135,17 @@ const columnTable = [
       return record ? (
         <Tag color="#87d068">Đã hoàn thành</Tag>
       ) : (
-        <Tag color="#87d068">Đã hoàn thành</Tag>
+        <Tag color="#faad14">Chưa hoàn thành</Tag>
       );
     },
     align: "center",
   },
 ];
+const LINE_SONG_ID = '30';
+const LINE_IN_ID = '31';
+const LINE_DAN_ID = '32';
+const LINE_XA_LOT_ID = '33';
+const SONG_MACHINE = ['S01'];
 
 const Equipment1 = (props) => {
   document.title = "UI - Thống kê lỗi";
@@ -140,8 +156,9 @@ const Equipment1 = (props) => {
   const [dataColChart, setDataColChart] = useState([]);
 
   const [params, setParams] = useState({
-    machine_code: "",
-    date: [dayjs(), dayjs()],
+    machine: SONG_MACHINE,
+    start_date: dayjs(),
+    end_date: dayjs(),
   });
   const [loading, setLoading] = useState(false);
 
@@ -199,57 +216,16 @@ const Equipment1 = (props) => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportMachineError(params);
+    const res = await exportMachineErrorList(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
 
-  const itemsMenu = [
-    {
-      title: "Sóng",
-      key: "30",
-      children: [
-        {
-          title: "Chuyền máy dợn sóng",
-          key: "S01",
-        },
-      ],
-    },
-    {
-      title: "In",
-      key: "31",
-      children: [
-        {
-          title: "Máy in P.06",
-          key: "P06",
-        },
-        {
-          title: "Máy in P.15",
-          key: "P15",
-        },
-      ],
-    },
-    {
-      title: "Dán",
-      key: "32",
-      children: [
-        {
-          title: "Máy dán D.05",
-          key: "D05",
-        },
-        {
-          title: "Máy dán D.06",
-          key: "D06",
-        },
-      ],
-    },
-  ];
-
   const configPieChart = {
     appendPadding: 10,
-    height:100,
+    height: 100,
     data: dataPieChart,
     angleField: "value",
     colorField: "name",
@@ -260,7 +236,26 @@ const Equipment1 = (props) => {
         `${name}` + " " + `${(percent * 100).toFixed(0)}%`,
     },
   };
-
+  const [itemsMenu, setItemMenu] = useState([]);
+  useEffect(() => {
+    (async () => {
+      const res1 = await getUIItemMenu();
+      setItemMenu(res1.data);
+      setParams({ ...params, machine: (res1.data.find(e => e.id === LINE_SONG_ID)?.children ?? []).map(e => e.id) })
+    })();
+  }, []);
+  const onCheck = (selectedKeys, e) => {
+    const filteredKeys = selectedKeys.filter(
+      (key) => !itemsMenu.some((e) => e.key === key)
+    );
+    setParams({ ...params, machine: filteredKeys });
+  };
+  const memoizedPieChart = useMemo(() => {
+    return <Pie {...configPieChart} />;
+  }, [dataPieChart]);
+  const memoizedColumnChart = useMemo(() => {
+    return <Column {...configColChart} />;
+  }, [dataColChart])
   return (
     <>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -268,7 +263,7 @@ const Equipment1 = (props) => {
           <div className="slide-bar">
             <Card
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-              className="custom-card scroll"
+              className="scroll"
               actions={[
                 <div layout="vertical">
                   <Button
@@ -281,6 +276,19 @@ const Equipment1 = (props) => {
                 </div>,
               ]}
             >
+              <Divider>Công đoạn</Divider>
+              <div className="mb-3">
+                <Form style={{ margin: "0 15px" }} layout="vertical">
+                  <Form.Item className="mb-3">
+                    <Tree
+                      checkable
+                      onCheck={onCheck}
+                      checkedKeys={params.machine}
+                      treeData={itemsMenu}
+                    />
+                  </Form.Item>
+                </Form>
+              </div>
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -291,18 +299,18 @@ const Equipment1 = (props) => {
                       placeholder="Bắt đầu"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [value, params.date[1]] })
+                        setParams({ ...params, start_date: value })
                       }
-                      value={params.date[0]}
+                      value={params.start_date}
                     />
                     <DatePicker
                       allowClear={false}
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [params.date[0], value] })
+                        setParams({ ...params, end_date: value })
                       }
-                      value={params.date[1]}
+                      value={params.end_date}
                     />
                   </Space>
                 </Form>
@@ -310,89 +318,56 @@ const Equipment1 = (props) => {
               <Divider>Điều kiện truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Máy" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      placeholder="Nhập máy"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
-                    />
-                  </Form.Item>
                   <Form.Item label="Mã lỗi" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
-                      onChange={(value) => {
-                        setParams({ ...params, ten_sp: value });
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          error_machine_id: e.target.value,
+                          page: 1,
+                        });
                       }}
                       placeholder="Nhập mã lỗi"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={[]}
                     />
                   </Form.Item>
                   <Form.Item label="Tên lỗi" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
-                      placeholder="Nhập tên lỗi"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          ten_su_co: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập mã lỗi"
                     />
                   </Form.Item>
                   <Form.Item label="Nguyên nhân" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
-                      placeholder="Nhập nguyên nhân"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      onChange={(value) =>
-                        setParams({ ...params, lo_sx: value })
-                      }
-                      options={listLoSX}
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          nguyen_nhan: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập mã lỗi"
                     />
                   </Form.Item>
                   <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
+                    <Input
                       allowClear
-                      showSearch
-                      placeholder="Nhập khách hàng"
-                      onChange={(value) =>
-                        setParams({ ...params, khach_hang: value })
-                      }
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listCustomers}
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          khach_hang: e.target.value,
+                          page: 1,
+                        });
+                      }}
+                      placeholder="Nhập mã lỗi"
                     />
                   </Form.Item>
                 </Form>
@@ -401,7 +376,7 @@ const Equipment1 = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Row gutter={[8, 8]} style={{height: '100%'}}>
+          <Row gutter={[8, 8]} style={{ height: '100%' }}>
             <Col span={12}>
               <Card
                 title="Tần suất phát sinh lỗi"
@@ -411,7 +386,7 @@ const Equipment1 = (props) => {
                   padding: "0px",
                 }}
               >
-                {!loading && <Pie {...configPieChart} />}
+                {memoizedPieChart}
               </Card>
             </Col>
             <Col span={12}>
@@ -420,7 +395,7 @@ const Equipment1 = (props) => {
                 bodyStyle={{ padding: 12, height: 200 }}
                 style={{ height: "100%", padding: "0px" }}
               >
-                <Column {...configColChart} />
+                {memoizedColumnChart}
               </Card>
             </Col>
             <Col span={24}>

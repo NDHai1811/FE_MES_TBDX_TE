@@ -442,32 +442,33 @@ const col_detailTable = [
     ],
   },
 ];
-Array.prototype.random = function () {
-  return this[Math.floor(Math.random() * this.length)];
-};
-const dataTable = Array.from({ length: 32 }, (_, i) => {
-  return {
-    machine_id: ["S01", "P15", "P06", "D05", "D06"].random(),
-    khach_hang: "VICTORY",
-    don_hang: "A21" + Math.floor(Math.random() * 30),
-    lo_sx: [
-      "231209043",
-      "231209044",
-      "231209001",
-      "231209002",
-      "231209003",
-    ].random(),
-    ngay_sx: dayjs(
-      new Date(+new Date() - Math.floor(Math.random() * 10000000000))
-    ).format("DD/MM/YYYY HH:mm:ss"),
-  };
-});
+// Array.prototype.random = function () {
+//   return this[Math.floor(Math.random() * this.length)];
+// };
+// const dataTable = Array.from({ length: 32 }, (_, i) => {
+//   return {
+//     machine_id: ["S01", "P15", "P06", "D05", "D06"].random(),
+//     khach_hang: "VICTORY",
+//     don_hang: "A21" + Math.floor(Math.random() * 30),
+//     lo_sx: [
+//       "231209043",
+//       "231209044",
+//       "231209001",
+//       "231209002",
+//       "231209003",
+//     ].random(),
+//     ngay_sx: dayjs(
+//       new Date(+new Date() - Math.floor(Math.random() * 10000000000))
+//     ).format("DD/MM/YYYY HH:mm:ss"),
+//   };
+// });
 
 const Equipment2 = (props) => {
   document.title = "UI - Thông số máy";
   const [listMachines, setListMachines] = useState([]);
   const [listStaffs, setListStaffs] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState();
+  const [dataTable, setDataTable] = useState([])
 
   const [data, setData] = useState([]);
   const [params, setParams] = useState({
@@ -843,34 +844,6 @@ const Equipment2 = (props) => {
                   layout="vertical"
                   onValuesChange={(value) => setParams({ ...params, ...value })}
                 >
-                  <Form.Item label="Máy" className="mb-3" name={"ca_sx"}>
-                    <Select
-                      showSearch
-                      allowClear
-                      placeholder="Chọn máy"
-                      options={[
-                        {
-                          label: "Ca 1",
-                          value: 1,
-                        },
-                        {
-                          label: "Ca 2",
-                          value: 2,
-                        },
-                      ]}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Thời gian"
-                    className="mb-3"
-                    name={"date_if"}
-                  >
-                    <DatePicker
-                      placeholder="Chọn thời gian"
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-
                   <Form.Item label="Thông số" className="mb-3">
                     <Select
                       showSearch
@@ -934,8 +907,8 @@ const Equipment2 = (props) => {
               </>
             }
           >
-            <Spin spinning={loading}>
               <Table
+                loading={loading}
                 size="small"
                 bordered
                 pagination={false}
@@ -954,7 +927,6 @@ const Equipment2 = (props) => {
                 columns={col_detailTable}
                 dataSource={dataTable}
               />
-            </Spin>
           </Card>
         </Col>
         <Modal

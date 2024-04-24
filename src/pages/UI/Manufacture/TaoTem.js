@@ -239,7 +239,6 @@ const TaoTem = () => {
             dataIndex: "machine_id",
             key: "machine_id",
             align: "center",
-            fixed: "left",
             width: 70,
             editable: true,
         },
@@ -248,7 +247,6 @@ const TaoTem = () => {
             dataIndex: "nhan_vien_sx",
             key: "nhan_vien_sx",
             align: "center",
-            fixed: "left",
             width: 150,
             editable: true,
             render: (value) => listUsers.find(e => value == e?.value)?.label

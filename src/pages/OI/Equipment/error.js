@@ -9,52 +9,6 @@ import "../style.scss";
 import { useEffect } from "react";
 import { getErrorLogs } from "../../../api/oi/equipment";
 
-const tableColumns = [
-  {
-    title: "TT",
-    dataIndex: "thu_tu",
-    key: "thu_tu",
-    align: "center",
-    render: (value, record, index) => index + 1,
-  },
-  {
-    title: "Thời gian dừng",
-    dataIndex: "start_time",
-    key: "start_time",
-    align: "center",
-  },
-  {
-    title: "Thời gian chạy",
-    dataIndex: "end_time",
-    key: "end_time",
-    align: "center",
-  },
-  {
-    title: "Mã sự cố",
-    dataIndex: "code",
-    key: "code",
-    align: "center",
-  },
-  {
-    title: "Tên sự cố",
-    dataIndex: "ten_su_co",
-    key: "ten_su_co",
-    align: "center",
-  },
-  {
-    title: "Nguyên nhân",
-    dataIndex: "nguyen_nhan",
-    key: "nguyen_nhan",
-    align: "center",
-  },
-  {
-    title: "Cách xử lý",
-    dataIndex: "cach_xu_ly",
-    key: "cach_xu_ly",
-    align: "center",
-  },
-];
-
 const Error = () => {
   const { machine_id } = useParams();
 
@@ -65,15 +19,64 @@ const Error = () => {
     startDate: dayjs(),
     endDate: dayjs(),
   });
-
+  const [loading, setLoading] = useState(false);
+  const tableColumns = [
+    {
+      title: "TT",
+      dataIndex: "thu_tu",
+      key: "thu_tu",
+      align: "center",
+      render: (value, record, index) => index + 1,
+    },
+    {
+      title: "Thời gian dừng",
+      dataIndex: "start_time",
+      key: "start_time",
+      align: "center",
+      render: (value) => value && dayjs(value).isValid() && dayjs(value).format(date.startDate.isSame(date.endDate) ? 'HH:mm:ss' : 'DD/MM/YYYY HH:mm:ss')
+    },
+    {
+      title: "Thời gian chạy",
+      dataIndex: "end_time",
+      key: "end_time",
+      align: "center",
+      render: (value) => value && dayjs(value).isValid() && dayjs(value).format(date.startDate.isSame(date.endDate) ? 'HH:mm:ss' : 'DD/MM/YYYY HH:mm:ss')
+    },
+    {
+      title: "Mã sự cố",
+      dataIndex: "code",
+      key: "code",
+      align: "center",
+    },
+    {
+      title: "Tên sự cố",
+      dataIndex: "ten_su_co",
+      key: "ten_su_co",
+      align: "center",
+    },
+    {
+      title: "Nguyên nhân",
+      dataIndex: "nguyen_nhan",
+      key: "nguyen_nhan",
+      align: "center",
+    },
+    {
+      title: "Cách xử lý",
+      dataIndex: "cach_xu_ly",
+      key: "cach_xu_ly",
+      align: "center",
+    },
+  ];
+  
   useEffect(() => {
     getLogs();
-  }, [machine_id]);
+  }, [machine_id, date]);
 
-  const getLogs = () => {
-    getErrorLogs({ machine_id: machine_id })
-      .then((res) => setLogs(res.data))
-      .catch((err) => console.log("Lấy danh sách lịch sử lỗi thất bại: ", err));
+  const getLogs = async () => {
+    setLoading(true);
+    var res = await getErrorLogs({ machine_id: machine_id, start_date: date.startDate, end_date: date.endDate })
+    setLogs(res.data);
+    setLoading(false);
   };
 
   const columns = [
@@ -172,7 +175,7 @@ const Error = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
-            disabledDate={disabledStartDate}
+            // disabledDate={disabledStartDate}
             onChange={(value) => setDate({ ...date, startDate: value })}
           />
         </Col>
@@ -182,7 +185,7 @@ const Error = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
-            disabledDate={disabledEndDate}
+            // disabledDate={disabledEndDate}
             onChange={(value) => setDate({ ...date, endDate: value })}
           />
         </Col>
@@ -199,6 +202,7 @@ const Error = () => {
           }}
           columns={tableColumns}
           dataSource={logs}
+          loading={loading}
           size="small"
           onRow={(record, index) => {
             return {

@@ -9,6 +9,7 @@ import Mapping from "./mapping";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT_REQUEST } from "../../../commons/constants";
 import { formatDateTime } from "../../../commons/utils";
+import { getListMachine } from "../../../api";
 
 const Equipment = (props) => {
   document.title = "Thiết bị";
@@ -97,11 +98,11 @@ const Equipment = (props) => {
   };
 
   const getMachineList = () => {
-    getMachines()
+    getListMachine({is_iot: 1})
       .then((res) => {
-        if (res.data.length > 0) {
-          setMachines(res.data);
-          setMachine(res.data[0].value);
+        if (res.length > 0) {
+          setMachines(res);
+          setMachine(res[0].value);
         }
       })
       .catch((err) => console.log("Lấy danh sách máy thất bại: ", err));

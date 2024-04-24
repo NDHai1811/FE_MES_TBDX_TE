@@ -8,6 +8,10 @@ export async function getMachineErrorList(params) {
     const res = await axios.get('ui/equipment/error-machine-list', {params});
     return res;
 }
+export async function exportMachineErrorList(params) {
+    const res = await axios.get('ui/equipment/error-machine-list/export', {params});
+    return res;
+}
 export async function getErrorMachineFrenquency(params) {
     const res = await axios.get('ui/equipment/error-machine-frequency', {params});
     return res;

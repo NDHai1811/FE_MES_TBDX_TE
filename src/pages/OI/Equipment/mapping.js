@@ -21,13 +21,14 @@ const columns1 = [
     key: "lo_sx",
     align: "center",
     render: (value) => value || "-",
-    width: '7%'
+    width: '200px'
   },
   {
     title: "Mã KH",
     dataIndex: "ma_khach_hang",
     key: "ma_khach_hang",
     align: "center",
+    width: '160px',
     render: (value) => value || "-",
   },
   // {
@@ -39,8 +40,8 @@ const columns1 = [
   // },
   {
     title: "MDH",
-    dataIndex: "don_hang",
-    key: "don_hang",
+    dataIndex: "mdh",
+    key: "mdh",
     align: "center",
     render: (value) => value || "-",
     width: '7%'
@@ -49,14 +50,6 @@ const columns1 = [
     title: "MQL",
     dataIndex: "mql",
     key: "mql",
-    align: "center",
-    render: (value) => value || "-",
-    width: '4%'
-  },
-  {
-    title: "Số lớp",
-    dataIndex: "so_lop",
-    key: "so_lop",
     align: "center",
     render: (value) => value || "-",
     width: '4%'
@@ -105,6 +98,7 @@ const Mapping = () => {
   });
   const [selectedItem, setSelectedItem] = useState([]);
   const [tableColumns, setTableColumns] = useState(columns1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setParams({ ...params, machine_id: machine_id })
@@ -115,18 +109,17 @@ const Mapping = () => {
     }
   }, [params.machine_id, params.start_date, params.end_date]);
 
-  const getLogs = () => {
-    getEquipmentLogs(params)
-      .then((res) => {
-        setLogs(res.data.data);
-        const newColumns = res.data.columns.map((val) => ({
-          ...val,
-          render: (value) => value || "-",
-          align: "center",
-        }));
-        setTableColumns(columns1.concat(newColumns));
-      })
-      .catch((err) => console.log("Lấy lịch sử thiết bị thất bại: ", err));
+  const getLogs = async () => {
+    setLoading(true)
+    var res = await getEquipmentLogs(params)
+    setLogs(res.data.data);
+    const newColumns = res.data.columns.map((val) => ({
+      ...val,
+      render: (value) => value || "-",
+      align: "center",
+    }));
+    setTableColumns(columns1.concat(newColumns));
+    setLoading(false);
   };
 
   const disabledStartDate = (current) => {
@@ -237,7 +230,7 @@ const Mapping = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
-            disabledDate={disabledStartDate}
+            // disabledDate={disabledStartDate}
             onChange={(value) => setParams({ ...params, start_date: value })}
           />
         </Col>
@@ -247,7 +240,7 @@ const Mapping = () => {
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
             defaultValue={dayjs()}
-            disabledDate={disabledEndDate}
+            // disabledDate={disabledEndDate}
             onChange={(value) => setParams({ ...params, end_date: value })}
           />
         </Col>
@@ -259,11 +252,12 @@ const Mapping = () => {
               ? "no-hover " + "table-row-green"
               : "table-row-light";
           }}
+          loading={loading}
           locale={{ emptyText: "Trống" }}
           pagination={false}
           bordered={true}
           scroll={{
-            x: "calc(700px + 100%)",
+            x: columns1.length < 10 ? "100%" : "calc(700px + 100%)",
             y: 300,
           }}
           columns={tableColumns}
