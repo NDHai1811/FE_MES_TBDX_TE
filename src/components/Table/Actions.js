@@ -2,7 +2,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 const Actions = (props) => {
-    const { record = null, form = null, onDelete = null, setEditingKey = null, editingKey = null, onCancel = null} = props;
+    const { record = null, form = null, onDelete = null, setEditingKey = null, editingKey = null, onCancel = null, addonAction = null} = props;
     const onEdit = () => {
         form?.setFieldsValue(record);
         setEditingKey(record.key);
@@ -30,6 +30,7 @@ const Actions = (props) => {
                 disabled={!editingKey}
                 onClick={() => onDelete(record)}
             />}
+            {addonAction && addonAction(record)}
         </div>
     );
 }

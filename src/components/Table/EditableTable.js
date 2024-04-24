@@ -3,7 +3,7 @@ import React, { useContext, useRef, useState, useEffect, forwardRef, useImperati
 import "./style.css";
 import Actions from "./Actions";
 const EditableTable = forwardRef((props, ref) => {
-  const { onDelete = null, onChange = null, onSelect = null, onCreate = null, onUpdate = null, dataSource, setDataSource = null } = props;
+  const { onDelete = null, onChange = null, onSelect = null, onCreate = null, onUpdate = null, dataSource, setDataSource = null, addonAction = null } = props;
   var editableColumns = [];
   const [editingKey, setEditingKey] = useState();
   const [form] = Form.useForm();
@@ -123,6 +123,7 @@ const EditableTable = forwardRef((props, ref) => {
       editingKey={editingKey}
       setEditingKey={setEditingKey}
       onCancel={onCancel}
+      addonAction={addonAction}
     />
   }].map(mapColumns);
 
