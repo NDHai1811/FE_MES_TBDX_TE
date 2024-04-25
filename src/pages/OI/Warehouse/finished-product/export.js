@@ -324,7 +324,7 @@ const Export = (props) => {
             dataSource={selectedItem ? [selectedItem] : [{}]}
           />
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <DatePicker
             allowClear={false}
             placeholder="Từ ngày"
@@ -334,7 +334,7 @@ const Export = (props) => {
             onChange={(value)=>value && value?.isValid() && setParams({...params, start_date: value})}
           />
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <DatePicker
             allowClear={false}
             placeholder="Đến ngày"
@@ -344,7 +344,7 @@ const Export = (props) => {
             onChange={(value)=>value && value?.isValid() && setParams({...params, end_date: value})}
           />
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Button
             block
             className="h-100 w-100"
@@ -357,10 +357,9 @@ const Export = (props) => {
               justifyContent: "center",
             }}
           >
-            Quét tem gộp
           </Button>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Button
             block
             className="h-100 w-100"
@@ -369,7 +368,6 @@ const Export = (props) => {
             loading={isDownloading}
             onClick={onDownloadDeliveryNote}
           >
-            Tải phiếu xuất hàng
           </Button>
         </Col>
         <Col span={24}>
