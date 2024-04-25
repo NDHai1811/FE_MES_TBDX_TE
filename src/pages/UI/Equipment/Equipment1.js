@@ -412,19 +412,18 @@ const Equipment1 = (props) => {
                   </Button>
                 }
               >
-                <Spin spinning={loading}>
-                  <Table
-                    size="small"
-                    bordered
-                    pagination={false}
-                    scroll={{
-                      x: "150vw",
-                      y: "50vh",
-                    }}
-                    columns={columnTable}
-                    dataSource={data}
-                  />
-                </Spin>
+                <Table
+                  size="small"
+                  bordered
+                  pagination={false}
+                  loading={loading}
+                  scroll={{
+                    x: "150vw",
+                    y: "50vh",
+                  }}
+                  columns={columnTable}
+                  dataSource={data}
+                />
               </Card>
             </Col>
           </Row>

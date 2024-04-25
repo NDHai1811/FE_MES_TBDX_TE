@@ -142,7 +142,7 @@ const Error = () => {
   };
 
   const onShowPopup = () => {
-    setVisible(true);
+    selectedError && setVisible(true);
   };
 
   const disabledStartDate = (current) => {

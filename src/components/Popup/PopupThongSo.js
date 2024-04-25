@@ -8,7 +8,7 @@ function PopupThongSo(props) {
   const { visible, setVisible, lo_sx, getLogs } = props;
   const { machine_id } = useParams();
   const [form] = Form.useForm();
-
+  const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -25,8 +25,12 @@ function PopupThongSo(props) {
   };
 
   useEffect(() => {
-    getParamaterList();
-  }, []);
+    if(visible){
+      getParamaterList();
+    }else{
+      setVisible(false);
+    }
+  }, [visible]);
 
   const getParamaterList = () => {
     getParamaters({ machine_id, lo_sx })
@@ -34,7 +38,8 @@ function PopupThongSo(props) {
         setData(res.data);
         if (res.data.length === 0) {
           messageAlert("Đã mapping", "success");
-          handleCancel();
+        }else{
+          setOpen(true);
         }
       })
       .catch((err) => console.log("Lấy danh sách thông số thất bại: ", err));
@@ -134,7 +139,7 @@ function PopupThongSo(props) {
       {contextHolder}
       <Modal
         title="Thông số"
-        open={visible}
+        open={open}
         onOk={handleOk}
         onCancel={handleCancel}
       >

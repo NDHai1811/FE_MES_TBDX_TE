@@ -48,6 +48,7 @@ const QualityPQC = (props) => {
       // const res3 = await getMachineList();
       // setListMachines(res3.data.map((e) => ({ ...e, label: e.name + ' (' + e.id + ')', value: e.id })));
     })();
+    btn_click();
   }, []);
 
   useEffect(() => {
@@ -270,30 +271,28 @@ const QualityPQC = (props) => {
                   </Form.Item>
                 </div>
                 <Divider>Thời gian truy vấn</Divider>
-                <div className="mb-3">
-                  <Form style={{ margin: "0 15px" }} layout="vertical">
-                    {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
-                    <Space direction="vertical" style={{ width: "100%" }}>
-                      <DatePicker
-                        allowClear={false}
-                        placeholder="Bắt đầu"
-                        style={{ width: "100%" }}
-                        onChange={(value) =>
-                          setParams({ ...params, start_date: value })
-                        }
-                        value={params.start_date}
-                      />
-                      <DatePicker
-                        allowClear={false}
-                        placeholder="Kết thúc"
-                        style={{ width: "100%" }}
-                        onChange={(value) =>
-                          setParams({ ...params, end_date: value })
-                        }
-                        value={params.end_date}
-                      />
-                    </Space>
-                  </Form>
+              <div className="mb-3">
+                  {/* <RangePicker placeholder={["Bắt đầu", "Kết thúc"]} /> */}
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, start_date: value })
+                      }
+                      value={params.start_date}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, end_date: value })
+                      }
+                      value={params.end_date}
+                    />
+                  </Space>
                 </div>
                 <Divider>Điều kiện truy vấn</Divider>
                 <div className="mb-3">

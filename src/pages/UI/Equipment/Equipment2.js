@@ -469,36 +469,79 @@ const Equipment2 = (props) => {
   const [listStaffs, setListStaffs] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState();
   const [dataTable, setDataTable] = useState([])
-
-  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPage, setTotalPage] = useState(20);
   const [params, setParams] = useState({
     machine_code: "",
     ca_sx: "",
     date: [dayjs(), dayjs()],
   });
-  async function btn_click() {
-    setLoSX();
+  const defaultColumns = [
+    {
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      render: (value, record, index) => index + 1,
+      align: "center",
+      fixed: "left",
+      width: 50
+    },
+    {
+      title: "Ngày sản xuất",
+      dataIndex: "ngay_sx",
+      key: "ngay_sx",
+      align: "center",
+      fixed: "left",
+      width: 150
+    },
+    {
+      title: "Lô sản xuất",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      fixed: "left",
+      width: 150
+    },
+    {
+      title: "Mã máy",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      fixed: "left",
+      align: "center",
+      width: 70
+    },
+  ];
+  const [columnTable, setColumnTable] = useState(defaultColumns);
+  const mapColumns = (item) => {
+    const newItem = {
+      ...item,
+      dataIndex: item.key,
+      align: 'center',
+      width: 90
+    }
+    if(item.children && (item.children??[]).length > 0){
+      newItem.children = item.children.map(mapColumns)
+    }
+    return newItem
+  }
+  const loadData = async () => {
     setLoading(false);
     const res = await getMachineParamLogs(params);
     if (res.success) {
-      setData(res.data);
-      // setData(
-      //   res.data.map((e) => {
-      //     let dataIf = e.data_if;
-      //     Object.keys(dataIf ?? {}).forEach(function (key, index) {
-      //       dataIf[key] = { is_if: true, value: dataIf[key] };
-      //     });
-      //     let dataInput = e.data_input;
-      //     Object.keys(dataInput ?? {}).forEach(function (key, index) {
-      //       dataInput[key] = { is_if: false, value: dataInput[key] };
-      //     });
-      //     return { ...e, ...dataIf, ...dataInput };
-      //   })
-      // );
+      setDataTable(res.data.data);
+      setColumnTable([...defaultColumns, ...res.data.columns.map(mapColumns)]);
     }
     setLoading(false);
   }
-
+  async function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize)
+    loadData({...params, page, pageSize});
+  }
+  useEffect(() => {
+    console.log(columnTable);
+  }, [columnTable]);
   useEffect(() => {
     (async () => {
       const res1 = await getUIItemMenu();
@@ -518,240 +561,7 @@ const Equipment2 = (props) => {
     setExportLoading(false);
   };
   const [openDetail, setOpenDetail] = useState(false);
-  const detailColumns = [
-    {
-      title: "STT",
-      dataIndex: "index",
-      key: "index",
-      render: (value, record, index) => index + 1,
-      align: "center",
-    },
-    {
-      title: "Lô sx",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
-      align: "center",
-    },
-    {
-      title: "Mã thùng/pallet",
-      dataIndex: "lot_id",
-      key: "lot_id",
-      align: "center",
-    },
-
-    {
-      title: "Mã máy",
-      dataIndex: "machine_code",
-      key: "machine_code",
-      align: "center",
-    },
-    {
-      title: "In",
-      align: "center",
-      children: [
-        {
-          title: "Tốc độ",
-          dataIndex: "speed",
-          key: "speed",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? Math.round(value?.value) : "-",
-            };
-          },
-        },
-        {
-          title: "Độ ph",
-          dataIndex: "ph",
-          key: "ph",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Nhiệt độ nước",
-          dataIndex: "w_temp",
-          key: "w_temp",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Nhiệt độ môi trường",
-          dataIndex: "t_ev",
-          key: "t_ev",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Độ ẩm môi trường",
-          dataIndex: "e_hum",
-          key: "e_hum",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-      ],
-    },
-    {
-      title: "Phủ",
-      align: "center",
-      children: [
-        {
-          title: "Công suất đèn UV1",
-          dataIndex: "uv1",
-          key: "uv1",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Công suất đèn UV2",
-          dataIndex: "uv2",
-          key: "uv2",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Công suất đèn UV3",
-          dataIndex: "uv3",
-          key: "uv3",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-      ],
-    },
-    {
-      title: "Bế",
-      align: "center",
-      children: [
-        {
-          title: "Áp lực bế",
-          dataIndex: "p_be",
-          key: "p_be",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-      ],
-    },
-    {
-      title: "Gấp dán",
-      align: "center",
-      children: [
-        {
-          title: "Áp lực băng tải 1",
-          dataIndex: "p_conv1",
-          key: "p_conv1",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Áp lực băng tải 2",
-          dataIndex: "p_conv2",
-          key: "p_conv2",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Áp lực súng bắn keo",
-          dataIndex: "p_gun",
-          key: "p_gun",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-        {
-          title: "Nhiệt độ thùng keo",
-          dataIndex: "t_gun",
-          key: "t_gun",
-          align: "center",
-          render: (value, record) => {
-            return {
-              props: {
-                style: { backgroundColor: value?.is_if ? "#ebebeb" : "" },
-              },
-              children: value?.value ? value?.value : "-",
-            };
-          },
-        },
-      ],
-    },
-  ];
+  
   const [loSX, setLoSX] = useState();
   const onClickRow = async (record) => {
     setLoSX(record.lo_sx);
@@ -763,6 +573,23 @@ const Equipment2 = (props) => {
     );
     setParams({ ...params, machine: filteredKeys });
   };
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [dataTable]);
   return (
     <>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -778,7 +605,7 @@ const Equipment2 = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={()=>btn_click()}
                   >
                     Truy vấn
                   </Button>
@@ -886,7 +713,7 @@ const Equipment2 = (props) => {
           <Card
             title="Thông số máy"
             style={{ height: "100%" }}
-            className="custom-card scroll"
+            className="custom-card"
             extra={
               <>
                 <Button
@@ -911,10 +738,18 @@ const Equipment2 = (props) => {
                 loading={loading}
                 size="small"
                 bordered
-                pagination={false}
+                pagination={{
+                  current: page,
+                  size: "small",
+                  total: totalPage,
+                  pageSize: pageSize,
+                  showSizeChanger: true,
+                  onChange: (page, pageSize) => {
+                    btn_click(page, pageSize);
+                  },
+                }}
                 scroll={{
-                  x: "500%",
-                  y: "50vh",
+                  y: tableHeight,
                 }}
                 // style={{height:'100%'}}
                 onRow={(record, rowIndex) => {
@@ -924,29 +759,11 @@ const Equipment2 = (props) => {
                     },
                   };
                 }}
-                columns={col_detailTable}
+                columns={columnTable}
                 dataSource={dataTable}
               />
           </Card>
         </Col>
-        <Modal
-          title="Chi tiết thông số máy"
-          open={openDetail}
-          onCancel={() => setOpenDetail(false)}
-        >
-          <Table
-            size="small"
-            bordered
-            pagination={false}
-            scroll={{
-              x: "150vw",
-              y: "60vh",
-            }}
-            // style={{height:'100%'}}
-            columns={col_detailTable}
-            dataSource={data}
-          />
-        </Modal>
       </Row>
     </>
   );

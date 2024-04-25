@@ -33,12 +33,13 @@ import {
 } from "../../../api";
 import "../style.scss";
 import dayjs from "dayjs";
-import { DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
+import { DeleteOutlined, DownOutlined, DownloadOutlined, EditOutlined, LoadingOutlined, UpOutlined } from "@ant-design/icons";
 import { createDeliveryNote, createExportCommand, createWareHouseFGExport, deleteDeliveryNote, exportWarehouseExportNote, exportWarehouseFGDeliveryNote, getDeliveryNoteList, getWarehouseFGExportList, updateDeliveryNote, updateWarehouseFGExport, warehouseExportLogList } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
 import PopupCreateDeliveryNote from "../../../components/Popup/PopupCreateDeliveryNote";
+import { downloadDeliveryNote } from "../../../api/oi/warehouse";
 
 const WarehouseExportCommand = () => {
   document.title = "Quản lý lệnh xuất kho";
@@ -527,6 +528,18 @@ const WarehouseExportCommand = () => {
   const onAfterCreate = () => {
     btn_click();
   }
+  const [loadingRow, setLoadingRow] = useState()
+  const onDownloadDeliveryNote = async (record) => {
+    setLoadingRow(record.id);
+    var res = await downloadDeliveryNote({ delivery_note_id: record.id });
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setLoadingRow();
+  }
+  const btnDownloadExportCommand = (record) => {
+    return loadingRow === record.id ? <LoadingOutlined/> : <DownloadOutlined onClick={()=>onDownloadDeliveryNote(record)}/>
+  }
   return (
     <>
       {contextHolder}
@@ -658,6 +671,7 @@ const WarehouseExportCommand = () => {
                   onDelete={onDelete}
                   onSelect={onSelect}
                   onUpdate={onSave}
+                  addonAction={btnDownloadExportCommand}
                 />
               </Form>
             </Spin>
