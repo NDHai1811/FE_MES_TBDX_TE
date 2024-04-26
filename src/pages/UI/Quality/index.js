@@ -74,7 +74,6 @@ const QualityPQC = (props) => {
       key: "index",
       align: "center",
       render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
-      fixed: "left",
       width: '50px'
     },
     {
@@ -82,7 +81,6 @@ const QualityPQC = (props) => {
       dataIndex: "machine_id",
       key: "machine_id",
       align: "center",
-      fixed: "left",
       width: '80px'
     },
     {
@@ -417,6 +415,11 @@ const QualityPQC = (props) => {
               >
                 <Table
                   loading={loading}
+                  rowClassName={(record, index) =>
+                    record.phan_dinh == 1
+                      ? "table-row-grey"
+                      : ""
+                  }
                   bordered
                   size="small"
                   columns={columns}
