@@ -13,6 +13,7 @@ import {
   Modal,
   Checkbox,
   Tree,
+  Input,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { getThongSoMay, getUIItemMenu } from "../../../api/ui/main";
@@ -473,9 +474,8 @@ const Equipment2 = (props) => {
   const [pageSize, setPageSize] = useState(20);
   const [totalPage, setTotalPage] = useState(20);
   const [params, setParams] = useState({
-    machine_code: "",
-    ca_sx: "",
-    date: [dayjs(), dayjs()],
+    start_date: dayjs(),
+    end_date: dayjs()
   });
   const defaultColumns = [
     {
@@ -520,24 +520,25 @@ const Equipment2 = (props) => {
       align: 'center',
       width: 90
     }
-    if(item.children && (item.children??[]).length > 0){
+    if (item.children && (item.children ?? []).length > 0) {
       newItem.children = item.children.map(mapColumns)
     }
     return newItem
   }
-  const loadData = async () => {
-    setLoading(false);
+  const loadData = async (params) => {
+    setLoading(true);
     const res = await getMachineParamLogs(params);
     if (res.success) {
       setDataTable(res.data.data);
       setColumnTable([...defaultColumns, ...res.data.columns.map(mapColumns)]);
+      setTotalPage(res.data.totalPage)
     }
     setLoading(false);
   }
   async function btn_click(page = 1, pageSize = 20) {
     setPage(page);
     setPageSize(pageSize)
-    loadData({...params, page, pageSize});
+    loadData({ ...params, page, pageSize });
   }
   useEffect(() => {
     console.log(columnTable);
@@ -561,7 +562,7 @@ const Equipment2 = (props) => {
     setExportLoading(false);
   };
   const [openDetail, setOpenDetail] = useState(false);
-  
+
   const [loSX, setLoSX] = useState();
   const onClickRow = async (record) => {
     setLoSX(record.lo_sx);
@@ -605,7 +606,7 @@ const Equipment2 = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={()=>btn_click()}
+                    onClick={() => btn_click()}
                   >
                     Truy vấn
                   </Button>
@@ -624,7 +625,7 @@ const Equipment2 = (props) => {
                   </Form.Item>
                 </Form>
               </div>
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
                   <Form.Item label="Phân loại" className="mb-3">
                     <Select
@@ -637,7 +638,7 @@ const Equipment2 = (props) => {
                     />
                   </Form.Item>
                 </Form>
-              </div>
+              </div> */}
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">
@@ -648,18 +649,18 @@ const Equipment2 = (props) => {
                       placeholder="Bắt đầu"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [value, params.date[1]] })
+                        setParams({ ...params, start_date: value })
                       }
-                      value={params.date[0]}
+                      value={params.start_date}
                     />
                     <DatePicker
                       allowClear={false}
                       placeholder="Kết thúc"
                       style={{ width: "100%" }}
                       onChange={(value) =>
-                        setParams({ ...params, date: [params.date[0], value] })
+                        setParams({ ...params, end_date: value })
                       }
-                      value={params.date[1]}
+                      value={params.end_date}
                     />
                   </Space>
                 </Form>
@@ -671,38 +672,32 @@ const Equipment2 = (props) => {
                   layout="vertical"
                   onValuesChange={(value) => setParams({ ...params, ...value })}
                 >
-                  <Form.Item label="Thông số" className="mb-3">
-                    <Select
-                      showSearch
-                      onChange={(value) => {
-                        setSelectedStaff(value);
+                  <Form.Item label="Lô sản xuất" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          lo_sx: e.target.value,
+                          page: 1,
+                        });
                       }}
-                      placeholder="Chọn thông số"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listStaffs}
+                      placeholder="Nhập lô sản xuất"
                     />
                   </Form.Item>
-                  <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
-                      showSearch
-                      onChange={(value) => {
-                        setSelectedStaff(value);
+                  {/* <Form.Item label="Khách hàng" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          khach_hang: e.target.value,
+                          page: 1,
+                        });
                       }}
-                      placeholder="Chọn khách hàng"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={listStaffs}
+                      placeholder="Nhập tên khách hàng rút gọn"
                     />
-                  </Form.Item>
+                  </Form.Item> */}
                 </Form>
               </div>
             </Card>
@@ -714,54 +709,54 @@ const Equipment2 = (props) => {
             title="Thông số máy"
             style={{ height: "100%" }}
             className="custom-card"
-            extra={
-              <>
-                <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                >
-                  Xuất excel
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={exportFile}
-                  loading={exportLoading}
-                  style={{ marginLeft: 12 }}
-                >
-                  Report
-                </Button>
-              </>
-            }
+          // extra={
+          //   <>
+          //     <Button
+          //       type="primary"
+          //       onClick={exportFile}
+          //       loading={exportLoading}
+          //     >
+          //       Xuất excel
+          //     </Button>
+          //     <Button
+          //       type="primary"
+          //       onClick={exportFile}
+          //       loading={exportLoading}
+          //       style={{ marginLeft: 12 }}
+          //     >
+          //       Report
+          //     </Button>
+          //   </>
+          // }
           >
-              <Table
-                loading={loading}
-                size="small"
-                bordered
-                pagination={{
-                  current: page,
-                  size: "small",
-                  total: totalPage,
-                  pageSize: pageSize,
-                  showSizeChanger: true,
-                  onChange: (page, pageSize) => {
-                    btn_click(page, pageSize);
+            <Table
+              loading={loading}
+              size="small"
+              bordered
+              pagination={{
+                current: page,
+                size: "small",
+                total: totalPage,
+                pageSize: pageSize,
+                showSizeChanger: true,
+                onChange: (page, pageSize) => {
+                  btn_click(page, pageSize);
+                },
+              }}
+              scroll={{
+                y: tableHeight,
+              }}
+              // style={{height:'100%'}}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: (event) => {
+                    onClickRow(record);
                   },
-                }}
-                scroll={{
-                  y: tableHeight,
-                }}
-                // style={{height:'100%'}}
-                onRow={(record, rowIndex) => {
-                  return {
-                    onClick: (event) => {
-                      onClickRow(record);
-                    },
-                  };
-                }}
-                columns={columnTable}
-                dataSource={dataTable}
-              />
+                };
+              }}
+              columns={columnTable}
+              dataSource={dataTable}
+            />
           </Card>
         </Col>
       </Row>

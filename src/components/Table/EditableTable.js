@@ -158,7 +158,6 @@ const EditableTable = forwardRef((props, ref) => {
   const [isCreate, setIsCreate] = useState(false);
   useImperativeHandle(ref, () => ({
     create: (isCreate = true) => {
-      console.log(isCreate);
       setIsCreate(isCreate);
     }
   }));

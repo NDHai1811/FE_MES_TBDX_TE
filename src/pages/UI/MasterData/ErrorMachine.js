@@ -28,9 +28,11 @@ import {
   deleteErrorMachines,
   exportErrorMachines,
   getErrorMachines,
+  getLine,
   updateErrorMachines,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import EditableTable from "../../../components/Table/EditableTable";
 
 const ErrorMachines = () => {
   document.title = "Quản lý lỗi máy";
@@ -40,6 +42,10 @@ const ErrorMachines = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalPage, setTotalPage] = useState(1);
+  const [lineList, setLineList] = useState([]);
   const col_detailTable = [
     {
       title: "Mã lỗi ",
@@ -47,62 +53,46 @@ const ErrorMachines = () => {
       key: "code",
       align: "center",
       fixed: "left",
+      editable: true,
     },
     {
       title: "Tên lỗi",
       dataIndex: "ten_su_co",
       key: "ten_su_co",
       align: "center",
+      editable: true,
     },
     {
       title: "Công đoạn",
-      dataIndex: "line",
-      key: "line",
+      dataIndex: "line_id",
+      key: "line_id",
       align: "center",
-      render: (value, item, index) => value?.name,
+      render: (value) => lineList.find(e => e.value == value)?.label,
+      editable: true,
+      inputType: 'select',
+      options: lineList
     },
     {
       title: "Nguyên nhân",
       dataIndex: "nguyen_nhan",
       key: "nguyen_nhan",
       align: "center",
+      editable: true,
     },
     {
       title: "Cách xử lý",
       dataIndex: "cach_xu_ly",
       key: "cach_xu_ly",
       align: "center",
-    },
-  ];
-  const formFields = [
-    {
-      key: "id",
-      hidden: true,
-    },
-    {
-      title: "Mã lỗi ",
-      key: "code",
-    },
-    {
-      title: "Tên lỗi",
-      key: "ten_su_co",
-    },
-    {
-      title: "Công đoạn",
-      key: "line",
-    },
-    {
-      title: "Nguyên nhân",
-      key: "nguyen_nhan",
-    },
-    {
-      title: "Cách xử lý",
-      key: "cach_xu_ly",
+      editable: true,
     },
   ];
 
-  function btn_click() {
-    loadListTable(params);
+  function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize);
+    loadListTable({ ...params, page, pageSize });
+    tableRef.current.create(false);
   }
 
   const [data, setData] = useState([]);
@@ -110,16 +100,19 @@ const ErrorMachines = () => {
     setLoading(true);
     const res = await getErrorMachines(params);
     setData(
-      res.map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
+    setTotalPage(res.totalPage)
     setLoading(false);
   };
   useEffect(() => {
     (async () => {
-      loadListTable(params);
-    })();
+      var res = await getLine();
+      setLineList(res.map(e => ({ ...e, value: e.id, label: e.name })))
+    })()
+    btn_click()
   }, []);
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -146,7 +139,7 @@ const ErrorMachines = () => {
       if (res) {
         form.resetFields();
         setOpenMdl(false);
-        loadListTable(params);
+        btn_click()
       }
     } else {
       const res = await createErrorMachines(values);
@@ -154,35 +147,27 @@ const ErrorMachines = () => {
       if (res) {
         form.resetFields();
         setOpenMdl(false);
-        loadListTable(params);
+        btn_click()
       }
     }
   };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteErrorMachines(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
+  const onCreate = async (values) => {
+    const res = await createErrorMachines(values);
+    btn_click()
   };
-  const editRecord = () => {
-    setIsEdit(true);
-    if (listCheck.length !== 1) {
-      message.info("Chọn 1 bản ghi để chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({ ...result, line: result?.line?.name });
-      setOpenMdl(true);
-    }
+  const onUpdate = async (values) => {
+    const res = await updateErrorMachines(values);
+    btn_click()
   };
+  const onDelete = async (ids) => {
+    const res = await deleteErrorMachines(ids);
+    setListCheck([]);
+    btn_click()
+  };
+  const tableRef = useRef();
   const insertRecord = () => {
-    setIsEdit(false);
-    form.resetFields();
-    setOpenMdl(true);
-  };
+    tableRef.current.create();
+  }
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
@@ -195,10 +180,28 @@ const ErrorMachines = () => {
     setExportLoading(false);
   };
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
   };
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -208,7 +211,7 @@ const ErrorMachines = () => {
             <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
               <Button
                 type="primary"
-                onClick={btn_click}
+                onClick={() => btn_click()}
                 style={{ width: "80%" }}
               >
                 Tìm kiếm
@@ -219,15 +222,19 @@ const ErrorMachines = () => {
                 <Form
                   style={{ margin: "0 15px" }}
                   layout="vertical"
-                  onFinish={btn_click}
+                  onFinish={() => btn_click()}
                 >
                   <Form.Item label="Công đoạn" className="mb-3">
-                    <Input
+                    <Select
                       allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, line: e.target.value })
+                      onChange={(value) =>
+                        setParams({ ...params, line_id: value })
                       }
-                      placeholder="Nhập mã"
+                      onSelect={(value) =>
+                        setParams({ ...params, line_id: value })
+                      }
+                      options={lineList}
+                      placeholder="Chọn công đoạn"
                     />
                   </Form.Item>
                   <Form.Item label="Mã lỗi" className="mb-3">
@@ -236,7 +243,16 @@ const ErrorMachines = () => {
                       onChange={(e) =>
                         setParams({ ...params, code: e.target.value })
                       }
-                      placeholder="Nhập tên"
+                      placeholder="Nhập mã lỗi"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Tên lỗi" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ten_su_co: e.target.value })
+                      }
+                      placeholder="Nhập tên lỗi"
                     />
                   </Form.Item>
                   <Button hidden htmlType="submit"></Button>
@@ -248,8 +264,8 @@ const ErrorMachines = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý thông số sản phẩm"
-            className="custom-card scroll"
+            title="Quản lý lỗi máy"
+            className="custom-card"
             extra={
               <Space>
                 <Upload
@@ -266,11 +282,11 @@ const ErrorMachines = () => {
                       error();
                     } else if (info.file.status === "done") {
                       if (info.file.response.success === true) {
-                        loadListTable(params);
+                        btn_click()
                         success();
                         setLoadingExport(false);
                       } else {
-                        loadListTable(params);
+                        btn_click()
                         message.error(info.file.response.message);
                         setLoadingExport(false);
                       }
@@ -292,97 +308,62 @@ const ErrorMachines = () => {
                 >
                   Export Excel
                 </Button>
-                <Button
-                  type="primary"
-                  onClick={editRecord}
-                  disabled={listCheck.length <= 0}
-                >
-                  Edit
-                </Button>
                 <Button type="primary" onClick={insertRecord}>
-                  Insert
+                  Tạo
                 </Button>
                 <Popconfirm
                   title="Xoá bản ghi"
                   description={
                     "Bạn có chắc xoá " + listCheck.length + " bản ghi đã chọn?"
                   }
-                  onConfirm={deleteRecord}
+                  onConfirm={() => onDelete(data.reduce(function (filtered, option, index) {
+                    if (listCheck.includes(index)) {
+                      var someNewValue = option.id
+                      filtered.push(someNewValue);
+                    }
+                    return filtered;
+                  }, []))}
                   okText="Có"
                   cancelText="Không"
                   placement="bottomRight"
                 >
                   <Button type="primary" disabled={listCheck.length <= 0}>
-                    Delete
+                    Xoá
                   </Button>
                 </Popconfirm>
               </Space>
             }
           >
-            <Spin spinning={loading}>
-              <Table
-                size="small"
-                bordered
-                pagination={true}
-                columns={col_detailTable}
-                scroll={{
-                  x: "100%",
-                  y: window.innerHeight*0.57,
-                }}
-                dataSource={data.map((e) => ({ ...e, key: e.id }))}
-                rowSelection={rowSelection}
-              />
-            </Spin>
+            <EditableTable
+              loading={loading}
+              size="small"
+              bordered
+              columns={col_detailTable}
+              scroll={{
+                x: "100%",
+                y: tableHeight,
+              }}
+              ref={tableRef}
+              pagination={{
+                current: page,
+                size: "small",
+                total: totalPage,
+                pageSize: pageSize,
+                showSizeChanger: true,
+                onChange: (page, pageSize) => {
+                  btn_click(page, pageSize)
+                },
+              }}
+              onUpdate={onUpdate}
+              onCreate={onCreate}
+              setDataSource={setData}
+              onDelete={(record) => onDelete([record.id])}
+              dataSource={data}
+              rowSelection={rowSelection}
+            />
           </Card>
         </Col>
       </Row>
-      <Modal
-        title={isEdit ? "Cập nhật" : "Thêm mới"}
-        open={openMdl}
-        onCancel={() => setOpenMdl(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt")
-                return (
-                  <Col span={!e.hidden ? 12 : 0}>
-                    <Form.Item
-                      name={e.key}
-                      className="mb-3"
-                      label={e.title}
-                      hidden={e.hidden}
-                      rules={[{ required: e.required }]}
-                    >
-                      {!e.isTrueFalse ? (
-                        <Input
-                          disabled={e.disabled || (isEdit && e.key === "id")}
-                        ></Input>
-                      ) : (
-                        <Select>
-                          <Select.Option value={1}>Có</Select.Option>
-                          <Select.Option value={0}>Không</Select.Option>
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Col>
-                );
-            })}
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };
