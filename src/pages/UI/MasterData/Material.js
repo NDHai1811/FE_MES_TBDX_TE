@@ -38,53 +38,30 @@ import { exportWarehouseTicket } from "../../../api/ui/warehouse";
 import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import EditableTable from "../../../components/Table/EditableTable";
 
 const Materials = () => {
   document.title = "Quản lý nguyên vật liệu";
   const [listCheck, setListCheck] = useState([]);
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [params, setParams] = useState({
-    page: 1,
-    pageSize: 10,
-  });
+  const [pageSize, setPageSize] = useState(20);
+  const [params, setParams] = useState();
   const [loading, setLoading] = useState(false);
   const [openMdlEdit, setOpenMdlEdit] = useState(false);
   const [editingKey, setEditingKey] = useState("");
-  const onUpdate = async () => {
-    const row = await form.validateFields();
-    console.log(row);
-    const item = data.find((val) => val.key === editingKey);
-
-    if (typeof editingKey === "number") {
-      const res = await createMaterial(row);
-      if (res) {
-        form.resetFields();
-        loadListTable(params);
-        setEditingKey("");
-      }
-    } else {
-      row.id = editingKey;
-      if (listCheck.length > 0) {
-        row.ids = listCheck;
-      }
-      const res = await updateMaterial(row);
-      if (res) {
-        form.resetFields();
-        loadListTable();
-        setEditingKey("");
-        // if (listCheck.length > 0) {
-        //   setListCheck([]);
-        // }
-      }
-    }
+  const onUpdate = async (record) => {
+    const res = await updateMaterial(record);
+    btn_click(page, pageSize);
   };
-
-  const onDetele = async (record) => {
-    await deleteMaterials({ id: record.id });
-    loadListTable();
+  const onCreate = async (record) => {
+    var res = await createMaterial(record);
+    btn_click();
   };
+  const onDelete = async (ids) => {
+    var res = await deleteMaterials(ids);
+    btn_click(page, pageSize);
+  }
   const columns = [
     {
       title: "Mã cuộn TBDX",
@@ -150,109 +127,68 @@ const Materials = () => {
       render: (value, item, index) => (value ? "X" : ""),
     },
     {
-      title: "Tác vụ",
-      dataIndex: "action",
-      key: "action",
-      checked: true,
+      title: "Vị trí",
+      dataIndex: "locator_id",
+      key: "locator_id",
       align: "center",
-      fixed: "right",
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => onUpdate(record)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Lưu
-            </Typography.Link>
-            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-              <a>Hủy</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <span>
-            <EditOutlined
-              style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
-              disabled={editingKey !== ""}
-              onClick={() => edit(record)}
-            />
-            <Popconfirm
-              title="Bạn có chắc chắn muốn xóa?"
-              onConfirm={() => onDetele(record)}
-            >
-              <DeleteOutlined
-                style={{
-                  color: "red",
-                  marginLeft: 8,
-                  fontSize: 18,
-                }}
-              />
-            </Popconfirm>
-          </span>
-        );
-      },
+      editable: true,
     },
-  ];
-  const formFields = [
-    {
-      title: "Mã cuộn TBDX",
-      key: "material_id",
-    },
-    {
-      title: "Mã vật tư",
-      key: "ma_vat_tu",
-    },
-    {
-      title: "Tên nhà cung cấp",
-      key: "ten_ncc",
-    },
-    {
-      title: "Mã cuộn nhà cung cấp",
-      key: "ma_cuon_ncc",
-    },
-    {
-      title: "Số kg",
-      key: "so_kg",
-    },
-    {
-      title: "Loại giấy",
-      key: "loai_giay",
-    },
-    {
-      title: "Khổ giấy",
-      key: "kho_giay",
-    },
-    {
-      title: "Định lượng",
-      key: "dinh_luong",
-    },
+    // {
+    //   title: "Tác vụ",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   checked: true,
+    //   align: "center",
+    //   fixed: "right",
+    //   render: (_, record) => {
+    //     const editable = isEditing(record);
+    //     return editable ? (
+    //       <span>
+    //         <Typography.Link
+    //           onClick={() => onUpdate(record)}
+    //           style={{
+    //             marginRight: 8,
+    //           }}
+    //         >
+    //           Lưu
+    //         </Typography.Link>
+    //         <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+    //           <a>Hủy</a>
+    //         </Popconfirm>
+    //       </span>
+    //     ) : (
+    //       <span>
+    //         <EditOutlined
+    //           style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+    //           disabled={editingKey !== ""}
+    //           onClick={() => edit(record)}
+    //         />
+    //         <Popconfirm
+    //           title="Bạn có chắc chắn muốn xóa?"
+    //           onConfirm={() => onDetele(record)}
+    //         >
+    //           <DeleteOutlined
+    //             style={{
+    //               color: "red",
+    //               marginLeft: 8,
+    //               fontSize: 18,
+    //             }}
+    //           />
+    //         </Popconfirm>
+    //       </span>
+    //     );
+    //   },
+    // },
   ];
 
-  const edit = (record) => {
-    form.setFieldsValue({
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    if (typeof editingKey === "number") {
-      const newData = [...data];
-      newData.shift();
-      setData(newData);
-    }
-    setEditingKey("");
-  };
-
-  function btn_click() {
-    loadListTable();
+  function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize)
+    loadListTable({ ...params, page, pageSize });
   }
 
   const [data, setData] = useState([]);
-  const loadListTable = async () => {
+  const loadListTable = async (params) => {
     setLoading(true);
     const res = await getMaterials(params);
     setTotalPage(res.totalPage);
@@ -261,170 +197,48 @@ const Materials = () => {
         return { ...e, key: e.id };
       })
     );
+    setListCheck([]);
     setLoading(false);
   };
   useEffect(() => {
-    (async () => {
-      loadListTable();
-    })();
-  }, [params.page, params.pageSize]);
+    btn_click()
+  }, []);
 
   const [messageApi, contextHolder] = message.useMessage();
-
-  const success = () => {
-    messageApi.open({
-      type: "success",
-      content: "Upload file thành công",
-    });
-  };
-
-  const error = () => {
-    messageApi.open({
-      type: "error",
-      content: "Upload file lỗi",
-    });
-  };
-
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteMaterials(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
-  };
   const componentRef1 = useRef();
 
   const handlePrint = useReactToPrint({
     content: () => componentRef1.current,
   });
-
+  const tableRef = useRef();
   const onInsert = () => {
-    form.resetFields();
-    setData([
-      {
-        key: data.length + 1,
-      },
-      ...data,
-    ]);
-    setEditingKey(data.length + 1);
-  };
-  const [form] = Form.useForm();
-  const onFinish = async (values) => {
-    // if (values.id) {
-    //   const res = await updateWarehouseImport(values);
-    // } else {
-    //   const res = await createWarehouseImport(values);
-    // }
-    setOpenMdlEdit(false);
+    tableRef.current.create();
   };
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
   };
-  const [exportLoading, setExportLoading] = useState(false);
-  const [exportLoading1, setExportLoading1] = useState(false);
-  const exportFile = async () => {
-    setExportLoading(true);
-    const res = await exportWarehouseTicket({
-      ...params,
-      material_ids: listCheck,
-    });
-    if (res.success) {
-      window.location.href = baseURL + res.data;
-    }
-    setExportLoading(false);
-  };
-  const onChange = (value, dataIndex) => {
-    const items = data.map((val) => {
-      if (val.key === editingKey) {
-        val[dataIndex] = value;
-      }
-      return { ...val };
-    });
-    value.isValid() && setData(items);
-  };
-  const onSelect = (value, dataIndex) => {
-    const items = data.map((val) => {
-      if (val.key === editingKey) {
-        val[dataIndex] = value;
-      }
-      return { ...val };
-    });
-    setData(items);
-  };
-  const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    onChange,
-    onSelect,
-    options,
-    ...restProps
-  }) => {
-    let inputNode;
-    switch (inputType) {
-      case "number":
-        inputNode = <InputNumber />;
-        break;
-      case "select":
-        inputNode = (
-          <Select
-            value={record?.[dataIndex]}
-            options={options}
-            onChange={(value) => onSelect(value, dataIndex)}
-            bordered
-            showSearch
-          />
-        );
-        break;
-      default:
-        inputNode = <Input />;
-    }
-    return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{
-              margin: 0,
-            }}
-            initialValue={record?.[dataIndex]}
-          >
-            {inputNode}
-          </Form.Item>
-        ) : (
-          children
-        )}
-      </td>
-    );
-  };
-  const isEditing = (record) => record.key === editingKey;
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType: "text",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-        onChange,
-        onSelect,
-        options: [],
-      }),
-    };
-  });
+  
   const { userProfile } = useProfile();
+  const header = document.querySelector('.custom-card .ant-table-header');
+  const pagination = document.querySelector('.custom-card .ant-pagination');
+  const card = document.querySelector('.custom-card .ant-card-body');
+  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  useEffect(() => {
+    const handleWindowResize = () => {
+      const header = document.querySelector('.custom-card .ant-table-header');
+      const pagination = document.querySelector('.custom-card .ant-pagination');
+      const card = document.querySelector('.custom-card .ant-card-body');
+      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+    };
+    handleWindowResize();
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [data]);
   return (
     <>
       {contextHolder}
@@ -434,7 +248,7 @@ const Materials = () => {
             <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
               <Button
                 type="primary"
-                onClick={btn_click}
+                onClick={() => btn_click()}
                 style={{ width: "80%" }}
               >
                 Tìm kiếm
@@ -467,6 +281,27 @@ const Materials = () => {
                       }
                     />
                   </Form.Item>
+                  <Form.Item label={"Vị trí"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập vị trí"}
+                      onChange={(e) =>
+                        setParams({ ...params, locator_id: e.target.value })
+                      }
+                    />
+                  </Form.Item>
+                  <Form.Item label={"Phân loại"} className="mb-3">
+                    <Select
+                      placeholder={"Chọn phân loại"}
+                      onChange={(value) =>
+                        setParams({ ...params, phan_loai: value })
+                      }
+                      onSelect={(value) =>
+                        setParams({ ...params, phan_loai: value })
+                      }
+                      allowClear
+                      options={[{ value: 0, label: 'Chưa nhập kho' }, { value: 1, label: 'Đã nhập kho' }]}
+                    />
+                  </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>
@@ -476,11 +311,11 @@ const Materials = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            className="custom-card scroll"
+            className="custom-card"
             title="Quản lý nguyên vật liệu"
             extra={
               <Space>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={exportFile}
                   loading={exportLoading}
@@ -518,14 +353,37 @@ const Materials = () => {
                 </Upload>
                 <Button type="primary" onClick={onInsert}>
                   Thêm NVL
-                </Button>
+                </Button> */}
                 <Button type="primary" onClick={handlePrint}>
                   In tem NVL
                 </Button>
+                <Button type="primary" onClick={onInsert}>
+                  Thêm
+                </Button>
+                <Popconfirm
+                  title="Xoá bản ghi"
+                  description={
+                    "Bạn có chắc xoá " + listCheck.length + " bản ghi đã chọn?"
+                  }
+                  onConfirm={() => onDelete(data.reduce(function (filtered, option, index) {
+                    if (listCheck.includes(index)) {
+                      var someNewValue = option.id
+                      filtered.push(someNewValue);
+                    }
+                    return filtered;
+                  }, []))}
+                  okText="Có"
+                  cancelText="Không"
+                  placement="bottomRight"
+                >
+                  <Button type="primary" disabled={listCheck.length <= 0}>
+                    Xoá
+                  </Button>
+                </Popconfirm>
                 <div className="report-history-invoice">
                   <TemNVL
                     listCheck={data
-                      .filter((e) => listCheck.includes(e.id))
+                      .filter((e, i) => listCheck.includes(i))
                       .map((e) => ({ ...e, material_id: e.id }))}
                     ref={componentRef1}
                   />
@@ -533,113 +391,33 @@ const Materials = () => {
               </Space>
             }
           >
-            <Spin spinning={loading}>
-              <Form form={form} component={false}>
-                <Table
-                  bordered
-                  columns={mergedColumns}
-                  dataSource={data}
-                  className="h-100"
-                  rowSelection={rowSelection}
-                  size="small"
-                  components={{
-                    body: {
-                      cell: EditableCell,
-                    },
-                  }}
-                  pagination={{
-                    current: page,
-                    size: "small",
-                    total: totalPage,
-                    onChange: (page, pageSize) => {
-                      setPage(page);
-                      setPageSize(pageSize);
-                      setParams({ ...params, page: page, pageSize: pageSize });
-                    },
-                  }}
-                />
-              </Form>
-            </Spin>
+            <EditableTable
+              ref={tableRef}
+              loading={loading}
+              bordered
+              columns={columns}
+              dataSource={data}
+              setDataSource={setData}
+              className="h-100"
+              rowSelection={rowSelection}
+              size="small"
+              pagination={{
+                current: page,
+                size: "small",
+                pageSize: pageSize,
+                total: totalPage,
+                onChange: (page, pageSize) => {
+                  btn_click(page, pageSize);
+                },
+              }}
+              onDelete={(record) => onDelete([record.id])}
+              onUpdate={onUpdate}
+              onCreate={onCreate}
+              scroll={{ y: tableHeight }}
+            />
           </Card>
         </Col>
       </Row>
-      {/* <Modal
-        title={isEdit ? "Cập nhật" : "Thêm mới"}
-        open={openMdl}
-        onCancel={() => setOpenMdl(false)}
-        footer={null}
-        width={800}
-      >
-        <Form
-          style={{ margin: "0 15px" }}
-          layout="vertical"
-          form={form}
-          onFinish={onFinish}
-        >
-          <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt") {
-                if (e?.children?.length > 0) {
-                  return e.children.map((c, index) => {
-                    return (
-                      <Col span={!c.hidden ? 12 / e.children.length : 0}>
-                        <Form.Item
-                          name={[e.key, c.key]}
-                          className="mb-3"
-                          label={e.title + " - " + c.title}
-                          hidden={c.hidden}
-                          rules={[{ required: c.required }]}
-                        >
-                          {!c.isTrueFalse ? (
-                            <Input
-                              disabled={
-                                c.disabled || (isEdit && c.key === "id")
-                              }
-                            ></Input>
-                          ) : (
-                            <Select>
-                              <Select.Option value={1}>Có</Select.Option>
-                              <Select.Option value={0}>Không</Select.Option>
-                            </Select>
-                          )}
-                        </Form.Item>
-                      </Col>
-                    );
-                  });
-                } else {
-                  return (
-                    <Col span={!e.hidden ? 12 : 0}>
-                      <Form.Item
-                        name={e.key}
-                        className="mb-3"
-                        label={e.title}
-                        hidden={e.hidden}
-                        rules={[{ required: e.required }]}
-                      >
-                        {!e.isTrueFalse ? (
-                          <Input
-                            disabled={e.disabled || (isEdit && e.key === "id")}
-                          ></Input>
-                        ) : (
-                          <Select>
-                            <Select.Option value={1}>Có</Select.Option>
-                            <Select.Option value={0}>Không</Select.Option>
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                  );
-                }
-              }
-            })}
-          </Row>
-          <Form.Item className="mb-0">
-            <Button type="primary" htmlType="submit">
-              Lưu lại
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal> */}
     </>
   );
 };

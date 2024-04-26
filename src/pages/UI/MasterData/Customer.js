@@ -54,7 +54,7 @@ const Customer = () => {
   const [editingKey, setEditingKey] = useState("");
   const onUpdate = async (values) => {
     const res = await updateCustomer(values);
-    btn_click();
+    btn_click(page, pageSize);
   };
   const onCreate = async (values) => {
     const res = await createCustomer(values);
@@ -147,7 +147,7 @@ const Customer = () => {
   const onDelete = async (ids) => {
     const res = await deleteCustomer(ids);
     setListCheck([]);
-    btn_click();
+    btn_click(page, pageSize);
   };
   const tableRef = useRef();
   const onInsert = () => {
