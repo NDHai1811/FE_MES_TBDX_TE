@@ -222,6 +222,14 @@ const Customer = () => {
                       }
                     />
                   </Form.Item>
+                  <Form.Item label={"Tên KH rút gọn"} className="mb-3">
+                    <Input
+                      placeholder={"Nhập tên KH rút gọn"}
+                      onChange={(e) =>
+                        setParams({ ...params, short_name: e.target.value })
+                      }
+                    />
+                  </Form.Item>
                   <Button hidden htmlType="submit"></Button>
                 </Form>
               </div>

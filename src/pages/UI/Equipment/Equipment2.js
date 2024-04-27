@@ -20,7 +20,7 @@ import { getThongSoMay, getUIItemMenu } from "../../../api/ui/main";
 import { baseURL } from "../../../config";
 import { exportThongSoMay } from "../../../api/ui/export";
 import dayjs from "dayjs";
-import { getMachineParamLogs } from "../../../api/ui/machine";
+import { getMachineList, getMachineParamLogs } from "../../../api/ui/machine";
 import "../style.scss";
 
 const dataChart = Array.from({ length: 12 }, (_, i) => ({
@@ -541,12 +541,9 @@ const Equipment2 = (props) => {
     loadData({ ...params, page, pageSize });
   }
   useEffect(() => {
-    console.log(columnTable);
-  }, [columnTable]);
-  useEffect(() => {
     (async () => {
-      const res1 = await getUIItemMenu();
-      setItemMenu(res1.data);
+      const res1 = await getMachineList({is_iot: true});
+      setListMachines(res1.data.map(e=>({...e, value: e.id, label: e.name})));
     })();
     btn_click();
   }, []);
@@ -617,28 +614,18 @@ const Equipment2 = (props) => {
                 <Form style={{ margin: "0 15px" }} layout="vertical">
                   <Divider>Công đoạn</Divider>
                   <Form.Item className="mb-3">
-                    <Tree
-                      checkable
-                      onCheck={onCheck}
-                      treeData={itemsMenu}
+                    <Select
+                      allowClear
+                      showSearch
+                      onChange={(value) => {
+                        setParams({ ...params, machine_id: value });
+                      }}
+                      placeholder="Chọn máy"
+                      options={listMachines}
                     />
                   </Form.Item>
                 </Form>
               </div>
-              {/* <div className="mb-3">
-                <Form style={{ margin: "0 15px" }} layout="vertical">
-                  <Form.Item label="Phân loại" className="mb-3">
-                    <Select
-                      allowClear
-                      placeholder="Chọn phân loại"
-                      options={listMachines}
-                      onChange={(value) =>
-                        setParams({ ...params, machine_code: value })
-                      }
-                    />
-                  </Form.Item>
-                </Form>
-              </div> */}
               <Divider>Thời gian truy vấn</Divider>
               <div className="mb-3">
                 <Form style={{ margin: "0 15px" }} layout="vertical">

@@ -53,8 +53,8 @@ const columns = [
   },
   {
     title: "Kích chạy",
-    dataIndex: "kich_thuoc",
-    key: "kich_thuoc",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
     align: "center",
   },
   {
