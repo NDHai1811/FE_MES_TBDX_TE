@@ -21,30 +21,23 @@ const columns1 = [
     key: "lo_sx",
     align: "center",
     render: (value) => value || "-",
-    width: '200px'
+    width: '120px'
   },
   {
     title: "Mã KH",
     dataIndex: "ma_khach_hang",
     key: "ma_khach_hang",
     align: "center",
-    width: '160px',
+    width: '120px',
     render: (value) => value || "-",
   },
-  // {
-  //   title: "Mã layout",
-  //   dataIndex: "layout_id",
-  //   key: "layout_id",
-  //   align: "center",
-  //   render: (value) => value || "-",
-  // },
   {
     title: "MDH",
     dataIndex: "mdh",
     key: "mdh",
     align: "center",
     render: (value) => value || "-",
-    width: '7%'
+    width: '90px'
   },
   {
     title: "MQL",
@@ -52,7 +45,7 @@ const columns1 = [
     key: "mql",
     align: "center",
     render: (value) => value || "-",
-    width: '4%'
+    width: '60px'
   },
   {
     title: "Khổ tổng",
@@ -60,7 +53,7 @@ const columns1 = [
     key: "kho_tong",
     align: "center",
     render: (value) => value || "-",
-    width: '6%'
+    width: '80px'
   },
   {
     title: "Dài tấm",
@@ -68,7 +61,7 @@ const columns1 = [
     key: "dai_tam",
     align: "center",
     render: (value) => value || "-",
-    width: '6%'
+    width: '80px'
   },
   {
     title: "Số lượng",
@@ -76,6 +69,7 @@ const columns1 = [
     key: "so_luong",
     align: "center",
     render: (value) => value || "-",
+    width: '80px'
   },
   {
     title: "Mapping",
@@ -83,6 +77,7 @@ const columns1 = [
     key: "mapping",
     align: "center",
     render: (value) => (value ? "Đã mapping" : "-"),
+    width: '120px'
   },
 ];
 
@@ -118,6 +113,7 @@ const Mapping = () => {
         ...val,
         render: (value) => value || "-",
         align: "center",
+        width: '90px'
       }));
       setTableColumns(columns1.concat(newColumns));
       setLoading(false);
@@ -228,6 +224,7 @@ const Mapping = () => {
       >
         <Col span={12}>
           <DatePicker
+            allowClear={false}
             placeholder="Từ ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
@@ -238,6 +235,7 @@ const Mapping = () => {
         </Col>
         <Col span={12}>
           <DatePicker
+            allowClear={false}
             placeholder="Đến ngày"
             style={{ width: "100%" }}
             format={COMMON_DATE_FORMAT}
@@ -259,7 +257,7 @@ const Mapping = () => {
           pagination={false}
           bordered={true}
           scroll={{
-            x: columns1.length < 10 ? "100%" : "calc(700px + 100%)",
+            x: 1120,
             y: 300,
           }}
           columns={tableColumns}
