@@ -9,6 +9,7 @@ import {
   DatePicker,
   Select,
   Tooltip,
+  message,
 } from "antd";
 import "../style.scss";
 import {
@@ -21,6 +22,8 @@ import {
   startStopProduce,
   getTrackingStatus,
   getCurrentManufacturing,
+  startProduce,
+  stopProduce,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import {
@@ -34,40 +37,46 @@ import TemTest from "./TemTest";
 
 const columns = [
   {
-    title: "Số TT tem",
+    title: "STT tem",
     dataIndex: "thu_tu_uu_tien",
     key: "thu_tu_uu_tien",
     align: "center",
+    width: 50
   },
   {
     title: "Tên khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
+    width: 90
   },
   {
     title: "MDH",
     dataIndex: "mdh",
     key: "mdh",
     align: "center",
+    width: 90
   },
   {
     title: "Kích chạy",
     dataIndex: "quy_cach",
     key: "quy_cach",
     align: "center",
+    width: 100
   },
   {
     title: "Khổ",
     dataIndex: "kho_tong",
     key: "kho_tong",
     align: "center",
+    width: 60
   },
   {
     title: "Dài tấm",
     dataIndex: "dai_tam",
     key: "dai_tam",
     align: "center",
+    width: 70
   },
   {
     title: "SL KH",
@@ -166,6 +175,7 @@ const Manufacture1 = (props) => {
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
+      width: '20%',
       render: (value) => value ?? "-",
     },
     {
@@ -173,6 +183,7 @@ const Manufacture1 = (props) => {
       dataIndex: "san_luong_kh",
       key: "san_luong_kh",
       align: "center",
+      width: '20%',
       render: (value) => value ?? "-",
     },
     {
@@ -180,6 +191,7 @@ const Manufacture1 = (props) => {
       dataIndex: "sl_dau_ra_hang_loat",
       key: "sl_dau_ra_hang_loat",
       align: "center",
+      width: '20%',
       render: (value) => value ?? "-",
     },
     {
@@ -187,6 +199,7 @@ const Manufacture1 = (props) => {
       dataIndex: "sl_ng_sx",
       key: "sl_ng_sx",
       align: "center",
+      width: '20%',
       render: (value) => value ?? "-",
     },
     {
@@ -194,6 +207,7 @@ const Manufacture1 = (props) => {
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
+      width: '20%',
       render: (value) => value ?? "-",
     },
   ];
@@ -213,7 +227,7 @@ const Manufacture1 = (props) => {
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [listTem, setListTem] = useState([]);
-  const [isPause, setIsPasue] = useState(true);
+  const [isPaused, setIsPasued] = useState(true);
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -268,7 +282,7 @@ const Manufacture1 = (props) => {
     (async () => {
       var res = await getTrackingStatus({ machine_id: machine_id });
       if (res.success) {
-        setIsPasue(!res.data?.status)
+        setIsPasued(!res.data?.status)
       }
       // var tem = await getTem();
       // setListTem(tem)
@@ -281,7 +295,7 @@ const Manufacture1 = (props) => {
 
   var timeout;
   const loadDataRescursive = async (machine_id, selectedLot) => {
-    if (!machine_id || isPause) return;
+    if (!machine_id || isPaused) return;
     const res = await getCurrentManufacturing({ machine_id });
     console.log(selectedLot?.lo_sx, res.data?.lo_sx);
     if (selectedLot?.lo_sx !== res.data?.lo_sx) {
@@ -294,7 +308,7 @@ const Manufacture1 = (props) => {
       return e;
     }))
     setSelectedLot(res.data);
-    if (res.success) {
+    if (res.success && !isPaused) {
       if (window.location.href.indexOf("/oi/manufacture") > -1)
         timeout = setTimeout(function () {
           loadDataRescursive(machine_id, selectedLot);
@@ -304,9 +318,9 @@ const Manufacture1 = (props) => {
   useEffect(() => {
     clearTimeout(timeout);
     console.log('changed lo_sx', selectedLot);
-    !isPause && loadDataRescursive(machine_id, selectedLot, isPause);
+    !isPaused && loadDataRescursive(machine_id, selectedLot, isPaused);
     return () => clearTimeout(timeout);
-  }, [isPause, selectedLot?.lo_sx]);
+  }, [isPaused, selectedLot?.lo_sx]);
 
 
 
@@ -386,31 +400,44 @@ const Manufacture1 = (props) => {
   };
 
   const onClickRow = (record) => {
-    record.status <= 1 && isPause && setSelectedLot(record);
+    record.status <= 1 && isPaused && setSelectedLot(record);
   }
-
-  const onClickBtn = async () => {
-    var res = await startStopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: !isPause, machine_id: machine_id });
-    if (res.success) {
-      setIsPasue(!isPause);
-      reloadData();
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loadingAction, setLoadingAction] = useState(false)
+  const onStart = async () => {
+    if(!selectedLot){
+      messageApi.warning('Chưa chọn lô để bắt đầu');
+      return 0;
     }
+    setLoadingAction(true);
+    var res = await startProduce({ lo_sx: selectedLot?.lo_sx, is_pause: false, machine_id: machine_id });
+    if (res.success) {
+      setIsPasued(false);
+    }
+    setLoadingAction(false);
+  }
+  const onStop = async () => {
+    setLoadingAction(true);
+    var res = await stopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: true, machine_id: machine_id });
+    if (res.success) {
+      setIsPasued(true);
+    }
+    setLoadingAction(false);
   }
   const tableRef = useRef();
   const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
   const [tableSize, setTableSize] = useState(
     {
-      width: window.innerWidth < 700 ? '400vw' : '200vw',
+      width: window.innerWidth < 700 ? '400vw' : '150vw',
       height: table?.top ? (window.innerHeight - table?.top) - 70 : 300,
     }
   );
   useEffect(() => {
     const handleWindowResize = () => {
       const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-      console.log(table);
       setTableSize(
         {
-          width: window.innerWidth < 700 ? '400vw' : '200vw',
+          width: window.innerWidth < 700 ? '400vw' : '150vw',
           height: table?.top ? (window.innerHeight - table?.top) - 80 : 300,
         }
       );
@@ -423,6 +450,7 @@ const Manufacture1 = (props) => {
   }, [data]);
   return (
     <React.Fragment>
+      {contextHolder}
       <Spin spinning={loading}>
         <Row className="mt-1" gutter={[6, 8]}>
           <Col span={24}>
@@ -472,7 +500,7 @@ const Manufacture1 = (props) => {
               onChange={onChangeEndDate}
             />
           </Col>
-          <Col span={6}><Button type="primary" onClick={onClickBtn} className="w-100">{isPause ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+          <Col span={6}><Button type="primary" loading={loadingAction} onClick={()=>isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
           <Col span={6}>
             <Button
               size="medium"

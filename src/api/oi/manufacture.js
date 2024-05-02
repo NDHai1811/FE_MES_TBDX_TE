@@ -91,6 +91,12 @@ export async function manualPrintStamp(params){
 export async function startStopProduce(params){
   return await axios.post("/oi/manufacture/start-stop-produce", params);
 }
+export async function startProduce(params){
+  return await axios.post("/oi/manufacture/start-produce", params);
+}
+export async function stopProduce(params){
+  return await axios.post("/oi/manufacture/stop-produce", params);
+}
 export async function getTrackingStatus(params){
   return await axios.get("/oi/manufacture/tracking-status", {params});
 }

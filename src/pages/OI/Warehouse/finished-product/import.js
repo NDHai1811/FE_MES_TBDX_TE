@@ -48,6 +48,7 @@ const importColumns = [
     dataIndex: "stt",
     key: "stt",
     align: "center",
+    width: 50,
     render: (value, record, index) => index + 1,
   },
   {

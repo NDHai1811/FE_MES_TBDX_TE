@@ -75,7 +75,7 @@ function PopupQuetQrNhapKho(props) {
     (async () => {
       if (currentResult) {
         const result = JSON.parse(currentResult);
-        const res = await checkLoSX({ lo_sx: result.lo_sx });
+        const res = await checkLoSX({ lo_sx: result.lo_sx, list_losx: data.map(e=>e.lo_sx) });
         const isExisted = data?.some((val) => val?.lo_sx === result.lo_sx);
         console.log(res);
         if (!isExisted && res.success == true) {
