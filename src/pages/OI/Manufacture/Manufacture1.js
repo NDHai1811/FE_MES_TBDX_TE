@@ -325,19 +325,18 @@ const Manufacture1 = (props) => {
 
 
   const getOverAllDetail = () => {
-    setLoading(true);
     getOverAll(params)
       .then((res) => setOverall(res.data))
       .catch((err) => {
         console.error("Get over all error: ", err);
       })
-      .finally(() => setLoading(false));
   };
 
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
-    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })))
+    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+    setLoading(false);
   };
 
   const onChangeLine = (value) => {
@@ -405,7 +404,7 @@ const Manufacture1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
-    if(!selectedLot){
+    if (!selectedLot) {
       messageApi.warning('Chưa chọn lô để bắt đầu');
       return 0;
     }
@@ -451,96 +450,95 @@ const Manufacture1 = (props) => {
   return (
     <React.Fragment>
       {contextHolder}
-      <Spin spinning={loading}>
-        <Row className="mt-1" gutter={[6, 8]}>
-          <Col span={24}>
-            <Table
-              size="small"
-              pagination={false}
-              bordered
-              locale={{ emptyText: "Trống" }}
-              className="custom-table"
-              columns={overallColumns}
-              dataSource={overall}
-            />
-          </Col>
-          <Col span={24}>
-            <Table
-              size="small"
-              pagination={false}
-              bordered
-              className="custom-table"
-              locale={{ emptyText: "Trống" }}
-              columns={currentColumns}
-              dataSource={selectedLot ? [selectedLot] : []}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => { tableRef.current?.scrollTo({ key: selectedLot?.lo_sx }); },
-                };
-              }}
-            />
-          </Col>
-          <Col span={6}>
-            <DatePicker
-              allowClear={false}
-              placeholder="Từ ngày"
-              style={{ width: "100%" }}
-              format={COMMON_DATE_FORMAT}
-              defaultValue={dayjs()}
-              onChange={onChangeStartDate}
-            />
-          </Col>
-          <Col span={6}>
-            <DatePicker
-              allowClear={false}
-              placeholder="Đến ngày"
-              style={{ width: "100%" }}
-              format={COMMON_DATE_FORMAT}
-              defaultValue={dayjs()}
-              onChange={onChangeEndDate}
-            />
-          </Col>
-          <Col span={6}><Button type="primary" loading={loadingAction} onClick={()=>isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
-          <Col span={6}>
-            <Button
-              size="medium"
-              type="primary"
-              style={{ width: "100%" }}
-              onClick={handlePrint}
-              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-            />
-            <div className="report-history-invoice">
-              {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
-              <TemGiayTam listCheck={listTem} ref={componentRef1} />
-              <TemThanhPham listCheck={listTem} ref={componentRef2} />
-            </div>
-          </Col>
-          <Col span={24}>
-            <Table
-              scroll={{
-                x: tableSize.width,
-                y: tableSize.height,
-              }}
-              size="small"
-              rowClassName={(record, index) =>
-                "no-hover " + rowClassName(record, index)
-              }
-              className="bottom-table"
-              ref={tableRef}
-              pagination={false}
-              bordered
-              columns={columns}
-              rowSelection={rowSelection}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => { onClickRow(record) },
-                };
-              }}
-              dataSource={data}
-            />
-          </Col>
-        </Row>
-      </Spin>
+      <Row className="mt-1" gutter={[6, 8]}>
+        <Col span={24}>
+          <Table
+            size="small"
+            pagination={false}
+            bordered
+            locale={{ emptyText: "Trống" }}
+            className="custom-table"
+            columns={overallColumns}
+            dataSource={overall}
+          />
+        </Col>
+        <Col span={24}>
+          <Table
+            size="small"
+            pagination={false}
+            bordered
+            className="custom-table"
+            locale={{ emptyText: "Trống" }}
+            columns={currentColumns}
+            dataSource={selectedLot ? [selectedLot] : []}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: (event) => { tableRef.current?.scrollTo({ key: selectedLot?.lo_sx }); },
+              };
+            }}
+          />
+        </Col>
+        <Col span={6}>
+          <DatePicker
+            allowClear={false}
+            placeholder="Từ ngày"
+            style={{ width: "100%" }}
+            format={COMMON_DATE_FORMAT}
+            defaultValue={dayjs()}
+            onChange={onChangeStartDate}
+          />
+        </Col>
+        <Col span={6}>
+          <DatePicker
+            allowClear={false}
+            placeholder="Đến ngày"
+            style={{ width: "100%" }}
+            format={COMMON_DATE_FORMAT}
+            defaultValue={dayjs()}
+            onChange={onChangeEndDate}
+          />
+        </Col>
+        <Col span={6}><Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+        <Col span={6}>
+          <Button
+            size="medium"
+            type="primary"
+            style={{ width: "100%" }}
+            onClick={handlePrint}
+            icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+          />
+          <div className="report-history-invoice">
+            {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+            <TemGiayTam listCheck={listTem} ref={componentRef1} />
+            <TemThanhPham listCheck={listTem} ref={componentRef2} />
+          </div>
+        </Col>
+        <Col span={24}>
+          <Table
+            loading={loading}
+            scroll={{
+              x: tableSize.width,
+              y: tableSize.height,
+            }}
+            size="small"
+            rowClassName={(record, index) =>
+              "no-hover " + rowClassName(record, index)
+            }
+            className="bottom-table"
+            ref={tableRef}
+            pagination={false}
+            bordered
+            columns={columns}
+            rowSelection={rowSelection}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: (event) => { onClickRow(record) },
+              };
+            }}
+            dataSource={data}
+          />
+        </Col>
+      </Row>
     </React.Fragment>
   );
 };
