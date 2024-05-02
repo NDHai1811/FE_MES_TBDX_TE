@@ -8,6 +8,10 @@ import {
   Input,
   Space,
   DatePicker,
+  Modal,
+  InputNumber,
+  Table,
+  message,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -17,8 +21,8 @@ import {
 } from "../../../api";
 import "../style.scss";
 import dayjs from "dayjs";
-import { DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { deleteWarehouseFGExport, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
+import { ArrowsAltOutlined, CloseOutlined, DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
+import { deleteWarehouseFGExport, divideFGExportPlan, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
@@ -43,7 +47,7 @@ const WarehouseExportPlan = () => {
   const [listUsers, setListUsers] = useState([]);
   const [listNotes, setListNote] = useState({});
   const [listCheck, setListCheck] = useState([]);
-
+  const [messageApi, contextHolder] = message.useMessage();
   const col_detailTable = [
     {
       title: "Lệnh xuất",
@@ -246,15 +250,64 @@ const WarehouseExportPlan = () => {
       setListCheck(selectedRowKeys);
     },
   };
+  const [selectedDividerPlan, setSelectedDividerPlan] = useState();
+  const [openModal, setOpenModal] = useState(false)
+  const [inputData, setInputData] = useState([]);
+  const addonAction = (record) => {
+    return <ArrowsAltOutlined onClick={() => {setSelectedDividerPlan(record); setOpenModal(true);}} style={{ fontSize: 18 }} title="Tách kế hoạch" />
+  }
+  const renderInputData = (item, index) => {
+    return (
+        <Col span={24} key={index}>
+          <p3 style={{ display: "block" }} className={"mb-1"}>Số lượng cần xuất</p3>
+          <div className="d-flex">
+            <InputNumber
+              min={0}
+              placeholder="Nhập số lượng cần xuất"
+              onChange={(value) => setInputData(prev=>prev.map((e, i)=>(i===index) ? value : e))}
+              value={item}
+              style={{ width: "50%" }}
+            />
+            <CloseOutlined style={{margin: 8}} onClick={()=>setInputData(prev=>prev.filter((e, i)=>i!==index))}/>
+          </div>
+        </Col>
+    );
+  };
+  const columns = ['ngay_xuat', 'thoi_gian_xuat', 'customer_id', 'mdh', 'mql', 'so_luong_dh', 'so_luong', 'xuong_giao'];
+  const handleCancel = () => {
+    setOpenModal(false)
+    setSelectedDividerPlan();
+    setInputData([])
+  }
+  const handleOk = async () => {
+    if(!selectedDividerPlan){
+      messageApi.warning('Không có kế hoạch cần tách');
+      return 0;
+    }
+    if(inputData.length <= 0){
+      messageApi.warning('Không có số lượng tách');
+      return 0;
+    }
+    if((inputData??[]).reduce(function(prev, cur) {return prev + cur;}, 0) > selectedDividerPlan.so_luong){
+      messageApi.warning('Số lượng tách lớn hơn số lượng của kế hoạch');
+      return 0;
+    }
+    var params = {...selectedDividerPlan}
+    params.so_luong_tach = inputData;
+    var res = await divideFGExportPlan(params);
+    handleCancel();
+    btn_click();
+  }
   return (
     <>
+    {contextHolder}
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
             <Card
               style={{ height: "100%" }}
               styles={{ body: { padding: 0 } }}
-              bodyStyle={{padding: 0}}
+              bodyStyle={{ padding: 0 }}
               className="custom-card scroll"
               actions={[
                 <div
@@ -394,10 +447,37 @@ const WarehouseExportPlan = () => {
               rowSelection={rowSelection}
               onDelete={deleteItem}
               onUpdate={save}
+              addonAction={addonAction}
             />
           </Card>
         </Col>
       </Row>
+      <Modal
+        title="Tách đơn hàng"
+        open={openModal}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Lưu"
+        width={700}
+      >
+        <Row
+          style={{ flexDirection: "row", marginBottom: 8 }}
+          gutter={[8, 8]}
+        >
+          <Col span={24}>
+            <Table 
+            size="small" 
+            bordered 
+            pagination={false} 
+            columns={col_detailTable.filter(e => columns.includes(e.dataIndex))} 
+            dataSource={selectedDividerPlan ? [{...selectedDividerPlan, so_luong: (selectedDividerPlan.so_luong ?? 0) - (inputData??[]).reduce(function(prev, cur) {return prev + cur;}, 0)}] : []} />
+          </Col>
+          {inputData.map(renderInputData)}
+        </Row>
+        <Button type="primary" onClick={() => setInputData(prev => [...prev,  0])} style={{ marginBottom: 12 }}>
+          Thêm dòng
+        </Button>
+      </Modal>
     </>
   );
 };

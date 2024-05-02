@@ -8,6 +8,7 @@ import {
   Spin,
   DatePicker,
   Select,
+  Tooltip,
 } from "antd";
 import "../style.scss";
 import {
@@ -33,63 +34,112 @@ import TemTest from "./TemTest";
 
 const columns = [
   {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
+    title: "Số TT tem",
+    dataIndex: "thu_tu_uu_tien",
+    key: "thu_tu_uu_tien",
     align: "center",
-    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Tên khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
   },
   {
     title: "MDH",
     dataIndex: "mdh",
     key: "mdh",
     align: "center",
-    render: (value, record, index) => value || "-",
   },
   {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
+    title: "Kích chạy",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
     align: "center",
-    render: (value, record, index) => value || "-",
   },
   {
-    title: "Số lớp",
-    dataIndex: "so_lop",
-    key: "so_lop",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Khổ tổng",
+    title: "Khổ",
     dataIndex: "kho_tong",
     key: "kho_tong",
     align: "center",
-    render: (value, record, index) => value || "-",
   },
   {
     title: "Dài tấm",
     dataIndex: "dai_tam",
     key: "dai_tam",
     align: "center",
-    render: (value, record, index) => value || "-",
   },
   {
-    title: "SL kế hoạch",
+    title: "SL KH",
     dataIndex: "san_luong_kh",
     key: "san_luong_kh",
     align: "center",
   },
   {
-    title: "SL đầu ra",
+    title: "SL thực tế",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
   },
   {
-    title: "SL đạt",
-    dataIndex: "sl_ok",
-    key: "sl_ok",
+    title: "Mặt F",
+    dataIndex: "ma_cuon_f",
+    key: "ma_cuon_f",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Sóng E",
+    dataIndex: "ma_cuon_se",
+    key: "ma_cuon_se",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Láng E",
+    dataIndex: "ma_cuon_le",
+    key: "ma_cuon_le",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Sóng B",
+    dataIndex: "ma_cuon_sb",
+    key: "ma_cuon_sb",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Láng B",
+    dataIndex: "ma_cuon_lb",
+    key: "sl",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Sóng C",
+    dataIndex: "ma_cuon_sc",
+    key: "ma_cuon_sc",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Láng C",
+    dataIndex: "ma_cuon_lc",
+    key: "ma_cuon_lc",
+    align: "center",
+    width: '90px',
+  },
+  {
+    title: "Số mét tới",
+    dataIndex: "so_m_toi",
+    key: "so_m_toi",
+    align: "center",
+  },
+  {
+    title: "SL phế",
+    dataIndex: "sl_ng_sx",
+    key: "sl_ng_sx",
     align: "center",
   },
   {
@@ -97,7 +147,13 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => (value === 1 ? "OK" : "-"),
+    render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
+  },
+  {
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
+    align: "center",
   },
 ];
 
@@ -110,35 +166,35 @@ const Manufacture1 = (props) => {
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value ?? "-",
     },
     {
-      title: "Sản lượng kế hoạch",
+      title: "SL kế hoạch",
       dataIndex: "san_luong_kh",
       key: "san_luong_kh",
       align: "center",
-      render: (value) => value,
+      render: (value) => value ?? "-",
     },
     {
-      title: "Sản lượng đầu ra",
+      title: "SL còn lại",
       dataIndex: "sl_dau_ra_hang_loat",
       key: "sl_dau_ra_hang_loat",
       align: "center",
-      render: (value) => value,
+      render: (value) => value ?? "-",
     },
     {
-      title: "Sản lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
+      title: "Phế",
+      dataIndex: "sl_ng_sx",
+      key: "sl_ng_sx",
       align: "center",
-      render: (value) => value,
+      render: (value) => value ?? "-",
     },
     {
       title: "Phán định",
       dataIndex: "phan_dinh",
       key: "phan_dinh",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value ?? "-",
     },
   ];
   const history = useHistory();
@@ -320,6 +376,7 @@ const Manufacture1 = (props) => {
 
 
   const rowSelection = {
+    fixed: true,
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
@@ -343,8 +400,8 @@ const Manufacture1 = (props) => {
   const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
   const [tableSize, setTableSize] = useState(
     {
-      width: window.innerWidth < 700 ? '300vw' : '100%',
-      height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+      width: window.innerWidth < 700 ? '400vw' : '200vw',
+      height: table?.top ? (window.innerHeight - table?.top) - 70 : 300,
     }
   );
   useEffect(() => {
@@ -353,8 +410,8 @@ const Manufacture1 = (props) => {
       console.log(table);
       setTableSize(
         {
-          width: window.innerWidth < 700 ? '300vw' : '100%',
-          height: table?.top ? (window.innerHeight - table?.top) - 60 : 300,
+          width: window.innerWidth < 700 ? '400vw' : '200vw',
+          height: table?.top ? (window.innerHeight - table?.top) - 80 : 300,
         }
       );
     };
