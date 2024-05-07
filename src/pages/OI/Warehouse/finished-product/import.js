@@ -169,16 +169,18 @@ const Import = (props) => {
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
 
-  const getListPalletFG = () => {
-    getListPallet()
-      .then((res) => setListPallet(res.data))
-      .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
+  const getListPalletFG = async () => {
+    setLoadingPalletList(true)
+    var res = await getListPallet()
+    setListPallet(res.data); 
+    setLoadingPalletList(false)
   };
 
-  const getLogs = () => {
-    getWarehouseTpLogs()
-      .then((res) => setLogs(res.data))
-      .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
+  const getLogs = async () => {
+    setLoadingImportHistory(true);
+    var res = await getWarehouseTpLogs()
+    setLogs(res.data); 
+    setLoadingImportHistory(false);
   };
 
   const column2 = [
@@ -265,6 +267,8 @@ const Import = (props) => {
     },
   };
 
+  const [loadingImportHistory, setLoadingImportHistory] = useState(false);
+  const [loadingPalletList, setLoadingPalletList] = useState(false);
   const renderImportWarehouse = () => {
     return (
       <Col span={24}>
@@ -273,6 +277,7 @@ const Import = (props) => {
             x: "calc(700px + 50%)",
             y: 300,
           }}
+          loading={loadingImportHistory}
           rowClassName={(record, index) =>
             record.status === 1
               ? "table-row-yellow"
@@ -299,6 +304,7 @@ const Import = (props) => {
             x: "calc(700px + 50%)",
             y: 300,
           }}
+          loading={loadingPalletList}
           rowClassName={(record, index) =>
             record.is_location === 1
               ? "table-row-green"
