@@ -265,11 +265,11 @@ const Export2 = (props) => {
           setCurrentScan={setCurrentScan}
         />
       )}
-      <PopupXuatKhoNvl
+      {isScan && <PopupXuatKhoNvl
         visible={isScan}
         setVisible={setIsScan}
         setCurrentScan={setCurrentScan}
-      />
+      />}
     </React.Fragment>
   );
 };
