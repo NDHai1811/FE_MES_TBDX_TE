@@ -132,53 +132,7 @@ const Materials = () => {
       key: "locator_id",
       align: "center",
       editable: true,
-    },
-    // {
-    //   title: "Tác vụ",
-    //   dataIndex: "action",
-    //   key: "action",
-    //   checked: true,
-    //   align: "center",
-    //   fixed: "right",
-    //   render: (_, record) => {
-    //     const editable = isEditing(record);
-    //     return editable ? (
-    //       <span>
-    //         <Typography.Link
-    //           onClick={() => onUpdate(record)}
-    //           style={{
-    //             marginRight: 8,
-    //           }}
-    //         >
-    //           Lưu
-    //         </Typography.Link>
-    //         <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-    //           <a>Hủy</a>
-    //         </Popconfirm>
-    //       </span>
-    //     ) : (
-    //       <span>
-    //         <EditOutlined
-    //           style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
-    //           disabled={editingKey !== ""}
-    //           onClick={() => edit(record)}
-    //         />
-    //         <Popconfirm
-    //           title="Bạn có chắc chắn muốn xóa?"
-    //           onConfirm={() => onDetele(record)}
-    //         >
-    //           <DeleteOutlined
-    //             style={{
-    //               color: "red",
-    //               marginLeft: 8,
-    //               fontSize: 18,
-    //             }}
-    //           />
-    //         </Popconfirm>
-    //       </span>
-    //     );
-    //   },
-    // },
+    }
   ];
 
   function btn_click(page = 1, pageSize = 20) {

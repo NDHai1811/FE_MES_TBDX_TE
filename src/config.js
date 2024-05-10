@@ -8,7 +8,7 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "https://tbdxback.ors.vn/api",
+    API_URL: "http://127.0.0.1:8000/api",
   },
-  baseURL: "https://tbdxback.ors.vn",
+  baseURL: "http://127.0.0.1:8000",
 }
