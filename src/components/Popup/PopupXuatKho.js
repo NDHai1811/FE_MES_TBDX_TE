@@ -16,16 +16,9 @@ import { DeleteOutlined } from "@ant-design/icons";
 
 function PopupXuatKhoNvl(props) {
   const { visible, setVisible, setCurrentScan } = props;
-  const [data, setData] = useState();
+  const ScanXuatNvl = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
+  const [data, setData] = useState(ScanXuatNvl);
   const [currentValue, setCurrentValue] = useState();
-  const getData = async (value) => {
-    var res = await scanExportsNVL({ material_id: value });
-    if (res.success) {
-      window.localStorage.setItem("ScanXuatNvl", JSON.stringify(res.data));
-      setData(res.data);
-      setCurrentScan(res.data);
-    }
-  }
   const columns = [
     {
       title: "Mã cuộn",
@@ -48,8 +41,8 @@ function PopupXuatKhoNvl(props) {
     },
     {
       title: "Tác vụ",
-      dataIndex: "locator_id",
-      key: "locator_id",
+      dataIndex: "action",
+      key: "action",
       align: "center",
       render: (text, record, index) => (
         <DeleteOutlined
@@ -59,6 +52,26 @@ function PopupXuatKhoNvl(props) {
       ),
     },
   ];
+  const getData = async () => {
+    if (data && currentValue !== data.id) {
+      sendResult({ ...data, locator_id: currentValue });
+    }else{
+      var res = await scanExportsNVL({ material_id: currentValue });
+      if (res.success) {
+        window.localStorage.setItem("ScanXuatNvl", JSON.stringify(res.data));
+        setData(res.data);
+        setCurrentScan(res.data);
+      }
+    }
+    
+    setCurrentValue("");
+  }
+  useEffect(()=>{
+    if(currentValue){
+      getData();
+    }
+  }, [currentValue])
+  
   const handleDelete = (index) => {
     setData();
     window.localStorage.removeItem("ScanXuatNvl");
@@ -78,35 +91,22 @@ function PopupXuatKhoNvl(props) {
   };
   const scanRef = useRef();
   const onScanResult = (value) => {
+    console.log(value);
     if (scanRef.current) {
       clearTimeout(scanRef.current);
     }
     scanRef.current = setTimeout(() => {
-      const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
-      if (value && data) {
-        if (value !== data.material_id) {
-          sendResult({ ...data, locator_id: value });
-        }
-      } else if (value && !data) {
-        getData(value);
-      }
+      setCurrentValue(value);
     }, 1000);
   };
-  const handleEnterPress = () => {
-    const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
-    if (currentValue && data) {
-      if (currentValue !== data.material_id) {
-        sendResult({ ...data, locator_id: currentValue });
-      }
-    } else if (currentValue && !data) {
-      getData(currentValue);
-    }
-    setCurrentValue("");
+  const handleEnterPress = (event) => {
+    setCurrentValue(event.target.value);
   };
   const onChangeValue = (e) => {
-    const inputValue = e.target.value;
-    setCurrentValue(inputValue);
+    // const inputValue = e.target.value;
+    // setCurrentValue(inputValue);
   };
+  
   return (
     <div>
       <Modal
@@ -123,7 +123,6 @@ function PopupXuatKhoNvl(props) {
           placeholder="Nhập giá trị"
           onPressEnter={handleEnterPress}
           style={{ marginTop: 16, height: 50 }}
-          value={currentValue}
           onChange={onChangeValue}
         />
         <Row className="mt-3">

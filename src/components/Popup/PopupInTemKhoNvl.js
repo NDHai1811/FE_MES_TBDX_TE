@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Modal, Row, Col, Table, Input, Button, message } from "antd";
 import "./PopupQuetQr.css";
-import { handleNGMaterial, sendResultPrint } from "../../api/oi/warehouse";
+import { getScanList, handleNGMaterial, sendResultPrint, sendResultReimport } from "../../api/oi/warehouse";
 import ScanQR from "../Scanner";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -10,22 +10,13 @@ const SCAN_TIME_OUT = 1000;
 function PopupInTemKhoNvl(props) {
   const { visible, setVisible, setCurrentScan, getLogs, getOverAll } = props;
   const [messageApi, contextHolder] = message.useMessage();
-  const list = JSON.parse(window.localStorage.getItem("NhapLaiNvl"));
+  const NhapLaiNvl = JSON.parse(window.localStorage.getItem("NhapLaiNvl"));
+  const list = NhapLaiNvl?.data;
+  const scanTarget = NhapLaiNvl?.target ?? 'material_id';
   const [materials, setMaterials] = useState(list || []);
   const [currentData, setCurrentData] = useState("");
   const scanRef = useRef();
   const [currentValue, setCurrentValue] = useState("");
-
-  const messageAlert = (content, type = "error") => {
-    messageApi.open({
-      type,
-      content,
-      className: "custom-class",
-      style: {
-        marginTop: "50%",
-      },
-    });
-  };
 
   const columns = [
     {
@@ -46,6 +37,7 @@ function PopupInTemKhoNvl(props) {
           onChange={(e) => onChangeQuantity(e.target.value, index)}
           placeholder="Nhập kg..."
           style={{ width: 100 }}
+          min={0}
           disabled={list}
         />
       ),
@@ -87,53 +79,57 @@ function PopupInTemKhoNvl(props) {
   };
 
   const sendResult = () => {
-    const resData = materials.map((val) => ({
-      ...val,
-      so_kg: parseInt(val.so_kg, 10),
-    }));
-
-    sendResultPrint({ data: resData })
+    if (materials.length <= 0) {
+      messageApi.warning('Không có dữ liệu')
+      return 0;
+    }
+    if (materials.some(e => !e.locator_id)) {
+      messageApi.warning('Chưa nhập đầy đủ vị trí');
+      return 0;
+    }
+    sendResultReimport(materials)
       .then((res) => {
-        console.log({ res });
         if (res.success) {
           window.localStorage.removeItem("NhapLaiNvl");
           setVisible(false);
           getLogs?.();
           getOverAll?.();
         }
-
-        // setCurrentScan([
-        //   {
-        //     material_id: res.data.parent_id,
-        //     so_kg: res.data.so_kg,
-        //     locator_id: res.data.locator_id,
-        //   },
-        // ]);
       })
       .catch((err) => console.log("Gửi dữ liệu in tem thất bại: ", err));
   };
 
+  const getData = async () => {
+    if (scanTarget === 'material_id' && materials.some(e => e.id === currentData)) {
+      messageApi.warning('Đã quét mã cuộn này');
+      setCurrentData("")
+      return 0;
+    }
+    var res = await getScanList({ [scanTarget]: currentData })
+    if (res.success) {
+      if (scanTarget === 'locator_id') {
+        if (materials.some(e => !e.locator_id)) {
+          const item = materials.find((val) => !val.locator_id);
+          const newData = materials.map((val) => {
+            if (val.material_id === item.material_id) {
+              val.locator_id = currentData;
+            }
+            return {
+              ...val,
+            };
+          });
+          setMaterials(newData);
+        }
+      } else {
+        setMaterials(oldData => [...oldData, res.data]);
+      }
+    }
+    setCurrentData("")
+  }
+
   useEffect(() => {
     if (currentData) {
-      if (materials.length < 3) {
-        const isExisted = materials.some(
-          (val) => val.material_id === currentData
-        );
-        if (!isExisted) {
-          if (materials.length > 0) {
-            setMaterials([
-              ...materials,
-              { material_id: currentData, so_kg: "", locator_id: "" },
-            ]);
-          } else {
-            setMaterials([
-              { material_id: currentData, so_kg: "", locator_id: "" },
-            ]);
-          }
-        } else {
-          messageAlert("Mã cuộn bị trùng, Vui lòng quét mã cuộn khác!");
-        }
-      }
+      getData();
     }
   }, [currentData]);
 
@@ -143,7 +139,7 @@ function PopupInTemKhoNvl(props) {
 
   const save = () => {
     if (materials.length > 0) {
-      window.localStorage.setItem("NhapLaiNvl", JSON.stringify(materials));
+      window.localStorage.setItem("NhapLaiNvl", JSON.stringify({ data: materials, target: 'locator_id' }));
       handleCancel();
     }
   };
@@ -153,32 +149,17 @@ function PopupInTemKhoNvl(props) {
   };
 
   const onScan = (result) => {
-    if (!list) {
-      setCurrentData(result);
-    } else {
-      if (scanRef.current) {
-        clearTimeout(scanRef.current);
-      }
-      scanRef.current = setTimeout(() => {
-        if (materials.some((e) => !e.locator_id)) {
-          const item = materials.find((val) => !val.locator_id);
-          const newData = materials.map((val) => {
-            if (val.material_id === item.material_id) {
-              val.locator_id = result;
-            }
-            return {
-              ...val,
-            };
-          });
-          setMaterials(newData);
-        }
-      }, SCAN_TIME_OUT);
+    if (scanRef.current) {
+      clearTimeout(scanRef.current);
     }
+    scanRef.current = setTimeout(() => {
+      setCurrentData(result)
+    }, SCAN_TIME_OUT);
   };
 
   const moveToKho13 = () => {
     const resData = materials;
-    if(resData.some(e=>e.so_kg !== 0 && !e.so_kg )){
+    if (resData.some(e => e.so_kg !== 0 && !e.so_kg)) {
       messageApi.error('Chưa nhập số lượng nhập kho');
       return 0;
     }

@@ -12,8 +12,8 @@ export const sendResultScan = async (data) => {
   return await axios.post("/oi/warehouse/mlt/import/save", data);
 };
 
-export const sendResultPrint = async (data) => {
-  return await axios.post("/oi/warehouse/mlt/import/retype", data);
+export const sendResultReimport = async (data) => {
+  return await axios.post("/oi/warehouse/mlt/import/reimport", data);
 };
 
 export const handleNGMaterial = async (data) => {

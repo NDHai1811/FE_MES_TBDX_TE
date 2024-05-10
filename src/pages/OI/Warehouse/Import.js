@@ -95,6 +95,13 @@ const importColumns = [
     align: "center",
     render: (value) => value || "-",
   },
+  {
+    title: "TG nhập",
+    dataIndex: "tg_nhap",
+    key: "tg_nhap",
+    align: "center",
+    render: (value) => value || "-",
+  },
 ];
 
 const options = [

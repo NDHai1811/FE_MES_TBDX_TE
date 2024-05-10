@@ -48,8 +48,8 @@ const exportColumns = [
   },
   {
     title: "Mã cuộn TBDX",
-    dataIndex: "id",
-    key: "id",
+    dataIndex: "material_id",
+    key: "material_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -95,6 +95,13 @@ const exportColumns = [
     align: "center",
     render: (value) => value || "-",
   },
+  {
+    title: "TG xuất",
+    dataIndex: "tg_xuat",
+    key: "tg_xuat",
+    align: "center",
+    render: (value) => value || "-",
+  },
 ];
 
 const options = [
@@ -124,10 +131,6 @@ const Export2 = (props) => {
       locator_id: "",
     },
   );
-
-  const onShowPopup = () => {
-    setVisible(true);
-  };
 
   const onChangeLine = (value) => {
     history.push("/oi/warehouse/kho-nvl/" + value);
@@ -257,14 +260,6 @@ const Export2 = (props) => {
           />
         </Col>
       </Row>
-      {visible && (
-        <PopupInTemKhoNvl
-          visible={visible}
-          setVisible={setVisible}
-          data={logs}
-          setCurrentScan={setCurrentScan}
-        />
-      )}
       {isScan && <PopupXuatKhoNvl
         visible={isScan}
         setVisible={setIsScan}
