@@ -177,10 +177,11 @@ function PopupInTemKhoNvl(props) {
   };
 
   const moveToKho13 = () => {
-    const resData = materials.map((val) => ({
-      ...val,
-      so_kg: parseInt(val.so_kg, 10),
-    }));
+    const resData = materials;
+    if(resData.some(e=>e.so_kg !== 0 && !e.so_kg )){
+      messageApi.error('Chưa nhập số lượng nhập kho');
+      return 0;
+    }
 
     handleNGMaterial({ data: resData })
       .then((res) => {

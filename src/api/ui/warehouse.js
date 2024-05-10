@@ -109,3 +109,13 @@ export async function divideFGExportPlan(params) {
   const res = await axios.post("/ui/warehouse/fg/export/plan/divide", params);
   return res.data;
 }
+export const exportWarehouseFGExportList = async (params) => {
+  return await axios.get("/ui/warehouse/fg/export/list/export", { params });
+};
+
+export const getLSXPallet = async (params) => {
+  return await axios.get("/ui/lsx-pallet/list", { params });
+}
+export const exportLSXPallet = async (params) => {
+  return await axios.get("/ui/lsx-pallet/export", { params });
+}

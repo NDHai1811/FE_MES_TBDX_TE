@@ -22,7 +22,7 @@ import {
 import "../style.scss";
 import dayjs from "dayjs";
 import { ArrowsAltOutlined, CloseOutlined, DeleteOutlined, DownOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { deleteWarehouseFGExport, divideFGExportPlan, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
+import { deleteWarehouseFGExport, divideFGExportPlan, exportWarehouseFGExportList, getDeliveryNoteList, getWarehouseFGExportList, updateWarehouseFGExport } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
@@ -298,6 +298,15 @@ const WarehouseExportPlan = () => {
     handleCancel();
     btn_click();
   }
+  const [exportLoading, setExportLoading] = useState(false);
+  const exportFile = async () => {
+    setExportLoading(true);
+    const res = await exportWarehouseFGExportList(params);
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
+  };
   return (
     <>
     {contextHolder}
@@ -416,6 +425,7 @@ const WarehouseExportPlan = () => {
             className="custom-card"
             extra={
               <Space>
+                <Button type="primary" onClick={exportFile} loading={exportLoading}>Xuất excel</Button>
                 <PopupCreateDeliveryNote listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate} />
                 <PopupCreateExportPlanFG listUsers={listUsers} listCustomers={listCustomers} listVehicles={listVehicles} onAfterCreate={onAfterCreate} />
               </Space>

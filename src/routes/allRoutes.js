@@ -56,6 +56,7 @@ import QCByMachineIOT from "../pages/OI/Quality/QCByMachineIOT";
 import IQC from "../pages/OI/Quality/IQC";
 import WarehouseExportCommand from "../pages/UI/Warehouse/WarehouseExportCommand";
 import MachineAssignment from "../pages/UI/MasterData/MachineAssignment";
+import Pallet from "../pages/UI/Warehouse/Pallet";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -79,6 +80,7 @@ const authProtectedRoutes = [
   { path: "/ui/warehouse/quan-ly-lenh-xuat-kho", component: WarehouseExportCommand, label: 'Quản lý lệnh xuất kho', permission: 'ui-warehouse-quan-ly-lenh-xuat-kho' },
   { path: "/ui/warehouse/quan-ly-giay-cuon", component: WarehouseMLT, label: 'Quản lý giấy cuộn', permission: 'ui-warehouse-quan-ly-giay-cuon' },
   { path: "/ui/warehouse/quan-ly-kho-nvl", component: KhoNVL, label: 'Quản lý kho NVL', permission: 'ui-warehouse-quan-ly-kho-nvl' },
+  { path: "/ui/warehouse/quan-ly-tem-gop", component: Pallet, label: 'Quản lý tem gộp', permission: 'ui-warehouse-quan-ly-tem-gop' },
   { path: "/ui/warehouse/tao-ton", component: TaoTon, permission: 'ui-warehouse-tao-ton' },
   { path: "/ui/kpi", component: UIKPI, label: 'KPI', permission: 'ui-kpi' },
   { path: "/ui/abnormal/kich-ban-bat-thuong", component: Kichban },

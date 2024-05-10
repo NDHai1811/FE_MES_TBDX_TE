@@ -196,9 +196,9 @@ const Import = (props) => {
       );
   };
 
-  useEffect(() => {
-    !visible && getLogs();
-  }, [visible]);
+  // useEffect(() => {
+  //   !visible && getLogs();
+  // }, [visible]);
   return (
     <React.Fragment>
       <Row className="mt-1" gutter={[6, 12]}>

@@ -76,15 +76,21 @@ function PopupXuatKhoNvl(props) {
     setData();
     setCurrentScan();
   };
+  const scanRef = useRef();
   const onScanResult = (value) => {
-    const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
-    if (value && data) {
-      if (value !== data.material_id) {
-        sendResult({ ...data, locator_id: value });
-      }
-    } else if (value && !data) {
-      getData(value);
+    if (scanRef.current) {
+      clearTimeout(scanRef.current);
     }
+    scanRef.current = setTimeout(() => {
+      const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));
+      if (value && data) {
+        if (value !== data.material_id) {
+          sendResult({ ...data, locator_id: value });
+        }
+      } else if (value && !data) {
+        getData(value);
+      }
+    }, 1000);
   };
   const handleEnterPress = () => {
     const data = JSON.parse(window.localStorage.getItem("ScanXuatNvl"));

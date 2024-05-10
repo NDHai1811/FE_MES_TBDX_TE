@@ -43,7 +43,9 @@ const PopupCreateDeliveryNote = (props) => {
       title: 'Thời gian xuất',
       dataIndex: 'ngay_xuat',
       align: 'center',
-      render: (value) => (value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
+      render: (value) => (value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : "",
+      isSearch: true,
+      input_type: 'date',
     },
     {
       title: 'Người tạo KH',
