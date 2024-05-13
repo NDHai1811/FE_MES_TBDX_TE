@@ -114,7 +114,7 @@ const KhoNvl = (props) => {
       dataIndex: "so_kg_nhap",
       key: "so_kg_nhap",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
       width:'100px'
     },
     {
@@ -151,21 +151,21 @@ const KhoNvl = (props) => {
       dataIndex: "so_kg_dau",
       key: "so_kg_dau",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
     },
     {
       title: "Sl xuất (kg)",
       dataIndex: "sl_xuat",
       key: "dinh_luong",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
     },
     {
       title: "Sl cuối (kg)",
       dataIndex: "so_kg_cuoi",
       key: "so_kg_cuoi",
       align: "center",
-      render: (value) => value || "-",
+      render: (value) => value || 0,
     },
     {
       title: "Ngày xuất",

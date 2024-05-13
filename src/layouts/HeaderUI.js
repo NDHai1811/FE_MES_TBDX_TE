@@ -84,6 +84,23 @@ const HeaderUI = () => {
       permission: "master-data",
     },
   ];
+  const generateMenuItems = (routes) => {
+    return routes.map(route => {
+      if (route.children && route.children.length > 0) {
+        return (
+          <Menu.SubMenu key={route.path} title={route.label}>
+            {generateMenuItems(route.children)}
+          </Menu.SubMenu>
+        );
+      } else {
+        return (
+          <Menu.Item key={route.path}>
+            <Link to={route.path} style={{ textDecoration: 'none' }}>{route.label}</Link>
+          </Menu.Item>
+        );
+      }
+    });
+  };
   const [clock, setClock] = useState(new Date());
   useEffect(() => {
     setInterval(() => tick(), 1000);
@@ -146,13 +163,15 @@ const HeaderUI = () => {
                 fontWeight: "600",
               }}
               className="ant-menu-dark"
-              items={items.filter(
-                (e) => !e?.hidden
-                // (userProfile?.permission ?? []).includes("*") ||
-                // (userProfile?.permission ?? []).includes(e.permission)
-              )}
+              // items={items.filter(
+              //   (e) => !e?.hidden
+              // )}
               onSelect={selectMenu}
-            />
+            >
+              {generateMenuItems(items.filter(
+                (e) => !e?.hidden
+              ))}
+            </Menu>
           </Col>
           <Col
             span={6}

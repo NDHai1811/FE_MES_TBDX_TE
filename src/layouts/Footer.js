@@ -10,6 +10,7 @@ import {
 import { Button, Menu, Layout } from "antd";
 import React, { useEffect, useState } from "react";
 import {
+  Link,
   useHistory,
   useLocation,
   useParams,
@@ -83,19 +84,22 @@ const Footer = () => {
             (userProfile?.permission ?? []).includes(e.permission)
           )
             return (
-              <div
+              <a
                 style={{
+                  color: 'white',
                   flexDirection: "column",
                   alignItems: "center",
                   display: "flex",
                   cursor: "pointer",
+                  textDecoration: 'none',
                   opacity: window.location.pathname.includes(e.key) ? 1 : 0.5,
                 }}
-                onClick={() => onChangeScreen(e.key)}
+                // onClick={() => onChangeScreen(e.key)}
+                href={e.key}
               >
                 {e.icon}
                 {e.label}
-              </div>
+              </a>
             );
         })}
       </Layout.Footer>

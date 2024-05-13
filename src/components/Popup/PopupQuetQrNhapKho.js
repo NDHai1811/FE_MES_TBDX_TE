@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Row, Col, Table } from "antd";
+import { Modal, Row, Col, Table, message } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import {
   getSuggestPallet,
   sendStorePallet,
 } from "../../api/oi/warehouse";
+import { LoadingOutlined } from "@ant-design/icons";
 
 function PopupQuetQrNhapKho(props) {
   const {
@@ -21,69 +22,72 @@ function PopupQuetQrNhapKho(props) {
     setResult,
   } = props;
 
-  const [columns, setColumns] = useState([]);
   const [currentResult, setCurrentResult] = useState("");
   const [data, setData] = useState([]);
   const [palletId, setPalletId] = useState("");
   const [item, setItem] = useState({});
-
+  const [isChecking, setIsChecking] = useState(false)
   const totalQuantity = data?.reduce((sum, val) => sum + parseInt(val?.so_luong), 0);
+  const [messageApi, contextHolder] = message.useMessage();
+  
+  const columns = [
+    {
+      title: palletId,
+      children: [
+        {
+          title: "STT",
+          dataIndex: "index",
+          key: "index",
+          align: "center",
+          render: (value, record, index) => index + 1,
+        },
+        {
+          title: "Mã lô sản xuất",
+          dataIndex: "lo_sx",
+          key: "lo_sx",
+          align: "center",
+          render: (value) => value || "-",
+        },
+      ],
+    },
+    {
+      title: isChecking ? <LoadingOutlined/> : totalQuantity,
+      align: "center",
+      children: [
+        {
+          title: "Số lượng",
+          dataIndex: "so_luong",
+          key: "so_luong",
+          align: "center",
+          render: (value) => value,
+        },
+      ],
+    },
+  ];
 
   useEffect(() => {
     getSuggestList();
   }, []);
 
   useEffect(() => {
-    totalQuantity > 0 &&
-      setColumns([
-        {
-          title: palletId,
-          children: [
-            {
-              title: "STT",
-              dataIndex: "index",
-              key: "index",
-              align: "center",
-              render: (value, record, index) => index + 1,
-            },
-            {
-              title: "Mã lô sản xuất",
-              dataIndex: "lo_sx",
-              key: "lo_sx",
-              align: "center",
-              render: (value) => value || "-",
-            },
-          ],
-        },
-        {
-          title: totalQuantity,
-          align: "center",
-          children: [
-            {
-              title: "Số lượng",
-              dataIndex: "so_luong",
-              key: "so_luong",
-              align: "center",
-              render: (value) => value,
-            },
-          ],
-        },
-      ]);
-  }, [totalQuantity]);
-
-  useEffect(() => {
     (async () => {
-      if (currentResult) {
+      if (currentResult && !isChecking) {
         const result = JSON.parse(currentResult);
-        const res = await checkLoSX({ lo_sx: result.lo_sx, list_losx: data.map(e=>e.lo_sx) });
         const isExisted = data?.some((val) => val?.lo_sx === result.lo_sx);
-        console.log(res);
+        if(isExisted){
+          messageApi.warning('Đã quét lô này');
+          return 0;
+        }
+        setIsChecking(true);
+        const res = await checkLoSX({ lo_sx: result.lo_sx, list_losx: data.map(e=>e.lo_sx) });
         if (!isExisted && res.success == true) {
           setData((prevData) => [
             ...prevData,
             { lo_sx: result.lo_sx, so_luong: result.so_luong },
           ]);
         }
+        setIsChecking(false)
+        setCurrentResult();
       }
     })()
   }, [currentResult]);
@@ -97,40 +101,6 @@ function PopupQuetQrNhapKho(props) {
           locator_id: res.data.locator_id,
           pallet_id: res.data.pallet_id,
         });
-        setColumns([
-          {
-            title: res.data.pallet_id,
-            children: [
-              {
-                title: "STT",
-                dataIndex: "index",
-                key: "index",
-                align: "center",
-                render: (value, record, index) => index + 1,
-              },
-              {
-                title: "Mã lô sản xuất",
-                dataIndex: "lo_sx",
-                key: "lo_sx",
-                align: "center",
-                render: (value) => value || "-",
-              },
-            ],
-          },
-          {
-            title: `${res.data.so_luong}`,
-            align: "center",
-            children: [
-              {
-                title: "Số lượng",
-                dataIndex: "so_luong",
-                key: "so_luong",
-                align: "center",
-                render: (value) => value || "-",
-              },
-            ],
-          },
-        ]);
       })
       .catch((err) => console.log("Lấy danh sách đề xuất thất bại: ", err));
   };
@@ -184,6 +154,7 @@ function PopupQuetQrNhapKho(props) {
 
   return (
     <div>
+      {contextHolder}
       <Modal
         title="Quét mã"
         open={visible}

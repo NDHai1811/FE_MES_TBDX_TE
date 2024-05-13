@@ -433,6 +433,8 @@ const Vehicle = () => {
                                                 e.select ? (
                                                     <Select
                                                         allowClear
+                                                        showSearch
+                                                        optionFilterProp="label"
                                                         mode={e.select.mode}
                                                         options={e.select.options}
                                                     />

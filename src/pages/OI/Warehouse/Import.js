@@ -195,9 +195,11 @@ const Import = (props) => {
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
 
+  const [loading, setLoading] = useState(false)
   const getLogs = () => {
+    setLoading(true);
     getTablesNvl()
-      .then((res) => setLogs(res.data))
+      .then((res) => {setLogs(res.data); setLoading(false);})
       .catch((err) =>
         console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
       );
@@ -276,6 +278,7 @@ const Import = (props) => {
                 ? "table-row-grey"
                 : ""
             }
+            loading={loading}
             size="small"
             pagination={false}
             bordered

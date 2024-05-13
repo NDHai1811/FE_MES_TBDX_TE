@@ -185,16 +185,16 @@ const Export2 = (props) => {
       .then((res) => setOverall(res.data))
       .catch((err) => console.log("Lấy dữ liệu thất bại: ", err));
   };
-
+  const [loading, setLoading] = useState(false)
   const getLogs = () => {
     getExportsNVL()
-      .then((res) => setLogs(res.data))
+      .then((res) => { setLogs(res.data); setLoading(false); })
       .catch((err) =>
         console.log("Lấy danh sách bảng xuất kho nvl thất bại: ", err)
       );
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     (!visible || !isScan) && getLogs();
   }, [visible, isScan]);
   return (
@@ -206,7 +206,7 @@ const Export2 = (props) => {
             bordered
             size="small"
             className="mb-1 custom-table"
-            locale={{emptyText:'Trống'}}
+            locale={{ emptyText: 'Trống' }}
             columns={column2}
             dataSource={[overall]}
           />
@@ -214,7 +214,7 @@ const Export2 = (props) => {
         <Col span={24}>
           <Table
             pagination={false}
-            locale={{emptyText:'Trống'}}
+            locale={{ emptyText: 'Trống' }}
             bordered
             size="small"
             className="mb-1 custom-table"
@@ -248,8 +248,8 @@ const Export2 = (props) => {
               record.status === 1
                 ? "table-row-yellow"
                 : record.status === 2
-                ? "table-row-grey"
-                : ""
+                  ? "table-row-grey"
+                  : ""
             }
             size="small"
             pagination={false}
