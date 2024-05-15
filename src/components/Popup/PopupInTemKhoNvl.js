@@ -83,6 +83,10 @@ function PopupInTemKhoNvl(props) {
       messageApi.warning('Không có dữ liệu')
       return 0;
     }
+    if (materials.some(e => !e.so_kg || e <= 0)) {
+      messageApi.warning('Số lượng nhập kho không được bằng 0');
+      return 0;
+    }
     if (materials.some(e => !e.locator_id)) {
       messageApi.warning('Chưa nhập đầy đủ vị trí');
       return 0;
@@ -140,11 +144,16 @@ function PopupInTemKhoNvl(props) {
   const save = () => {
     if (materials.length > 0) {
       window.localStorage.setItem("NhapLaiNvl", JSON.stringify({ data: materials, target: 'locator_id' }));
-      handleCancel();
+      handleClose();
     }
   };
 
   const handleCancel = () => {
+    window.localStorage.removeItem("NhapLaiNvl");
+    setVisible(false);
+  };
+
+  const handleClose = () => {
     setVisible(false);
   };
 
@@ -158,38 +167,23 @@ function PopupInTemKhoNvl(props) {
   };
 
   const moveToKho13 = () => {
-    const resData = materials;
-    if (resData.some(e => e.so_kg !== 0 && !e.so_kg)) {
-      messageApi.error('Chưa nhập số lượng nhập kho');
+    console.log(materials);
+    if (materials.some(e => !e.so_kg || e.so_kg <= 0)) {
+      messageApi.warning('Số lượng nhập kho không được bằng 0');
       return 0;
     }
-
-    handleNGMaterial({ data: resData })
+    handleNGMaterial({ data: materials })
       .then((res) => {
         console.log({ res });
         setMaterials([]);
+        window.localStorage.removeItem("NhapLaiNvl");
         handleCancel();
       })
       .catch((err) => console.log("Gửi dữ liệu in tem thất bại: ", err));
   };
   const handleEnterPress = () => {
-    if (!list) {
-      setCurrentData(currentValue);
-    } else {
-      if (materials.some((e) => !e.locator_id)) {
-        const item = materials.find((val) => !val.locator_id);
-        const newData = materials.map((val) => {
-          if (val.material_id === item.material_id) {
-            val.locator_id = currentValue;
-          }
-          return {
-            ...val,
-          };
-        });
-        setMaterials(newData);
-      }
-    }
-    setCurrentValue('');
+    setCurrentData(currentValue);
+    setCurrentValue("");
   };
   const onChangeValue = (e) => {
     const inputValue = e.target.value;
@@ -210,7 +204,7 @@ function PopupInTemKhoNvl(props) {
             {!list ? "Lưu" : "Xong"}
           </Button>,
         ]}
-        onCancel={handleCancel}
+        onCancel={handleClose}
       >
         <Row className="mt-2">
           <Col span={24}>
