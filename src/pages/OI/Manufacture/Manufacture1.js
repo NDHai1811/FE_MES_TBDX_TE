@@ -228,6 +228,7 @@ const Manufacture1 = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listTem, setListTem] = useState([]);
   const [isPaused, setIsPasued] = useState(true);
+  const [LSX, setLSX] = useState();
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -282,12 +283,22 @@ const Manufacture1 = (props) => {
     (async () => {
       var res = await getTrackingStatus({ machine_id: machine_id });
       if (res.success) {
-        setIsPasued(!res.data?.status)
+        setIsPasued(!res.data?.status);
+        setLSX(res.data.lo_sx);
       }
       // var tem = await getTem();
       // setListTem(tem)
     })();
-  }, []);
+  }, [isPaused]);
+
+  useEffect(() => {
+    if(LSX){
+      setSelectedLot(data.find(e=>e.lo_sx === LSX))
+    }else{
+      setSelectedLot();
+    }
+    
+  }, [data, LSX]);
 
   useEffect(() => {
     reloadData();
@@ -315,12 +326,12 @@ const Manufacture1 = (props) => {
         }, 3000);
     }
   };
-  useEffect(() => {
-    clearTimeout(timeout);
-    console.log('changed lo_sx', selectedLot);
-    !isPaused && loadDataRescursive(machine_id, selectedLot, isPaused);
-    return () => clearTimeout(timeout);
-  }, [isPaused, selectedLot?.lo_sx]);
+  // useEffect(() => {
+  //   clearTimeout(timeout);
+  //   console.log('changed lo_sx', selectedLot);
+  //   !isPaused && loadDataRescursive(machine_id, selectedLot, isPaused);
+  //   return () => clearTimeout(timeout);
+  // }, [isPaused, selectedLot?.lo_sx]);
 
 
 
@@ -404,7 +415,8 @@ const Manufacture1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
-    if (!selectedLot) {
+    console.log(selectedLot);
+    if (!selectedLot?.lo_sx) {
       messageApi.warning('Chưa chọn lô để bắt đầu');
       return 0;
     }
