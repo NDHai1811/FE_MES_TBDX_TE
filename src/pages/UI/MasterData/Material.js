@@ -131,7 +131,7 @@ const Materials = () => {
       dataIndex: "locator_id",
       key: "locator_id",
       align: "center",
-      editable: true,
+      // editable: true,
     }
   ];
 

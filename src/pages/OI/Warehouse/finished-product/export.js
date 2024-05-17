@@ -226,7 +226,9 @@ const Export = (props) => {
     setLoadingTable(false);
   }
   useEffect(() => {
-    loadDataTable()
+    if(deliveryNoteID){
+      loadDataTable()
+    }
   }, [deliveryNoteID]);
 
   const handleCloseMdl = () => {
@@ -239,10 +241,6 @@ const Export = (props) => {
   };
 
   const [data, setData] = useState([]);
-
-  useEffect(() => {
-    loadData()
-  }, []);
   const onScan = async (result) => {
     console.log(result);
     if (scanRef.current) {
@@ -270,7 +268,6 @@ const Export = (props) => {
     });
     setDeliveryNote(arr);
     setSelectedItem();
-    setLoadingTable(false)
   }
   const onFinish = async (values) => {
     const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: selectedItem?.delivery_note_id }
