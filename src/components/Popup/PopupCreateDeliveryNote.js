@@ -90,6 +90,7 @@ const PopupCreateDeliveryNote = (props) => {
       key: "mql",
       align: "center",
       width: 50,
+      isSearch: true,
     },
     {
       title: "L",

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PrinterOutlined } from "@ant-design/icons";
+import Echo from 'laravel-echo';
+import socketio from 'socket.io-client';
 import {
   Row,
   Col,
@@ -447,6 +449,31 @@ const Manufacture1 = (props) => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [data]);
+  useEffect(() => {
+    window.io = socketio;
+    window.Echo = new Echo({
+      broadcaster: 'socket.io',
+      host: 'http://localhost:6001', // Laravel Echo Server host
+      transports: ['websocket', 'polling', 'flashsocket']
+    });
+    window.Echo.connector.socket.on('connect', () => {
+      console.log('WebSocket connected!');
+    });
+    window.Echo.connector.socket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
+    });
+
+    window.Echo.connector.socket.on('disconnect', () => {
+      console.log('WebSocket disconnected!');
+    });
+    window.Echo.channel('laravel_database_mychannel')
+      .listen('.my-event', (e) => {
+        console.log(e);
+      });
+    return () => {
+      window.Echo.leaveChannel('laravel_database_mychannel');
+    };
+  }, []);
   return (
     <React.Fragment>
       {contextHolder}
