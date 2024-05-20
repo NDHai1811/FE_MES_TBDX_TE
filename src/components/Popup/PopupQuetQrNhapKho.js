@@ -106,7 +106,7 @@ function PopupQuetQrNhapKho(props) {
   };
 
   const sendResult = () => {
-    const totalQuantity = data.reduce((sum, val) => sum + val.so_luong, 0);
+    const totalQuantity = data.reduce((sum, val) => sum + parseInt(val.so_luong), 0);
     const arr = [];
     data.forEach((val) => {
       arr.push({ lo_sx: val.lo_sx, so_luong: val.so_luong });
