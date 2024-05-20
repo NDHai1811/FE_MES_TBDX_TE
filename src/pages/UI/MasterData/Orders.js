@@ -332,7 +332,19 @@ const Orders = () => {
     {
       label: 'Chia máy + P8',
       value: 'layout_type',
-    }
+    },
+    {
+      label: 'TMO',
+      value: 'tmo',
+    },
+    {
+      label: 'Item',
+      value: 'item',
+    },
+    {
+      label: 'Size',
+      value: 'size',
+    },
   ]);
   const checkAll = listParams.length > 0 ? optionChecks.length === listParams.length : false;
   const indeterminate = listParams.length > 0 && listParams.length < optionChecks.length;
@@ -1846,7 +1858,7 @@ const Orders = () => {
         {inputData.map(renderInputData)}
       </Modal>
       <Modal
-        title="Chọn thông tin cần coppy"
+        title="Chọn thông tin cần copy"
         open={isOpenMdl}
         onOk={handleOkMdl}
         onCancel={handleCancelMdl}
