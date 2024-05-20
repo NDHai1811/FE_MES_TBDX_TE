@@ -50,6 +50,14 @@ const Pallet = (props) => {
       render: (value) => value || "-",
     },
     {
+      title: "Khách hàng",
+      dataIndex: "short_name",
+      key: "short_name",
+      align: "center",
+      width: 120,
+      render: (value, record, index) => record?.order?.short_name,
+    },
+    {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
@@ -62,7 +70,7 @@ const Pallet = (props) => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
-      width: 60,
+      width: 50,
       render: (value) => value || "-",
     },
     {
@@ -97,10 +105,19 @@ const Pallet = (props) => {
       render: (value) => value || "-",
     },
     {
+      title: "Số lượng",
+      dataIndex: "so_luong",
+      key: "so_luong",
+      align: "center",
+      width: 75,
+      render: (value) => value || "-",
+    },
+    {
       title: "Vị trí",
       dataIndex: "locator_id",
       key: "locator_id",
       align: "center",
+      width: 80,
       render: (value) => value || "-",
     },
     {
@@ -108,6 +125,7 @@ const Pallet = (props) => {
       dataIndex: "status",
       key: "status",
       align: "center",
+      width: 120,
       render: (value) => value || "-",
     },
   ];
@@ -134,9 +152,9 @@ const Pallet = (props) => {
   async function btn_click(page = 1, pageSize = 20) {
     setPage(page);
     setPageSize(pageSize)
-    loadDataTable({...params, page, pageSize});
+    loadDataTable({ ...params, page, pageSize });
   }
-  useEffect(()=>{
+  useEffect(() => {
     btn_click();
   }, [])
   const header = document.querySelector('.custom-card .ant-table-header');
@@ -158,7 +176,7 @@ const Pallet = (props) => {
   }, [dataTable]);
   const [listLSXPallet, setListLSXPallet] = useState([]);
   const rowSelection = {
-    selectedRowKeys: listLSXPallet.map(e=>e.id),
+    selectedRowKeys: listLSXPallet.map(e => e.id),
     fixed: true,
     onChange: (selectedRowKeys, selectedRows) => {
       setListLSXPallet(selectedRows)
@@ -239,7 +257,7 @@ const Pallet = (props) => {
                     <Input allowClear placeholder="Nhập mã vị trí" onChange={(event) => setParams({ ...params, locator_id: event.target.value })} />
                   </Form.Item>
                   <Form.Item label="Trạng thái" className="mb-3">
-                    <Select placeholder="Chọn trạng thái" allowClear onChange={(value) => setParams({ ...params, status: value })} options={[{value: 1, label: "Đã nhập kho"}, {value: 0, label: "Chưa nhập kho"}]}/>
+                    <Select placeholder="Chọn trạng thái" allowClear onChange={(value) => setParams({ ...params, status: value })} options={[{ value: 1, label: "Đã nhập kho" }, { value: 0, label: "Chưa nhập kho" }]} />
                   </Form.Item>
                 </div>
               </Card>
@@ -283,7 +301,7 @@ const Pallet = (props) => {
               scroll={{
                 y: tableHeight,
               }}
-            //   rowSelection={rowSelection}
+              //   rowSelection={rowSelection}
               columns={table}
               dataSource={dataTable}
             />
