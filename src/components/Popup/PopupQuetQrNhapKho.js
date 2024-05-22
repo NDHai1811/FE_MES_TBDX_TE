@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Row, Col, Table, message } from "antd";
+import { Modal, Row, Col, Table, message, Typography } from "antd";
 import "./PopupQuetQr.css";
 import ScanQR from "../Scanner";
 import { useState } from "react";
@@ -31,9 +31,9 @@ function PopupQuetQrNhapKho(props) {
   const [messageApi, contextHolder] = message.useMessage();
   
   const columns = [
-    {
-      title: palletId,
-      children: [
+    // {
+    //   title: palletId,
+    //   children: [
         {
           title: "STT",
           dataIndex: "index",
@@ -48,12 +48,12 @@ function PopupQuetQrNhapKho(props) {
           align: "center",
           render: (value) => value || "-",
         },
-      ],
-    },
-    {
-      title: isChecking ? <LoadingOutlined/> : totalQuantity,
-      align: "center",
-      children: [
+    //   ],
+    // },
+    // {
+    //   title: isChecking ? <LoadingOutlined/> : totalQuantity,
+    //   align: "center",
+    //   children: [
         {
           title: "Số lượng",
           dataIndex: "so_luong",
@@ -61,13 +61,13 @@ function PopupQuetQrNhapKho(props) {
           align: "center",
           render: (value) => value,
         },
-      ],
-    },
+    //   ],
+    // },
   ];
 
-  useEffect(() => {
-    getSuggestList();
-  }, []);
+  // useEffect(() => {
+  //   getSuggestList();
+  // }, []);
 
   useEffect(() => {
     (async () => {
@@ -113,9 +113,9 @@ function PopupQuetQrNhapKho(props) {
     });
 
     const resData = {
-      pallet_id: palletId,
-      number_of_lot: data.length,
-      so_luong: totalQuantity,
+      // pallet_id: palletId,
+      // number_of_lot: data.length,
+      // so_luong: totalQuantity,
       inp_arr: arr,
     };
 
@@ -129,6 +129,7 @@ function PopupQuetQrNhapKho(props) {
               so_luong: totalQuantity,
             },
           ]);
+          setVisible(false);
           setListCheck([res.data]);
           setResult?.(res.data);
         }
@@ -138,7 +139,6 @@ function PopupQuetQrNhapKho(props) {
   };
 
   const handleOk = () => {
-    setVisible(false);
     if (data.length > 0) {
       sendResult();
     }
@@ -173,6 +173,19 @@ function PopupQuetQrNhapKho(props) {
               bordered
               columns={columns}
               dataSource={data}
+              summary={(pageData) => {
+                let sum = 0;
+                pageData.forEach(({ so_luong }) => {
+                  sum += so_luong;
+                });
+        
+                return data.length ? (
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell index={0} colSpan={2} align="center"><strong>Tổng số lượng</strong></Table.Summary.Cell>
+                    <Table.Summary.Cell index={1} align="center">{sum}</Table.Summary.Cell>
+                  </Table.Summary.Row>
+                ) : null;
+              }}
             />
           </Col>
         </Row>

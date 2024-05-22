@@ -102,6 +102,7 @@ const Pallet = (props) => {
       dataIndex: "kich_thuoc",
       key: "kich_thuoc",
       align: "center",
+      width: 100,
       render: (value) => value || "-",
     },
     {
