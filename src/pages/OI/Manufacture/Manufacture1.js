@@ -417,7 +417,6 @@ const Manufacture1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
-    console.log(selectedLot);
     if (!selectedLot?.lo_sx) {
       messageApi.warning('Chưa chọn lô để bắt đầu');
       return 0;
