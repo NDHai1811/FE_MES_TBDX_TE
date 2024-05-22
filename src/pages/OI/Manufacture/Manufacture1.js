@@ -293,14 +293,14 @@ const Manufacture1 = (props) => {
     })();
   }, [isPaused]);
 
-  useEffect(() => {
-    if(LSX){
-      setSelectedLot(data.find(e=>e.lo_sx === LSX))
-    }else{
-      setSelectedLot();
-    }
-    
-  }, [data, LSX]);
+  // useEffect(() => {
+  //   if (LSX) {
+  //     setSelectedLot(data.find(e => e.lo_sx === LSX))
+  //   } else {
+  //     setSelectedLot();
+  //   }
+
+  // }, [data, LSX]);
 
   useEffect(() => {
     reloadData();
@@ -480,7 +480,19 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        console.log(e);
+        let result = JSON.parse(e.data);
+        setLSX(result.lo_sx);
+        setSelectedLot({ ...selectedLot, lo_sx: result.lo_sx, san_luong_kh: result.sl_kh, sl_dau_ra_hang_loat: result.pre_counter, sl_ng_sx: result.error_counter });
+       
+          const updateItems = data?.map(item => {
+            if (item.lo_sx == result.lo_sx) {
+              return { ...item, sl_dau_ra_hang_loat: result.pre_counter, sl_ng_sx: result.error_counter, status: 1 };
+            }
+            return item;
+          })
+          setData(updateItems);
+        
+        console.log(data, result);
       });
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
