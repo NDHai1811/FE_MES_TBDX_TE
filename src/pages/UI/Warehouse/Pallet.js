@@ -63,7 +63,7 @@ const Pallet = (props) => {
       key: "created_at",
       align: "center",
       width: 120,
-      render: (value, record, index) => value ? dayjs(value).format('DD/MM/YYYY') : "",
+      render: (value, record, index) => value && dayjs(value).isValid() ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : "",
     },
     {
       title: "MDH",
