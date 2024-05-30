@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useReducer } from "react";
 import { PrinterOutlined } from "@ant-design/icons";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
@@ -348,7 +348,8 @@ const Manufacture1 = (props) => {
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
-    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+    // setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+    tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
     setLoading(false);
   };
 
@@ -357,6 +358,7 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
+    
     if (record.status === 1) {
       return "table-row-green";
     }
@@ -368,6 +370,9 @@ const Manufacture1 = (props) => {
     }
     if (record.status === 4) {
       return "table-row-grey";
+    }
+    if(record?.lo_sx === selectedLot?.lo_sx){
+      return "table-row-blue";
     }
     return "";
   };
@@ -460,6 +465,24 @@ const Manufacture1 = (props) => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [data]);
+  const dataReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_DATA':
+        return action.payload;
+      default:
+        return state;
+    }
+  };
+  const [updatedData, dispatch] = useReducer(dataReducer, []);
+  const dataTableReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_DATA':
+        return action.payload;
+      default:
+        return state;
+    }
+  };
+  const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
   useEffect(() => {
     window.io = socketio;
     window.Echo = new Echo({
@@ -479,24 +502,34 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        let result = JSON.parse(e.data);
-        setLSX(result.lo_sx);
-        setSelectedLot({ ...selectedLot, lo_sx: result.lo_sx, san_luong_kh: result.sl_kh, sl_dau_ra_hang_loat: result.pre_counter, sl_ng_sx: result.error_counter });
-       
-          const updateItems = data?.map(item => {
-            if (item.lo_sx == result.lo_sx) {
-              return { ...item, sl_dau_ra_hang_loat: result.pre_counter, sl_ng_sx: result.error_counter, status: 1 };
-            }
-            return item;
-          })
-          setData(updateItems);
-        
-        console.log(data, result);
+        console.log(e.data);
+        let result = e.data;
+        if(result.length > 0){
+          var target = result[result.length-1 ?? 0];
+          // setLSX(target?.lo_sx);
+          // setSelectedLot({ ...selectedLot, lo_sx: target.lo_sx, san_luong_kh: target.dinh_muc, sl_dau_ra_hang_loat: target.sl_dau_ra_hang_loat, sl_ng_sx: target.sl_ng_sx });
+          dispatch({type: 'UPDATE_DATA', payload: result});
+        }
       });
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
     };
   }, []);
+  useEffect(()=>{
+    const updateItems = dataTable.map(item => {
+      const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
+      if (record) {
+        return {
+          ...item,
+          sl_dau_ra_hang_loat: record?.sl_dau_ra_hang_loat,
+          sl_ng_sx: record?.sl_ng_sx,
+          status: record?.status
+        };
+      }
+      return item;
+    });
+    tableDispatch({type: 'UPDATE_DATA', payload: updateItems});
+  }, [updatedData])
   return (
     <React.Fragment>
       {contextHolder}
@@ -520,10 +553,10 @@ const Manufacture1 = (props) => {
             className="custom-table"
             locale={{ emptyText: "Trống" }}
             columns={currentColumns}
-            dataSource={selectedLot ? [selectedLot] : []}
+            dataSource={updatedData.length ? [updatedData.at(-1)] : []}
             onRow={(record, rowIndex) => {
               return {
-                onClick: (event) => { tableRef.current?.scrollTo({ key: selectedLot?.lo_sx }); },
+                onClick: (event) => { tableRef.current?.scrollTo({ key: updatedData.at(-1)?.lo_sx }); },
               };
             }}
           />
@@ -585,7 +618,7 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
-            dataSource={data}
+            dataSource={dataTable}
           />
         </Col>
       </Row>
