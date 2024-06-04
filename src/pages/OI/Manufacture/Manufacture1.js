@@ -16,6 +16,7 @@ import {
 import "../style.scss";
 import {
   useHistory,
+  useLocation,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import {
@@ -36,6 +37,7 @@ import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
+import { baseHost, baseURL } from "../../../config";
 
 const columns = [
   {
@@ -214,6 +216,7 @@ const Manufacture1 = (props) => {
     },
   ];
   const history = useHistory();
+  const location = useLocation();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
   const componentRef3 = useRef();
@@ -285,13 +288,13 @@ const Manufacture1 = (props) => {
     (async () => {
       var res = await getTrackingStatus({ machine_id: machine_id });
       if (res.success) {
-        setIsPasued(!res.data?.status);
+        setIsPasued(!res.data?.is_running);
         setLSX(res.data.lo_sx);
       }
       // var tem = await getTem();
       // setListTem(tem)
     })();
-  }, [isPaused]);
+  }, []);
 
   // useEffect(() => {
   //   if (LSX) {
@@ -442,29 +445,6 @@ const Manufacture1 = (props) => {
     setLoadingAction(false);
   }
   const tableRef = useRef();
-  const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-  const [tableSize, setTableSize] = useState(
-    {
-      width: window.innerWidth < 700 ? '400vw' : '150vw',
-      height: table?.top ? (window.innerHeight - table?.top) - 70 : 300,
-    }
-  );
-  useEffect(() => {
-    const handleWindowResize = () => {
-      const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-      setTableSize(
-        {
-          width: window.innerWidth < 700 ? '400vw' : '150vw',
-          height: table?.top ? (window.innerHeight - table?.top) - 80 : 300,
-        }
-      );
-    };
-    handleWindowResize();
-    window.addEventListener('resize', handleWindowResize);
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, [data]);
   const dataReducer = (state, action) => {
     switch (action.type) {
       case 'UPDATE_DATA':
@@ -484,10 +464,13 @@ const Manufacture1 = (props) => {
   };
   const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
   useEffect(() => {
+    if(!(location.pathname.indexOf('/oi/manufacture') > -1)){
+      return 0;
+    }
     window.io = socketio;
     window.Echo = new Echo({
       broadcaster: 'socket.io',
-      host: 'http://localhost:6001', // Laravel Echo Server host
+      host: baseHost+':6001', // Laravel Echo Server host
       transports: ['websocket', 'polling', 'flashsocket']
     });
     window.Echo.connector.socket.on('connect', () => {
@@ -514,7 +497,7 @@ const Manufacture1 = (props) => {
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
     };
-  }, []);
+  }, [location]);
   useEffect(()=>{
     const updateItems = dataTable.map(item => {
       const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
@@ -600,8 +583,8 @@ const Manufacture1 = (props) => {
           <Table
             loading={loading}
             scroll={{
-              x: tableSize.width,
-              y: tableSize.height,
+              x: window.innerWidth < 700 ? '400vw' : '150vw',
+              y: '50vh',
             }}
             size="small"
             rowClassName={(record, index) =>
@@ -618,7 +601,7 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
-            dataSource={dataTable}
+            dataSource={dataTable.map((e, i)=>({...e, key: e.lo_sx}))}
           />
         </Col>
       </Row>

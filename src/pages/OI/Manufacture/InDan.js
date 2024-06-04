@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useReducer } from "react";
 import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import {
   Row,
@@ -15,6 +15,7 @@ import {
 import "../style.scss";
 import {
   useHistory,
+  useLocation,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import {
@@ -29,6 +30,9 @@ import dayjs from "dayjs";
 import ScanQR from "../../../components/Scanner";
 import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
+import { baseHost } from "../../../config";
+import Echo from 'laravel-echo';
+import socketio from 'socket.io-client';
 
 const columns = [
   {
@@ -46,8 +50,8 @@ const columns = [
   },
   {
     title: "Sản lượng đầu ra",
-    dataIndex: "san_luong",
-    key: "san_luong",
+    dataIndex: "sl_dau_ra_hang_loat",
+    key: "sl_dau_ra_hang_loat",
     align: "center",
   },
   {
@@ -134,6 +138,7 @@ const InDan = (props) => {
     },
   ];
   const history = useHistory();
+  const location = useLocation();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
   const componentRef3 = useRef();
@@ -158,16 +163,6 @@ const InDan = (props) => {
   ]);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
-  const ws = useRef(null);
-
-  const reloadData = async () => {
-    const resData = await getListLotDetail();
-    setData(resData);
-    if (resData?.[0]?.status === 1) {
-      setSelectedLot(resData?.[0]);
-    }
-    getOverAllDetail();
-  };
   const overallColumns = [
     {
       title: "Công đoạn",
@@ -210,6 +205,11 @@ const InDan = (props) => {
     },
   ];
 
+  useEffect(()=>{
+    getOverAllDetail();
+    getListLotDetail();
+  }, [])
+
   useEffect(() => {
     if (isScan === 1) {
       setIsOpenQRScanner(true);
@@ -218,61 +218,16 @@ const InDan = (props) => {
     }
   }, [isScan]);
 
-  var timeout;
-  useEffect(() => {
-    clearTimeout(timeout)
-    const loadDataRescursive = async (params, machine_id) => {
-      if (!machine_id) return;
-      const res = await getLotByMachine(params);
-      setData(res.data);
-      if (res.data[0]?.status === 1) {
-        setSelectedLot(res.data[0]);
-      } else {
-        setSelectedLot(null);
-      }
-      if (res.success) {
-        if (window.location.href.indexOf("manufacture") > -1)
-          timeout = setTimeout(function () {
-            loadDataRescursive(params, machine_id);
-          }, 5000);
-      }
-    };
-    loadDataRescursive(params, machine_id);
-    return () => clearTimeout(timeout);
-  }, [params.start_date, params.end_date, params.machine_id]);
-
-  const loadDataRescursive = async (params, machine_id) => {
-    console.log(params, machine_id);
-    if (!machine_id) return;
-    const res = await getLotByMachine(params);
-    setData(res.data);
-    if (res.data[0]?.status === 1) {
-      setSelectedLot(res.data[0]);
-    } else {
-      setSelectedLot(null);
-    }
-    if (res.success) {
-      if (window.location.href.indexOf("manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(params, machine_id);
-        }, 5000);
-    }
-  };
-
-  const getOverAllDetail = () => {
-    setLoading(true);
-    getOverAll(params)
-      .then((res) => setOverall(res.data))
-      .catch((err) => {
-        console.error("Get over all error: ", err);
-      })
-      .finally(() => setLoading(false));
+  const getOverAllDetail = async () => {
+    var res = await getOverAll(params);
+    setOverall(res.data);
   };
 
   const getListLotDetail = async () => {
-    const res = await getLotByMachine(params);
     setLoading(true);
-    return res.data;
+    const res = await getLotByMachine(params);
+    tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
+    setLoading(false);
   };
 
   const onChangeLine = (value) => {
@@ -282,7 +237,7 @@ const InDan = (props) => {
   const onScan = async (result) => {
     const lo_sx = JSON.parse(result).lo_sx;
     scanQrCode({ lo_sx: lo_sx, machine_id: machine_id })
-      .then((response) => response.success && reloadData())
+      .then((response) => response.success && getListLotDetail())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
     setIsOpenQRScanner(false);
     setIsScan(2)
@@ -377,7 +332,6 @@ const InDan = (props) => {
   useEffect(() => {
     const handleWindowResize = () => {
       const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-      console.log(table);
       setTableSize(
         {
           width: window.innerWidth < 700 ? '300vw' : '100%',
@@ -391,6 +345,72 @@ const InDan = (props) => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [data]);
+  const dataReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_DATA':
+        return action.payload;
+      default:
+        return state;
+    }
+  };
+  const [updatedData, dispatch] = useReducer(dataReducer, []);
+  const dataTableReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_DATA':
+        return action.payload;
+      default:
+        return state;
+    }
+  };
+  const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
+  useEffect(() => {
+    if(!(location.pathname.indexOf('/oi/manufacture') > -1)){
+      return 0;
+    }
+    window.io = socketio;
+    window.Echo = new Echo({
+      broadcaster: 'socket.io',
+      host: baseHost+':6001', // Laravel Echo Server host
+      transports: ['websocket', 'polling', 'flashsocket']
+    });
+    window.Echo.connector.socket.on('connect', () => {
+      console.log('WebSocket connected!');
+    });
+    window.Echo.connector.socket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
+    });
+
+    window.Echo.connector.socket.on('disconnect', () => {
+      console.log('WebSocket disconnected!');
+    });
+    window.Echo.channel('laravel_database_mychannel')
+      .listen('.my-event', (e) => {
+        console.log(e.data);
+        let result = e.data;
+        if(result.length > 0){
+          var target = result[result.length-1 ?? 0];
+          // setLSX(target?.lo_sx);
+          // setSelectedLot({ ...selectedLot, lo_sx: target.lo_sx, san_luong_kh: target.dinh_muc, sl_dau_ra_hang_loat: target.sl_dau_ra_hang_loat, sl_ng_sx: target.sl_ng_sx });
+          dispatch({type: 'UPDATE_DATA', payload: result});
+        }
+      });
+    return () => {
+      window.Echo.leaveChannel('laravel_database_mychannel');
+    };
+  }, [location]);
+  useEffect(()=>{
+    const updateItems = dataTable.map(item => {
+      const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
+      if (record) {
+        return {
+          ...item,
+          ...record
+        };
+      }
+      return item;
+    });
+    tableDispatch({type: 'UPDATE_DATA', payload: updateItems});
+  }, [updatedData])
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -485,7 +505,7 @@ const InDan = (props) => {
             pagination={false}
             bordered
             columns={columns}
-            dataSource={data.map((e, index) => ({ ...e, key: index }))}
+            dataSource={dataTable}
           />
         </Col>
       </Spin>

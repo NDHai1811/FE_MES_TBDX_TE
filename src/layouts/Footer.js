@@ -94,6 +94,7 @@ const Footer = () => {
                   textDecoration: 'none',
                   opacity: window.location.pathname.includes(e.key) ? 1 : 0.5,
                 }}
+                key={e.key}
                 // onClick={() => onChangeScreen(e.key)}
                 href={e.key}
               >

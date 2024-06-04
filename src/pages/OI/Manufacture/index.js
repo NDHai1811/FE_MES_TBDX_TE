@@ -9,16 +9,21 @@ import Manufacture1 from "./Manufacture1";
 import NhapTay from "./NhapTay";
 import InDan from "./InDan";
 import { getMachines } from "../../../api/oi/equipment";
+import { Spin } from "antd";
 const Manufacture = () => {
   document.title = "Sản xuất";
   const { machine_id } = useParams();
   const history = useHistory();
   const [IOTList, setIOTList] = useState([])
   const [machineOptions, setMachineOptions] = useState([]);
+  const [content, setContent] = useState();
   const getListMachine = async () => {
     var res = await getMachines();
     if (res.data.length > 0) {
       setMachineOptions(res.data);
+      if(!machine_id){
+        history.push('/oi/manufacture/'+res.data[0]?.value);
+      }
     } else {
       history.push('/screen');
     }
@@ -28,31 +33,26 @@ const Manufacture = () => {
   }, [])
   useEffect(() => {
     if(machineOptions.length > 0){
-      var target = machineOptions.find((e) => e.value === machine_id);
-      if (!target) {
-        target = machineOptions[0];
+      if(machine_id === 'S01'){
+        setContent(<Manufacture1 machineOptions={machineOptions}/>);
+      }else{
+        machineOptions.forEach(e=>{
+          if (e.value === machine_id) {
+            if(e.is_iot){
+              setContent(<InDan machineOptions={machineOptions}/>);
+            }else{
+              setContent(<NhapTay machineOptions={machineOptions}/>);
+            }
+          }
+        })
       }
-      history.push("/oi/manufacture/" + target.value);
-      var iot_machine = [];
-      (machineOptions).forEach(element => {
-        if(element?.is_iot){
-          iot_machine.push(element.value);
-        }
-      });
-      setIOTList(iot_machine);
     }
   }, [machineOptions, machine_id]);
   
-
+  
   return (
     <React.Fragment>
-      {
-        machine_id === "S01" ? 
-        <Manufacture1 machineOptions={machineOptions}/> :
-        IOTList.includes(machine_id) ? 
-        <InDan machineOptions={machineOptions}/> : 
-        <NhapTay machineOptions={machineOptions}/>
-      }
+      {content ?? <Spin spinning={true} style={{textAlign:'center', width: '100%'}}/>}
     </React.Fragment>
   );
 };
