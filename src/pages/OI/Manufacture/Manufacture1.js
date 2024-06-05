@@ -233,7 +233,7 @@ const Manufacture1 = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listTem, setListTem] = useState([]);
   const [isPaused, setIsPasued] = useState(true);
-  const [LSX, setLSX] = useState();
+  const [current, setCurrent] = useState(null);
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -254,7 +254,7 @@ const Manufacture1 = (props) => {
           value={machine_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
-          bordered={false}
+          variant="bordered"
         />
       ),
     },
@@ -289,7 +289,6 @@ const Manufacture1 = (props) => {
       var res = await getTrackingStatus({ machine_id: machine_id });
       if (res.success) {
         setIsPasued(!res.data?.is_running);
-        setLSX(res.data.lo_sx);
       }
       // var tem = await getTem();
       // setListTem(tem)
@@ -308,37 +307,6 @@ const Manufacture1 = (props) => {
   useEffect(() => {
     reloadData();
   }, [params, machine_id]);
-
-  var timeout;
-  const loadDataRescursive = async (machine_id, selectedLot) => {
-    if (!machine_id || isPaused) return;
-    const res = await getCurrentManufacturing({ machine_id });
-    console.log(selectedLot?.lo_sx, res.data?.lo_sx);
-    if (selectedLot?.lo_sx !== res.data?.lo_sx) {
-      reloadData();
-    }
-    setData(prev => prev.map(e => {
-      if (e?.lo_sx === res.data?.lo_sx) {
-        return { ...e, ...res.data }
-      }
-      return e;
-    }))
-    setSelectedLot(res.data);
-    if (res.success && !isPaused) {
-      if (window.location.href.indexOf("/oi/manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(machine_id, selectedLot);
-        }, 3000);
-    }
-  };
-  // useEffect(() => {
-  //   clearTimeout(timeout);
-  //   console.log('changed lo_sx', selectedLot);
-  //   !isPaused && loadDataRescursive(machine_id, selectedLot, isPaused);
-  //   return () => clearTimeout(timeout);
-  // }, [isPaused, selectedLot?.lo_sx]);
-
-
 
   const getOverAllDetail = () => {
     getOverAll(params)
@@ -433,6 +401,7 @@ const Manufacture1 = (props) => {
     var res = await startProduce({ lo_sx: selectedLot?.lo_sx, is_pause: false, machine_id: machine_id });
     if (res.success) {
       setIsPasued(false);
+      getListLotDetail();
     }
     setLoadingAction(false);
   }
@@ -441,6 +410,7 @@ const Manufacture1 = (props) => {
     var res = await stopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: true, machine_id: machine_id });
     if (res.success) {
       setIsPasued(true);
+      getListLotDetail();
     }
     setLoadingAction(false);
   }
@@ -486,11 +456,10 @@ const Manufacture1 = (props) => {
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
         console.log(e.data);
-        let result = e.data;
+        let result = e.data.map(e=>({...e, key: e.lo_sx}));
         if(result.length > 0){
           var target = result[result.length-1 ?? 0];
-          // setLSX(target?.lo_sx);
-          // setSelectedLot({ ...selectedLot, lo_sx: target.lo_sx, san_luong_kh: target.dinh_muc, sl_dau_ra_hang_loat: target.sl_dau_ra_hang_loat, sl_ng_sx: target.sl_ng_sx });
+          setCurrent(target ?? null);
           dispatch({type: 'UPDATE_DATA', payload: result});
         }
       });
@@ -500,13 +469,11 @@ const Manufacture1 = (props) => {
   }, [location]);
   useEffect(()=>{
     const updateItems = dataTable.map(item => {
-      const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
+      const record = updatedData.find(e => e.lo_sx === item.lo_sx);
       if (record) {
         return {
           ...item,
-          sl_dau_ra_hang_loat: record?.sl_dau_ra_hang_loat,
-          sl_ng_sx: record?.sl_ng_sx,
-          status: record?.status
+          ...record
         };
       }
       return item;
@@ -525,7 +492,7 @@ const Manufacture1 = (props) => {
             locale={{ emptyText: "Trống" }}
             className="custom-table"
             columns={overallColumns}
-            dataSource={overall}
+            dataSource={overall.map((e, i)=>({...e, key: i}))}
           />
         </Col>
         <Col span={24}>
@@ -536,10 +503,10 @@ const Manufacture1 = (props) => {
             className="custom-table"
             locale={{ emptyText: "Trống" }}
             columns={currentColumns}
-            dataSource={updatedData.length ? [updatedData.at(-1)] : []}
+            dataSource={current ? [current] : []}
             onRow={(record, rowIndex) => {
               return {
-                onClick: (event) => { tableRef.current?.scrollTo({ key: updatedData.at(-1)?.lo_sx }); },
+                onClick: (event) => { tableRef.current?.scrollTo({ key: current?.lo_sx }); },
               };
             }}
           />
@@ -601,7 +568,7 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
-            dataSource={dataTable.map((e, i)=>({...e, key: e.lo_sx}))}
+            dataSource={dataTable.map((e)=>({...e, key: e.lo_sx}))}
           />
         </Col>
       </Row>
