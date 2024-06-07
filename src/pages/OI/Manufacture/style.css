@@ -21,7 +21,7 @@
 
   body {
     zoom: 135%;
-    background-color: #fff;
+    background-color: #fff !important;
   }
 
   b {

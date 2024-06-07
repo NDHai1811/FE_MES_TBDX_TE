@@ -343,7 +343,7 @@ const Manufacture1 = (props) => {
       return "table-row-grey";
     }
     if(record?.lo_sx === selectedLot?.lo_sx){
-      return "table-row-blue";
+      return "table-row-light-blue";
     }
     return "";
   };
@@ -356,7 +356,7 @@ const Manufacture1 = (props) => {
         printThanhPham();
       }
       setListCheck([]);
-      setListTem([]);
+      // setListTem([]);
     }
   };
 

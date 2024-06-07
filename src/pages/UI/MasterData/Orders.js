@@ -839,7 +839,7 @@ const Orders = () => {
             />
             <Popconfirm
               title="Bạn có chắc chắn muốn xóa?"
-              onConfirm={() => onDetele(record)}
+              onConfirm={() => onDetele([record.id])}
             >
               <DeleteOutlined
                 style={{
@@ -1254,8 +1254,8 @@ const Orders = () => {
     }
   };
 
-  const onDetele = async (record) => {
-    await deleteOrders({ ids: listCheck });
+  const onDetele = async (ids) => {
+    await deleteOrders({ ids });
     loadListTable(params);
     message.success('Xoá thành công');
   };
