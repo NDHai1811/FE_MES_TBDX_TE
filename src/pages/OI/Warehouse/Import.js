@@ -174,14 +174,7 @@ const Import = (props) => {
       key: "sl_ton",
       align: "center",
       render: (value) => value || 0,
-    },
-    // {
-    //   title: "Số ngày tồn kho",
-    //   dataIndex: "so_ngay_ton",
-    //   key: "so_ngay_ton",
-    //   align: "center",
-    //   render: (value) => value || "-",
-    // },
+    }
   ];
 
   useEffect(() => {
