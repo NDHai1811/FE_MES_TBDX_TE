@@ -26,10 +26,11 @@ import {
   exportOrders,
   getKhuon,
   getOrders,
+  restoreOrders,
   splitOrders,
   updateOrder,
 } from "../../../api";
-import { DeleteOutlined, EditOutlined, LinkOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined, LeftOutlined, RightOutlined, UndoOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { COMMON_DATE_TABLE_FORMAT_REQUEST } from "../../../commons/constants";
 import dayjs from "dayjs";
@@ -210,6 +211,7 @@ const Orders = () => {
     page: 1,
     pageSize: 20,
   });
+  const { userProfile } = useProfile();
   const [editingKey, setEditingKey] = useState("");
   const [isSidebar, setIsSidebar] = useState(true);
   const [splitKey, setSplitKey] = useState("");
@@ -829,36 +831,58 @@ const Orders = () => {
         ) : (
           <span>
             <LinkOutlined
+              title="Tách"
               style={{ color: "#1677ff", fontSize: 18 }}
               onClick={() => showModal(record)}
             />
             <EditOutlined
+              title="Chỉnh sửa"
               style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             />
-            <Popconfirm
-              title="Bạn có chắc chắn muốn xóa?"
-              onConfirm={() => onDetele(record)}
-            >
-              <DeleteOutlined
-                style={{
-                  color: "red",
-                  marginLeft: 8,
-                  fontSize: 18,
-                }}
+            {!record?.deleted_at ? 
+              <Popconfirm
+                title="Bạn có chắc chắn muốn xóa?"
+                onConfirm={() => onDetele([record.id])}
+              >
+                <DeleteOutlined
+                  title="Xoá"
+                  style={{
+                    color: "red",
+                    marginLeft: 8,
+                    fontSize: 18,
+                  }}
+                />
+              </Popconfirm>
+              :
+              <UndoOutlined
+                title="Khôi phục"
+                style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
+                disabled={editingKey !== ""}
+                onClick={() => restore(record)}
               />
-            </Popconfirm>
+            }
           </span>
         );
       },
     },
   ];
 
-  const mergedColumns = colDetailTable.map((col) => {
+  const mergedColumns = colDetailTable.filter(col=>{
+    if(col.dataIndex === 'action'){
+      if (!userProfile || !(userProfile?.permission ?? []).includes('edit-order')) {
+        return false;
+      }
+      return true;
+    }else{
+      return true
+    }
+  }).map((col) => {
     if (!editableColumns.includes(col.dataIndex)) {
       return col;
     }
+    
     return {
       ...col,
       onCell: (record) => ({
@@ -1157,6 +1181,13 @@ const Orders = () => {
     setEditingKey(record.key);
   };
 
+  const restore = async (record) => {
+    var res = await restoreOrders(record);
+    if(res.success){
+      loadListTable(params);
+    }
+  } 
+
   const cancel = () => {
     // if (typeof editingKey === "number") {
     //   const newData = [...data];
@@ -1254,10 +1285,12 @@ const Orders = () => {
     }
   };
 
-  const onDetele = async (record) => {
-    await deleteOrders({ ids: listCheck });
-    loadListTable(params);
-    message.success('Xoá thành công');
+  const onDetele = async (ids) => {
+    var res = await deleteOrders({ ids });
+    if(res.success){
+      loadListTable(params);
+      message.success('Xoá thành công');
+    }
   };
 
   const exportFile = async () => {
@@ -1363,7 +1396,7 @@ const Orders = () => {
     });
     setInputData(items);
   };
-  const { userProfile } = useProfile();
+  
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -1727,6 +1760,25 @@ const Orders = () => {
                         setPage(1);
                       }}
                       placeholder="Nhập ghi chú TBDX"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Trạng thái" className="mb-3">
+                    <Select
+                      allowClear
+                      onChange={(value) => {
+                        setParams({
+                          ...params,
+                          status: value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      optionFilterProp="label"
+                      options={[
+                        {value: 'all', label: 'Tất cả'},
+                        {value: 'deleted', label: 'Đã xoá'},
+                      ]}
+                      placeholder="Chọn trạng thái"
                     />
                   </Form.Item>
                   <Button hidden htmlType="submit"></Button>

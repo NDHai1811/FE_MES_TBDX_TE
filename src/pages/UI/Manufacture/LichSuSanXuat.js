@@ -13,6 +13,7 @@ import {
   Spin,
   Tree,
   Input,
+  Popconfirm,
 } from "antd";
 import "../style.scss";
 import {
@@ -25,10 +26,13 @@ import {
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import {
+  deleteProductionHistory,
   getProduceOverall,
   getProducePercent,
   getProduceTable,
 } from "../../../api/ui/manufacture";
+import { useProfile } from "../../../components/hooks/UserHooks";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const columns1 = [
   {
@@ -292,6 +296,42 @@ const LichSuSanXuat = (props) => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [dataTable3]);
+  const { userProfile } = useProfile();
+  const deleteItem = async (id) => {
+    var res = await deleteProductionHistory(id);
+    if(res.success){
+      btn_click();
+    }
+  }
+  var historyColumns = [];
+  if (userProfile.username === 'admin') {
+    historyColumns = [...columns3,
+    {
+      title: 'Hành động',
+      dataIndex: 'action',
+      align: "center",
+      fixed: "right",
+      width: 70,
+      render: (_, record) => {
+        return (
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa?"
+            onConfirm={() => deleteItem(record.id)}
+          >
+            <DeleteOutlined
+              style={{
+                color: "red",
+                fontSize: 20,
+              }}
+            />
+          </Popconfirm>
+        );
+      },
+    }
+    ];
+  }else{
+    historyColumns = [...columns3];
+  }
   return (
     <React.Fragment>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -515,7 +555,7 @@ const LichSuSanXuat = (props) => {
                   x: "120vw",
                   y: tableHeight,
                 }}
-                columns={columns3}
+                columns={historyColumns}
                 dataSource={dataTable3}
               />
             </Spin>

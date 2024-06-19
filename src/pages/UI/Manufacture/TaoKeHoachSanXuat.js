@@ -376,17 +376,17 @@ const TaoKeHoachSanXuat = () => {
 
     useEffect(() => {
         (async () => {
-            if (orderParams.machine_id) {
+            if (orderParams.machine_id && openMdlOrder) {
                 loadListOrders();
             }
         })()
     }, [orderParams])
 
-    useEffect(() => {
-        (async () => {
-            loadListPlans();
-        })()
-    }, [lsxParams]);
+    // useEffect(() => {
+    //     (async () => {
+    //         loadListPlans();
+    //     })()
+    // }, [lsxParams]);
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () => {
         setExportLoading(false);

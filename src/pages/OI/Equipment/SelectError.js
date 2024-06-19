@@ -27,15 +27,15 @@ import {
   message,
 } from "antd";
 import { withRouter, Link } from "react-router-dom";
-import CardInfo from "../components/CardInfo";
-import DataDetail from "../../../components/DataDetail";
-import SelectButton from "../../../components/Button/SelectButton";
-import "../style.scss";
-import {
-  useHistory,
-  useParams,
-} from "react-router-dom/cjs/react-router-dom.min";
-import { log } from "@antv/g2plot/lib/utils";
+// import CardInfo from "../components/CardInfo";
+// import DataDetail from "../../../components/DataDetail";
+// import SelectButton from "../../../components/Button/SelectButton";
+// import "../style.scss";
+// import {
+//   useHistory,
+//   useParams,
+// } from "react-router-dom/cjs/react-router-dom.min";
+// import { log } from "@antv/g2plot/lib/utils";
 import {
   getErrorOfLine,
   getMachineLog,

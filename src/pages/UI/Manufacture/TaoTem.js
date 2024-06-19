@@ -17,6 +17,7 @@ import {
     InputNumber,
     Tabs,
     Badge,
+    DatePicker,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
@@ -29,6 +30,7 @@ import { getMachineList } from "../../../api/ui/machine";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
+import dayjs from "dayjs";
 
 const EditableCell = ({
     editing,
@@ -56,6 +58,7 @@ const EditableCell = ({
                     bordered
                     popupMatchSelectWidth={options.length > 0 ? 200 : 0}
                     showSearch
+                    optionFilterProp="label"
                 />
             );
             break;
@@ -509,6 +512,13 @@ const TaoTem = () => {
             key: "note_3",
             align: "center",
         },
+        {
+            title: "Ngày thực hiện KH",
+            dataIndex: "ngay_thuc_hien_kh",
+            key: "ngay_thuc_hien_kh",
+            align: "center",
+            render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.thoi_gian_bat_dau).format('DD-MM-YYYY') : '',
+        },
     ];
     const selectOrdersColumns = [...ordersColumn, {
         title: 'Tác vụ',
@@ -952,7 +962,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        <Col span={5}>
                             <Form.Item
                                 label="MQL"
                                 className="mb-3"
@@ -974,7 +984,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
+                        <Col span={5}>
                             <Form.Item
                                 label="Kích thước"
                                 className="mb-3"
@@ -994,7 +1004,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                             <Form.Item
                                 label="Dài"
                                 className="mb-3"
@@ -1014,7 +1024,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                             <Form.Item
                                 label="Rộng"
                                 className="mb-3"
@@ -1034,7 +1044,7 @@ const TaoTem = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                             <Form.Item
                                 label="Cao"
                                 className="mb-3"
@@ -1051,6 +1061,27 @@ const TaoTem = () => {
                                     }}
                                     placeholder="Nhập cao"
                                     value={orderParams.height}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={5}>
+                            <Form.Item
+                                label="Ngày thực hiện KH"
+                                className="mb-3"
+                            >
+                                <DatePicker
+                                    allowClear
+                                    style={{width:'100%'}}
+                                    onChange={(value) => {
+                                        setOrderParams({
+                                            ...orderParams,
+                                            ngay_kh: value,
+                                            page: 1,
+                                        });
+                                        setPage(1);
+                                    }}
+                                    placeholder="Chọn ngày thực hiện KH"
+                                    value={orderParams.ngay_kh}
                                 />
                             </Form.Item>
                         </Col>

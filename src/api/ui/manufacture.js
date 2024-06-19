@@ -19,6 +19,11 @@ export async function getListProductPlan(params) {
     return res.data;
 }
 
+export async function deleteProductionHistory(id) {
+    const res = await axios.delete("ui/manufacture/production-histoy/delete/"+id);
+    return res;
+}
+
 export async function handlePlan(params) {
     const res = await axios.post("ui/manufacture/handle-plan", params);
     return res;

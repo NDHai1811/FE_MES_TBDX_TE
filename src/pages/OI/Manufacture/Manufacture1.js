@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useReducer } from "react";
 import { PrinterOutlined } from "@ant-design/icons";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
@@ -16,6 +16,7 @@ import {
 import "../style.scss";
 import {
   useHistory,
+  useLocation,
   useParams,
 } from "react-router-dom/cjs/react-router-dom.min";
 import {
@@ -36,6 +37,7 @@ import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
+import { baseHost, baseURL } from "../../../config";
 
 const columns = [
   {
@@ -214,6 +216,7 @@ const Manufacture1 = (props) => {
     },
   ];
   const history = useHistory();
+  const location = useLocation();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
   const componentRef3 = useRef();
@@ -230,7 +233,7 @@ const Manufacture1 = (props) => {
   const [listCheck, setListCheck] = useState([]);
   const [listTem, setListTem] = useState([]);
   const [isPaused, setIsPasued] = useState(true);
-  const [LSX, setLSX] = useState();
+  const [current, setCurrent] = useState(null);
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -251,7 +254,7 @@ const Manufacture1 = (props) => {
           value={machine_id}
           onChange={onChangeLine}
           style={{ width: "100%" }}
-          bordered={false}
+          variant="bordered"
         />
       ),
     },
@@ -285,13 +288,12 @@ const Manufacture1 = (props) => {
     (async () => {
       var res = await getTrackingStatus({ machine_id: machine_id });
       if (res.success) {
-        setIsPasued(!res.data?.status);
-        setLSX(res.data.lo_sx);
+        setIsPasued(!res.data?.is_running);
       }
       // var tem = await getTem();
       // setListTem(tem)
     })();
-  }, [isPaused]);
+  }, []);
 
   // useEffect(() => {
   //   if (LSX) {
@@ -306,37 +308,6 @@ const Manufacture1 = (props) => {
     reloadData();
   }, [params, machine_id]);
 
-  var timeout;
-  const loadDataRescursive = async (machine_id, selectedLot) => {
-    if (!machine_id || isPaused) return;
-    const res = await getCurrentManufacturing({ machine_id });
-    console.log(selectedLot?.lo_sx, res.data?.lo_sx);
-    if (selectedLot?.lo_sx !== res.data?.lo_sx) {
-      reloadData();
-    }
-    setData(prev => prev.map(e => {
-      if (e?.lo_sx === res.data?.lo_sx) {
-        return { ...e, ...res.data }
-      }
-      return e;
-    }))
-    setSelectedLot(res.data);
-    if (res.success && !isPaused) {
-      if (window.location.href.indexOf("/oi/manufacture") > -1)
-        timeout = setTimeout(function () {
-          loadDataRescursive(machine_id, selectedLot);
-        }, 3000);
-    }
-  };
-  // useEffect(() => {
-  //   clearTimeout(timeout);
-  //   console.log('changed lo_sx', selectedLot);
-  //   !isPaused && loadDataRescursive(machine_id, selectedLot, isPaused);
-  //   return () => clearTimeout(timeout);
-  // }, [isPaused, selectedLot?.lo_sx]);
-
-
-
   const getOverAllDetail = () => {
     getOverAll(params)
       .then((res) => setOverall(res.data))
@@ -348,7 +319,8 @@ const Manufacture1 = (props) => {
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
-    setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+    // setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
+    tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
     setLoading(false);
   };
 
@@ -357,6 +329,7 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
+    
     if (record.status === 1) {
       return "table-row-green";
     }
@@ -369,6 +342,9 @@ const Manufacture1 = (props) => {
     if (record.status === 4) {
       return "table-row-grey";
     }
+    if(record?.lo_sx === selectedLot?.lo_sx){
+      return "table-row-light-blue";
+    }
     return "";
   };
 
@@ -380,7 +356,7 @@ const Manufacture1 = (props) => {
         printThanhPham();
       }
       setListCheck([]);
-      setListTem([]);
+      // setListTem([]);
     }
   };
 
@@ -417,7 +393,6 @@ const Manufacture1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
-    console.log(selectedLot);
     if (!selectedLot?.lo_sx) {
       messageApi.warning('Chưa chọn lô để bắt đầu');
       return 0;
@@ -426,6 +401,7 @@ const Manufacture1 = (props) => {
     var res = await startProduce({ lo_sx: selectedLot?.lo_sx, is_pause: false, machine_id: machine_id });
     if (res.success) {
       setIsPasued(false);
+      getListLotDetail();
     }
     setLoadingAction(false);
   }
@@ -434,38 +410,37 @@ const Manufacture1 = (props) => {
     var res = await stopProduce({ lo_sx: selectedLot?.lo_sx, is_pause: true, machine_id: machine_id });
     if (res.success) {
       setIsPasued(true);
+      getListLotDetail();
     }
     setLoadingAction(false);
   }
   const tableRef = useRef();
-  const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-  const [tableSize, setTableSize] = useState(
-    {
-      width: window.innerWidth < 700 ? '400vw' : '150vw',
-      height: table?.top ? (window.innerHeight - table?.top) - 70 : 300,
+  const dataReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_DATA':
+        return action.payload;
+      default:
+        return state;
     }
-  );
+  };
+  const [updatedData, dispatch] = useReducer(dataReducer, []);
+  const dataTableReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_DATA':
+        return action.payload;
+      default:
+        return state;
+    }
+  };
+  const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
   useEffect(() => {
-    const handleWindowResize = () => {
-      const table = document.querySelector('.bottom-table .ant-table-body')?.getBoundingClientRect();
-      setTableSize(
-        {
-          width: window.innerWidth < 700 ? '400vw' : '150vw',
-          height: table?.top ? (window.innerHeight - table?.top) - 80 : 300,
-        }
-      );
-    };
-    handleWindowResize();
-    window.addEventListener('resize', handleWindowResize);
-    return () => {
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, [data]);
-  useEffect(() => {
+    if(!(location.pathname.indexOf('/oi/manufacture') > -1)){
+      return 0;
+    }
     window.io = socketio;
     window.Echo = new Echo({
       broadcaster: 'socket.io',
-      host: 'http://localhost:6001', // Laravel Echo Server host
+      host: baseHost+':6001', // Laravel Echo Server host
       transports: ['websocket', 'polling', 'flashsocket']
     });
     window.Echo.connector.socket.on('connect', () => {
@@ -480,24 +455,31 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        let result = JSON.parse(e.data);
-        setLSX(result.lo_sx);
-        setSelectedLot({ ...selectedLot, lo_sx: result.lo_sx, san_luong_kh: result.sl_kh, sl_dau_ra_hang_loat: result.pre_counter, sl_ng_sx: result.error_counter });
-       
-          const updateItems = data?.map(item => {
-            if (item.lo_sx == result.lo_sx) {
-              return { ...item, sl_dau_ra_hang_loat: result.pre_counter, sl_ng_sx: result.error_counter, status: 1 };
-            }
-            return item;
-          })
-          setData(updateItems);
-        
-        console.log(data, result);
+        console.log(e.data);
+        let result = e.data.map(e=>({...e, key: e.lo_sx}));
+        if(result.length > 0){
+          var target = result[result.length-1 ?? 0];
+          setCurrent(target ?? null);
+          dispatch({type: 'UPDATE_DATA', payload: result});
+        }
       });
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
     };
-  }, []);
+  }, [location]);
+  useEffect(()=>{
+    const updateItems = dataTable.map(item => {
+      const record = updatedData.find(e => e.lo_sx === item.lo_sx);
+      if (record) {
+        return {
+          ...item,
+          ...record
+        };
+      }
+      return item;
+    });
+    tableDispatch({type: 'UPDATE_DATA', payload: updateItems});
+  }, [updatedData])
   return (
     <React.Fragment>
       {contextHolder}
@@ -510,7 +492,7 @@ const Manufacture1 = (props) => {
             locale={{ emptyText: "Trống" }}
             className="custom-table"
             columns={overallColumns}
-            dataSource={overall}
+            dataSource={overall.map((e, i)=>({...e, key: i}))}
           />
         </Col>
         <Col span={24}>
@@ -521,10 +503,10 @@ const Manufacture1 = (props) => {
             className="custom-table"
             locale={{ emptyText: "Trống" }}
             columns={currentColumns}
-            dataSource={selectedLot ? [selectedLot] : []}
+            dataSource={current ? [current] : []}
             onRow={(record, rowIndex) => {
               return {
-                onClick: (event) => { tableRef.current?.scrollTo({ key: selectedLot?.lo_sx }); },
+                onClick: (event) => { tableRef.current?.scrollTo({ key: current?.lo_sx }); },
               };
             }}
           />
@@ -568,8 +550,8 @@ const Manufacture1 = (props) => {
           <Table
             loading={loading}
             scroll={{
-              x: tableSize.width,
-              y: tableSize.height,
+              x: window.innerWidth < 700 ? '400vw' : '150vw',
+              y: '50vh',
             }}
             size="small"
             rowClassName={(record, index) =>
@@ -586,7 +568,7 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
-            dataSource={data}
+            dataSource={dataTable.map((e)=>({...e, key: e.lo_sx}))}
           />
         </Col>
       </Row>

@@ -55,12 +55,12 @@ const Permissions = () => {
       key: "slug",
       align: "center",
     },
-    {
-      title: "Link",
-      dataIndex: "link",
-      key: "link",
-      align: "center",
-    },
+    // {
+    //   title: "Link",
+    //   dataIndex: "link",
+    //   key: "link",
+    //   align: "center",
+    // },
   ];
   const formFields = [
     {
@@ -359,35 +359,35 @@ const Permissions = () => {
                   </Col>
                 );
             })}
-            <Col span={24}>
+            {/* <Col span={24}>
               <Form.Item
                 name={'link'}
                 className="mb-3"
                 label={'Link'}
                 getValueFromEvent={handleSelectAll}
               >
-              <Select
-                mode={'multiple'}
-                showSearch
-                allowClear
-                maxTagCount={5}
+                <Select
+                  mode={'multiple'}
+                  showSearch
+                  allowClear
+                  maxTagCount={5}
                 // options={authProtectedRoutes.map(r => r.path).flat().map(e => ({ value: e, label: e }))}
-              >
-                <Select.Option value="all">---Chọn tất cả---</Select.Option>
-                {authProtectedRoutes.map(r => r.path).flat().map(e => (
-                  <Select.Option value={e}>{e}</Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item className="mb-0">
-          <Button type="primary" htmlType="submit">
-            Lưu lại
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal >
+                >
+                  <Select.Option value="all">---Chọn tất cả---</Select.Option>
+                  {authProtectedRoutes.map(r => r.path).flat().map(e => (
+                    <Select.Option value={e}>{e}</Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col> */}
+          </Row>
+          <Form.Item className="mb-0">
+            <Button type="primary" htmlType="submit">
+              Lưu lại
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal >
     </>
   );
 };

@@ -11,4 +11,5 @@ module.exports = {
     API_URL: "http://127.0.0.1:8000/api",
   },
   baseURL: "http://127.0.0.1:8000",
+  baseHost: "http://127.0.0.1"
 }

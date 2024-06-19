@@ -58,6 +58,14 @@ const Pallet = (props) => {
       render: (value, record, index) => record?.order?.short_name,
     },
     {
+      title: "Ngày tạo",
+      dataIndex: "created_at",
+      key: "created_at",
+      align: "center",
+      width: 120,
+      render: (value, record, index) => value && dayjs(value).isValid() ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : "",
+    },
+    {
       title: "MDH",
       dataIndex: "mdh",
       key: "mdh",
@@ -102,6 +110,7 @@ const Pallet = (props) => {
       dataIndex: "kich_thuoc",
       key: "kich_thuoc",
       align: "center",
+      width: 100,
       render: (value) => value || "-",
     },
     {

@@ -197,9 +197,9 @@ function PopupInTemKhoNvl(props) {
         open={visible}
         footer={[
           <Button onClick={handleCancel}>Huỷ</Button>,
-          <Button type="primary" danger onClick={moveToKho13}>
+          list ? <Button type="primary" danger onClick={moveToKho13}>
             Khu 13
-          </Button>,
+          </Button> : null,
           <Button type="primary" onClick={!list ? save : handleOk}>
             {!list ? "Lưu" : "Xong"}
           </Button>,

@@ -113,6 +113,8 @@ const Layout = () => {
     "ma_khuon",
     "vt_khuon",
     "al_khuon",
+    'vi_tri_khuon',
+    'vt_lo_bat_khuon'
   ]);
   const isEditing = (record) => record.key === editingKey;
 
@@ -200,7 +202,7 @@ const Layout = () => {
       dataIndex: "machine_id",
       key: "machine_id",
       align: "center",
-      editable: hasEditColumn("machine_name"),
+      editable: hasEditColumn("machine_id"),
       width: "80px",
     },
     {
@@ -507,11 +509,11 @@ const Layout = () => {
           editable: hasEditColumn("vt_lo_bat_khuon"),
         },
         {
-          title: "Khối bế",
-          dataIndex: "al_khuon",
-          key: "al_khuon",
+          title: "Vị trí khuôn",
+          dataIndex: "vi_tri_khuon",
+          key: "vi_tri_khuon",
           align: "center",
-          editable: hasEditColumn("al_khuon"),
+          editable: hasEditColumn("vi_tri_khuon"),
         },
       ],
     },

@@ -8,9 +8,10 @@ import {
   checkLoSX,
   getInfoPallet,
   sendStorePallet,
+  updatePallet,
 } from "../../api/oi/warehouse";
 
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LoadingOutlined } from "@ant-design/icons";
 function PopupScanPallet(props) {
   const {
     visible,
@@ -20,69 +21,63 @@ function PopupScanPallet(props) {
     setListCheck,
     setResult,
   } = props;
-
-  const [columns, setColumns] = useState([]);
   const [currentResult, setCurrentResult] = useState("");
   const [data, setData] = useState([]);
   const [palletId, setPalletId] = useState("");
-  const [item, setItem] = useState({});
+  const [item, setItem] = useState({pallet_id: "", so_luong: 0, locator_id: ""});
 
-  const totalQuantity = data?.reduce(
-    (sum, val) => sum + parseInt(val?.so_luong),
-    0
-  );
-
-  useEffect(() => {
-    totalQuantity > 0 &&
-      setColumns([
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  useEffect(()=>{
+    setTotalQuantity(data?.reduce((sum, val) => sum + parseInt(val?.so_luong), 0));
+  }, [data])
+  const columns = [
+    {
+      title: palletId ?? "Mã pallet",
+      children: [
         {
-          title: palletId,
-          children: [
-            {
-              title: "STT",
-              dataIndex: "index",
-              key: "index",
-              align: "center",
-              render: (value, record, index) => index + 1,
-            },
-            {
-              title: "Mã lô sản xuất",
-              dataIndex: "lo_sx",
-              key: "lo_sx",
-              align: "center",
-              render: (value) => value || "-",
-            },
-          ],
-        },
-        {
-          title: totalQuantity,
+          title: "STT",
+          dataIndex: "index",
+          key: "index",
           align: "center",
-          children: [
-            {
-              title: "Số lượng",
-              dataIndex: "so_luong",
-              key: "so_luong",
-              align: "center",
-              render: (value) => value,
-            },
-          ],
+          render: (value, record, index) => index + 1,
         },
         {
-          title: "Tác vụ",
+          title: "Mã lô sản xuất",
+          dataIndex: "lo_sx",
+          key: "lo_sx",
           align: "center",
-          render: (_, record, index) => (
-            <DeleteOutlined
-              onClick={() => handleDelete(index)}
-              style={{
-                color: "red",
-                marginLeft: 8,
-                fontSize: 18,
-              }}
-            />
-          )
+          render: (value) => value || "-",
         },
-      ]);
-  }, [totalQuantity]);
+      ],
+    },
+    {
+      title: totalQuantity,
+      align: "center",
+      children: [
+        {
+          title: "Số lượng",
+          dataIndex: "so_luong",
+          key: "so_luong",
+          align: "center",
+          render: (value) => value,
+        },
+      ],
+    },
+    {
+      title: "Tác vụ",
+      align: "center",
+      render: (_, record, index) => (
+        <DeleteOutlined
+          onClick={() => handleDelete(index)}
+          style={{
+            color: "red",
+            marginLeft: 8,
+            fontSize: 18,
+          }}
+        />
+      )
+    },
+  ];
 
   useEffect(() => {
     (async () => {
@@ -103,53 +98,7 @@ function PopupScanPallet(props) {
           if (res.success == true) {
             setPalletId(res?.data?.id);
             setData(res?.data?.losxpallet);
-            setColumns([
-              {
-                title: res.data.pallet_id,
-                children: [
-                  {
-                    title: "STT",
-                    dataIndex: "index",
-                    key: "index",
-                    align: "center",
-                    render: (value, record, index) => index + 1,
-                  },
-                  {
-                    title: "Mã lô sản xuất",
-                    dataIndex: "lo_sx",
-                    key: "lo_sx",
-                    align: "center",
-                    render: (value) => value || "-",
-                  },
-                ],
-              },
-              {
-                title: `${res.data.so_luong}`,
-                align: "center",
-                children: [
-                  {
-                    title: "Số lượng",
-                    dataIndex: "so_luong",
-                    key: "so_luong",
-                    align: "center",
-                    render: (value) => value || "-",
-                  },
-                ],
-              },
-              {
-                title: "Tác vụ",
-                align: "center",
-                render: (_, record) => (
-                  <DeleteOutlined
-                    style={{
-                      color: "red",
-                      marginLeft: 8,
-                      fontSize: 18,
-                    }}
-                  />
-                )
-              },
-            ]);
+            setItem({...item, pallet_id: res.data.id, so_luong: res.data.so_luong, locator_id: res.data.locator_id});
           }
         }
       }
@@ -176,7 +125,7 @@ function PopupScanPallet(props) {
       inp_arr: arr,
     };
 
-    sendStorePallet(resData)
+    updatePallet(resData)
       .then((res) => {
         setSelectedItem([
           {

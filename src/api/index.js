@@ -541,7 +541,7 @@ export async function updateOrder(params) {
 }
 export async function deleteOrders(params) {
   const res = await axios.delete('/orders/delete', { params });
-  return res.data;
+  return res;
 }
 export async function exportOrders(params) {
   const res = await axios.get('/orders/export', { params });
@@ -549,6 +549,10 @@ export async function exportOrders(params) {
 }
 export async function splitOrders(params) {
   const res = await axios.post('/orders/split', params);
+  return res;
+}
+export async function restoreOrders(params) {
+  const res = await axios.post('/orders/restore', params);
   return res;
 }
 
