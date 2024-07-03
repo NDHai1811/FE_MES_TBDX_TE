@@ -275,7 +275,7 @@ const Export = (props) => {
     if (res.success) {
       setVisible(false);
       form.resetFields();
-      loadData();
+      // loadData();
       loadDataTable();
     }
   }

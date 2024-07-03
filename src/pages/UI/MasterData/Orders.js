@@ -805,6 +805,14 @@ const Orders = () => {
       render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.thoi_gian_bat_dau).format('DD-MM-YYYY') : '',
     },
     {
+      title: "Người tạo",
+      dataIndex: "creator",
+      key: "creator",
+      align: "center",
+      width: '2%',
+      render: (value) => value?.name ?? '',
+    },
+    {
       title: "Tác vụ",
       dataIndex: "action",
       key: "action",

@@ -140,12 +140,13 @@ const WarehouseExportCommand = () => {
     setListCheck([])
     setLoading(true);
     const res = await getDeliveryNoteList(params);
+    console.log(res);
     setData(
-      [...res.data].map((e) => {
+      [...res.data.data].map((e) => {
         return { ...e, key: e.id };
       })
     );
-    setTotalPage(res.totalPage)
+    setTotalPage(res.data.totalPage)
     setLoading(false);
   };
   
@@ -596,34 +597,40 @@ const WarehouseExportCommand = () => {
                       value={params.end_date}
                     />
                   </Form.Item>
-                  <Form.Item label="Khách hàng" className="mb-3">
-                    <Select
-                      allowClear
-                      showSearch
-                      onChange={(value) =>
-                        setParams({ ...params, customer_id: value })
-                      }
-                      optionFilterProp="label"
-                      options={listCustomers}
-                      placeholder="Chọn khách hàng"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Mã đơn hàng" className="mb-3">
+                  <Form.Item label="Lệnh xuất" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>
-                        setParams({ ...params, mdh: e.target.value })
+                        setParams({ ...params, id: e.target.value })
                       }
-                      placeholder="Nhập mã đơn hàng"
+                      placeholder="Nhập lệnh xuất"
                     />
                   </Form.Item>
-                  <Form.Item label="Mã quản lý" className="mb-3">
+                  <Form.Item label="Người báo xuất" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>
-                        setParams({ ...params, mql: e.target.value })
+                        setParams({ ...params, created_by: e.target.value })
                       }
-                      placeholder="Nhập mã quản lý"
+                      placeholder="Nhập tên người báo xuất"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Số xe" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, vehicle_id: e.target.value })
+                      }
+                      placeholder="Nhập số xe"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Người xuất" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, exporter_id: e.target.value })
+                      }
+                      placeholder="Nhập tên người xuất"
                     />
                   </Form.Item>
                 </Form>

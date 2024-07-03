@@ -191,6 +191,13 @@ const PopupCreateExportPlanFG = (props) => {
       isSearch: true,
       input_type: 'date',
     },
+    {
+      title: "Người tạo ĐH",
+      dataIndex: "creator",
+      key: "creator",
+      align: "center",
+      render: (value) => value?.name ?? '',
+    },
   ];
   const rowSelection = {
     selectedRowKeys: [].concat(selectedRows).map(e => e.key),

@@ -216,6 +216,13 @@ const KeHoachSanXuat = () => {
       width: 60,
     },
     {
+      title: "Người tạo",
+      dataIndex: "creator",
+      key: "creator",
+      align: "center",
+      render: (value)=>value?.name ?? ""
+    },
+    {
       title: "Tác vụ",
       dataIndex: "action",
       key: "action",
