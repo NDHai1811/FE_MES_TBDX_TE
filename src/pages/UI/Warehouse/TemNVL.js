@@ -19,69 +19,57 @@ const PrintTemplate = ({ detail }) => {
                 <table>
                     <thead>
                         <tr>
-                            <th style={{ width: "50%" }}></th>
-                            <th style={{ width: "50%" }}></th>
-                           
+                            <th style={{ width: "20%" }}></th>
+                            <th style={{ width: "20%" }}></th>
+                            <th style={{ width: "20%" }}></th>
+                            <th style={{ width: "20%" }}></th>
+                            <th style={{ width: "20%" }}></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colSpan={2}>
-                                <div className="d-flex justify-content-between">
+                            <td colSpan={3}>
+                                <div className="d-flex justify-content-center">
                                     <QRCode
-                                        style={{ marginRight: "5px" }}
                                         value={detail['material_id']}
                                         bordered={false}
-                                        size={120}
+                                        size={180}
                                         type="svg"
                                     />
-                                    <div className="flex-column">
-                                        <h3 style={{ marginLeft: "8px", fontSize: '34px', marginTop: '28px' }}>TEM CUỘN</h3>
-                                        {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
-                                    </div>
-                                    <div className="flex-column">
-                                        <img src={logolight} width={120} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
-                                        {/* <h5 style={{ marginLeft: "8px" }}>{detail.lot_id}</h5> */}
-                                    </div>
-                                    {/* <Barcode value={detail.lot_id} format="CODE128" height={32} width={1.5} fontSize={16} /> */}
+                                </div>
+                            </td>
+                            <td colSpan={2}>
+                                <div className="text-center">
+                                    <img src={logolight} width={120} style={{ marginRight: "10px", marginLeft: '10px', marginTop: '10px' }} />
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td className="text-center">MÃ CUỘN TBDX</td>
-                            <td className="text-center">{detail['material_id']}</td>
+                            <td colSpan={5} style={{height: 180}}>
+                                <h3 style={{ marginLeft: "8px", fontSize: '90px', marginTop: '0', textAlign: 'center', fontWeight: 'bold' }}>
+                                    {detail['material_id']}
+                                </h3>
+                            </td>
                         </tr>
-                        <tr>
-                            <td className="text-center">MÃ VẬT TƯ</td>
-                            <td className="text-center"><b>{detail['ma_vat_tu']}</b></td>
+                        <tr style={{ height: 55 }}>
+                            <td className="text-center" colSpan={2}>KHỔ GIẤY</td>
+                            <td className="text-center" colSpan={3}>{detail['kho_giay']}</td>
                         </tr>
-                        <tr>
-                            <td className="text-center">NHÀ CUNG CẤP</td>
-                            <td className="text-center">{detail['ten_ncc']}</td>
+                        <tr style={{ height: 55 }}>
+                            <td className="text-center" colSpan={2}>ĐỊNH LƯỢNG</td>
+                            <td className="text-center" colSpan={3}>{detail['dinh_luong']}</td>
                         </tr>
-                        <tr>
-                            <td className="text-center">MÃ CUỘN NCC:</td>
-                            <td className="text-center">{detail['ma_cuon_ncc']}</td>
+                        <tr style={{ height: 55 }}>
+                            <td className="text-center" colSpan={2}>SỐ KG</td>
+                            <td className="text-center" colSpan={3}>{detail['so_kg']}</td>
                         </tr>
-                        <tr>
-                            <td className="text-center">FSC</td>
-                            <td className="text-center">{detail['fsc'] ? "X" : ""}</td>
+                        <tr style={{ height: 55 }}>
+                            <td className="text-center" colSpan={2}>MÃ CUỘN NCC:</td>
+                            <td className="text-center" colSpan={3}>{detail['ma_cuon_ncc']}</td>
                         </tr>
-                        <tr>
-                            <td className="text-center">KHỔ GIẤY</td>
-                            <td className="text-center">{detail['kho_giay']}</td>
-                        </tr>
-                        <tr>
-                            <td className="text-center">ĐỊNH LƯỢNG</td>
-                            <td className="text-center">{detail['dinh_luong']}</td>
-                        </tr>
-                        <tr>
-                            <td className="text-center">SỐ KG</td>
-                            <td className="text-center">{detail['so_kg']}</td>
-                        </tr>
-                        <tr>
-                            <td className="text-center">NGÀY NHẬP KHO</td>
-                            <td className="text-center">{detail['updated_at'] ? dayjs(detail['updated_at']).format('DD/MM/YYYY HH:mm:ss') : ''}</td>
+                        <tr style={{ height: 55 }}>
+                            <td className="text-center" colSpan={2}>NGÀY NHẬP KHO</td>
+                            <td className="text-center" colSpan={3}>{detail['updated_at'] ? dayjs(detail['updated_at']).format('DD/MM/YYYY HH:mm:ss') : ''}</td>
                         </tr>
                     </tbody>
                 </table>
