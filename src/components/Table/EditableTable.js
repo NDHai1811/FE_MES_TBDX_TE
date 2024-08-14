@@ -1,12 +1,17 @@
-import { DatePicker, Form, Input, InputNumber, Select, Table } from "antd";
+import { DatePicker, Form, Input, InputNumber, Select, Table, TimePicker } from "antd";
 import React, { useContext, useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import "./style.css";
 import Actions from "./Actions";
+import dayjs from "dayjs";
 const EditableTable = forwardRef((props, ref) => {
   const { onDelete = null, onChange = null, onSelect = null, onCreate = null, onUpdate = null, dataSource, setDataSource = null, addonAction = null } = props;
   var editableColumns = [];
   const [editingKey, setEditingKey] = useState();
+  const [data, setData] = useState(dataSource);
   const [form] = Form.useForm();
+  useEffect(() => {
+    setData(dataSource)
+  }, [dataSource])
   const EditableCell = ({
     editing,
     dataIndex,
@@ -24,7 +29,7 @@ const EditableTable = forwardRef((props, ref) => {
     let inputNode;
     switch (inputType) {
       case "number":
-        inputNode = <InputNumber {...inputProps}/>;
+        inputNode = <InputNumber {...inputProps} />;
         break;
       case "select":
         inputNode = (
@@ -42,7 +47,7 @@ const EditableTable = forwardRef((props, ref) => {
         inputNode = (
           <DatePicker
             {...inputProps}
-            value={record?.[dataIndex]}
+            value={record?.[dataIndex] && dayjs(record?.[dataIndex]) || null}
             options={options}
             // onSelect={(value) => onSelect(value, dataIndex, index)}
             // onChange={(value) => value.isValid() && onChange(value, dataIndex, index)}
@@ -50,8 +55,22 @@ const EditableTable = forwardRef((props, ref) => {
           />
         );
         break;
+      case "time":
+        inputNode = (
+          <TimePicker
+            {...inputProps}
+            value={record?.[dataIndex] && dayjs(record?.[dataIndex]) || null}
+            options={options}
+            format={'HH:mm'}
+            needConfirm={false}
+            // onSelect={(value) => onSelect(value, dataIndex, index)}
+            // onChange={(value) => value.isValid() && onChange(value, dataIndex, index)}
+            showSearch
+          />
+        );
+        break;
       default:
-        inputNode = <Input {...inputProps}/>;
+        inputNode = <Input {...inputProps} />;
         break;
     }
     return (
@@ -87,7 +106,7 @@ const EditableTable = forwardRef((props, ref) => {
         index: rowIndex,
         editing: record.key === editingKey,
         onChange: onChange ?? function (value, dataIndex, index) {
-          setDataSource(dataSource.map((e, i) => {
+          setData(data.map((e, i) => {
             if (i === editingKey) {
               return { ...e, [dataIndex]: value }
             }
@@ -95,7 +114,7 @@ const EditableTable = forwardRef((props, ref) => {
           }))
         },
         onSelect: onSelect ?? function (value, dataIndex, index) {
-          setDataSource(dataSource.map((e, i) => {
+          setData(data.map((e, i) => {
             if (i === editingKey) {
               return { ...e, [dataIndex]: value }
             }
@@ -104,7 +123,7 @@ const EditableTable = forwardRef((props, ref) => {
         },
       }),
     };
-    if(col.children && (col.children??[]).length > 0){
+    if (col.children && (col.children ?? []).length > 0) {
       newCol.children = col.children.map(mapColumns)
     }
     return newCol
@@ -130,16 +149,35 @@ const EditableTable = forwardRef((props, ref) => {
   const handleSave = async (record) => {
     const row = await form?.validateFields();
     console.log(row);
-    setDataSource(dataSource.map((e, i) => {
+    setData(data.map((e, i) => {
       if (i === editingKey) {
         return { ...e, ...row }
       }
       return e;
     }))
     if (isCreate) {
-      onCreate && onCreate({ ...record, ...row }, editingKey);
+      // onCreate && onCreate({ ...record, ...row }, editingKey);
+      if (onCreate) {
+        var res = await onCreate({ ...record, ...row }, editingKey);
+        if (typeof res === 'boolean') {
+          if (res) {
+            setDataSource(data)
+          } else {
+            setData(dataSource)
+          }
+        }
+      }
     } else {
-      onUpdate && onUpdate({ ...record, ...row }, editingKey);
+      if (onUpdate) {
+        var res = await onUpdate({ ...record, ...row }, editingKey);
+        if (typeof res === 'boolean') {
+          if (res) {
+            setDataSource(data)
+          } else {
+            setData(dataSource)
+          }
+        }
+      }
     }
     form?.resetFields();
     setEditingKey();
@@ -150,7 +188,7 @@ const EditableTable = forwardRef((props, ref) => {
     form.resetFields();
     setEditingKey();
     if (isCreate) {
-      setDataSource(dataSource.slice(1));
+      setData(data.slice(1));
     }
     setIsCreate(false);
   }
@@ -163,26 +201,26 @@ const EditableTable = forwardRef((props, ref) => {
   }));
   useEffect(() => {
     if (isCreate) {
-      setDataSource(prev => [{}, ...prev]);
+      setData(prev => [{}, ...prev]);
       setEditingKey(0);
-    }else{
+    } else {
       onCancel()
     }
   }, [isCreate]);
 
   useEffect(() => {
-    const row = dataSource.find((e, i)=>i===editingKey);
-    if(row){
-      form.setFieldsValue({...row});
+    const row = data.find((e, i) => i === editingKey);
+    if (row) {
+      form.setFieldsValue({ ...row });
     }
-  }, [dataSource]);
-  
+  }, [data]);
+
   return (
-    <Form form={form} component={false} onFinish={(values) => handleSave(dataSource.find((e, index) => index === editingKey), editingKey)}>
+    <Form form={form} component={false} onFinish={(values) => handleSave(data.find((e, index) => index === editingKey), editingKey)}>
       <Table
         {...props}
         columns={editableColumns}
-        dataSource={dataSource.map((e, i)=>({...e, key: i}))}
+        dataSource={data.map((e, i) => ({ ...e, key: i }))}
         components={{
           body: {
             cell: EditableCell,

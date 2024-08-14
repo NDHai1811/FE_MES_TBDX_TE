@@ -617,6 +617,10 @@ export async function exportCustomer(params) {
   const res = await axios.get('/customer/export', { params });
   return res;
 }
+export async function getRealCustomerList(params){
+  const res = await axios.get('/real-customer-list', {params});
+  return res.data
+}
 
 //Vehicles
 export async function getVehicles(params) {

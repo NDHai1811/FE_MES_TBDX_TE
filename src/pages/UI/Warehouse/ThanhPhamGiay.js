@@ -15,11 +15,12 @@ import {
   Tree,
 } from "antd";
 import { exportWarehouse, exportWarehouseFGLogs } from "../../../api/ui/export";
-import { getHistoryWareHouseFG } from "../../../api/ui/warehouse";
+import { getHistoryWareHouseFG, updateExportFGLog } from "../../../api/ui/warehouse";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import "../style.scss";
+import EditableTable from "../../../components/Table/EditableTable";
 
 const ThanhPhamGiay = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
@@ -56,6 +57,7 @@ const ThanhPhamGiay = (props) => {
       key: "khach_hang",
       align: "center",
       fixed: 'left',
+      width: 150,
       render: (value) => value || "-",
     },
     {
@@ -64,6 +66,7 @@ const ThanhPhamGiay = (props) => {
       key: "mdh",
       align: "center",
       fixed: 'left',
+      width: 70,
       render: (value) => value || "-",
     },
     {
@@ -104,6 +107,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "kich_thuoc",
       key: "kich_thuoc",
       align: "center",
+      width: 120,
       render: (value) => value || "-",
     },
     {
@@ -143,7 +147,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "tg_nhap",
           key: "tg_nhap",
           align: "center",
-          width: 70,
+          width: 150,
           render: (value) => (value && dayjs(value).format('HH:mm')) || "-",
         },
         {
@@ -151,7 +155,7 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "sl_nhap",
           key: "sl_nhap",
           align: "center",
-          width: 70,
+          width: 100,
           render: (value) => value || "-",
         },
         {
@@ -180,16 +184,20 @@ const ThanhPhamGiay = (props) => {
           dataIndex: "tg_xuat",
           key: "tg_xuat",
           align: "center",
-          width: 100,
+          width: 150,
           render: (value) => (value && dayjs(value).format('DD/MM/YYYY')) || "-",
+          editable: true,
+          inputType: 'date'
         },
         {
           title: "TG xuất",
           dataIndex: "tg_xuat",
           key: "tg_xuat",
           align: "center",
-          width: 70,
+          width: 100,
           render: (value) => (value && dayjs(value).format('HH:mm')) || "-",
+          editable: true,
+          inputType: 'time'
         },
         {
           title: "SL xuất",
@@ -198,6 +206,7 @@ const ThanhPhamGiay = (props) => {
           align: "center",
           width: 70,
           render: (value) => value || "-",
+          editable: true,
         },
         {
           title: "Người xuất",
@@ -208,12 +217,14 @@ const ThanhPhamGiay = (props) => {
           render: (value) => value || "-",
         },
       ],
+      editable: true
     },
     {
       title: "Vị trí",
       dataIndex: "vi_tri",
       key: "vi_tri",
       align: "center",
+      width: 70,
       render: (value) => value || "-",
     },
     {
@@ -221,6 +232,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "pallet_id",
       key: "pallet_id",
       align: "center",
+      width: 150,
       render: (value) => value || "-",
     },
     {
@@ -228,6 +240,7 @@ const ThanhPhamGiay = (props) => {
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
+      width: 150,
       render: (value) => value || "-",
     },
   ];
@@ -247,7 +260,10 @@ const ThanhPhamGiay = (props) => {
   async function btn_click() {
     setLoading(true);
     const res = await getHistoryWareHouseFG(params);
-    setDataTable(res.data);
+    setDataTable(res.data.map(e=>({
+      ...e,
+      tg_xuat: (e.tg_xuat && dayjs(e.tg_xuat)) || null
+    })));
     setParams({ ...params, totalPage: res.totalPage })
     setLoading(false);
   }
@@ -274,6 +290,17 @@ const ThanhPhamGiay = (props) => {
   const formSubmition = () => {
     console.log(params);
     params.page === 1 ? btn_click() : setParams({ ...params, page: 1 });
+  }
+
+  const onUpdate = async (rowData) => {
+    //update sl_xuat only
+    console.log(rowData);
+    if(!rowData.sl_xuat || isNaN(rowData.sl_xuat)){
+      message.warning('Số lượng xuất phải là số');
+      return false;
+    }
+    var res = await updateExportFGLog(rowData);
+    btn_click();
   }
   return (
     <>
@@ -392,7 +419,7 @@ const ThanhPhamGiay = (props) => {
               </Space>
             }
           >
-            <Table
+            <EditableTable
               size="small"
               bordered
               loading={loading}
@@ -414,6 +441,8 @@ const ThanhPhamGiay = (props) => {
               }}
               columns={table}
               dataSource={dataTable}
+              setDataSource={setDataTable}
+              onUpdate={onUpdate}
             />
           </Card>
         </Col>

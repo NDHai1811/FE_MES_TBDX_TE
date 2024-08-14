@@ -24,8 +24,10 @@ import {
   createOrder,
   deleteOrders,
   exportOrders,
+  getCustomer,
   getKhuon,
   getOrders,
+  getRealCustomerList,
   restoreOrders,
   splitOrders,
   updateOrder,
@@ -42,6 +44,7 @@ import {
 } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { getCustomers } from "../../../api/ui/main";
 
 const EditableCell = ({
   editing,
@@ -59,7 +62,7 @@ const EditableCell = ({
   let inputNode;
   switch (inputType) {
     case "number":
-      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)}/>;
+      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)} />;
       break;
     case "select":
       inputNode = (
@@ -221,6 +224,8 @@ const Orders = () => {
   const [layouts, setLayouts] = useState([]);
   const [listDRC, setListDRC] = useState([]);
   const [listKhuonLink, setListKhuonLink] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [customerShorts, setCustomerShorts] = useState([]);
   const [listCheck, setListCheck] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalPage, setTotalPage] = useState(1);
@@ -354,6 +359,14 @@ const Orders = () => {
     const arr = optionChecks.map((value) => value.value);
     setListParams(e.target.checked ? arr : []);
   };
+  const fetchCustomers = async () => {
+    var res = await getRealCustomerList();
+    setCustomers(res.data.map(e => ({ ...e, value: e.id, label: e.id })))
+  }
+  const fetchCustomerShorts = async () => {
+    var res = await getCustomers();
+    setCustomerShorts(res.data)
+  }
   const showInput = () => {
     setInputData([
       ...inputData,
@@ -366,6 +379,16 @@ const Orders = () => {
   };
   const [hideData, setHideData] = useState([]);
   const colDetailTable = [
+    {
+      title: "Mã khách hàng",
+      dataIndex: "customer_id",
+      key: "customer_id",
+      align: "center",
+      editable: true,
+      checked: true,
+      fixed: "left",
+      width: 100,
+    },
     {
       title: "Khách hàng",
       dataIndex: "short_name",
@@ -849,7 +872,7 @@ const Orders = () => {
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
             />
-            {!record?.deleted_at ? 
+            {!record?.deleted_at ?
               <Popconfirm
                 title="Bạn có chắc chắn muốn xóa?"
                 onConfirm={() => onDetele([record.id])}
@@ -877,20 +900,20 @@ const Orders = () => {
     },
   ];
 
-  const mergedColumns = colDetailTable.filter(col=>{
-    if(col.dataIndex === 'action'){
+  const mergedColumns = colDetailTable.filter(col => {
+    if (col.dataIndex === 'action') {
       if (!userProfile || !(userProfile?.permission ?? []).includes('edit-order')) {
         return false;
       }
       return true;
-    }else{
+    } else {
       return true
     }
   }).map((col) => {
     if (!editableColumns.includes(col.dataIndex)) {
       return col;
     }
-    
+
     return {
       ...col,
       onCell: (record) => ({
@@ -910,7 +933,9 @@ const Orders = () => {
                 col.dataIndex === "layout_type" ||
                 col.dataIndex === "phan_loai_1" ||
                 col.dataIndex === "phan_loai_2" ||
-                col.dataIndex === "quy_cach_drc"
+                col.dataIndex === "quy_cach_drc" ||
+                col.dataIndex === "customer_id" ||
+                col.dataIndex === "short_name"
                 ? "select"
                 : "text",
         dataIndex: col.dataIndex,
@@ -970,6 +995,13 @@ const Orders = () => {
         // if (filteredOptions.length <= 0) {
         //   filteredOptions = listDRC;
         // }
+        break;
+      case 'customer_id':
+        filteredOptions = customers;
+        break;
+      case 'short_name':
+        var record = data.find((e) => e.id === editingKey);
+        filteredOptions = customerShorts.filter(e=>e?.customer_id === record?.customer_id);
         break;
       default:
         break;
@@ -1062,6 +1094,8 @@ const Orders = () => {
     getLayouts();
     getDRCs();
     getKhuonLink();
+    fetchCustomers();
+    fetchCustomerShorts();
   }, []);
 
   const rowSelection = {
@@ -1110,14 +1144,14 @@ const Orders = () => {
         val[dataIndex] = value;
         if (val?.buyer_id && val?.phan_loai_1 && val?.dai && val?.rong) {
           const khuon = listKhuonLink.find(e => {
-            if(e.customer_id == val.short_name && e.buyer_id == val.buyer_id && e.phan_loai_1 == val.phan_loai_1 && e.dai == val.dai && e.rong == val.rong && e?.cao == val?.cao && ((!e?.pad_xe_ranh && !val?.note_3) || e?.pad_xe_ranh == val?.note_3)){
+            if (e.customer_id == val.short_name && e.buyer_id == val.buyer_id && e.phan_loai_1 == val.phan_loai_1 && e.dai == val.dai && e.rong == val.rong && e?.cao == val?.cao && ((!e?.pad_xe_ranh && !val?.note_3) || e?.pad_xe_ranh == val?.note_3)) {
               return true
             }
             return false;
           });
           if (khuon) {
             val = { ...val, khuon_id: khuon?.khuon_id }
-          }else{
+          } else {
             val = { ...val, khuon_id: null }
           }
         }
@@ -1133,14 +1167,14 @@ const Orders = () => {
         val[dataIndex] = value;
         if (val?.buyer_id && val?.phan_loai_1 && val?.dai && val?.rong) {
           const khuon = listKhuonLink.find(e => {
-            if(e.customer_id == val.short_name && e.buyer_id == val.buyer_id && e.phan_loai_1 == val.phan_loai_1 && e.dai == val.dai && e.rong == val.rong && e?.cao == val?.cao && ((!e?.pad_xe_ranh && !val?.note_3) || e?.pad_xe_ranh == val?.note_3)){
+            if (e.customer_id == val.short_name && e.buyer_id == val.buyer_id && e.phan_loai_1 == val.phan_loai_1 && e.dai == val.dai && e.rong == val.rong && e?.cao == val?.cao && ((!e?.pad_xe_ranh && !val?.note_3) || e?.pad_xe_ranh == val?.note_3)) {
               return true
             }
             return false;
           });
           if (khuon) {
             val = { ...val, khuon_id: khuon?.khuon_id }
-          }else{
+          } else {
             val = { ...val, khuon_id: null }
           }
         }
@@ -1191,10 +1225,10 @@ const Orders = () => {
 
   const restore = async (record) => {
     var res = await restoreOrders(record);
-    if(res.success){
+    if (res.success) {
       loadListTable(params);
     }
-  } 
+  }
 
   const cancel = () => {
     // if (typeof editingKey === "number") {
@@ -1295,7 +1329,7 @@ const Orders = () => {
 
   const onDetele = async (ids) => {
     var res = await deleteOrders({ ids });
-    if(res.success){
+    if (res.success) {
       loadListTable(params);
       message.success('Xoá thành công');
     }
@@ -1404,7 +1438,7 @@ const Orders = () => {
     });
     setInputData(items);
   };
-  
+
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -1423,18 +1457,18 @@ const Orders = () => {
     };
   }, [data]);
   const onFormValuesChange = (changedValues, allValues) => {
-    if(editingKey){
-      const record = data.find(e=>e.id ===editingKey);
+    if (editingKey) {
+      const record = data.find(e => e.id === editingKey);
       let formData = { ...record };
       if (record?.buyer_id && record?.phan_loai_1 && record?.dai && record?.rong) {
         const khuon = listKhuonLink.find(e => e.customer_id == record.short_name && e.buyer_id == record.buyer_id && e.phan_loai == record.phan_loai && e.dai == record.dai && e.rong == record.rong && e?.cao == record?.cao && e?.pad_xe_ranh == record?.note_3);
         if (khuon) {
           formData = { ...formData, khuon_id: khuon?.khuon_id, phan_loai_2: null }
-          setData(prev=>prev.map(e=>{
-            if(e.id === editingKey){
-              return {...e, khuon_id: khuon?.khuon_id, phan_loai_2: null};
+          setData(prev => prev.map(e => {
+            if (e.id === editingKey) {
+              return { ...e, khuon_id: khuon?.khuon_id, phan_loai_2: null };
             }
-            return {...e};
+            return { ...e };
           }))
         }
       }
@@ -1783,8 +1817,8 @@ const Orders = () => {
                       }}
                       optionFilterProp="label"
                       options={[
-                        {value: 'all', label: 'Tất cả'},
-                        {value: 'deleted', label: 'Đã xoá'},
+                        { value: 'all', label: 'Tất cả' },
+                        { value: 'deleted', label: 'Đã xoá' },
                       ]}
                       placeholder="Chọn trạng thái"
                     />

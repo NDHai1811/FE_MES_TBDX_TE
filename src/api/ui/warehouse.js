@@ -69,6 +69,10 @@ export async function getHistoryWareHouseFG(params) {
   const res = await axios.get("/ui/warehouse/fg/log", { params: params });
   return res.data;
 }
+export async function updateExportFGLog(params) {
+  const res = await axios.post("/ui/warehouse/fg/update-export-log", params);
+  return res;
+}
 export async function createWareHouseFGExport(params) {
   const res = await axios.post("/ui/warehouse/fg/export/create", params);
   return res;
