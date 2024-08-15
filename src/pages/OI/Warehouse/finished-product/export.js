@@ -270,7 +270,10 @@ const Export = (props) => {
     setSelectedItem();
   }
   const onFinish = async (values) => {
-    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: values, delivery_note_id: selectedItem?.delivery_note_id }
+    const lsx = values ? Object.values(values) : [];
+    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: lsx, delivery_note_id: selectedItem?.delivery_note_id }
+    console.log(params);
+    
     var res = await exportPallet(params);
     if (res.success) {
       setVisible(false);
