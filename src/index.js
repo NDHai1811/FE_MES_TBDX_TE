@@ -9,6 +9,7 @@ import { Provider } from "react-redux";
 import { configureStore } from "./store";
 import { ConfigProvider } from "antd";
 import viVN from "antd/locale/vi_VN";
+import "./index.css"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
