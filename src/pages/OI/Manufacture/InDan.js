@@ -393,6 +393,9 @@ const InDan = (props) => {
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
         console.log(e.data);
+        if(e.data?.info_cong_doan?.machine_id !== machine_id){
+          return;
+        }
         if (e.data?.reload) {
           window.location.reload();
         } else {
