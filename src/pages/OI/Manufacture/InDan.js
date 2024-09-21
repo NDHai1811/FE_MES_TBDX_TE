@@ -36,9 +36,30 @@ import socketio from 'socket.io-client';
 
 const columns = [
   {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MĐH",
+    dataIndex: "mdh",
+    key: "mdh",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MQL",
+    dataIndex: "mql",
+    key: "mql",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -75,23 +96,9 @@ const columns = [
     render: (value) => value || "-",
   },
   {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -208,7 +215,7 @@ const InDan = (props) => {
   useEffect(()=>{
     getOverAllDetail();
     getListLotDetail();
-  }, [])
+  }, [params])
 
   useEffect(() => {
     if (isScan === 1) {

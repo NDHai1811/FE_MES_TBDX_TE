@@ -90,6 +90,13 @@ const columns = [
     width: 70
   },
   {
+    title: "Số dao",
+    dataIndex: "so_dao",
+    key: "so_dao",
+    align: "center",
+    width: 70
+  },
+  {
     title: "SL thực tế",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
@@ -198,11 +205,11 @@ const Manufacture1 = (props) => {
     },
     {
       title: "SL còn lại",
-      dataIndex: "sl_dau_ra_hang_loat",
-      key: "sl_dau_ra_hang_loat",
+      dataIndex: "sl_con_lai",
+      key: "sl_con_lai",
       align: "center",
       width: '20%',
-      render: (value) => value ?? "-",
+      render: (value, record) => (record?.san_luong_kh ?? 0) - (record?.sl_dau_ra_hang_loat ?? 0),
     },
     {
       title: "Phế",
@@ -491,8 +498,6 @@ const Manufacture1 = (props) => {
               }
               return lo;
             }));
-            
-            
           }
         }
       });
