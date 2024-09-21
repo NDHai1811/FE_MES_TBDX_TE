@@ -89,13 +89,13 @@ const columns = [
     align: "center",
     width: 70
   },
-  {
-    title: "Số dao",
-    dataIndex: "so_dao",
-    key: "so_dao",
-    align: "center",
-    width: 70
-  },
+  // {
+  //   title: "Số dao",
+  //   dataIndex: "so_dao",
+  //   key: "so_dao",
+  //   align: "center",
+  //   width: 70
+  // },
   {
     title: "SL thực tế",
     dataIndex: "sl_dau_ra_hang_loat",
@@ -419,16 +419,17 @@ const Manufacture1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
-    if (!selectedLot?.lo_sx) {
-      messageApi.warning('Chưa chọn lô để bắt đầu');
+    if (listCheck.length !== 1 || !(listCheck[0] ?? false)) {
+      messageApi.warning('Chọn 1 lô để bắt đầu');
       return 0;
     }
     setLoadingAction(true);
-    var res = await startProduce({ lo_sx: selectedLot?.lo_sx, is_pause: false, machine_id: machine_id });
+    var res = await startProduce({ lo_sx: listCheck[0], is_pause: false, machine_id: machine_id });
     if (res.success) {
       setIsPasued(false);
       getListLotDetail();
     }
+    setListCheck([]);
     setLoadingAction(false);
   }
   const onStop = async () => {
