@@ -124,7 +124,7 @@ const InDan = (props) => {
     },
     {
       title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
+      dataIndex: "sl_dau_ra_hang_loat",
       key: "san_luong",
       align: "center",
       render: (value) => value,
@@ -233,10 +233,12 @@ const InDan = (props) => {
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
+    let check = false;
     setData(res.data.map(e => {
-      if (e?.status === 1) {
+      if (e?.status === 1 && !check) {
         setSpecifiedRowKey(e?.lo_sx);
-        setSelectedLot(e)
+        setSelectedLot(e);
+        check = true;
       }
       return { ...e, key: e?.lo_sx }
     }));
