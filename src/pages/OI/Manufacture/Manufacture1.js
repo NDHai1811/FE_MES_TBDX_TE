@@ -405,6 +405,7 @@ const Manufacture1 = (props) => {
 
   const rowSelection = {
     fixed: true,
+    columnWidth: 50,
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
@@ -595,6 +596,7 @@ const Manufacture1 = (props) => {
             rowClassName={(record, index) =>
               "no-hover " + rowClassName(record, index)
             }
+            rowHoverable={false}
             className="bottom-table"
             ref={tableRef}
             pagination={false}
@@ -606,6 +608,7 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
+            virtual
             dataSource={data}
           />
         </Col>
