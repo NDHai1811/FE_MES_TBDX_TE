@@ -18,6 +18,7 @@ import {
     Tabs,
     Badge,
     DatePicker,
+    Empty,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
@@ -356,6 +357,8 @@ const TaoTem = () => {
         value.isValid() && setData(items);
     };
     const rowSelection = {
+        fixed: 'left',
+        columnWidth: 48,
         onChange: (selectedRowKeys, selectedRows) => {
             setListCheck(selectedRowKeys);
         },
@@ -830,14 +833,16 @@ const TaoTem = () => {
                                     bordered
                                     scroll={{
                                         y: tableHeight,
-                                        x: "100vw"
+                                        x: 'calc(100vw + 48px)'
                                     }}
+                                    // locale={{emptyText: <Empty style={{width: '100%', display: 'flex'}} image={Empty.PRESENTED_IMAGE_SIMPLE}/>}}
                                     components={{
                                         body: {
-                                            cell: EditableCell,
+                                            cell: data.length ? EditableCell : null,
                                         },
                                     }}
-                                    rowClassName="editable-row"
+                                    virtual
+                                    // rowClassName="editable-row"
                                     columns={mergedColumns}
                                     dataSource={data}
                                     rowSelection={rowSelection}

@@ -36,9 +36,30 @@ import socketio from 'socket.io-client';
 
 const columns = [
   {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
+    title: "Khách hàng",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MĐH",
+    dataIndex: "mdh",
+    key: "mdh",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "MQL",
+    dataIndex: "mql",
+    key: "mql",
+    align: "center",
+    render: (value, record, index) => value || "-",
+  },
+  {
+    title: "Quy cách",
+    dataIndex: "quy_cach",
+    key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -75,23 +96,9 @@ const columns = [
     render: (value) => value || "-",
   },
   {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
+    title: "Lô SX",
+    dataIndex: "lo_sx",
+    key: "lo_sx",
     align: "center",
     render: (value, record, index) => value || "-",
   },
@@ -117,7 +124,7 @@ const InDan = (props) => {
     },
     {
       title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
+      dataIndex: "sl_dau_ra_hang_loat",
       key: "san_luong",
       align: "center",
       render: (value) => value,
@@ -208,7 +215,7 @@ const InDan = (props) => {
   useEffect(()=>{
     getOverAllDetail();
     getListLotDetail();
-  }, [])
+  }, [params])
 
   useEffect(() => {
     if (isScan === 1) {
@@ -226,7 +233,16 @@ const InDan = (props) => {
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
-    tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
+    let check = false;
+    setData(res.data.map(e => {
+      if (e?.status === 1 && !check) {
+        setSpecifiedRowKey(e?.lo_sx);
+        setSelectedLot(e);
+        check = true;
+      }
+      return { ...e, key: e?.lo_sx }
+    }));
+    // tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
     setLoading(false);
   };
 
@@ -386,18 +402,43 @@ const InDan = (props) => {
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
         console.log(e.data);
-        let result = e.data;
-        if(result.length > 0){
-          var target = result[result.length-1 ?? 0];
-          // setLSX(target?.lo_sx);
-          // setSelectedLot({ ...selectedLot, lo_sx: target.lo_sx, san_luong_kh: target.dinh_muc, sl_dau_ra_hang_loat: target.sl_dau_ra_hang_loat, sl_ng_sx: target.sl_ng_sx });
-          dispatch({type: 'UPDATE_DATA', payload: result});
+        if(e.data?.info_cong_doan?.machine_id !== machine_id){
+          return;
+        }
+        if (e.data?.reload) {
+          window.location.reload();
+        } else {
+          if (e.data?.info_cong_doan) {
+            setData(prevData => [...prevData].map(lo => {
+              if (e.data?.info_cong_doan?.lo_sx == lo.lo_sx) {
+                const current = { ...lo, ...e.data?.info_cong_doan};
+                setSelectedLot(current);
+                setSpecifiedRowKey(current?.lo_sx);
+                return current;
+              }
+              return lo;
+            }));
+            
+            
+          }
         }
       });
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
     };
   }, [location]);
+  const [specifiedRowKey, setSpecifiedRowKey] = useState(null);
+  const tableRef = useRef();
+  const handleScrollToRow = (specifiedRowKey) => {
+    if (specifiedRowKey !== null && tableRef.current) {
+      tableRef.current?.scrollTo({ key: specifiedRowKey, behavior: 'smooth' });
+    }
+  };
+  useEffect(() => {
+    if (data.length > 0) {
+      handleScrollToRow(specifiedRowKey);
+    }
+  }, [specifiedRowKey]);
   useEffect(()=>{
     const updateItems = dataTable.map(item => {
       const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
@@ -492,6 +533,7 @@ const InDan = (props) => {
         </Row>
         <Col span={24} className="mt-2">
           <Table
+            ref={tableRef}
             scroll={{
               x: tableSize.width,
               y: tableSize.height,
@@ -505,7 +547,7 @@ const InDan = (props) => {
             pagination={false}
             bordered
             columns={columns}
-            dataSource={dataTable}
+            dataSource={data}
           />
         </Col>
       </Spin>

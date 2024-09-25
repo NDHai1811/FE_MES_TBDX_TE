@@ -87,79 +87,91 @@ const columns = [
     dataIndex: "san_luong_kh",
     key: "san_luong_kh",
     align: "center",
+    width: 70
   },
+  // {
+  //   title: "Số dao",
+  //   dataIndex: "so_dao",
+  //   key: "so_dao",
+  //   align: "center",
+  //   width: 70
+  // },
   {
     title: "SL thực tế",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
+    width: 80
   },
   {
     title: "Mặt F",
     dataIndex: "ma_cuon_f",
     key: "ma_cuon_f",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Sóng E",
     dataIndex: "ma_cuon_se",
     key: "ma_cuon_se",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Láng E",
     dataIndex: "ma_cuon_le",
     key: "ma_cuon_le",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Sóng B",
     dataIndex: "ma_cuon_sb",
     key: "ma_cuon_sb",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Láng B",
     dataIndex: "ma_cuon_lb",
     key: "sl",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Sóng C",
     dataIndex: "ma_cuon_sc",
     key: "ma_cuon_sc",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Láng C",
     dataIndex: "ma_cuon_lc",
     key: "ma_cuon_lc",
     align: "center",
-    width: '90px',
+    width: 70,
   },
   {
     title: "Số mét tới",
     dataIndex: "so_m_toi",
     key: "so_m_toi",
     align: "center",
+    width: 70
   },
   {
     title: "SL phế",
     dataIndex: "sl_ng_sx",
     key: "sl_ng_sx",
     align: "center",
+    width: 70
   },
   {
     title: "Phán định",
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
+    width: 70,
     render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
   },
   {
@@ -167,6 +179,7 @@ const columns = [
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
+    width: 120
   },
 ];
 
@@ -192,11 +205,11 @@ const Manufacture1 = (props) => {
     },
     {
       title: "SL còn lại",
-      dataIndex: "sl_dau_ra_hang_loat",
-      key: "sl_dau_ra_hang_loat",
+      dataIndex: "sl_con_lai",
+      key: "sl_con_lai",
       align: "center",
       width: '20%',
-      render: (value) => value ?? "-",
+      render: (value, record) => (record?.san_luong_kh ?? 0) - (record?.sl_dau_ra_hang_loat ?? 0),
     },
     {
       title: "Phế",
@@ -319,8 +332,21 @@ const Manufacture1 = (props) => {
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
-    // setData(res.data.map((e, index) => ({ ...e, key: e.lo_sx })));
-    tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
+    setData(res.data.map(e => {
+      if (e?.status === 1) {
+        setSpecifiedRowKey(e?.lo_sx);
+        setCurrent(e)
+      }
+      return { ...e, key: e?.lo_sx }
+    }));
+    // tableDispatch({
+    //   type: 'UPDATE_DATA', payload: res.data.map((e, index) => {
+    //     if (e.status == 1) {
+    //       setSpecifiedRowKey(e.lo_sx);
+    //     }
+    //     return { ...e, key: e.lo_sx }
+    //   })
+    // });
     setLoading(false);
   };
 
@@ -329,7 +355,7 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    
+
     if (record.status === 1) {
       return "table-row-green";
     }
@@ -342,7 +368,7 @@ const Manufacture1 = (props) => {
     if (record.status === 4) {
       return "table-row-grey";
     }
-    if(record?.lo_sx === selectedLot?.lo_sx){
+    if (record?.lo_sx === selectedLot?.lo_sx) {
       return "table-row-light-blue";
     }
     return "";
@@ -379,6 +405,7 @@ const Manufacture1 = (props) => {
 
   const rowSelection = {
     fixed: true,
+    columnWidth: 50,
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
@@ -393,16 +420,17 @@ const Manufacture1 = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
-    if (!selectedLot?.lo_sx) {
-      messageApi.warning('Chưa chọn lô để bắt đầu');
+    if (listCheck.length !== 1 || !(listCheck[0] ?? false)) {
+      messageApi.warning('Chọn 1 lô để bắt đầu');
       return 0;
     }
     setLoadingAction(true);
-    var res = await startProduce({ lo_sx: selectedLot?.lo_sx, is_pause: false, machine_id: machine_id });
+    var res = await startProduce({ lo_sx: listCheck[0], is_pause: false, machine_id: machine_id });
     if (res.success) {
       setIsPasued(false);
       getListLotDetail();
     }
+    setListCheck([]);
     setLoadingAction(false);
   }
   const onStop = async () => {
@@ -434,13 +462,13 @@ const Manufacture1 = (props) => {
   };
   const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
   useEffect(() => {
-    if(!(location.pathname.indexOf('/oi/manufacture') > -1)){
+    if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
       return 0;
     }
     window.io = socketio;
     window.Echo = new Echo({
       broadcaster: 'socket.io',
-      host: baseHost+':6001', // Laravel Echo Server host
+      host: baseHost + ':6001', // Laravel Echo Server host
       transports: ['websocket', 'polling', 'flashsocket']
     });
     window.Echo.connector.socket.on('connect', () => {
@@ -456,30 +484,41 @@ const Manufacture1 = (props) => {
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
         console.log(e.data);
-        let result = e.data.map(e=>({...e, key: e.lo_sx}));
-        if(result.length > 0){
-          var target = result[result.length-1 ?? 0];
-          setCurrent(target ?? null);
-          dispatch({type: 'UPDATE_DATA', payload: result});
+        if(e.data?.info_cong_doan?.machine_id !== machine_id){
+          return;
+        }
+        if (e.data?.reload) {
+          window.location.reload();
+        } else {
+          if (e.data?.info_cong_doan) {
+            setData(prevData => [...prevData].map(lo => {
+              if (e.data?.info_cong_doan?.lo_sx == lo.lo_sx) {
+                const current = { ...lo, ...e.data?.info_cong_doan};
+                setCurrent(current);
+                setSpecifiedRowKey(current?.lo_sx);
+                return current;
+              }
+              return lo;
+            }));
+          }
         }
       });
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
     };
   }, [location]);
-  useEffect(()=>{
-    const updateItems = dataTable.map(item => {
-      const record = updatedData.find(e => e.lo_sx === item.lo_sx);
-      if (record) {
-        return {
-          ...item,
-          ...record
-        };
-      }
-      return item;
-    });
-    tableDispatch({type: 'UPDATE_DATA', payload: updateItems});
-  }, [updatedData])
+
+  const [specifiedRowKey, setSpecifiedRowKey] = useState(null);
+  const handleScrollToRow = (specifiedRowKey) => {
+    if (specifiedRowKey !== null && tableRef.current) {
+      tableRef.current?.scrollTo({ key: specifiedRowKey, behavior: 'smooth' });
+    }
+  };
+  useEffect(() => {
+    if (data.length > 0) {
+      handleScrollToRow(specifiedRowKey);
+    }
+  }, [specifiedRowKey]);
   return (
     <React.Fragment>
       {contextHolder}
@@ -492,7 +531,7 @@ const Manufacture1 = (props) => {
             locale={{ emptyText: "Trống" }}
             className="custom-table"
             columns={overallColumns}
-            dataSource={overall.map((e, i)=>({...e, key: i}))}
+            dataSource={overall.map((e, i) => ({ ...e, key: i }))}
           />
         </Col>
         <Col span={24}>
@@ -506,7 +545,7 @@ const Manufacture1 = (props) => {
             dataSource={current ? [current] : []}
             onRow={(record, rowIndex) => {
               return {
-                onClick: (event) => { tableRef.current?.scrollTo({ key: current?.lo_sx }); },
+                onClick: (event) => { tableRef.current?.scrollTo({ key: current?.lo_sx, behavior: 'smooth' }); },
               };
             }}
           />
@@ -550,13 +589,14 @@ const Manufacture1 = (props) => {
           <Table
             loading={loading}
             scroll={{
-              x: window.innerWidth < 700 ? '400vw' : '150vw',
+              x: true,
               y: '50vh',
             }}
             size="small"
             rowClassName={(record, index) =>
               "no-hover " + rowClassName(record, index)
             }
+            rowHoverable={false}
             className="bottom-table"
             ref={tableRef}
             pagination={false}
@@ -568,7 +608,8 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
-            dataSource={dataTable.map((e)=>({...e, key: e.lo_sx}))}
+            virtual
+            dataSource={data}
           />
         </Col>
       </Row>
