@@ -84,20 +84,6 @@ const KeHoachSanXuat = () => {
       editable: true,
     },
     {
-      title: "Lô sx",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
-      align: "center",
-      width: 150,
-    },
-    {
-      title: "Máy sx",
-      dataIndex: "machine_id",
-      key: "machine_id",
-      align: "center",
-      width: 100,
-    },
-    {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
@@ -221,6 +207,20 @@ const KeHoachSanXuat = () => {
       key: "creator",
       align: "center",
       render: (value)=>value?.name ?? ""
+    },
+    {
+      title: "Lô sx",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      width: 150,
+    },
+    {
+      title: "Máy sx",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: 100,
     },
     {
       title: "Tác vụ",
