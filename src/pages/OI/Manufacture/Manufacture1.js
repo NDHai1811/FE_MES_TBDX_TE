@@ -334,7 +334,6 @@ const Manufacture1 = (props) => {
     const res = await getLotByMachine(params);
     setData(res.data.map(e => {
       if (e?.status === 1) {
-        setSpecifiedRowKey(e?.lo_sx);
         setCurrent(e)
       }
       return { ...e, key: e?.lo_sx }
@@ -488,7 +487,7 @@ const Manufacture1 = (props) => {
           return;
         }
         if (e.data?.reload) {
-          window.location.reload();
+          reloadData(); 
         } else {
           if (e.data?.info_cong_doan) {
             setData(prevData => [...prevData].map(lo => {
@@ -509,16 +508,21 @@ const Manufacture1 = (props) => {
   }, [location]);
 
   const [specifiedRowKey, setSpecifiedRowKey] = useState(null);
-  const handleScrollToRow = (specifiedRowKey) => {
+  const handleScrollToRow = () => {
     if (specifiedRowKey !== null && tableRef.current) {
       tableRef.current?.scrollTo({ key: specifiedRowKey, behavior: 'smooth' });
     }
   };
   useEffect(() => {
+    console.log('dm', specifiedRowKey, data);
+    
     if (data.length > 0) {
       handleScrollToRow(specifiedRowKey);
     }
   }, [specifiedRowKey]);
+  useEffect(()=>{
+    current && setSpecifiedRowKey(current?.lo_sx);
+  }, [current])
   return (
     <React.Fragment>
       {contextHolder}
@@ -596,6 +600,7 @@ const Manufacture1 = (props) => {
             rowClassName={(record, index) =>
               "no-hover " + rowClassName(record, index)
             }
+            rowKey={'lo_sx'}
             rowHoverable={false}
             className="bottom-table"
             ref={tableRef}
@@ -608,7 +613,7 @@ const Manufacture1 = (props) => {
                 onClick: (event) => { onClickRow(record) },
               };
             }}
-            virtual
+            // virtual
             dataSource={data}
           />
         </Col>

@@ -102,3 +102,7 @@ export async function updateTem(params) {
     const res = await axios.post("ui/manufacture/tem/update", params);
     return res;
 }
+export async function deleteTem(id) {
+    const res = await axios.delete("ui/manufacture/tem/delete/" + id);
+    return res;
+}

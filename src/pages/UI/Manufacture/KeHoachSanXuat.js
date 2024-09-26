@@ -80,22 +80,8 @@ const KeHoachSanXuat = () => {
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: 50,
-      editable: true,
-    },
-    {
-      title: "Lô sx",
-      dataIndex: "lo_sx",
-      key: "lo_sx",
-      align: "center",
-      width: 150,
-    },
-    {
-      title: "Máy sx",
-      dataIndex: "machine_id",
-      key: "machine_id",
-      align: "center",
       width: 100,
+      editable: true,
     },
     {
       title: "Khách hàng",
@@ -154,6 +140,20 @@ const KeHoachSanXuat = () => {
       width: 60,
     },
     {
+      title: "Số dao",
+      dataIndex: "so_dao",
+      key: "so_dao",
+      align: "center",
+      width: 60,
+    },
+    {
+      title: "Dài tấm",
+      dataIndex: "dai_tam",
+      key: "dai_tam",
+      align: "center",
+      width: 60,
+    },
+    {
       title: "Kết cấu giấy",
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
@@ -188,20 +188,6 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Số dao",
-      dataIndex: "so_dao",
-      key: "so_dao",
-      align: "center",
-      width: 60,
-    },
-    {
-      title: "Dài tấm",
-      dataIndex: "dai_tam",
-      key: "dai_tam",
-      align: "center",
-      width: 60,
-    },
-    {
       title: "Layout",
       dataIndex: "layout_id",
       key: "layout_id",
@@ -221,6 +207,20 @@ const KeHoachSanXuat = () => {
       key: "creator",
       align: "center",
       render: (value)=>value?.name ?? ""
+    },
+    {
+      title: "Lô sx",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      width: 150,
+    },
+    {
+      title: "Máy sx",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: 100,
     },
     {
       title: "Tác vụ",
@@ -316,7 +316,7 @@ const KeHoachSanXuat = () => {
   const onUpdate = async () => {
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
-    const res = await updateProductPlan({ ...item, ...row });
+    const res = await updateProductPlan({plan: { ...item, ...row }, params});
     if (res) {
       form.resetFields();
       loadListTable();
