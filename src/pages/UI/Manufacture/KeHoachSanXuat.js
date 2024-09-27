@@ -36,6 +36,7 @@ import {
   DeleteOutlined,
   DownOutlined,
   EditOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import TemXaLot from "./TemXaLot";
 import Tem from "../../OI/Manufacture/TemGiayTam";
@@ -206,7 +207,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "creator",
       key: "creator",
       align: "center",
-      render: (value)=>value?.name ?? ""
+      render: (value) => value?.name ?? ""
     },
     {
       title: "Lô sx",
@@ -214,6 +215,7 @@ const KeHoachSanXuat = () => {
       key: "lo_sx",
       align: "center",
       width: 150,
+      // fixed: 'right'
     },
     {
       title: "Máy sx",
@@ -234,17 +236,20 @@ const KeHoachSanXuat = () => {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Typography.Link
-              onClick={() => onUpdate(record)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Lưu
-            </Typography.Link>
-            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-              <a>Hủy</a>
-            </Popconfirm>
+            {isLoading ? <LoadingOutlined /> :
+              <>
+                <Typography.Link
+                  onClick={() => onUpdate(record)}
+                  style={{
+                    marginRight: 8,
+                  }}
+                >
+                  Lưu
+                </Typography.Link>
+                <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+                  <a>Hủy</a>
+                </Popconfirm>
+              </>}
           </span>
         ) : (
           <span>
@@ -313,15 +318,18 @@ const KeHoachSanXuat = () => {
     });
   };
 
+  const [isLoading, setIsLoading] = useState(false);
   const onUpdate = async () => {
+    setIsLoading(true);
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
-    const res = await updateProductPlan({plan: { ...item, ...row }, params});
+    const res = await updateProductPlan({ ...item, ...row });
     if (res) {
       form.resetFields();
       loadListTable();
       setEditingKey("");
     }
+    setIsLoading(false);
   };
   const onDetele = async (record) => {
     console.log(record);
@@ -345,7 +353,7 @@ const KeHoachSanXuat = () => {
   };
 
   const cancel = () => {
-    if (typeof editingKey === "number") {
+    if (editingKey === 0) {
       const newData = [...data];
       newData.shift();
       setData(newData);
