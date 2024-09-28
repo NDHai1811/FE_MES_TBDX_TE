@@ -103,3 +103,9 @@ export async function getTrackingStatus(params){
 export async function getCurrentManufacturing(params){
   return await axios.get("/oi/manufacture/current", {params});
 }
+export async function startTracking(params){
+  return await axios.post("/oi/manufacture/start-tracking", params);
+}
+export async function stopTracking(params){
+  return await axios.post("/oi/manufacture/stop-tracking", params);
+}

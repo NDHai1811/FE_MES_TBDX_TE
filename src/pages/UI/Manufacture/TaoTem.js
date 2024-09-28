@@ -19,10 +19,11 @@ import {
     Badge,
     DatePicker,
     Empty,
+    Popconfirm,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect, useRef } from "react";
-import { createStampFromOrder, getTems, updateTem } from "../../../api/ui/manufacture";
+import { createStampFromOrder, deleteTem, getTems, updateTem } from "../../../api/ui/manufacture";
 import "../style.scss";
 import { useReactToPrint } from "react-to-print";
 import { getOrders, getUsers } from "../../../api";
@@ -32,6 +33,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
 import dayjs from "dayjs";
+import EditableTable from "../../../components/Table/EditableTable";
 
 const EditableCell = ({
     editing,
@@ -266,7 +268,7 @@ const TaoTem = () => {
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
-                    <span>
+                    <Space wrap>
                         <Typography.Link
                             onClick={() => onUpdate(record)}
                             style={{
@@ -276,19 +278,31 @@ const TaoTem = () => {
                             Lưu
                         </Typography.Link>
                         <a onClick={cancel}>Hủy</a>
-                    </span>
+                    </Space>
                 ) : (
-                    <span>
+                    <Space wrap>
                         <EditOutlined
                             style={{ color: "#1677ff", fontSize: 18 }}
                             disabled={editingKey !== ""}
                             onClick={() => edit(record)}
                         />
-                    </span>
+                        <Popconfirm title="Bạn có chắc chắn muốn xoá?" onConfirm={()=>deleteRecord(record)}>
+                            <DeleteOutlined
+                                style={{ color: "red", fontSize: 18 }}
+                                disabled={editingKey !== ""}
+                            />
+                        </Popconfirm>
+                    </Space>
                 );
             },
         },
     ];
+    const deleteRecord = async (record) => {
+        var res = await deleteTem(record?.id);
+        if(res.success){
+            loadListTable();
+        }
+    }
     const [messageApi, contextHolder] = message.useMessage();
 
     useEffect(() => {
@@ -523,26 +537,32 @@ const TaoTem = () => {
             render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.thoi_gian_bat_dau).format('DD-MM-YYYY') : '',
         },
     ];
-    const selectOrdersColumns = [...ordersColumn, {
-        title: 'Tác vụ',
-        key: 'action',
-        dataIndex: 'action',
-        align: 'center',
-        fixed: 'right',
-        width: 60,
-        render: (_, record) => <DeleteOutlined style={{ color: "red", fontSize: 18 }} onClick={() => onDeselectOrders([record])} />
-    }];
+    const selectOrdersColumns = [
+        ...ordersColumn.slice(0, 5),
+        {
+            title: 'Số lượng định mức',
+            dataIndex: 'sl_dinh_muc',
+            key: "sl_dinh_muc",
+            align: 'center',
+            editable: true,
+            inputType: 'number',
+            inputProps: {
+                max: (record) => record?.sl,
+                min: 0
+            }
+        },
+        ...ordersColumn.slice(5)];
     const [orderChecked, setOrderChecked] = useState([]);
     const [selectedOrders, setSelectedOrders] = useState([]);
     const orderRowSelection = {
-        selectedRowKeys: [].concat(selectedOrders).map(e => e.key),
+        selectedRowKeys: selectedOrders.map(e => e.id),
         fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
             setOrderChecked(selectedRowKeys);
             setSelectedOrders(prev => {
                 const newArray = [...prev, ...selectedRows];
                 return newArray.filter((e, index) => {
-                    return index === newArray.findIndex(o => e.key === o.key);
+                    return index === newArray.findIndex(o => e.id === o.id);
                 });
             });
         },
@@ -553,8 +573,19 @@ const TaoTem = () => {
         setSelectedOrders(prev => {
             const newArray = [...prev];
             return newArray.filter((e, index) => {
-                return !rows.some(o => o.key === e.key)
+                return !rows.some(o => o.id === e.id)
             });
+        });
+    }
+    const onChangeSLDM = (rowData, editingKey) => {
+        setSelectedOrders(prev => {
+            const newArray = [...prev];
+            return newArray.map((e, i) => {
+                if (i === editingKey) {
+                    return { ...e, ...rowData }
+                }
+                return { ...e }
+            })
         });
     }
     const createStamp = async () => {
@@ -571,7 +602,7 @@ const TaoTem = () => {
             messageApi.info('Chưa chọn nhân viên');
             return 0;
         }
-        var res = await createStampFromOrder({ order_ids: order_ids, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
+        var res = await createStampFromOrder({ orders: selectedOrders, machine_id: orderParams.machine_id, nhan_vien_sx: orderParams.nhan_vien_sx });
         if (res.success) {
             setOpenModal(false);
             setOrderChecked([]);
@@ -632,7 +663,7 @@ const TaoTem = () => {
         {
             label: <Space>{'Đơn hàng đã chọn'}<Badge count={selectedOrders.length} showZero color="#1677ff" overflowCount={999} /></Space>,
             key: 2,
-            children: <Table size='small' bordered
+            children: <EditableTable size='small' bordered
                 pagination={false}
                 loading={loadingOrders}
                 scroll={
@@ -644,6 +675,9 @@ const TaoTem = () => {
                 tableLayout="fixed"
                 columns={selectOrdersColumns}
                 dataSource={selectedOrders}
+                onDelete={(record) => onDeselectOrders([record])}
+                onUpdate={onChangeSLDM}
+                setDataSource={setSelectedOrders}
                 summary={() => (
                     <Table.Summary fixed>
                         <Table.Summary.Row>
@@ -1076,7 +1110,7 @@ const TaoTem = () => {
                             >
                                 <DatePicker
                                     allowClear
-                                    style={{width:'100%'}}
+                                    style={{ width: '100%' }}
                                     onChange={(value) => {
                                         setOrderParams({
                                             ...orderParams,

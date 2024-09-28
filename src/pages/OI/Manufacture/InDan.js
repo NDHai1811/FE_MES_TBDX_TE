@@ -23,6 +23,9 @@ import {
   getLotByMachine,
   getInfoTem,
   scanQrCode,
+  getTrackingStatus,
+  startTracking,
+  stopTracking,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -41,6 +44,7 @@ const columns = [
     key: "khach_hang",
     align: "center",
     render: (value, record, index) => value || "-",
+    width: 100,
   },
   {
     title: "MĐH",
@@ -48,6 +52,7 @@ const columns = [
     key: "mdh",
     align: "center",
     render: (value, record, index) => value || "-",
+    width: 100,
   },
   {
     title: "MQL",
@@ -55,6 +60,7 @@ const columns = [
     key: "mql",
     align: "center",
     render: (value, record, index) => value || "-",
+    width: 50,
   },
   {
     title: "Quy cách",
@@ -62,24 +68,28 @@ const columns = [
     key: "quy_cach",
     align: "center",
     render: (value, record, index) => value || "-",
+    width: 130,
   },
   {
     title: "Sản lượng kế hoạch",
     dataIndex: "dinh_muc",
     key: "dinh_muc",
     align: "center",
+    width: 150,
   },
   {
     title: "Sản lượng đầu ra",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
+    width: 130,
   },
   {
     title: "Sản lượng đạt",
     dataIndex: "sl_ok",
     key: "sl_ok",
     align: "center",
+    width: 110,
   },
   {
     title: "Phán định",
@@ -87,6 +97,7 @@ const columns = [
     key: "phan_dinh",
     align: "center",
     render: (value) => (value === 1 ? "OK" : "-"),
+    width: 90,
   },
   {
     title: "Mã layout",
@@ -94,6 +105,7 @@ const columns = [
     key: "layout_id",
     align: "center",
     render: (value) => value || "-",
+    width: 90,
   },
   {
     title: "Lô SX",
@@ -101,6 +113,7 @@ const columns = [
     key: "lo_sx",
     align: "center",
     render: (value, record, index) => value || "-",
+    width: 120,
   },
 ];
 
@@ -242,6 +255,7 @@ const InDan = (props) => {
       }
       return { ...e, key: e?.lo_sx }
     }));
+    fetchTrackingStatus();
     // tableDispatch({type: 'UPDATE_DATA', payload: res.data.map((e, index) => ({ ...e, key: e.lo_sx }))});
     setLoading(false);
   };
@@ -251,8 +265,9 @@ const InDan = (props) => {
   };
 
   const onScan = async (result) => {
-    const lo_sx = JSON.parse(result).lo_sx;
-    scanQrCode({ lo_sx: lo_sx, machine_id: machine_id })
+    const qrResult = JSON.parse(result);
+    const lo_sx = qrResult?.lo_sx;
+    scanQrCode({ lo_sx: lo_sx, machine_id: machine_id, so_luong: qrResult?.so_luong })
       .then((response) => response.success && getListLotDetail())
       .catch((err) => console.log("Quét mã qr thất bại: ", err));
     setIsOpenQRScanner(false);
@@ -451,7 +466,23 @@ const InDan = (props) => {
       return item;
     });
     tableDispatch({type: 'UPDATE_DATA', payload: updateItems});
-  }, [updatedData])
+  }, [updatedData]);
+
+  const [trackingStatus, setTrackingStatus] = useState(0);
+  const fetchTrackingStatus = async () => {
+    var res = await getTrackingStatus({ machine_id: machine_id });
+    if (res.success) {
+      setTrackingStatus(res.data?.status);
+    }
+  }
+  const onChangeTrackingStatus = async () => {
+    if(trackingStatus === 0){
+      await startTracking({ machine_id: machine_id });
+    }else{
+      await stopTracking({ machine_id: machine_id });
+    }
+    fetchTrackingStatus();
+  } 
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -478,7 +509,7 @@ const InDan = (props) => {
               dataSource={selectedLot ? [selectedLot] : []}
             />
           </Col>
-          <Col span={9}>
+          <Col span={(machine_id === 'P15' || machine_id === 'P06') ? 8 : 9}>
             <DatePicker
               allowClear={false}
               placeholder="Từ ngày"
@@ -488,7 +519,7 @@ const InDan = (props) => {
               onChange={onChangeStartDate}
             />
           </Col>
-          <Col span={9}>
+          <Col span={(machine_id === 'P15' || machine_id === 'P06') ? 8 : 9}>
             <DatePicker
               allowClear={false}
               placeholder="Đến ngày"
@@ -497,6 +528,15 @@ const InDan = (props) => {
               defaultValue={dayjs()}
               onChange={onChangeEndDate}
             />
+          </Col>
+          <Col span={(machine_id === 'P15' || machine_id === 'P06') ? 2 : 0}>
+            <Button
+              size="medium"
+              type="primary"
+              style={{ width: "100%" }}
+              disabled={trackingStatus === 1}
+              onClick={() => onChangeTrackingStatus()}
+            >Bắt đầu</Button>
           </Col>
           <Col span={2}>
             <Button
@@ -535,7 +575,7 @@ const InDan = (props) => {
           <Table
             ref={tableRef}
             scroll={{
-              x: tableSize.width,
+              // x: tableSize.width,
               y: tableSize.height,
             }}
             size="small"

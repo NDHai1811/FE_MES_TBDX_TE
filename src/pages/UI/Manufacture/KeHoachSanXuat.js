@@ -36,6 +36,7 @@ import {
   DeleteOutlined,
   DownOutlined,
   EditOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import TemXaLot from "./TemXaLot";
 import Tem from "../../OI/Manufacture/TemGiayTam";
@@ -140,6 +141,20 @@ const KeHoachSanXuat = () => {
       width: 60,
     },
     {
+      title: "Số dao",
+      dataIndex: "so_dao",
+      key: "so_dao",
+      align: "center",
+      width: 60,
+    },
+    {
+      title: "Dài tấm",
+      dataIndex: "dai_tam",
+      key: "dai_tam",
+      align: "center",
+      width: 60,
+    },
+    {
       title: "Kết cấu giấy",
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
@@ -174,20 +189,6 @@ const KeHoachSanXuat = () => {
       align: "center",
     },
     {
-      title: "Số dao",
-      dataIndex: "so_dao",
-      key: "so_dao",
-      align: "center",
-      width: 60,
-    },
-    {
-      title: "Dài tấm",
-      dataIndex: "dai_tam",
-      key: "dai_tam",
-      align: "center",
-      width: 60,
-    },
-    {
       title: "Layout",
       dataIndex: "layout_id",
       key: "layout_id",
@@ -206,7 +207,22 @@ const KeHoachSanXuat = () => {
       dataIndex: "creator",
       key: "creator",
       align: "center",
-      render: (value)=>value?.name ?? ""
+      render: (value) => value?.name ?? ""
+    },
+    {
+      title: "Lô sx",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      width: 150,
+      // fixed: 'right'
+    },
+    {
+      title: "Máy sx",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: 100,
     },
     {
       title: "Lô sx",
@@ -234,17 +250,20 @@ const KeHoachSanXuat = () => {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Typography.Link
-              onClick={() => onUpdate(record)}
-              style={{
-                marginRight: 8,
-              }}
-            >
-              Lưu
-            </Typography.Link>
-            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
-              <a>Hủy</a>
-            </Popconfirm>
+            {isLoading ? <LoadingOutlined /> :
+              <>
+                <Typography.Link
+                  onClick={() => onUpdate(record)}
+                  style={{
+                    marginRight: 8,
+                  }}
+                >
+                  Lưu
+                </Typography.Link>
+                <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+                  <a>Hủy</a>
+                </Popconfirm>
+              </>}
           </span>
         ) : (
           <span>
@@ -313,7 +332,9 @@ const KeHoachSanXuat = () => {
     });
   };
 
+  const [isLoading, setIsLoading] = useState(false);
   const onUpdate = async () => {
+    setIsLoading(true);
     const row = await form.validateFields();
     const item = data.find((val) => val.key === editingKey);
     const res = await updateProductPlan({ ...item, ...row });
@@ -322,6 +343,7 @@ const KeHoachSanXuat = () => {
       loadListTable();
       setEditingKey("");
     }
+    setIsLoading(false);
   };
   const onDetele = async (record) => {
     console.log(record);
@@ -345,7 +367,7 @@ const KeHoachSanXuat = () => {
   };
 
   const cancel = () => {
-    if (typeof editingKey === "number") {
+    if (editingKey === 0) {
       const newData = [...data];
       newData.shift();
       setData(newData);

@@ -29,7 +29,7 @@ const EditableTable = forwardRef((props, ref) => {
     let inputNode;
     switch (inputType) {
       case "number":
-        inputNode = <InputNumber {...inputProps} />;
+        inputNode = <InputNumber {...inputProps} max={typeof inputProps?.max === 'function' ? inputProps?.max(record) : (inputProps?.max ?? false)}/>;
         break;
       case "select":
         inputNode = (
@@ -170,9 +170,11 @@ const EditableTable = forwardRef((props, ref) => {
     } else {
       if (onUpdate) {
         var res = await onUpdate({ ...record, ...row }, editingKey);
+        console.log(res);
         if (typeof res === 'boolean') {
           if (res) {
-            setDataSource(data)
+            setDataSource(data);
+            setData(data);
           } else {
             setData(dataSource)
           }
