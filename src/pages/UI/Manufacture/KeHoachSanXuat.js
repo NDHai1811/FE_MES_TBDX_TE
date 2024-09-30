@@ -81,7 +81,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "thu_tu_uu_tien",
       key: "thu_tu_uu_tien",
       align: "center",
-      width: 100,
+      width: 50,
       editable: true,
     },
     {
@@ -216,6 +216,20 @@ const KeHoachSanXuat = () => {
       align: "center",
       width: 150,
       // fixed: 'right'
+    },
+    {
+      title: "Máy sx",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: 100,
+    },
+    {
+      title: "Lô sx",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      width: 150,
     },
     {
       title: "Máy sx",
