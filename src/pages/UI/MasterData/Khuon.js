@@ -64,7 +64,9 @@ const Khuon = () => {
       title: "Khách hàng",
       dataIndex: "customer_id",
       align: "center",
-      editable: true
+      editable: true,
+      width: 150,
+      fixed: 'left' 
     },
     {
       title: "Kích thước ĐH",
@@ -76,25 +78,33 @@ const Khuon = () => {
           title: "Dài",
           dataIndex: "dai",
           align: "center",
-          editable: true
+          editable: true,
+          fixed: 'left',
+          width: 70
         },
         {
           title: "Rộng",
           dataIndex: "rong",
           align: "center",
-          editable: true
+          editable: true,
+          fixed: 'left',
+          width: 70
         },
         {
           title: "Cao",
           dataIndex: "cao",
           align: "center",
-          editable: true
+          editable: true,
+          fixed: 'left',
+          width: 70
         },
         {
           title: "Kích thước chuẩn",
           dataIndex: "kich_thuoc",
           align: "center",
-          editable: true
+          editable: true,
+          fixed: 'left',
+          width: 120
         },
       ]
     },
@@ -103,13 +113,15 @@ const Khuon = () => {
       dataIndex: "phan_loai_1",
       align: "center",
       editable: true,
-      render: (value) => PL1s.find(e => e.value === value)?.label ?? ""
+      render: (value) => PL1s.find(e => e.value === value)?.label ?? "",
+      width: 120
     },
     {
       title: "Mã buyer",
       dataIndex: "buyer_id",
       align: "center",
-      editable: true
+      editable: true,
+      width: 190
     },
     {
       title: "Khuôn bế",
@@ -121,19 +133,22 @@ const Khuon = () => {
           title: "Khổ",
           dataIndex: "kho_khuon",
           align: "center",
-          editable: true
+          editable: true,
+          width: 70
         },
         {
           title: "Dài",
           dataIndex: "dai_khuon",
           align: "center",
-          editable: true
+          editable: true,
+          width: 70
         },
         {
           title: "Số con",
           dataIndex: "so_con",
           align: "center",
-          editable: true
+          editable: true,
+          width: 70
         },
       ]
     },
@@ -141,55 +156,64 @@ const Khuon = () => {
       title: "Số mảnh ghép",
       dataIndex: "so_manh_ghep",
       align: "center",
-      editable: true
+      editable: true,
+      width: 90
     },
     {
       title: "Mã khuôn bế",
       dataIndex: "khuon_id",
       align: "center",
-      editable: true
+      editable: true,
+      width: 220
     },
     {
       title: "Máy",
       dataIndex: "machine_id",
       align: "center",
-      editable: true
+      editable: true,
+      width: 70
     },
     {
-      title: "SL khuôn (số khuôn/bộ)",
+      title: "SL khuôn \n (số khuôn/bộ)",
       dataIndex: "sl_khuon",
       align: "center",
-      editable: true
+      editable: true,
+      width: 120
     },
     {
       title: "Pad xẻ rãnh",
       dataIndex: "pad_xe_ranh",
       align: "center",
-      editable: true
+      editable: true,
+      width: 100
     },
     {
       title: "Ghi chú khác",
       dataIndex: "note",
       align: "center",
-      editable: true
+      editable: true,
+      width: 120
     },
     {
       title: "Layout",
       dataIndex: "layout",
       align: "center",
-      editable: true
+      editable: true,
+      width: 100
     },
     {
       title: "Nhà cung cấp",
       dataIndex: "supplier",
       align: "center",
-      editable: true
+      editable: true,
+      width: 100
     },
     {
       title: "Ngày đặt khuôn",
       dataIndex: "ngay_dat_khuon",
       align: "center",
-      editable: true
+      editable: true,
+      width: 120
     },
   ];
 

@@ -70,6 +70,7 @@ const Layout = () => {
     page: 1,
     pageSize: 20,
   });
+  const tableRef = useRef(null);
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -188,6 +189,7 @@ const Layout = () => {
       align: "center",
       width: "170px",
       editable: hasEditColumn("customer_id"),
+      fixed: 'left',
     },
     {
       title: "Mã máy in và mã layout",
@@ -196,6 +198,7 @@ const Layout = () => {
       align: "center",
       width: "170px",
       editable: hasEditColumn("machine_layout_id"),
+      fixed: 'left',
     },
     {
       title: "Tên máy",
@@ -204,6 +207,7 @@ const Layout = () => {
       align: "center",
       editable: hasEditColumn("machine_id"),
       width: "80px",
+      fixed: 'left',
     },
     {
       title: "Mã layout",
@@ -212,6 +216,7 @@ const Layout = () => {
       align: "center",
       width: "4%",
       editable: hasEditColumn("layout_id"),
+      fixed: 'left',
     },
     {
       title: "Tốc độ",
@@ -518,6 +523,14 @@ const Layout = () => {
       ],
     },
     {
+      title: "Ngày cập nhật",
+      dataIndex: "updated_at",
+      key: "updated_at",
+      align: "center",
+      width: 150,
+      render: (value) => value && dayjs(value).isValid() ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
+    },
+    {
       title: "Hành động",
       dataIndex: "action",
       align: "center",
@@ -624,6 +637,7 @@ const Layout = () => {
     setData(newData);
     setEditingKey(data.length + 1);
     setType("add");
+    tableRef.current?.scrollTo({key: 0})
   };
 
   const cancel = (record) => {
@@ -757,7 +771,7 @@ const Layout = () => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={()=>btn_click()}
+                    onClick={() => btn_click()}
                   >
                     Truy vấn
                   </Button>
@@ -854,6 +868,7 @@ const Layout = () => {
             <Spin spinning={loading}>
               <Form form={form} component={false}>
                 <Table
+                  ref={tableRef}
                   size="small"
                   bordered
                   pagination={{
@@ -870,7 +885,7 @@ const Layout = () => {
                   }}
                   scroll={{
                     x: "280vw",
-                    y: tableHeight,
+                    y: 'calc(100vh - 340px)',
                   }}
                   components={{
                     body: {

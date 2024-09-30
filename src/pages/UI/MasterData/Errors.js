@@ -135,6 +135,7 @@ const Errors = () => {
         loadListTable(params);
       }
     }
+    setListCheck([])
   };
 
   const deleteRecord = async () => {
@@ -228,7 +229,7 @@ const Errors = () => {
           <Card
             style={{ height: "100%" }}
             className="custom-card scroll"
-            title="Quản lý thông số sản phẩm"
+            title="Quản lý lỗi công đoạn"
             extra={
               <Space>
                 <Upload
@@ -305,6 +306,10 @@ const Errors = () => {
                 pagination={true}
                 columns={col_detailTable}
                 dataSource={data}
+                scroll={{
+                  x: "100%",
+                  y: 'calc(100vh - 290px)',
+                }}
                 rowSelection={rowSelection}
               />
             </Spin>

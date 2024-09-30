@@ -64,6 +64,13 @@ const Machine = () => {
       fixed: "left",
     },
     {
+      title: "Công đoạn",
+      dataIndex: "line",
+      key: "line",
+      align: "center",
+      render: (value, item, index) => value?.name,
+    },
+    {
       title: "Kiểu loại",
       dataIndex: "kieu_loai",
       key: "kieu_loai",
@@ -74,13 +81,6 @@ const Machine = () => {
       dataIndex: "device_id",
       key: "device_id",
       align: "center",
-    },
-    {
-      title: "Công đoạn",
-      dataIndex: "line",
-      key: "line",
-      align: "center",
-      render: (value, item, index) => value?.name,
     },
     {
       title: "IOT",
@@ -178,6 +178,7 @@ const Machine = () => {
         loadListTable(params);
       }
     }
+    setListCheck([])
   };
 
   const deleteRecord = async () => {
@@ -272,7 +273,7 @@ const Machine = () => {
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
-            title="Máy"
+            title="Quản lý máy"
             extra={
               <Space>
                 <Upload
@@ -349,6 +350,10 @@ const Machine = () => {
                 pagination={true}
                 columns={col_detailTable}
                 dataSource={data}
+                scroll={{
+                  x: "100%",
+                  y: 'calc(100vh - 290px)',
+                }}
                 rowSelection={rowSelection}
               />
             </Spin>

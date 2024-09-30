@@ -156,6 +156,7 @@ const Users = () => {
         loadListTable(params);
       }
     }
+    setListCheck([])
   };
 
   const deleteRecord = async () => {
@@ -327,7 +328,7 @@ const Users = () => {
                 pagination={true}
                 scroll={{
                   x: "100%",
-                  y: window.innerHeight*0.57,
+                  y: 'calc(100vh - 290px)',
                 }}
                 columns={col_detailTable}
                 dataSource={data}

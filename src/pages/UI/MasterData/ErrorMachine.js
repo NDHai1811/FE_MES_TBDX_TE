@@ -48,12 +48,13 @@ const ErrorMachines = () => {
   const [lineList, setLineList] = useState([]);
   const col_detailTable = [
     {
-      title: "Mã lỗi ",
+      title: "Mã lỗi",
       dataIndex: "code",
       key: "code",
       align: "center",
       fixed: "left",
       editable: true,
+      width: 100
     },
     {
       title: "Tên lỗi",
@@ -61,6 +62,7 @@ const ErrorMachines = () => {
       key: "ten_su_co",
       align: "center",
       editable: true,
+      width: 220
     },
     {
       title: "Công đoạn",
@@ -70,7 +72,8 @@ const ErrorMachines = () => {
       render: (value) => lineList.find(e => e.value == value)?.label,
       editable: true,
       inputType: 'select',
-      options: lineList
+      options: lineList,
+      width: 100
     },
     {
       title: "Nguyên nhân",
@@ -78,6 +81,7 @@ const ErrorMachines = () => {
       key: "nguyen_nhan",
       align: "center",
       editable: true,
+      width: 200
     },
     {
       title: "Cách xử lý",
@@ -341,7 +345,7 @@ const ErrorMachines = () => {
               columns={col_detailTable}
               scroll={{
                 x: "100%",
-                y: tableHeight,
+                y: 'calc(100vh - 290px)',
               }}
               ref={tableRef}
               pagination={{

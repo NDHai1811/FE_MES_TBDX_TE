@@ -151,7 +151,7 @@ const QualityPQC = (props) => {
       key: "phan_dinh",
       align: "center",
       render: (value, record) =>
-        value === 1 ? "OK" : value === 2 ? "NG" : "waiting",
+        value === 1 ? "OK" : value === 2 ? "NG" : "pass",
     },
     {
       title: "Lô sản xuất",

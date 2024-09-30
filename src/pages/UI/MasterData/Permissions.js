@@ -28,7 +28,7 @@ import { authProtectedRoutes } from "../../../routes/allRoutes";
 import { useProfile } from "../../../components/hooks/UserHooks";
 
 const Permissions = () => {
-  document.title = "Quản lý quyền";
+  document.title = "Quản lý phân quyền";
   const { userProfile } = useProfile();
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
@@ -134,6 +134,7 @@ const Permissions = () => {
         loadListTable(params);
       }
     }
+    setListCheck([])
   };
 
   const deleteRecord = async () => {
@@ -225,7 +226,7 @@ const Permissions = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            title="Quản lý quyền"
+            title="Quản lý phân quyền"
             className="custom-card scroll"
             extra={
               <Space>
@@ -301,10 +302,10 @@ const Permissions = () => {
                 size="small"
                 bordered
                 pagination={true}
-                // scroll={{
-                //   x: "100%",
-                //   y: window.innerHeight*0.55,
-                // }}
+                scroll={{
+                  x: "100%",
+                  y: 'calc(100vh - 290px)',
+                }}
                 columns={col_detailTable}
                 dataSource={data}
                 rowSelection={rowSelection}

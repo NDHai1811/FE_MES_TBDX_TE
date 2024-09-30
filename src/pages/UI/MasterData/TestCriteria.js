@@ -77,7 +77,7 @@ const TestCriteria = () => {
     },
 
     {
-      title: "Tiêu chuẩn",
+      title: "Dung sai",
       dataIndex: "tieu_chuan",
       key: "tieu_chuan",
       align: "center",
@@ -89,7 +89,7 @@ const TestCriteria = () => {
       align: "center",
     },
     {
-      title: "Tham chiếu TCKT công đoạn",
+      title: "Tham chiếu",
       dataIndex: "ref_line",
       key: "ref_line",
       align: "center",
@@ -119,11 +119,12 @@ const TestCriteria = () => {
     {
       title: "Tiêu chuẩn",
       key: "tieu_chuan",
-      // required: true
+      required: true
     },
     {
       title: "Phân định",
       key: "phan_dinh",
+      required: true,
     },
     {
       title: "Tham chiếu TCKT công đoạn",
@@ -187,6 +188,7 @@ const TestCriteria = () => {
         loadListTable(params);
       }
     }
+    setListCheck([])
   };
 
   const deleteRecord = async () => {
@@ -361,7 +363,7 @@ const TestCriteria = () => {
                 pagination={true}
                 scroll={{
                   x: "100%",
-                  y: window.innerHeight*0.55,
+                  y: 'calc(100vh - 290px)',
                 }}
                 columns={col_detailTable}
                 dataSource={data}

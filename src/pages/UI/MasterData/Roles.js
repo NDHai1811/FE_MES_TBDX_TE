@@ -52,6 +52,7 @@ const Roles = () => {
       dataIndex: "name",
       key: "name",
       align: "center",
+      width: 170
     },
     {
       title: "Thuộc bộ phận",
@@ -59,6 +60,7 @@ const Roles = () => {
       key: "parent",
       align: "center",
       render: (value) => value?.name,
+      width: 150
     },
     {
       title: "Quyền",
@@ -155,6 +157,7 @@ const Roles = () => {
         loadListTable(params);
       }
     }
+    setListCheck([])
   };
 
   const deleteRecord = async () => {
@@ -321,7 +324,7 @@ const Roles = () => {
                 pagination={true}
                 scroll={{
                   x: "100%",
-                  y: window.innerHeight*0.57,
+                  y: 'calc(100vh - 290px)',
                 }}
                 columns={col_detailTable} 
                 dataSource={data}
