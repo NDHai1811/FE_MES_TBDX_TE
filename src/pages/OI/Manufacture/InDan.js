@@ -225,7 +225,7 @@ const InDan = (props) => {
     },
   ];
 
-  useEffect(()=>{
+  useEffect(() => {
     getOverAllDetail();
     getListLotDetail();
   }, [params])
@@ -395,13 +395,13 @@ const InDan = (props) => {
   };
   const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
   useEffect(() => {
-    if(!(location.pathname.indexOf('/oi/manufacture') > -1)){
+    if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
       return 0;
     }
     window.io = socketio;
     window.Echo = new Echo({
       broadcaster: 'socket.io',
-      host: baseHost+':6001', // Laravel Echo Server host
+      host: baseHost + ':6001', // Laravel Echo Server host
       transports: ['websocket', 'polling', 'flashsocket']
     });
     window.Echo.connector.socket.on('connect', () => {
@@ -416,25 +416,26 @@ const InDan = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        console.log(e.data);
-        if(e.data?.info_cong_doan?.machine_id !== machine_id){
+        if (e.data?.info_cong_doan?.machine_id !== machine_id) {
           return;
         }
+        console.log(e.data);
         if (e.data?.reload) {
-          window.location.reload();
+          getOverAllDetail();
+          getListLotDetail();
         } else {
           if (e.data?.info_cong_doan) {
             setData(prevData => [...prevData].map(lo => {
               if (e.data?.info_cong_doan?.lo_sx == lo.lo_sx) {
-                const current = { ...lo, ...e.data?.info_cong_doan};
+                const current = { ...lo, ...e.data?.info_cong_doan };
                 setSelectedLot(current);
                 setSpecifiedRowKey(current?.lo_sx);
                 return current;
               }
               return lo;
             }));
-            
-            
+
+
           }
         }
       });
@@ -454,7 +455,7 @@ const InDan = (props) => {
       handleScrollToRow(specifiedRowKey);
     }
   }, [specifiedRowKey]);
-  useEffect(()=>{
+  useEffect(() => {
     const updateItems = dataTable.map(item => {
       const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
       if (record) {
@@ -465,7 +466,7 @@ const InDan = (props) => {
       }
       return item;
     });
-    tableDispatch({type: 'UPDATE_DATA', payload: updateItems});
+    tableDispatch({ type: 'UPDATE_DATA', payload: updateItems });
   }, [updatedData]);
 
   const [trackingStatus, setTrackingStatus] = useState(0);
@@ -476,13 +477,13 @@ const InDan = (props) => {
     }
   }
   const onChangeTrackingStatus = async () => {
-    if(trackingStatus === 0){
+    if (trackingStatus === 0) {
       await startTracking({ machine_id: machine_id });
-    }else{
+    } else {
       await stopTracking({ machine_id: machine_id });
     }
     fetchTrackingStatus();
-  } 
+  }
   return (
     <React.Fragment>
       <Spin spinning={loading}>

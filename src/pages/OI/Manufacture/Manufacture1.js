@@ -482,10 +482,10 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        console.log(e.data);
         if(e.data?.info_cong_doan?.machine_id !== machine_id){
           return;
         }
+        console.log(e.data);
         if (e.data?.reload) {
           reloadData(); 
         } else {
