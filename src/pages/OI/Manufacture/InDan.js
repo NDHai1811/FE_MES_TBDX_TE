@@ -301,6 +301,18 @@ const InDan = (props) => {
     }
   };
 
+  useEffect(()=>{
+    handlePrint();
+  }, [listTem]);
+
+  const printSelectedLots = () => {
+    if(listCheck.length > 0){
+      setListTem(data.filter(e=>listCheck.includes(e.key)));
+    }else{
+      message.info('Chọn lô để in');
+    }
+  }
+
   const print = useReactToPrint({
     content: () => componentRef1.current,
   });
@@ -322,32 +334,35 @@ const InDan = (props) => {
   };
 
   const [visiblePrint, setVisiblePrint] = useState();
-  const [quantity, setQuantity] = useState();
+  const [quantity, setQuantity] = useState(0);
   const openMdlPrint = () => {
-    if (typeof (selectedLot) != 'undefined') {
+    if (listCheck.length === 1) {
       setVisiblePrint(true);
-      setQuantity(selectedLot?.san_luong);
+      setQuantity(data.find(e=>e.key === listCheck[0])?.san_luong);
     } else {
-      message.info('Chưa chọn lô in tem');
+      message.info('Chọn 1 lô để in tem');
     }
   }
 
   const onConfirmPrint = async () => {
-    if (selectedLot.so_luong < quantity) {
+    console.log(quantity);
+    
+    if (data.find(e=>e.key === listCheck[0])?.so_luong < quantity) {
       message.error('Số lượng nhập vượt quá số lượng thực tế');
     } else {
-      const res = { ...selectedLot, so_luong: quantity };
-      setListCheck([res]);
+      const res = { ...data.find(e=>e.key === listCheck[0]), so_luong: quantity };
+      setListTem([res]);
       setSelectedLot();
-      setQuantity("");
+      setQuantity(0);
       setVisiblePrint(false);
+      setListCheck([]);
     }
   };
   const rowSelection = {
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys)
-      setListTem(selectedRows);
+      // setListTem(selectedRows);
     },
     // getCheckboxProps: (record) => ({
     //   disabled: !record?.id
@@ -553,7 +568,7 @@ const InDan = (props) => {
               size="medium"
               type="primary"
               style={{ width: "100%" }}
-              onClick={handlePrint}
+              onClick={printSelectedLots}
               icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
             />
             <div className="report-history-invoice">
@@ -617,7 +632,7 @@ const InDan = (props) => {
         >
           <InputNumber
             value={quantity}
-            max={selectedLot?.san_luong}
+            max={data.find(e=>e.key === listCheck[0])?.san_luong}
             placeholder="Nhập sản lượng trên tem"
             onChange={setQuantity}
             style={{ width: "100%" }}

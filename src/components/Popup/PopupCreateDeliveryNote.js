@@ -364,7 +364,7 @@ const PopupCreateDeliveryNote = (props) => {
                   return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
                 } else if (index === 10) {
                   return <Table.Summary.Cell align="center" index={index}>{
-                    selectedRows.reduce((sum, { sl }) => sum + parseInt(sl), 0)
+                    selectedRows.reduce((sum, { so_luong_xuat }) => sum + parseInt(so_luong_xuat), 0)
                   }</Table.Summary.Cell>
                 } else {
                   return <Table.Summary.Cell index={index} />

@@ -241,7 +241,7 @@ const WarehouseExportPlan = () => {
   const onAfterCreate = async () => {
     loadListTable(params);
     const res4 = await getDeliveryNoteList();
-    setListNote(res4.data.map(e => ({ ...e, value: e.id, label: e.id })));
+    setListNote(res4.data.data.map(e => ({ ...e, value: e.id, label: e.id })));
   }
   const rowSelection = {
     selectedRowKeys: listCheck,

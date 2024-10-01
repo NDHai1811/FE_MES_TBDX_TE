@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useReducer } from "react";
-import { PrinterOutlined } from "@ant-design/icons";
+import { DragOutlined, PrinterOutlined, StopOutlined } from "@ant-design/icons";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
 import {
@@ -27,6 +27,7 @@ import {
   getCurrentManufacturing,
   startProduce,
   stopProduce,
+  reorderPlan,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import {
@@ -38,6 +39,34 @@ import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
 import { baseHost, baseURL } from "../../../config";
+import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+const DraggableRow = (props) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: props['data-row-key'],
+  });
+  const style = {
+    ...props.style,
+    transform: CSS.Translate.toString(transform),
+    transition,
+    cursor: 'move',
+    ...(isDragging
+      ? {
+        position: 'relative',
+        zIndex: 9999,
+      }
+      : {}),
+  };
+  return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
+};
 
 const columns = [
   {
@@ -45,7 +74,8 @@ const columns = [
     dataIndex: "thu_tu_uu_tien",
     key: "thu_tu_uu_tien",
     align: "center",
-    width: 50
+    width: 50,
+    fixed: 'left'
   },
   {
     title: "Tên khách hàng",
@@ -108,56 +138,56 @@ const columns = [
     dataIndex: "ma_cuon_f",
     key: "ma_cuon_f",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Sóng E",
     dataIndex: "ma_cuon_se",
     key: "ma_cuon_se",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Láng E",
     dataIndex: "ma_cuon_le",
     key: "ma_cuon_le",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Sóng B",
     dataIndex: "ma_cuon_sb",
     key: "ma_cuon_sb",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Láng B",
     dataIndex: "ma_cuon_lb",
     key: "sl",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Sóng C",
     dataIndex: "ma_cuon_sc",
     key: "ma_cuon_sc",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Láng C",
     dataIndex: "ma_cuon_lc",
     key: "ma_cuon_lc",
     align: "center",
-    width: 70,
+    width: 80,
   },
   {
     title: "Số mét tới",
     dataIndex: "so_m_toi",
     key: "so_m_toi",
     align: "center",
-    width: 70
+    width: 80
   },
   {
     title: "SL phế",
@@ -179,7 +209,8 @@ const columns = [
     dataIndex: "lo_sx",
     key: "lo_sx",
     align: "center",
-    width: 120
+    width: 120,
+    fixed: 'right'
   },
 ];
 
@@ -482,17 +513,18 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        if(e.data?.info_cong_doan?.machine_id !== machine_id){
+        console.log(e.data);
+        if (e.data?.info_cong_doan?.machine_id !== machine_id) {
           return;
         }
         console.log(e.data);
         if (e.data?.reload) {
-          reloadData(); 
+          reloadData();
         } else {
           if (e.data?.info_cong_doan) {
             setData(prevData => [...prevData].map(lo => {
               if (e.data?.info_cong_doan?.lo_sx == lo.lo_sx) {
-                const current = { ...lo, ...e.data?.info_cong_doan};
+                const current = { ...lo, ...e.data?.info_cong_doan };
                 setCurrent(current);
                 setSpecifiedRowKey(current?.lo_sx);
                 return current;
@@ -514,15 +546,41 @@ const Manufacture1 = (props) => {
     }
   };
   useEffect(() => {
-    console.log('dm', specifiedRowKey, data);
-    
     if (data.length > 0) {
       handleScrollToRow(specifiedRowKey);
     }
   }, [specifiedRowKey]);
-  useEffect(()=>{
+  useEffect(() => {
     current && setSpecifiedRowKey(current?.lo_sx);
-  }, [current])
+  }, [current]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        // https://docs.dndkit.com/api-documentation/sensors/pointer#activation-constraints
+        distance: 1,
+      },
+    }),
+  );
+  const onDragEnd = async ({ active, over }) => {
+    if (active.id !== over?.id) {
+      let current = null;
+      let target = null;
+      setData((prev) => {
+        const activeIndex = prev.findIndex((i) => i.key === active.id);
+        const overIndex = prev.findIndex((i) => i.key === over?.id);
+        current = prev[activeIndex];
+        target = prev[overIndex];
+        return arrayMove(prev, activeIndex, overIndex);
+      });
+      console.log(current, target);
+      const plan_input = {...current, thu_tu_uu_tien: target.thu_tu_uu_tien}
+      await reorderPlan(plan_input);
+      getListLotDetail();
+    }
+  };
+
+  const [isDraggable, setIsDraggable] = useState(false);
   return (
     <React.Fragment>
       {contextHolder}
@@ -574,8 +632,8 @@ const Manufacture1 = (props) => {
             onChange={onChangeEndDate}
           />
         </Col>
-        <Col span={6}><Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
-        <Col span={6}>
+        <Col span={5}><Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+        <Col span={5}>
           <Button
             size="medium"
             type="primary"
@@ -589,36 +647,59 @@ const Manufacture1 = (props) => {
             <TemThanhPham listCheck={listTem} ref={componentRef2} />
           </div>
         </Col>
+        <Col span={2}>
+          <Button
+            size="medium"
+            type="primary"
+            style={{ width: "100%" }}
+            onClick={()=>setIsDraggable(!isDraggable)}
+            title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
+            icon={!isDraggable ? <DragOutlined /> : <StopOutlined/>}
+          ></Button>
+        </Col>
         <Col span={24}>
-          <Table
-            loading={loading}
-            scroll={{
-              x: true,
-              y: '50vh',
-            }}
-            size="small"
-            rowClassName={(record, index) =>
-              "no-hover " + rowClassName(record, index)
-            }
-            rowKey={'lo_sx'}
-            rowHoverable={false}
-            className="bottom-table"
-            ref={tableRef}
-            pagination={false}
-            bordered
-            columns={columns}
-            rowSelection={rowSelection}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: (event) => { onClickRow(record) },
-              };
-            }}
-            // virtual
-            dataSource={data}
-          />
+          <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+            <SortableContext
+              // rowKey array
+              items={data.map((i) => i.key)}
+              strategy={verticalListSortingStrategy}
+            >
+              <Table
+                loading={loading}
+                scroll={{
+                  x: '100%',
+                  y: '50vh',
+                }}
+                size="small"
+                rowClassName={(record, index) =>
+                  rowClassName(record, index)
+                }
+                components={{
+                  body: {
+                    row: isDraggable ? DraggableRow : null,
+                  },
+                }}
+                rowKey={'lo_sx'}
+                rowHoverable={false}
+                className="bottom-table"
+                ref={tableRef}
+                pagination={false}
+                bordered
+                columns={columns}
+                rowSelection={rowSelection}
+                onRow={(record, rowIndex) => {
+                  return {
+                    onClick: (event) => { onClickRow(record) },
+                  };
+                }}
+                // virtual
+                dataSource={data}
+              />
+            </SortableContext>
+          </DndContext>
         </Col>
       </Row>
-    </React.Fragment>
+    </React.Fragment >
   );
 };
 

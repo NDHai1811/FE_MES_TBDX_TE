@@ -12,48 +12,48 @@ thead td[class*="ant-table-cell ant-table-cell-scrollbar"] {
   background-color: #0454a2 !important;
 }
 
-.table-row-light {
-  background-color: #ffffff;
+.table-row-light, .table-row-light td {
+  background-color: #ffffff !important;
 }
 
-.table-row-dark {
-  background-color: #fbfbfb;
+.table-row-dark, .table-row-dark td {
+  background-color: #fbfbfb !important;
 }
 
-.table-row-grey {
+.table-row-grey, .table-row-grey td {
   background-color: #ebebeb !important;
 }
 
-.table-row-red {
-  background-color: #ec1414;
-  color: white;
+.table-row-red, .table-row-red td {
+  background-color: #ec1414 !important;
+  color: white !important;
 }
 
-.table-row-pink {
-  background-color: #e63b82;
-  color: white;
+.table-row-pink, .table-row-pink td {
+  background-color: #e63b82 !important;
+  color: white !important;
 }
 
-.table-row-green {
-  background-color: #9eff7c;
+.table-row-green, .table-row-green td {
+  background-color: #9eff7c !important;
 }
 
-.table-row-pink {
-  background-color: rgb(199, 112, 127);
+.table-row-pink, .table-row-pink td {
+  background-color: rgb(199, 112, 127) !important;
 }
 
-.table-row-blue {
-  background-color: #2878f0;
-  color: white;
+.table-row-blue, .table-row-blue td {
+  background-color: #2878f0 !important;
+  color: white !important;
 }
 
-.table-row-light-blue {
-  background-color: #bae0ff;
+.table-row-light-blue, .table-row-light-blue td {
+  background-color: #bae0ff !important;
   // color: white;
 }
 
-.table-row-yellow {
-  background-color: #fdfdb4;
+.table-row-yellow, .table-row-yellow td {
+  background-color: #fdfdb4 !important;
 }
 
 thead th[class*="yellow"] {
@@ -122,7 +122,7 @@ thead th[class*="red"] {
 }
 
 .no-hover .ant-table-cell-row-hover {
-  background-color: transparent !important;
+  background-color: white !important;
 }
 
 // .ant-picker-dropdown {

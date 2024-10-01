@@ -109,3 +109,6 @@ export async function startTracking(params){
 export async function stopTracking(params){
   return await axios.post("/oi/manufacture/stop-tracking", params);
 }
+export async function reorderPlan(params){
+  return await axios.post("/oi/manufacture/reorder-plan", params);
+}
