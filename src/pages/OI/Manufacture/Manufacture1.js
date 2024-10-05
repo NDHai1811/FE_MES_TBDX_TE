@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useReducer } from "react";
-import { DragOutlined, PrinterOutlined, StopOutlined } from "@ant-design/icons";
+import React, { useEffect, useState, useRef, useReducer, useContext, useMemo } from "react";
+import { DragOutlined, HolderOutlined, PrinterOutlined, StopOutlined } from "@ant-design/icons";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
 import {
@@ -12,6 +12,13 @@ import {
   Select,
   Tooltip,
   message,
+  Tabs,
+  Badge,
+  Space,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
 } from "antd";
 import "../style.scss";
 import {
@@ -27,7 +34,11 @@ import {
   getCurrentManufacturing,
   startProduce,
   stopProduce,
-  reorderPlan,
+  reorderPriority,
+  getPausedPlanList,
+  pausePlan,
+  resumePlan,
+  updateQuantityInfoCongDoan,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import {
@@ -39,7 +50,7 @@ import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
 import { baseHost, baseURL } from "../../../config";
-import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, MouseSensor, useSensor, useSensors, TouchSensor } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
@@ -48,16 +59,27 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import "./Manufacture1.css"
+
+const RowContext = React.createContext({});
 
 const DraggableRow = (props) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: props['data-row-key'],
   });
+
   const style = {
     ...props.style,
     transform: CSS.Translate.toString(transform),
     transition,
-    cursor: 'move',
     ...(isDragging
       ? {
         position: 'relative',
@@ -65,7 +87,34 @@ const DraggableRow = (props) => {
       }
       : {}),
   };
-  return <tr {...props} ref={setNodeRef} style={style} {...attributes} {...listeners} />;
+  const contextValue = useMemo(
+    () => ({
+      setActivatorNodeRef,
+      listeners,
+    }),
+    [setActivatorNodeRef, listeners],
+  );
+  return (
+    <RowContext.Provider value={contextValue}>
+      <tr {...props} ref={setNodeRef} style={style} {...attributes} />
+    </RowContext.Provider>
+  );
+};
+
+const DragHandle = () => {
+  const { setActivatorNodeRef, listeners } = useContext(RowContext);
+  return (
+    <Button
+      type="text"
+      size="small"
+      icon={<HolderOutlined />}
+      style={{
+        cursor: 'move',
+      }}
+      ref={setActivatorNodeRef}
+      {...listeners}
+    />
+  );
 };
 
 const columns = [
@@ -75,14 +124,13 @@ const columns = [
     key: "thu_tu_uu_tien",
     align: "center",
     width: 50,
-    fixed: 'left'
   },
   {
     title: "Tên khách hàng",
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width: 90
+    width: 90,
   },
   {
     title: "MDH",
@@ -210,7 +258,7 @@ const columns = [
     key: "lo_sx",
     align: "center",
     width: 120,
-    fixed: 'right'
+    // fixed: 'right'
   },
 ];
 
@@ -273,6 +321,7 @@ const Manufacture1 = (props) => {
   const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [pausedList, setPasuedList] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [listTem, setListTem] = useState([]);
@@ -283,8 +332,8 @@ const Manufacture1 = (props) => {
   ]);
 
   const reloadData = async () => {
-    getListLotDetail();
-    getOverAllDetail();
+    await getListLotDetail();
+    await getOverAllDetail();
   };
   const overallColumns = [
     {
@@ -339,17 +388,15 @@ const Manufacture1 = (props) => {
     })();
   }, []);
 
-  // useEffect(() => {
-  //   if (LSX) {
-  //     setSelectedLot(data.find(e => e.lo_sx === LSX))
-  //   } else {
-  //     setSelectedLot();
-  //   }
+  document.addEventListener('dragover', (event) => {
+    console.log('dragging');
 
-  // }, [data, LSX]);
+    event.preventDefault();
+  });
 
   useEffect(() => {
     reloadData();
+    fetchPausedPlan();
   }, [params, machine_id]);
 
   const getOverAllDetail = () => {
@@ -369,16 +416,13 @@ const Manufacture1 = (props) => {
       }
       return { ...e, key: e?.lo_sx }
     }));
-    // tableDispatch({
-    //   type: 'UPDATE_DATA', payload: res.data.map((e, index) => {
-    //     if (e.status == 1) {
-    //       setSpecifiedRowKey(e.lo_sx);
-    //     }
-    //     return { ...e, key: e.lo_sx }
-    //   })
-    // });
     setLoading(false);
   };
+
+  const fetchPausedPlan = async () => {
+    var res = await getPausedPlanList(params);
+    setPasuedList(res.data);
+  }
 
   const onChangeLine = (value) => {
     window.location.href = ("/oi/manufacture/" + value);
@@ -438,10 +482,10 @@ const Manufacture1 = (props) => {
     columnWidth: 50,
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys)
+      console.log(selectedRowKeys);
+      setListCheck(data.filter(e => selectedRowKeys.includes(e.key)).map(e => e.key))
       setListTem(selectedRows);
     },
-
   };
 
   const onClickRow = (record) => {
@@ -473,24 +517,6 @@ const Manufacture1 = (props) => {
     setLoadingAction(false);
   }
   const tableRef = useRef();
-  const dataReducer = (state, action) => {
-    switch (action.type) {
-      case 'UPDATE_DATA':
-        return action.payload;
-      default:
-        return state;
-    }
-  };
-  const [updatedData, dispatch] = useReducer(dataReducer, []);
-  const dataTableReducer = (state, action) => {
-    switch (action.type) {
-      case 'UPDATE_DATA':
-        return action.payload;
-      default:
-        return state;
-    }
-  };
-  const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
   useEffect(() => {
     if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
       return 0;
@@ -505,7 +531,7 @@ const Manufacture1 = (props) => {
       console.log('WebSocket connected!');
     });
     window.Echo.connector.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+      // console.error('WebSocket connection error:', error);
     });
 
     window.Echo.connector.socket.on('disconnect', () => {
@@ -554,33 +580,261 @@ const Manufacture1 = (props) => {
     current && setSpecifiedRowKey(current?.lo_sx);
   }, [current]);
 
+  function detectSensor() {
+    const toMatch = [
+      /Android/i,
+      /webOS/i,
+      /iPhone/i,
+      /iPad/i,
+      /iPod/i,
+      /BlackBerry/i,
+      /Windows Phone/i
+    ];
+
+    return toMatch.some((toMatchItem) => {
+      return navigator.userAgent.match(toMatchItem);
+    });
+  }
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        // https://docs.dndkit.com/api-documentation/sensors/pointer#activation-constraints
-        distance: 1,
-      },
-    }),
+    useSensor(detectSensor() ? TouchSensor : MouseSensor),
   );
+  const [cloneItems, setCloneItems] = useState([]);
+  const [activeId, setActiveId] = useState(null);
+  const onDragStart = ({ active }) => {
+    document.body.style.overflowX = 'hidden'; // Disable horizontal scroll
+    setActiveId(active.id);
+    if (active.id && listCheck.includes(active.id)) {
+      setCloneItems(listCheck);
+    }
+  }
   const onDragEnd = async ({ active, over }) => {
-    if (active.id !== over?.id) {
-      let current = null;
-      let target = null;
-      setData((prev) => {
-        const activeIndex = prev.findIndex((i) => i.key === active.id);
-        const overIndex = prev.findIndex((i) => i.key === over?.id);
-        current = prev[activeIndex];
-        target = prev[overIndex];
-        return arrayMove(prev, activeIndex, overIndex);
+    document.body.style.overflowX = 'auto'; // Disable horizontal scroll
+    setCloneItems([]);
+    setListCheck([]);
+    if (listCheck.includes(over?.id)) {
+      return;
+    }
+    if (over && active.id !== over?.id) {
+      var newArray = [];
+      var oldData = data;
+      if (cloneItems.length > 0 || (cloneItems.length === 1 && !cloneItems.includes(active.id))) {
+        await setData(prev => {
+          const activeIndex = prev.findIndex((i) => i.key === active?.id);
+          let newData = [...prev].filter(e => !cloneItems.includes(e.key));
+          const overIndex = newData.findIndex((i) => i.key === over?.id);
+          newData.splice(overIndex + (activeIndex > overIndex ? 0 : 1), 0, ...prev.filter(e => cloneItems.includes(e.key)));
+          newArray = [...newData];
+          return newArray;
+        });
+      } else {
+        await setData((prev) => {
+          const activeIndex = prev.findIndex((i) => i.key === active.id);
+          const overIndex = prev.findIndex((i) => i.key === over?.id);
+          newArray = arrayMove(prev, activeIndex, overIndex);
+          return newArray;
+        });
+      }
+      var changes = newArray.map((newLot, newIndex) => {
+        const oldLot = oldData.find((lot, oldIndex) => oldIndex === newIndex);
+        return {
+          id: newLot.id,                       // id của lô
+          oldPriority: newLot.thu_tu_uu_tien,  // Giá trị thứ tự ưu tiên cũ
+          newPriority: oldLot.thu_tu_uu_tien   // Giá trị thứ tự ưu tiên mới
+        };
+      }).filter((lot) => {
+        return lot.oldPriority !== lot.newPriority; // Lô nào có sự thay đổi TTƯT thì trả về
       });
-      console.log(current, target);
-      const plan_input = {...current, thu_tu_uu_tien: target.thu_tu_uu_tien}
-      await reorderPlan(plan_input);
-      getListLotDetail();
+      if (changes.length > 0) {
+        await reorderPriority({ changes });
+        getListLotDetail();
+      }
     }
   };
 
   const [isDraggable, setIsDraggable] = useState(false);
+
+  const [pausing, setPausing] = useState(false);
+  const [resuming, setResuming] = useState(false);
+  const [selectedPausedKeys, setSelectedPausedKeys] = useState([]);
+  const pausedSelection = {
+    fixed: true,
+    columnWidth: 50,
+    selectedRowKeys: selectedPausedKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedPausedKeys(selectedRowKeys);
+    },
+  }
+  const pause = async () => {
+    if (listCheck.length <= 0) {
+      message.info('Chưa chọn kế hoạch muốn dừng');
+      return;
+    }
+    const check = data.find(e => listCheck.includes(e.key) && e.status > 1)
+    if (check) {
+      message.info('Lô ' + check?.lo_sx + " đã sản xuất");
+      return;
+    }
+    setPausing(true);
+    var res = await pausePlan({ info_ids: listCheck, machine_id: machine_id });
+    reloadData();
+    fetchPausedPlan();
+    setListCheck([]);
+    setSelectedPausedKeys([]);
+    setPausing(false);
+  }
+  const resume = async () => {
+    if (selectedPausedKeys.length <= 0) {
+      message.info('Chưa chọn kế hoạch muốn tiếp tục');
+      return;
+    }
+    setResuming(true);
+    var res = await resumePlan({ info_ids: selectedPausedKeys, machine_id: machine_id });
+    reloadData();
+    fetchPausedPlan();
+    setListCheck([]);
+    setSelectedPausedKeys([]);
+    setResuming(false);
+  }
+  const openModal = () => {
+    if (listCheck.length !== 1) {
+      message.info('Chọn 1 lô để nhập sản lượng');
+      return;
+    }
+    const target = data.find(e => e.key === listCheck[0]);
+    if (target?.status <= 1) {
+      message.info('Lô này chưa hoàn thành');
+      return;
+    }
+    setIsOpenModal(true);
+    form.setFieldsValue(target)
+  }
+
+  const closeModal = () => {
+    form.resetFields();
+    setIsOpenModal(false);
+  }
+  const items = [
+    {
+      label: 'Danh sách sản xuất',
+      key: 1,
+      children:
+        <Row gutter={[8, 8]}>
+          <Col span={24}>
+            <div style={{ width: '100%', justifyContent: 'space-between', display: 'flex', gap: 8 }}>
+              <Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                onClick={handlePrint}
+                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+              />
+              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Tạm dừng'}</Button>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                onClick={() => setIsDraggable(!isDraggable)}
+                title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
+                icon={!isDraggable ? <DragOutlined /> : <StopOutlined />}
+              >{!isDraggable ? "Di chuyển" : "Dừng di chuyển"}</Button>
+            </div>
+            <div className="report-history-invoice">
+              {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+              <TemGiayTam listCheck={listTem} ref={componentRef1} />
+              <TemThanhPham listCheck={listTem} ref={componentRef2} />
+            </div>
+          </Col>
+          <Col span={24}>
+            <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+              <SortableContext
+                // rowKey array
+                items={data.map((i) => i.key)}
+                strategy={verticalListSortingStrategy}
+              >
+                <Table
+                  loading={loading}
+                  scroll={{
+                    x: '100%',
+                    y: 'calc(100vh - 50vh)',
+                  }}
+                  size="small"
+                  rowClassName={(record, index) =>
+                    rowClassName(record, index)
+                  }
+                  components={{
+                    body: {
+                      row: isDraggable ? DraggableRow : null,
+                    },
+                  }}
+                  rowKey={'lo_sx'}
+                  rowHoverable={false}
+                  className="draggable-table"
+                  ref={tableRef}
+                  pagination={false}
+                  bordered
+                  columns={isDraggable ? [{
+                    key: 'sort',
+                    title: ' ',
+                    align: 'center',
+                    width: 40,
+                    fixed: 'left',
+                    render: () => <DragHandle />,
+                  }, ...columns] : columns}
+                  rowSelection={rowSelection}
+                  // onRow={(record, rowIndex) => {
+                  //   return {
+                  //     onClick: (event) => { onClickRow(record) },
+                  //   };
+                  // }}
+                  // virtual
+                  dataSource={data.filter(e => !cloneItems.filter(key => key !== activeId).includes(e.key))}
+                />
+              </SortableContext>
+            </DndContext>
+          </Col>
+        </Row>
+    },
+    {
+      label: <Space>{'Danh sách tạm dừng'}<Badge count={pausedList.length} showZero color="#1677ff" overflowCount={999} /></Space>,
+      key: 2,
+      children:
+        <Row gutter={[8, 8]}>
+          <Col span={6}>
+            <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Tiếp tục'}</Button>
+          </Col>
+          <Col span={24}>
+            <Table
+              loading={loading}
+              scroll={{
+                x: '100%',
+                y: 'calc(100vh - 50vh)',
+              }}
+              rowSelection={pausedSelection}
+              size="small"
+              rowKey={'lo_sx'}
+              rowHoverable={false}
+              pagination={false}
+              bordered
+              columns={columns}
+              // virtual
+              dataSource={pausedList}
+            />
+          </Col>
+        </Row>
+    }
+  ];
+  const [form] = Form.useForm();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const onUpdateQuantity = async (values) => {
+    var res = await updateQuantityInfoCongDoan(values);
+    if (res.success) {
+      closeModal();
+      reloadData();
+      setListCheck([]);
+    }
+  }
   return (
     <React.Fragment>
       {contextHolder}
@@ -612,7 +866,7 @@ const Manufacture1 = (props) => {
             }}
           />
         </Col>
-        <Col span={6}>
+        <Col span={12}>
           <DatePicker
             allowClear={false}
             placeholder="Từ ngày"
@@ -622,7 +876,7 @@ const Manufacture1 = (props) => {
             onChange={onChangeStartDate}
           />
         </Col>
-        <Col span={6}>
+        <Col span={12}>
           <DatePicker
             allowClear={false}
             placeholder="Đến ngày"
@@ -632,73 +886,24 @@ const Manufacture1 = (props) => {
             onChange={onChangeEndDate}
           />
         </Col>
-        <Col span={5}><Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
-        <Col span={5}>
-          <Button
-            size="medium"
-            type="primary"
-            style={{ width: "100%" }}
-            onClick={handlePrint}
-            icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-          />
-          <div className="report-history-invoice">
-            {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
-            <TemGiayTam listCheck={listTem} ref={componentRef1} />
-            <TemThanhPham listCheck={listTem} ref={componentRef2} />
-          </div>
-        </Col>
-        <Col span={2}>
-          <Button
-            size="medium"
-            type="primary"
-            style={{ width: "100%" }}
-            onClick={()=>setIsDraggable(!isDraggable)}
-            title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
-            icon={!isDraggable ? <DragOutlined /> : <StopOutlined/>}
-          ></Button>
-        </Col>
         <Col span={24}>
-          <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
-            <SortableContext
-              // rowKey array
-              items={data.map((i) => i.key)}
-              strategy={verticalListSortingStrategy}
-            >
-              <Table
-                loading={loading}
-                scroll={{
-                  x: '100%',
-                  y: '50vh',
-                }}
-                size="small"
-                rowClassName={(record, index) =>
-                  rowClassName(record, index)
-                }
-                components={{
-                  body: {
-                    row: isDraggable ? DraggableRow : null,
-                  },
-                }}
-                rowKey={'lo_sx'}
-                rowHoverable={false}
-                className="bottom-table"
-                ref={tableRef}
-                pagination={false}
-                bordered
-                columns={columns}
-                rowSelection={rowSelection}
-                onRow={(record, rowIndex) => {
-                  return {
-                    onClick: (event) => { onClickRow(record) },
-                  };
-                }}
-                // virtual
-                dataSource={data}
-              />
-            </SortableContext>
-          </DndContext>
+          <Tabs
+            type="card"
+            className="manufacture-tabs"
+            items={items}
+          />
         </Col>
       </Row>
+      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()}>
+        <Form form={form} layout="vertical" onFinish={onUpdateQuantity}>
+          <Form.Item name={"id"} hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name={"sl_dau_ra_hang_loat"} label="Sản lượng">
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </React.Fragment >
   );
 };

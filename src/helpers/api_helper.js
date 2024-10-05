@@ -44,23 +44,28 @@ axios.interceptors.response.use(
     return response.data ? response.data : response;
   },
   function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    let message;
-    switch (error?.response?.status) {
-      case 500:
-        message = "Internal Server Error";
-        break;
+    switch (error.response?.status) {
       case 401:
-        return (window.location.href = "/login");
+        // Handle unauthorized access, e.g., redirect to login page
+        // You can dispatch a logout action or perform any other required operations here
+        window.location.href ='/login';
         break;
-      case 404:
-        message = "Sorry! the data you are looking for could not be found";
-        break;
+
       default:
-        message = error.message || error;
+        break;
     }
-    messAPI.error({ ...conf, content: error.message });
-    return Promise.reject(message);
+    const defaultResponse = {
+      data: [],
+      success: false,
+      message: "Có lỗi xảy ra. Vui lòng thử lại sau.",
+    };
+    if (error?.response?.data?.message) {
+      messAPI.error({ content: error.response.data.message });
+    } else {
+      messAPI.error({ content: defaultResponse.message });
+    }
+
+    return Promise.resolve(defaultResponse);
   }
 );
 /**

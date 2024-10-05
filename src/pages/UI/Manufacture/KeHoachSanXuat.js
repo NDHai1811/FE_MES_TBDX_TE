@@ -134,6 +134,13 @@ const KeHoachSanXuat = () => {
       width: 60,
     },
     {
+      title: "Số loss",
+      dataIndex: "loss_quantity",
+      key: "loss_quantity",
+      align: "center",
+      width: 60,
+    },
+    {
       title: "Khổ",
       dataIndex: "kho",
       key: "kho",

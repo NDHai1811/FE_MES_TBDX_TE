@@ -109,6 +109,18 @@ export async function startTracking(params){
 export async function stopTracking(params){
   return await axios.post("/oi/manufacture/stop-tracking", params);
 }
-export async function reorderPlan(params){
-  return await axios.post("/oi/manufacture/reorder-plan", params);
+export async function reorderPriority(params){
+  return await axios.post("/oi/manufacture/reorder-priority", params);
+}
+export async function getPausedPlanList(params){
+  return await axios.get("/oi/manufacture/paused-plan-list", {params});
+}
+export async function pausePlan(params){
+  return await axios.post("/oi/manufacture/pause-plan", params);
+}
+export async function resumePlan(params){
+  return await axios.post("/oi/manufacture/resume-plan", params);
+}
+export async function updateQuantityInfoCongDoan(params){
+  return await axios.post("/oi/manufacture/update-quantity-info-cong-doan", params);
 }

@@ -71,10 +71,10 @@ const PrintTemplate = ({ detail }) => {
                             <td className="text-center" colSpan={2}>MÃ CUỘN NCC:</td>
                             <td className="text-center" colSpan={3}>{detail['ma_cuon_ncc']}</td>
                         </tr>
-                        {/* <tr style={{ height: 55 }}>
-                            <td className="text-center" colSpan={2}>NGÀY NHẬP KHO</td>
-                            <td className="text-center" colSpan={3}>{detail['updated_at'] ? dayjs(detail['updated_at']).format('DD/MM/YYYY HH:mm:ss') : ''}</td>
-                        </tr> */}
+                        <tr style={{ height: 55 }}>
+                            <td className="text-center" colSpan={2}>TÊN NCC</td>
+                            <td className="text-center" colSpan={3}>{detail['ten_ncc']}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

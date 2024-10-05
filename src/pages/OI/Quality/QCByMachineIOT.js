@@ -239,6 +239,24 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
+      title: "MĐH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+    },
+    {
+      title: "Quy cách",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+    },
+    {
       title: "Sản lượng đầu ra",
       dataIndex: "san_luong",
       key: "san_luong",

@@ -668,11 +668,11 @@ const WarehouseMLT = (props) => {
         </Col>
       </Row>
 
-      {openExportModal && <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
+      <Modal title={"Xuất phiếu nhập kho"} open={openExportModal} onCancel={() => setOpenExportModal(false)} width={1000}
         centered
         footer={
           <Space>
-            <Button>Huỷ</Button>
+            <Button onClick={() => setOpenExportModal(false)}>Huỷ</Button>
             <Button type="primary" onClick={exportFileReceiptNote} loading={exportLoading}>Phiếu nhập kho</Button>
             <Button type="primary" onClick={exportFileVehicleWeightNote} loading={exportLoading1}>Phiếu cân xe</Button>
           </Space>
@@ -686,14 +686,15 @@ const WarehouseMLT = (props) => {
           scroll={{
             y: "50vh",
           }}
+          // virtual
           className="h-100"
           rowSelection={rowSelectionReceipt}
-          pagination={false}
+          pagination={true}
           size="small"
           onUpdate={onSaveNote}
           onDelete={onDeleteNote}
         />
-      </Modal>}
+      </Modal>
     </>
   );
 };

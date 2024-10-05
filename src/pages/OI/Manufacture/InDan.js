@@ -11,6 +11,11 @@ import {
   Select,
   InputNumber,
   message,
+  Form,
+  Input,
+  Tabs,
+  Space,
+  Badge,
 } from "antd";
 import "../style.scss";
 import {
@@ -26,6 +31,10 @@ import {
   getTrackingStatus,
   startTracking,
   stopTracking,
+  updateQuantityInfoCongDoan,
+  getPausedPlanList,
+  pausePlan,
+  resumePlan,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -225,9 +234,14 @@ const InDan = (props) => {
     },
   ];
 
+  const reloadData = async () => {
+    await getListLotDetail();
+    await getOverAllDetail();
+  }
+
   useEffect(() => {
-    getOverAllDetail();
-    getListLotDetail();
+    reloadData();
+    fetchPausedPlan();
   }, [params])
 
   useEffect(() => {
@@ -301,14 +315,14 @@ const InDan = (props) => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     handlePrint();
   }, [listTem]);
 
   const printSelectedLots = () => {
-    if(listCheck.length > 0){
-      setListTem(data.filter(e=>listCheck.includes(e.key)));
-    }else{
+    if (listCheck.length > 0) {
+      setListTem(data.filter(e => listCheck.includes(e.key)));
+    } else {
       message.info('Chọn lô để in');
     }
   }
@@ -338,7 +352,7 @@ const InDan = (props) => {
   const openMdlPrint = () => {
     if (listCheck.length === 1) {
       setVisiblePrint(true);
-      setQuantity(data.find(e=>e.key === listCheck[0])?.san_luong);
+      setQuantity(data.find(e => e.key === listCheck[0])?.san_luong);
     } else {
       message.info('Chọn 1 lô để in tem');
     }
@@ -346,11 +360,11 @@ const InDan = (props) => {
 
   const onConfirmPrint = async () => {
     console.log(quantity);
-    
-    if (data.find(e=>e.key === listCheck[0])?.so_luong < quantity) {
+
+    if (data.find(e => e.key === listCheck[0])?.so_luong < quantity) {
       message.error('Số lượng nhập vượt quá số lượng thực tế');
     } else {
-      const res = { ...data.find(e=>e.key === listCheck[0]), so_luong: quantity };
+      const res = { ...data.find(e => e.key === listCheck[0]), so_luong: quantity };
       setListTem([res]);
       setSelectedLot();
       setQuantity(0);
@@ -499,6 +513,171 @@ const InDan = (props) => {
     }
     fetchTrackingStatus();
   }
+  const [form] = Form.useForm();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const onUpdateQuantity = async (values) => {
+    var res = await updateQuantityInfoCongDoan(values);
+    if (res.success) {
+      closeModal();
+      getListLotDetail();
+      setListCheck([]);
+    }
+  }
+  const openModal = () => {
+    if (listCheck.length !== 1) {
+      message.info('Chọn 1 lô để nhập sản lượng');
+      return;
+    }
+    const target = data.find(e => e.key === listCheck[0]);
+    if (target?.status <= 1) {
+      message.info('Lô này chưa hoàn thành');
+      return;
+    }
+    setIsOpenModal(true);
+    form.setFieldsValue(target)
+  }
+
+  const closeModal = () => {
+    form.resetFields();
+    setIsOpenModal(false);
+  }
+  const [pausing, setPausing] = useState(false);
+  const [pausedList, setPasuedList] = useState([]);
+  const [resuming, setResuming] = useState(false);
+  const [selectedPausedKeys, setSelectedPausedKeys] = useState([]);
+  const pausedSelection = {
+    fixed: true,
+    columnWidth: 50,
+    selectedRowKeys: selectedPausedKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedPausedKeys(selectedRowKeys);
+    },
+  }
+  const fetchPausedPlan = async () => {
+    var res = await getPausedPlanList(params);
+    setPasuedList(res.data.map(e=>({...e, key: e.key})));
+  }
+  const pause = async () => {
+    if (listCheck.length <= 0) {
+      message.info('Chưa chọn kế hoạch muốn dừng');
+      return;
+    }
+    const check = data.find(e => listCheck.includes(e.key) && e.status > 1)
+    if (check) {
+      message.info('Lô ' + check?.lo_sx + " đã sản xuất");
+      return;
+    }
+    setPausing(true);
+    var res = await pausePlan({ info_ids: data.filter(e=>listCheck.includes(e.lo_sx)).map(e=>e.id), machine_id: machine_id });
+    reloadData();
+    fetchPausedPlan();
+    setListCheck([]);
+    setSelectedPausedKeys([]);
+    setPausing(false);
+  }
+  const resume = async () => {
+    if (selectedPausedKeys.length <= 0) {
+      message.info('Chưa chọn kế hoạch muốn tiếp tục');
+      return;
+    }
+    console.log(pausedList.filter(e=>selectedPausedKeys.includes(e.key)));
+    
+    setResuming(true);
+    var res = await resumePlan({ info_ids: pausedList.filter(e=>selectedPausedKeys.includes(e.lo_sx)).map(e=>e.id), machine_id: machine_id });
+    reloadData();
+    fetchPausedPlan();
+    setListCheck([]);
+    setSelectedPausedKeys([]);
+    setResuming(false);
+  }
+  const items = [
+    {
+      label: 'Danh sách sản xuất',
+      key: 1,
+      children:
+        <Row gutter={[8, 8]}>
+          <Col span={24}>
+            <div style={{ width: '100%', justifyContent: 'space-between', display: 'flex', gap: 8 }}>
+              {(machine_id === 'P15' || machine_id === 'P06') ? <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                disabled={trackingStatus === 1}
+                onClick={() => onChangeTrackingStatus()}
+              >Bắt đầu</Button> : null}
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                onClick={() => setIsScan(1)}
+                icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
+              />
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                onClick={printSelectedLots}
+                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+              />
+              <div className="report-history-invoice">
+                <TemGiayTam listCheck={listTem} ref={componentRef1} />
+                <TemThanhPham listCheck={listTem} ref={componentRef2} />
+              </div>
+              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Tạm dừng'}</Button>
+            </div>
+          </Col>
+          <Col span={24}>
+            <Table
+              ref={tableRef}
+              scroll={{
+                // x: tableSize.width,
+                y: tableSize.height,
+              }}
+              size="small"
+              rowClassName={(record, index) =>
+                rowClassName(record, index)
+              }
+              rowHoverable={false}
+              className="bottom-table"
+              rowSelection={rowSelection}
+              pagination={false}
+              bordered
+              columns={columns}
+              dataSource={data}
+            />
+          </Col>
+        </Row>
+    },
+    {
+      label: <Space>{'Danh sách tạm dừng'}<Badge count={pausedList.length} showZero color="#1677ff" overflowCount={999} /></Space>,
+      key: 2,
+      children:
+        <Row gutter={[8, 8]}>
+          <Col span={6}>
+            <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Tiếp tục'}</Button>
+          </Col>
+          <Col span={24}>
+            <Table
+              loading={loading}
+              scroll={{
+                x: '100%',
+                y: 'calc(100vh - 50vh)',
+              }}
+              rowSelection={pausedSelection}
+              size="small"
+              rowKey={'lo_sx'}
+              rowHoverable={false}
+              pagination={false}
+              bordered
+              columns={columns}
+              // virtual
+              dataSource={pausedList}
+            />
+          </Col>
+        </Row>
+    }
+  ];
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -525,7 +704,7 @@ const InDan = (props) => {
               dataSource={selectedLot ? [selectedLot] : []}
             />
           </Col>
-          <Col span={(machine_id === 'P15' || machine_id === 'P06') ? 8 : 9}>
+          <Col span={12}>
             <DatePicker
               allowClear={false}
               placeholder="Từ ngày"
@@ -535,7 +714,7 @@ const InDan = (props) => {
               onChange={onChangeStartDate}
             />
           </Col>
-          <Col span={(machine_id === 'P15' || machine_id === 'P06') ? 8 : 9}>
+          <Col span={12}>
             <DatePicker
               allowClear={false}
               placeholder="Đến ngày"
@@ -545,65 +724,12 @@ const InDan = (props) => {
               onChange={onChangeEndDate}
             />
           </Col>
-          <Col span={(machine_id === 'P15' || machine_id === 'P06') ? 2 : 0}>
-            <Button
-              size="medium"
-              type="primary"
-              style={{ width: "100%" }}
-              disabled={trackingStatus === 1}
-              onClick={() => onChangeTrackingStatus()}
-            >Bắt đầu</Button>
-          </Col>
-          <Col span={2}>
-            <Button
-              size="medium"
-              type="primary"
-              style={{ width: "100%" }}
-              onClick={() => setIsScan(1)}
-              icon={<QrcodeOutlined style={{ fontSize: "24px" }} />}
-            />
-          </Col>
-          <Col span={2}>
-            <Button
-              size="medium"
-              type="primary"
-              style={{ width: "100%" }}
-              onClick={printSelectedLots}
-              icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-            />
-            <div className="report-history-invoice">
-              <TemGiayTam listCheck={listTem} ref={componentRef1} />
-              <TemThanhPham listCheck={listTem} ref={componentRef2} />
-            </div>
-          </Col>
-          <Col span={2}>
-            <Button
-              size="medium"
-              type="primary"
-              style={{ width: "100%" }}
-              onClick={openMdlPrint}
-            >
-              IN TEM
-            </Button>
-          </Col>
         </Row>
         <Col span={24} className="mt-2">
-          <Table
-            ref={tableRef}
-            scroll={{
-              // x: tableSize.width,
-              y: tableSize.height,
-            }}
-            size="small"
-            rowClassName={(record, index) =>
-              "no-hover " + rowClassName(record, index)
-            }
-            className="bottom-table"
-            rowSelection={rowSelection}
-            pagination={false}
-            bordered
-            columns={columns}
-            dataSource={data}
+          <Tabs
+            type="card"
+            className="manufacture-tabs"
+            items={items}
           />
         </Col>
       </Spin>
@@ -623,22 +749,16 @@ const InDan = (props) => {
           />
         </Modal>
       )}
-      {visiblePrint && (
-        <Modal
-          title="Số lượng trên tem"
-          open={visiblePrint}
-          onCancel={() => setVisiblePrint(false)}
-          onOk={onConfirmPrint}
-        >
-          <InputNumber
-            value={quantity}
-            max={data.find(e=>e.key === listCheck[0])?.san_luong}
-            placeholder="Nhập sản lượng trên tem"
-            onChange={setQuantity}
-            style={{ width: "100%" }}
-          />
-        </Modal>
-      )}
+      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()}>
+        <Form form={form} layout="vertical" onFinish={onUpdateQuantity}>
+          <Form.Item name={"id"} hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name={"sl_dau_ra_hang_loat"} label="Sản lượng">
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </React.Fragment>
   );
 };
