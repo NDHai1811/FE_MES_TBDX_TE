@@ -677,12 +677,13 @@ const Manufacture1 = (props) => {
       return;
     }
     setPausing(true);
-    var res = await pausePlan({ info_ids: listCheck, machine_id: machine_id });
+    var res = await pausePlan({ info_ids: data.filter(e => listCheck.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
     reloadData();
     fetchPausedPlan();
     setListCheck([]);
     setSelectedPausedKeys([]);
     setPausing(false);
+    setActiveKey('paused_manufacture_tab');
   }
   const resume = async () => {
     if (selectedPausedKeys.length <= 0) {
@@ -690,12 +691,13 @@ const Manufacture1 = (props) => {
       return;
     }
     setResuming(true);
-    var res = await resumePlan({ info_ids: selectedPausedKeys, machine_id: machine_id });
+    var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
     reloadData();
     fetchPausedPlan();
     setListCheck([]);
     setSelectedPausedKeys([]);
     setResuming(false);
+    setActiveKey('currrent_manufacture_tab');
   }
   const [activeKey, setActiveKey] = useState('currrent_manufacture_tab');
   const openModal = () => {
@@ -704,10 +706,10 @@ const Manufacture1 = (props) => {
       return;
     }
     const target = data.find(e => e.key === listCheck[0]);
-    if (target?.status <= 1) {
-      message.info('Lô này chưa hoàn thành');
-      return;
-    }
+    // if (target?.status <= 1) {
+    //   message.info('Lô này chưa hoàn thành');
+    //   return;
+    // }
     setIsOpenModal(true);
     form.setFieldsValue(target)
   }
