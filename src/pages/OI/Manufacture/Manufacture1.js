@@ -705,7 +705,14 @@ const Manufacture1 = (props) => {
       message.info('Chọn 1 lô để nhập sản lượng');
       return;
     }
-    const target = data.find(e => e.key === listCheck[0]);
+    let target = null
+    if(activeKey === 'currrent_manufacture_tab' ){
+      target = data.find(e => e.key === listCheck[0]);
+    }else{
+      target = pausedList.find(e => e.lo_sx === selectedPausedKeys[0]);
+    }
+    console.log(target);
+    
     // if (target?.status <= 1) {
     //   message.info('Lô này chưa hoàn thành');
     //   return;
@@ -854,6 +861,12 @@ const Manufacture1 = (props) => {
       setListCheck([]);
     }
   }
+
+  const onChangeTab = (key) => {
+    setActiveKey(key);
+    setSelectedPausedKeys([]);
+    setListCheck([]);
+  }
   return (
     <React.Fragment>
       {contextHolder}
@@ -911,7 +924,7 @@ const Manufacture1 = (props) => {
             type="card"
             className="manufacture-tabs"
             items={items}
-            onChange={setActiveKey}
+            onChange={onChangeTab}
           />
         </Col>
       </Row>
