@@ -22,7 +22,7 @@ const itemsMenu = [
     children: [
       {
         title: "Chuyền máy dợn sóng",
-        key: "S01",
+        key: "So01",
       },
     ],
   },

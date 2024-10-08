@@ -145,7 +145,7 @@ const LINE_SONG_ID = '30';
 const LINE_IN_ID = '31';
 const LINE_DAN_ID = '32';
 const LINE_XA_LOT_ID = '33';
-const SONG_MACHINE = ['S01'];
+const SONG_MACHINE = ['So01'];
 
 const Equipment1 = (props) => {
   document.title = "UI - Thống kê lỗi";
