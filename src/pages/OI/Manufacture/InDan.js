@@ -305,7 +305,7 @@ const InDan = (props) => {
   };
   const handlePrint = async () => {
     if (listTem.length > 0) {
-      if (machine_id === "S01") {
+      if (machine_id === "So01") {
         print();
       } else {
         printThanhPham();

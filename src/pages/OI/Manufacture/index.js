@@ -33,7 +33,7 @@ const Manufacture = () => {
   }, [])
   useEffect(() => {
     if(machineOptions.length > 0){
-      if(machine_id === 'S01'){
+      if(machine_id === 'So01'){
         setContent(<Manufacture1 machineOptions={machineOptions}/>);
       }else{
         machineOptions.forEach(e=>{

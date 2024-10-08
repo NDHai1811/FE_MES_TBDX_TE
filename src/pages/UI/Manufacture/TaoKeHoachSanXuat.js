@@ -56,7 +56,7 @@ const TaoKeHoachSanXuat = () => {
 
     const loadListPlans = async () => {
         setLoadingPlans(true);
-        lsxParams.machine_id = 'S01';
+        lsxParams.machine_id = 'So01';
         const res = await getListProductPlan(lsxParams);
         setListPlan(res);
         setLoadingPlans(false);
@@ -115,7 +115,7 @@ const TaoKeHoachSanXuat = () => {
         if (!planParams.machine_id) {
             message.info('Chưa chọn máy');
         } else {
-            // if (planParams.machine_id == 'S01') {
+            // if (planParams.machine_id == 'So01') {
             setData([]);
             setOpenMdlOrder(true);
             loadListOrders();
