@@ -529,7 +529,13 @@ const InDan = (props) => {
       message.info('Chọn 1 lô để nhập sản lượng');
       return;
     }
-    const target = data.find(e => e.key === listCheck[0]);
+    let target = null
+    if(activeKey === 'currrent_manufacture_tab' ){
+      target = data.find(e => e.key === listCheck[0]);
+    }else{
+      target = pausedList.find(e => e.lo_sx === selectedPausedKeys[0]);
+    }
+    console.log(target);
     setIsOpenModal(true);
     form.setFieldsValue(target)
   }
@@ -679,6 +685,11 @@ const InDan = (props) => {
         </Row>
     }
   ];
+  const onChangeTab = (key) => {
+    setActiveKey(key);
+    setSelectedPausedKeys([]);
+    setListCheck([]);
+  }
   return (
     <React.Fragment>
       <Spin spinning={loading}>
@@ -732,7 +743,7 @@ const InDan = (props) => {
             type="card"
             className="manufacture-tabs"
             items={items}
-            onChange={setActiveKey}
+            onChange={onChangeTab}
           />
         </Col>
       </Spin>
