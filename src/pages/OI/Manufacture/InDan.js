@@ -571,13 +571,13 @@ const InDan = (props) => {
     setListCheck([]);
     setSelectedPausedKeys([]);
     setPausing(false);
+    setActiveKey('paused_manufacture_tab')
   }
   const resume = async () => {
     if (selectedPausedKeys.length <= 0) {
       message.info('Chưa chọn kế hoạch muốn tiếp tục');
       return;
     }
-    console.log(pausedList.filter(e => selectedPausedKeys.includes(e.key)));
 
     setResuming(true);
     var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
@@ -586,6 +586,7 @@ const InDan = (props) => {
     setListCheck([]);
     setSelectedPausedKeys([]);
     setResuming(false);
+    setActiveKey('currrent_manufacture_tab');
   }
   const items = [
     {
