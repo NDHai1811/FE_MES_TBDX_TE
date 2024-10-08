@@ -92,7 +92,7 @@ const WarehouseExportCommand = () => {
       dataIndex: "created_by",
       key: "created_by",
       align: "center",
-      render: (value)=>listUsers.find(e=>e.id === value)?.name,
+      render: (value) => listUsers.find(e => e.id === value)?.name,
     },
     {
       title: "Số xe",
@@ -108,32 +108,39 @@ const WarehouseExportCommand = () => {
       dataIndex: "driver_id",
       key: "driver_id",
       align: "center",
-      render: (value)=>listUsers.find(e=>e.id === value)?.name,
+      render: (value) => listUsers.find(e => e.id === value)?.name,
       editable: true,
       inputType: 'select',
       options: listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name })),
     },
     {
       title: "Người xuất",
-      dataIndex: "exporter_id",
-      key: "exporter_id",
+      dataIndex: "exporter_ids",
+      key: "exporter_ids",
       align: "center",
-      render: (value)=>listUsers.find(e=>e.id === value)?.name,
+      render: (value) => <Space align="center" direction="vertical">
+        {listUsers.filter(e=>(value ?? []).includes(e.id)).map(e=>{
+          return e.name
+        })}
+      </Space>,
       editable: true,
       inputType: 'select',
+      inputProps: {
+        mode: 'multiple'
+      },
       options: listUsers,
     },
   ];
   const [messageApi, contextHolder] = message.useMessage();
 
   function btn_click() {
-    loadListTable({...params, page: 1, pageSize: 20});
+    loadListTable({ ...params, page: 1, pageSize: 20 });
     setPage(1);
     setPageSize(20);
   }
 
   useEffect(() => {
-    loadListTable({...params, page: page, pageSize: pageSize});
+    loadListTable({ ...params, page: page, pageSize: pageSize });
   }, [page, pageSize]);
 
   const loadListTable = async (params) => {
@@ -149,7 +156,7 @@ const WarehouseExportCommand = () => {
     setTotalPage(res.data.totalPage)
     setLoading(false);
   };
-  
+
   useEffect(() => {
     (async () => {
       const res1 = await getVehicles();
@@ -193,13 +200,13 @@ const WarehouseExportCommand = () => {
   const onSave = async (record) => {
     console.log(record);
     var res = await updateDeliveryNote(record)
-    if(res.success){
+    if (res.success) {
       btn_click()
     }
   }
   const onDelete = async (record) => {
     var res = await deleteDeliveryNote(record);
-    if(res.success){
+    if (res.success) {
       btn_click()
     }
   }
@@ -222,8 +229,8 @@ const WarehouseExportCommand = () => {
         var target = null;
         if (dataIndex === 'driver_id') {
           target = listVehicles.find(e => e.user1 === value);
-        } 
-        else if(dataIndex === 'vehicle_id') {
+        }
+        else if (dataIndex === 'vehicle_id') {
           target = listVehicles.find(e => e.id === value);
         }
         return { ...e, vehicle_id: target?.id, driver_id: target?.user1 }
@@ -234,9 +241,9 @@ const WarehouseExportCommand = () => {
     setData(items)
   }
   const searchOrder = async (filterByNote = false) => {
-    var paramsSearchOrder = {...orderParams};
-    if(filterByNote){
-      paramsSearchOrder = {...paramsSearchOrder, filter_by_delivery_note: true}
+    var paramsSearchOrder = { ...orderParams };
+    if (filterByNote) {
+      paramsSearchOrder = { ...paramsSearchOrder, filter_by_delivery_note: true }
     }
     setLoadingOrders(true);
     const res = await getOrders(paramsSearchOrder);
@@ -245,7 +252,7 @@ const WarehouseExportCommand = () => {
     setLoadingOrders(false);
   }
   useEffect(() => {
-    if(openMdl){
+    if (openMdl) {
       searchOrder(true);
     }
   }, [openMdl, orderParams]);
@@ -501,19 +508,19 @@ const WarehouseExportCommand = () => {
     }
   ];
   const onCreate = async () => {
-    if(!exportCommandParams?.vehicle_id){
+    if (!exportCommandParams?.vehicle_id) {
       messageApi.warning('Chưa chọn xe!');
       return 0;
     }
-    if(!exportCommandParams?.driver_id){
+    if (!exportCommandParams?.driver_id) {
       messageApi.warning('Chưa chọn tài xế!');
       return 0;
     }
-    if(!exportCommandParams?.exporter_id){
+    if (!exportCommandParams?.exporter_id) {
       messageApi.warning('Chưa chọn người xuất!');
       return 0;
     }
-    if(!selectedOrders.length){
+    if (!selectedOrders.length) {
       messageApi.warning('Chưa chọn đơn hàng!');
       return 0;
     }
@@ -539,7 +546,7 @@ const WarehouseExportCommand = () => {
     setLoadingRow();
   }
   const btnDownloadExportCommand = (record) => {
-    return loadingRow === record.id ? <LoadingOutlined/> : <DownloadOutlined onClick={()=>onDownloadDeliveryNote(record)}/>
+    return loadingRow === record.id ? <LoadingOutlined /> : <DownloadOutlined onClick={() => onDownloadDeliveryNote(record)} />
   }
   return (
     <>
@@ -642,11 +649,11 @@ const WarehouseExportCommand = () => {
           <Card
             style={{ height: "100%" }}
             title="Quản lý lệnh xuất kho"
-            styles={{ body: {paddingBottom: 0} }}
+            styles={{ body: { paddingBottom: 0 } }}
             className="custom-card"
             extra={
               <Space>
-                <PopupCreateDeliveryNote listUsers={listUsers} listVehicles={listVehicles} listCustomers={listCustomers} onAfterCreate={onAfterCreate}/>
+                <PopupCreateDeliveryNote listUsers={listUsers} listVehicles={listVehicles} listCustomers={listCustomers} onAfterCreate={onAfterCreate} />
               </Space>
             }
           >

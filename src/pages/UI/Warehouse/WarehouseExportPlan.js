@@ -154,13 +154,14 @@ const WarehouseExportPlan = () => {
     },
     {
       title: "Người xuất",
-      dataIndex: "exporter_id",
-      key: "exporter_id",
+      dataIndex: "exporter_ids",
+      key: "exporter_ids",
       align: "center",
-      render: (value) => {
-        const item = listUsers.find(e => e.id == value);
-        return item?.name
-      },
+      render: (value) => <Space align="center" direction="vertical">
+        {listUsers.filter(e=>(value ?? []).includes(parseInt(e.id))).map(e=>{
+          return e.name
+        })}
+      </Space>,
       // inputType: 'select',
       // options: listUsers,
       width: 180,

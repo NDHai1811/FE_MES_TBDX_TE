@@ -451,10 +451,13 @@ const PopupCreateDeliveryNote = (props) => {
                     placeholder="Chọn người xuất"
                     options={exportCommandParams.role_id ? listUsers.filter(e => (e.roles ?? []).some(e => e.id === exportCommandParams.role_id)) : listUsers}
                     showSearch
-                    value={exportCommandParams.exporter_id}
+                    mode="multiple"
+                    value={exportCommandParams.exporter_ids}
                     optionFilterProp="label"
-                    onSelect={(value) => {
-                      setExportCommandParams({ ...exportCommandParams, exporter_id: value });
+                    onChange={(value) => {
+                      console.log(value);
+                      
+                      setExportCommandParams({ ...exportCommandParams, exporter_ids: value });
                     }}
                   />
                 </div>

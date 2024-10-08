@@ -19,6 +19,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Popconfirm,
 } from "antd";
 import "../style.scss";
 import {
@@ -39,6 +40,7 @@ import {
   pausePlan,
   resumePlan,
   updateQuantityInfoCongDoan,
+  deletePausedPlanList,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import {
@@ -695,8 +697,9 @@ const Manufacture1 = (props) => {
     setSelectedPausedKeys([]);
     setResuming(false);
   }
+  const [activeKey, setActiveKey] = useState('currrent_manufacture_tab');
   const openModal = () => {
-    if (listCheck.length !== 1) {
+    if ((activeKey === 'currrent_manufacture_tab' && listCheck.length !== 1) || (activeKey === 'paused_manufacture_tab' && selectedPausedKeys.length !== 1)) {
       message.info('Chọn 1 lô để nhập sản lượng');
       return;
     }
@@ -713,14 +716,22 @@ const Manufacture1 = (props) => {
     form.resetFields();
     setIsOpenModal(false);
   }
+
+  const deletePlan = async () => {
+    if (selectedPausedKeys.length <= 0) {
+      message.info('Chọn lô để xoá');
+      return;
+    }
+    var res = await deletePausedPlanList({info_ids: selectedPausedKeys});
+  }
   const items = [
     {
       label: 'Danh sách sản xuất',
-      key: 1,
+      key: 'currrent_manufacture_tab',
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ width: '100%', justifyContent: 'space-between', display: 'flex', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
               <Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button>
               <Button
                 size="medium"
@@ -730,7 +741,7 @@ const Manufacture1 = (props) => {
                 icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
               />
               <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
-              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Tạm dừng'}</Button>
+              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Chuyển sang Tab "Tạm dừng"'}</Button>
               <Button
                 size="medium"
                 type="primary"
@@ -757,7 +768,7 @@ const Manufacture1 = (props) => {
                   loading={loading}
                   scroll={{
                     x: '100%',
-                    y: 'calc(100vh - 50vh)',
+                    y: 'calc(100vh - 56vh)',
                   }}
                   size="small"
                   rowClassName={(record, index) =>
@@ -798,18 +809,24 @@ const Manufacture1 = (props) => {
     },
     {
       label: <Space>{'Danh sách tạm dừng'}<Badge count={pausedList.length} showZero color="#1677ff" overflowCount={999} /></Space>,
-      key: 2,
+      key: 'paused_manufacture_tab',
       children:
         <Row gutter={[8, 8]}>
-          <Col span={6}>
-            <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Tiếp tục'}</Button>
+          <Col span={24}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+              <Button type="primary" disabled={selectedPausedKeys.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
+              <Popconfirm title="Việc này sẽ xoá tất cả KH được chọn. Bạn có chắc muốn xoá?" onConfirm={deletePlan}>
+                <Button type="primary" danger disabled={selectedPausedKeys.length <= 0} className="w-100">{'Xoá'}</Button>
+              </Popconfirm>
+            </div>
           </Col>
           <Col span={24}>
             <Table
               loading={loading}
               scroll={{
                 x: '100%',
-                y: 'calc(100vh - 50vh)',
+                y: 'calc(100vh - 56vh)',
               }}
               rowSelection={pausedSelection}
               size="small"
@@ -888,9 +905,11 @@ const Manufacture1 = (props) => {
         </Col>
         <Col span={24}>
           <Tabs
+            activeKey={activeKey}
             type="card"
             className="manufacture-tabs"
             items={items}
+            onChange={setActiveKey}
           />
         </Col>
       </Row>

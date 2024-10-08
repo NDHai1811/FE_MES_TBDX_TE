@@ -523,16 +523,13 @@ const InDan = (props) => {
       setListCheck([]);
     }
   }
+  const [activeKey, setActiveKey] = useState('currrent_manufacture_tab');
   const openModal = () => {
-    if (listCheck.length !== 1) {
+    if ((activeKey === 'currrent_manufacture_tab' && listCheck.length !== 1) || (activeKey === 'paused_manufacture_tab' && selectedPausedKeys.length !== 1)) {
       message.info('Chọn 1 lô để nhập sản lượng');
       return;
     }
     const target = data.find(e => e.key === listCheck[0]);
-    if (target?.status <= 1) {
-      message.info('Lô này chưa hoàn thành');
-      return;
-    }
     setIsOpenModal(true);
     form.setFieldsValue(target)
   }
@@ -555,7 +552,7 @@ const InDan = (props) => {
   }
   const fetchPausedPlan = async () => {
     var res = await getPausedPlanList(params);
-    setPasuedList(res.data.map(e=>({...e, key: e.key})));
+    setPasuedList(res.data.map(e => ({ ...e, key: e.key })));
   }
   const pause = async () => {
     if (listCheck.length <= 0) {
@@ -568,7 +565,7 @@ const InDan = (props) => {
       return;
     }
     setPausing(true);
-    var res = await pausePlan({ info_ids: data.filter(e=>listCheck.includes(e.lo_sx)).map(e=>e.id), machine_id: machine_id });
+    var res = await pausePlan({ info_ids: data.filter(e => listCheck.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
     reloadData();
     fetchPausedPlan();
     setListCheck([]);
@@ -580,10 +577,10 @@ const InDan = (props) => {
       message.info('Chưa chọn kế hoạch muốn tiếp tục');
       return;
     }
-    console.log(pausedList.filter(e=>selectedPausedKeys.includes(e.key)));
-    
+    console.log(pausedList.filter(e => selectedPausedKeys.includes(e.key)));
+
     setResuming(true);
-    var res = await resumePlan({ info_ids: pausedList.filter(e=>selectedPausedKeys.includes(e.lo_sx)).map(e=>e.id), machine_id: machine_id });
+    var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
     reloadData();
     fetchPausedPlan();
     setListCheck([]);
@@ -593,11 +590,11 @@ const InDan = (props) => {
   const items = [
     {
       label: 'Danh sách sản xuất',
-      key: 1,
+      key: 'currrent_manufacture_tab',
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ width: '100%', justifyContent: 'space-between', display: 'flex', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
               {(machine_id === 'P15' || machine_id === 'P06') ? <Button
                 size="medium"
                 type="primary"
@@ -624,7 +621,7 @@ const InDan = (props) => {
                 <TemThanhPham listCheck={listTem} ref={componentRef2} />
               </div>
               <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
-              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Tạm dừng'}</Button>
+              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Chuyển sang Tab "Tạm dừng"'}</Button>
             </div>
           </Col>
           <Col span={24}>
@@ -651,11 +648,14 @@ const InDan = (props) => {
     },
     {
       label: <Space>{'Danh sách tạm dừng'}<Badge count={pausedList.length} showZero color="#1677ff" overflowCount={999} /></Space>,
-      key: 2,
+      key: 'paused_manufacture_tab',
       children:
         <Row gutter={[8, 8]}>
-          <Col span={6}>
-            <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Tiếp tục'}</Button>
+          <Col span={24}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
+            </div>
           </Col>
           <Col span={24}>
             <Table
@@ -727,9 +727,11 @@ const InDan = (props) => {
         </Row>
         <Col span={24} className="mt-2">
           <Tabs
+            activeKey={activeKey}
             type="card"
             className="manufacture-tabs"
             items={items}
+            onChange={setActiveKey}
           />
         </Col>
       </Spin>

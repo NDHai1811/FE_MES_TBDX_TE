@@ -139,6 +139,7 @@ const KeHoachSanXuat = () => {
       key: "loss_quantity",
       align: "center",
       width: 60,
+      editable: true,
     },
     {
       title: "Khổ",

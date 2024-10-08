@@ -248,19 +248,19 @@ export async function exportErrors(params) {
 //TestCriteria
 export async function getTestCriteria(params) {
   const res = await axios.get("/test_criteria/list", { params });
-  return res.data;
+  return res;
 }
 export async function createTestCriteria(params) {
   const res = await axios.post("/test_criteria/create", params);
-  return res.data;
+  return res;
 }
 export async function updateTestCriteria(params) {
   const res = await axios.patch("/test_criteria/update", params);
-  return res.data;
+  return res;
 }
 export async function deleteTestCriteria(params) {
   const res = await axios.post("/test_criteria/delete", params);
-  return res.data;
+  return res;
 }
 export async function exportTestCriteria(params) {
   const res = await axios.get("/test_criteria/export", { params });

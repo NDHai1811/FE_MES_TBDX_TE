@@ -122,7 +122,7 @@ const Checksheet1 = (props) => {
         bodyStyle={{ maxHeight: 500, overflowX: 'hidden', overflowY: 'auto', paddingRight: 8 }}
         footer={
           <Space>
-            <Tooltip title="Lô không có lỗi lầm gì, duyệt để bỏ qua kiểm tra">
+            <Tooltip title="Không có lỗi gì, duyệt để bỏ qua kiểm tra">
               <Button
                 onClick={() => {
                   onSubmit({ tinh_nang: [] });

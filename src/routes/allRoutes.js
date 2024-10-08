@@ -57,6 +57,7 @@ import IQC from "../pages/OI/Quality/IQC";
 import WarehouseExportCommand from "../pages/UI/Warehouse/WarehouseExportCommand";
 import MachineAssignment from "../pages/UI/MasterData/MachineAssignment";
 import Pallet from "../pages/UI/Warehouse/Pallet";
+import QualityIQC from "../pages/UI/Quality/IQC";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -72,6 +73,7 @@ const authProtectedRoutes = [
   { path: "/ui/manufacture/don-hang", component: Orders, label: "Đơn hàng", permission: 'ui-manufacture-don-hang' },
   { path: "/ui/manufacture/buyer", component: Buyer, label: "Buyer", permission: 'ui-manufacture-buyer' },
   { path: "/ui/quality", component: UIQualityPQC, label: 'Chất lượng', permission: 'ui-quality-pqc' },
+  { path: "/ui/quality/iqc", component: QualityIQC, label: 'IQC', permission: 'ui-quality-iqc' },
   // { path: "/ui/quality/oqc", component: UIQualityOQC },
   { path: "/ui/equipment/thong-ke-loi", component: UIEquipment1, label: 'Thống kê lỗi', permission: 'ui-equipment-thong-ke-loi' },
   { path: "/ui/equipment/thong-so-may", component: UIEquipment2, label: 'Thông số máy', permission: 'ui-equipment-thong-so-may' },

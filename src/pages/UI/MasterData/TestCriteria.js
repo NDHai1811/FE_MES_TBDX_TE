@@ -42,10 +42,9 @@ const TestCriteria = () => {
   const col_detailTable = [
     {
       title: "Công đoạn",
-      dataIndex: "line",
-      key: "line",
+      dataIndex: "line_name",
+      key: "line_name",
       align: "center",
-      render: (value, item, index) => value?.name,
       fixed: "left",
     },
     {
@@ -88,27 +87,28 @@ const TestCriteria = () => {
       key: "phan_dinh",
       align: "center",
     },
-    {
-      title: "Tham chiếu",
-      dataIndex: "ref_line",
-      key: "ref_line",
-      align: "center",
-      render: (value, item, index) => value?.name,
-    },
+    // {
+    //   title: "Tham chiếu",
+    //   dataIndex: "ref_line",
+    //   key: "ref_line",
+    //   align: "center",
+    //   render: (value, item, index) => value?.name,
+    // },
   ];
   const formFields = [
     {
+      title: "Mã tiêu chí",
       key: "id",
-      hidden: true,
+      required: true,
+    },
+    {
+      title: "Tên tiêu chí",
+      key: "name",
+      required: true,
     },
     {
       title: "Công đoạn",
       key: "line",
-      required: true,
-    },
-    {
-      title: "Chỉ tiêu",
-      key: "chi_tieu",
       required: true,
     },
     {
@@ -117,7 +117,12 @@ const TestCriteria = () => {
       required: true,
     },
     {
-      title: "Tiêu chuẩn",
+      title: "Chỉ tiêu",
+      key: "chi_tieu",
+      required: true,
+    },
+    {
+      title: "Dung sai",
       key: "tieu_chuan",
       required: true
     },
@@ -126,10 +131,10 @@ const TestCriteria = () => {
       key: "phan_dinh",
       required: true,
     },
-    {
-      title: "Tham chiếu TCKT công đoạn",
-      key: "reference",
-    },
+    // {
+    //   title: "Tham chiếu TCKT công đoạn",
+    //   key: "reference",
+    // },
   ];
 
   function btn_click() {
@@ -141,7 +146,7 @@ const TestCriteria = () => {
     setLoading(true);
     const res = await getTestCriteria(params);
     setData(
-      res.map((e) => {
+      res.data.map((e) => {
         return { ...e, key: e.id };
       })
     );
@@ -174,7 +179,7 @@ const TestCriteria = () => {
     if (isEdit) {
       const res = await updateTestCriteria(values);
       console.log(res);
-      if (res) {
+      if (res.success) {
         form.resetFields();
         setOpenMdl(false);
         loadListTable(params);
@@ -182,7 +187,7 @@ const TestCriteria = () => {
     } else {
       const res = await createTestCriteria(values);
       console.log(res);
-      if (res) {
+      if (res.success) {
         form.resetFields();
         setOpenMdl(false);
         loadListTable(params);
