@@ -44,6 +44,7 @@ const importColumns = [
     dataIndex: "stt",
     key: "stt",
     align: "center",
+    width: 50,
     render: (value, record, index) => index + 1,
   },
   {
@@ -51,27 +52,7 @@ const importColumns = [
     dataIndex: "material_id",
     key: "material_id",
     align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã cuộn NCC",
-    dataIndex: "ma_cuon_ncc",
-    key: "ma_cuon_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
+    width: 120,
     render: (value) => value || "-",
   },
   {
@@ -79,6 +60,7 @@ const importColumns = [
     dataIndex: "loai_giay",
     key: "loai_giay",
     align: "center",
+    width: 80,
     render: (value) => value || "-",
   },
   {
@@ -86,6 +68,7 @@ const importColumns = [
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
+    width: 60,
     render: (value) => value || "-",
   },
   {
@@ -93,6 +76,32 @@ const importColumns = [
     dataIndex: "dinh_luong",
     key: "dinh_luong",
     align: "center",
+    width: 90,
+    render: (value) => value || "-",
+  },
+
+  {
+    title: "Số kg",
+    dataIndex: "so_kg",
+    key: "so_kg",
+    align: "center",
+    width: 60,
+    render: (value) => value || "-",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+    width: 70,
+    render: (value) => value || "-",
+  },
+  {
+    title: "Mã cuộn NCC",
+    dataIndex: "ma_cuon_ncc",
+    key: "ma_cuon_ncc",
+    align: "center",
+    width: 140,
     render: (value) => value || "-",
   },
   {
@@ -100,6 +109,7 @@ const importColumns = [
     dataIndex: "tg_nhap",
     key: "tg_nhap",
     align: "center",
+    width: 80,
     render: (value) => value || "-",
   },
 ];
@@ -192,7 +202,7 @@ const Import = (props) => {
   const getLogs = () => {
     setLoading(true);
     getTablesNvl()
-      .then((res) => {setLogs(res.data); setLoading(false);})
+      .then((res) => { setLogs(res.data); setLoading(false); })
       .catch((err) =>
         console.log("Lấy danh sách bảng nhập kho nvl thất bại: ", err)
       );
@@ -211,7 +221,7 @@ const Import = (props) => {
             size="small"
             className="mb-1 custom-table"
             columns={column2}
-            locale={{emptyText:'Trống'}}
+            locale={{ emptyText: 'Trống' }}
             dataSource={overall}
           />
         </Col>
@@ -221,7 +231,7 @@ const Import = (props) => {
             bordered
             size="small"
             className="mb-1 custom-table"
-            locale={{emptyText:'Trống'}}
+            locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
             dataSource={currentScan ? [currentScan] : []}
           />
@@ -261,21 +271,20 @@ const Import = (props) => {
         <Col span={24}>
           <Table
             scroll={{
-              x: "calc(700px + 50%)",
-              y: 300,
+              y: 'calc(100vh - 440px)',
             }}
             rowClassName={(record, index) =>
               record.status === 1
                 ? "table-row-yellow"
                 : record.status === 2
-                ? "table-row-grey"
-                : ""
+                  ? "table-row-grey"
+                  : ""
             }
             loading={loading}
             size="small"
             pagination={false}
             bordered
-            className="mb-4"
+            className="mb-2"
             columns={importColumns}
             dataSource={logs}
           />

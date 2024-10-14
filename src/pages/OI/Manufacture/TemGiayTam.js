@@ -90,7 +90,7 @@ const PrintTemplate = ({ detail }) => {
             </tr>
             <tr>
               <td colSpan={4} style={{ fontWeight: '700', fontSize: '26px' }}>{detail.note_3}</td>
-              <td className="text-center" style={{ fontWeight: '700', fontSize: '26px' }}>{detail.thu_tu_uu_tien}</td>
+              <td className="text-center" style={{ fontWeight: '700', fontSize: '26px' }}>{detail.so_pallet}</td>
             </tr>
             <tr>
               <td colSpan={4} style={{ fontSize: '12px' }}>GHI CHÚ TBDX</td>

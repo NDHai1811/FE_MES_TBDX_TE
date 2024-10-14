@@ -530,9 +530,9 @@ const InDan = (props) => {
       return;
     }
     let target = null
-    if(activeKey === 'currrent_manufacture_tab' ){
+    if (activeKey === 'currrent_manufacture_tab') {
       target = data.find(e => e.key === listCheck[0]);
-    }else{
+    } else {
       target = pausedList.find(e => e.lo_sx === selectedPausedKeys[0]);
     }
     console.log(target);
@@ -601,7 +601,7 @@ const InDan = (props) => {
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
               {(machine_id === 'Pr15' || machine_id === 'Pr06') ? <Button
                 size="medium"
                 type="primary"
@@ -659,7 +659,7 @@ const InDan = (props) => {
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
               <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
               <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
             </div>

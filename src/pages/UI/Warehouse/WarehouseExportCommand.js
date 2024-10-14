@@ -507,32 +507,6 @@ const WarehouseExportCommand = () => {
         )} />
     }
   ];
-  const onCreate = async () => {
-    if (!exportCommandParams?.vehicle_id) {
-      messageApi.warning('Chưa chọn xe!');
-      return 0;
-    }
-    if (!exportCommandParams?.driver_id) {
-      messageApi.warning('Chưa chọn tài xế!');
-      return 0;
-    }
-    if (!exportCommandParams?.exporter_id) {
-      messageApi.warning('Chưa chọn người xuất!');
-      return 0;
-    }
-    if (!selectedOrders.length) {
-      messageApi.warning('Chưa chọn đơn hàng!');
-      return 0;
-    }
-    var res = await createDeliveryNote({ ...exportCommandParams, orders: selectedOrders });
-    if (res.success) {
-      setOpenMdl(false);
-      btn_click()
-    }
-  }
-  const extraTab = {
-    right: <Button type="primary" className="tabs-extra-demo-button" onClick={onCreate}>Tạo lệnh XK</Button>,
-  };
   const onAfterCreate = () => {
     btn_click();
   }

@@ -686,7 +686,7 @@ const TaoKeHoachSanXuat = () => {
                                 className="mb-3"
                             >
                                 <DatePicker
-                                    allowClear={false}
+                                allowClear={false}
                                     placeholder="Kết thúc"
                                     style={{ width: "100%" }}
                                     onChange={(value) =>

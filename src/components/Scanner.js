@@ -68,10 +68,11 @@ const ScanQR = (props) => {
   };
 
   return (
-    <div style={{ height: "10%" }}>
+    <div style={{ width: 300, margin: 'auto'}}>
       <Html5QrcodePlugin
         fps={30}
         qrbox={200}
+        aspectRatio={4/3}
         disableFlip={true}
         qrCodeSuccessCallback={onNewScanResult}
         isHideButton={isHideButton}

@@ -25,6 +25,7 @@ import {
   createWarehouseImport,
   deleteGoodsReceiptNote,
   deleteWarehouseImport,
+  exportListMaterialExport,
   exportVehicleWeightTicket,
   exportWarehouseTicket,
   getGoodsReceiptNote,
@@ -45,6 +46,7 @@ const columns1 = [
     dataIndex: "index",
     key: "index",
     align: "center",
+    width: 50,
     render: (value, item, index) => index + 1,
   },
   {
@@ -52,42 +54,49 @@ const columns1 = [
     dataIndex: "machine",
     key: "machine",
     align: "center",
+    width: 50,
   },
   {
     title: "Đầu sóng",
     dataIndex: "dau_may",
     key: "dau_may",
     align: "center",
+    width: 100,
   },
   {
     title: "Mã vật tư",
     dataIndex: "ma_vat_tu",
     key: "ma_vat_tu",
     align: "center",
+    width: 100,
   },
   {
     title: "Mã cuộn",
     dataIndex: "material_id",
     key: "material_id",
     align: "center",
+    width: 100,
   },
   {
     title: "Vị trí",
     dataIndex: "locator_id",
     key: "locator_id",
     align: "center",
+    width: 70,
   },
   {
     title: "Loại giấy",
     dataIndex: "loai_giay",
     key: "loai_giay",
     align: "center",
+    width: 80,
   },
   {
     title: "FSC",
     dataIndex: "fsc",
     key: "fsc",
     align: "center",
+    width: 50,
     render: (value) => value ? "X" : ""
   },
   {
@@ -95,54 +104,63 @@ const columns1 = [
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
+    width: 80,
   },
   {
     title: "Định lượng",
     dataIndex: "dinh_luong",
     key: "dinh_luong",
     align: "center",
+    width: 90,
   },
   {
     title: "Số ký nhập",
     dataIndex: "so_kg_nhap",
     key: "so_kg_nhap",
     align: "center",
+    width: 100,
   },
   {
     title: "Số ký ban đầu",
     dataIndex: "so_kg_ban_dau",
     key: "so_kg_ban_dau",
     align: "center",
+    width: 120,
   },
   {
     title: "Số ký xuất",
     dataIndex: "so_kg_xuat",
     key: "so_kg_xuat",
     align: "center",
+    width: 100,
   },
   {
     title: "Số ký còn lại",
     dataIndex: "so_kg_con_lai",
     key: "so_kg_con_lai",
     align: "center",
+    width: 100,
   },
   {
     title: "Số m",
     dataIndex: "so_m_toi",
     key: "so_m_toi",
     align: "center",
+    width: 60,
   },
   {
-    title: "Thời gian cần dự kiếm",
+    title: "Thời gian cần dự kiến",
     dataIndex: "time_need",
     key: "time_need",
     align: "center",
+    width: 160,
   },
   {
     title: "Ca làm việc",
     dataIndex: "ca_sx",
     key: "ca_sx",
     align: "center",
+    width: 90,
   },
 ];
 const WarehouseMLT = (props) => {
@@ -389,7 +407,7 @@ const WarehouseMLT = (props) => {
         columns={columns1}
         dataSource={exportList}
         scroll={{
-          x: "100vw",
+          // x: "100vw",
           y: tableHeight,
         }}
         className="h-100"
@@ -501,6 +519,15 @@ const WarehouseMLT = (props) => {
   const onDeleteNote = async (record) => {
     var res = await deleteGoodsReceiptNote(record);
     getReceiptNote();
+  }
+
+  const exportFileExcel = async () => {
+    setExportLoading(true);
+    const res = await exportListMaterialExport({ ...params, ...exportParams });
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
   }
   return (
     <>
@@ -661,7 +688,15 @@ const WarehouseMLT = (props) => {
                       />
                     </div>
                   </Space>
-                ) : null
+                ) : <Space>
+                  <Button
+                    type="primary"
+                    onClick={() => exportFileExcel()}
+                    loading={exportLoading}
+                  >
+                    Excel
+                  </Button>
+                </Space>
               }
             ></Tabs>
           </Card>

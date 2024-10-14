@@ -123,3 +123,6 @@ export const getLSXPallet = async (params) => {
 export const exportLSXPallet = async (params) => {
   return await axios.get("/ui/lsx-pallet/export", { params });
 }
+export const exportListMaterialExport = async (params) => {
+  return await axios.get("/ui/warehouse/export-list-material-export", { params });
+}

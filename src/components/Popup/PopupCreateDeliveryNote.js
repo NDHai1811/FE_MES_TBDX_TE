@@ -297,7 +297,7 @@ const PopupCreateDeliveryNote = (props) => {
       messageApi.warning('Chưa chọn tài xế!');
       return 0;
     }
-    if (!exportCommandParams?.exporter_id) {
+    if (!(exportCommandParams?.exporter_ids ?? []).length) {
       messageApi.warning('Chưa chọn người xuất!');
       return 0;
     }

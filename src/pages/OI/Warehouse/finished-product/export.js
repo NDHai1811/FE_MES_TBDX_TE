@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker } from "antd";
+import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker, InputNumber } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -81,7 +81,7 @@ const Export = (props) => {
   const [loadingTable, setLoadingTable] = useState(false);
   const [form] = Form.useForm();
   const scanRef = useRef();
-  const [params, setParams] = useState({start_date: dayjs(), end_date: dayjs()})
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() })
   const column2 = [
     {
       title: "Kho",
@@ -201,10 +201,16 @@ const Export = (props) => {
       key: "so_luong",
       align: "center",
       render: (value, record, index) =>
-        <>
-          <Form.Item name={[index, "lo_sx"]} noStyle hidden><Input /></Form.Item>
-          <Form.Item name={[index, "so_luong"]} noStyle><Input /></Form.Item>
-        </>
+        <InputNumber value={value} onChange={(event) => setSelectedItem({
+          ...selectedItem, lo_sx:
+            (selectedItem.lo_sx ?? []).map((e, i) => {
+              if (i === index) {
+                return { ...e, so_luong: event.target.value }
+              }
+              return e;
+            })
+        }
+        )} />
       ,
     },
   ]
@@ -226,7 +232,7 @@ const Export = (props) => {
     setLoadingTable(false);
   }
   useEffect(() => {
-    if(deliveryNoteID){
+    if (deliveryNoteID) {
       loadDataTable()
     }
   }, [deliveryNoteID]);
@@ -269,12 +275,8 @@ const Export = (props) => {
     setDeliveryNote(arr);
     setSelectedItem();
   }
-  const onFinish = async (values) => {
-    const lsx = values ? Object.values(values) : [];
-    const params = { pallet_id: selectedItem?.pallet_id, lo_sx: lsx, delivery_note_id: selectedItem?.delivery_note_id }
-    console.log(params);
-    
-    var res = await exportPallet(params);
+  const saveExportPallet = async () => {
+    var res = await exportPallet(selectedItem);
     if (res.success) {
       setVisible(false);
       form.resetFields();
@@ -295,7 +297,7 @@ const Export = (props) => {
     }
     setIsDownloading(false);
   }
-  useEffect(()=>{
+  useEffect(() => {
     loadData();
     loadDataTable();
   }, [params])
@@ -331,7 +333,7 @@ const Export = (props) => {
             style={{ width: "100%" }}
             format={'DD/MM/YYYY'}
             defaultValue={params.start_date}
-            onChange={(value)=>value && value?.isValid() && setParams({...params, start_date: value})}
+            onChange={(value) => value && value?.isValid() && setParams({ ...params, start_date: value })}
           />
         </Col>
         <Col span={8}>
@@ -341,7 +343,7 @@ const Export = (props) => {
             style={{ width: "100%" }}
             format={'DD/MM/YYYY'}
             defaultValue={params.end_date}
-            onChange={(value)=>value && value?.isValid() && setParams({...params, end_date: value})}
+            onChange={(value) => value && value?.isValid() && setParams({ ...params, end_date: value })}
           />
         </Col>
         <Col span={4}>
@@ -413,25 +415,23 @@ const Export = (props) => {
           open={visible}
           onCancel={() => setVisible(false)}
           okText={"Lưu"}
-          onOk={() => form.submit()}
+          onOk={() => saveExportPallet()}
           width={600}
         >
-          <Form form={form} onFinish={onFinish}>
-            <Table
-              rowClassName={(record, index) =>
-                record.status === 1
-                  ? "table-row-yellow"
-                  : record.status === 2
-                    ? "table-row-grey"
-                    : ""
-              }
-              pagination={false}
-              bordered
-              className="mb-4"
-              columns={lsxColumns}
-              dataSource={selectedItem?.lo_sx ?? []}
-            />
-          </Form>
+          <Table
+            rowClassName={(record, index) =>
+              record.status === 1
+                ? "table-row-yellow"
+                : record.status === 2
+                  ? "table-row-grey"
+                  : ""
+            }
+            pagination={false}
+            bordered
+            className="mb-4"
+            columns={lsxColumns}
+            dataSource={selectedItem?.lo_sx ?? []}
+          />
         </Modal>
       )}
     </React.Fragment>

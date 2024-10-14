@@ -44,6 +44,7 @@ const exportColumns = [
     dataIndex: "stt",
     key: "stt",
     align: "center",
+    width: 50,
     render: (value, record, index) => index + 1,
   },
   {
@@ -51,27 +52,7 @@ const exportColumns = [
     dataIndex: "material_id",
     key: "material_id",
     align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã cuộn NCC",
-    dataIndex: "ma_cuon_ncc",
-    key: "ma_cuon_ncc",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Số kg",
-    dataIndex: "so_kg",
-    key: "so_kg",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
-    title: "Vị trí",
-    dataIndex: "vi_tri",
-    key: "vi_tri",
-    align: "center",
+    width: 120,
     render: (value) => value || "-",
   },
   {
@@ -79,6 +60,7 @@ const exportColumns = [
     dataIndex: "loai_giay",
     key: "loai_giay",
     align: "center",
+    width: 80,
     render: (value) => value || "-",
   },
   {
@@ -86,6 +68,7 @@ const exportColumns = [
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
+    width: 60,
     render: (value) => value || "-",
   },
   {
@@ -93,6 +76,32 @@ const exportColumns = [
     dataIndex: "dinh_luong",
     key: "dinh_luong",
     align: "center",
+    width: 90,
+    render: (value) => value || "-",
+  },
+
+  {
+    title: "Số kg",
+    dataIndex: "so_kg",
+    key: "so_kg",
+    align: "center",
+    width: 60,
+    render: (value) => value || "-",
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "vi_tri",
+    key: "vi_tri",
+    align: "center",
+    width: 70,
+    render: (value) => value || "-",
+  },
+  {
+    title: "Mã cuộn NCC",
+    dataIndex: "ma_cuon_ncc",
+    key: "ma_cuon_ncc",
+    align: "center",
+    width: 140,
     render: (value) => value || "-",
   },
   {
@@ -100,6 +109,7 @@ const exportColumns = [
     dataIndex: "tg_xuat",
     key: "tg_xuat",
     align: "center",
+    width: 80,
     render: (value) => value || "-",
   },
 ];
@@ -241,8 +251,7 @@ const Export2 = (props) => {
         <Col span={24}>
           <Table
             scroll={{
-              x: "calc(700px + 50%)",
-              y: 300,
+              y: 'calc(100vh - 440px)',
             }}
             rowClassName={(record, index) =>
               record.status === 1
@@ -254,7 +263,7 @@ const Export2 = (props) => {
             size="small"
             pagination={false}
             bordered
-            className="mb-4"
+            className="mb-2"
             columns={exportColumns}
             dataSource={logs}
           />

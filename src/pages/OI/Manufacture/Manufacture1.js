@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useReducer, useContext, useMemo } from "react";
-import { DragOutlined, HolderOutlined, PrinterOutlined, StopOutlined } from "@ant-design/icons";
+import React, { useEffect, useState, useRef, useReducer, useContext, useMemo, useCallback } from "react";
+import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, DragOutlined, HolderOutlined, PrinterOutlined, SearchOutlined, StopOutlined, UpOutlined } from "@ant-design/icons";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
 import {
@@ -62,6 +62,8 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import "./Manufacture1.css"
+import debounce from "lodash/debounce";
+import OISearchBox from "../../../components/Popup/OISearchBox";
 
 const RowContext = React.createContext({});
 
@@ -255,6 +257,14 @@ const columns = [
     render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
   },
   {
+    title: "Ngày SX KH",
+    dataIndex: "ngay_sx",
+    key: "ngay_sx",
+    align: "center",
+    width: 120,
+    // fixed: 'right'
+  },
+  {
     title: "Lô SX",
     dataIndex: "lo_sx",
     key: "lo_sx",
@@ -431,7 +441,9 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
-
+    if (record?.lo_sx === searchedTarget?.lo_sx) {
+      return "table-row-blue";
+    }
     if (record.status === 1) {
       return "table-row-green";
     }
@@ -541,11 +553,11 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        console.log(e.data);
+        // console.log(e.data);
         if (e.data?.info_cong_doan?.machine_id !== machine_id) {
           return;
         }
-        console.log(e.data);
+        // console.log(e.data);
         if (e.data?.reload) {
           reloadData();
         } else {
@@ -568,7 +580,7 @@ const Manufacture1 = (props) => {
   }, [location]);
 
   const [specifiedRowKey, setSpecifiedRowKey] = useState(null);
-  const handleScrollToRow = () => {
+  const handleScrollToRow = (specifiedRowKey) => {
     if (specifiedRowKey !== null && tableRef.current) {
       tableRef.current?.scrollTo({ key: specifiedRowKey, behavior: 'smooth' });
     }
@@ -706,13 +718,13 @@ const Manufacture1 = (props) => {
       return;
     }
     let target = null
-    if(activeKey === 'currrent_manufacture_tab' ){
+    if (activeKey === 'currrent_manufacture_tab') {
       target = data.find(e => e.key === listCheck[0]);
-    }else{
+    } else {
       target = pausedList.find(e => e.lo_sx === selectedPausedKeys[0]);
     }
     console.log(target);
-    
+
     // if (target?.status <= 1) {
     //   message.info('Lô này chưa hoàn thành');
     //   return;
@@ -731,7 +743,16 @@ const Manufacture1 = (props) => {
       message.info('Chọn lô để xoá');
       return;
     }
-    var res = await deletePausedPlanList({info_ids: selectedPausedKeys});
+    var res = await deletePausedPlanList({ info_ids: selectedPausedKeys });
+  }
+  const [searchedTarget, setSearchedTarget] = useState(null);
+  const [searchedList, setSearchedList] = useState([]);
+  const buttonResponsive = {
+    xs: 24,
+    sm: 12,
+    md: 8,
+    lg: 6,
+    xl: 4,
   }
   const items = [
     {
@@ -739,33 +760,33 @@ const Manufacture1 = (props) => {
       key: 'currrent_manufacture_tab',
       children:
         <Row gutter={[8, 8]}>
-          <Col span={24}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
-              <Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} className="w-100">{isPaused ? 'Bắt đầu' : 'Dừng'}</Button>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={handlePrint}
-                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-              />
-              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
-              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Chuyển sang Tab "Tạm dừng"'}</Button>
-              <Button
-                size="medium"
-                type="primary"
-                style={{ width: "100%" }}
-                onClick={() => setIsDraggable(!isDraggable)}
-                title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
-                icon={!isDraggable ? <DragOutlined /> : <StopOutlined />}
-              >{!isDraggable ? "Di chuyển" : "Dừng di chuyển"}</Button>
-            </div>
-            <div className="report-history-invoice">
-              {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
-              <TemGiayTam listCheck={listTem} ref={componentRef1} />
-              <TemThanhPham listCheck={listTem} ref={componentRef2} />
-            </div>
-          </Col>
+          {/* <Col span={6}> */}
+          {/* <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}> */}
+          <Col {...buttonResponsive} span={4}><Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
+          <Col {...buttonResponsive} span={4}><Button
+            size="medium"
+            type="primary"
+            style={{ width: "100%", height: '100%', textWrap: 'wrap' }}
+            onClick={handlePrint}
+            icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+          /></Col>
+          <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button></Col>
+          <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Chuyển sang Tab "Tạm dừng"'}</Button></Col>
+          <Col {...buttonResponsive} span={4}><Button
+            size="medium"
+            type="primary"
+            style={{ width: "100%", height: '100%', textWrap: 'wrap' }}
+            onClick={() => setIsDraggable(!isDraggable)}
+            title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
+            icon={!isDraggable ? <DragOutlined /> : <StopOutlined />}
+          >{!isDraggable ? "Di chuyển" : "Dừng di chuyển"}</Button></Col>
+          <Col {...buttonResponsive} span={4}><OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList}/></Col>
+          {/* </div> */}
+          <div className="report-history-invoice">
+            {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+            <TemGiayTam listCheck={listTem} ref={componentRef1} />
+            <TemThanhPham listCheck={listTem} ref={componentRef2} />
+          </div>
           <Col span={24}>
             <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragEnd={onDragEnd}>
               <SortableContext
@@ -822,7 +843,7 @@ const Manufacture1 = (props) => {
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
               <Button type="primary" disabled={selectedPausedKeys.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
               <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
               <Popconfirm title="Việc này sẽ xoá tất cả KH được chọn. Bạn có chắc muốn xoá?" onConfirm={deletePlan}>
@@ -861,12 +882,15 @@ const Manufacture1 = (props) => {
       setListCheck([]);
     }
   }
-
   const onChangeTab = (key) => {
     setActiveKey(key);
     setSelectedPausedKeys([]);
     setListCheck([]);
   }
+
+  useEffect(() => {
+    handleScrollToRow(searchedTarget?.lo_sx);
+  }, [searchedTarget])
   return (
     <React.Fragment>
       {contextHolder}
@@ -928,7 +952,7 @@ const Manufacture1 = (props) => {
           />
         </Col>
       </Row>
-      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()}>
+      <Modal title="Nhập sản lượng tay" destroyOnClose open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()}>
         <Form form={form} layout="vertical" onFinish={onUpdateQuantity}>
           <Form.Item name={"id"} hidden>
             <Input />
