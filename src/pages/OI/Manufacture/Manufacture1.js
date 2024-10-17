@@ -52,7 +52,7 @@ import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
 import { baseHost, baseURL } from "../../../config";
-import { DndContext, MouseSensor, useSensor, useSensors, TouchSensor } from '@dnd-kit/core';
+import { DndContext, MouseSensor, useSensor, useSensors, TouchSensor, rectIntersection } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
@@ -788,7 +788,7 @@ const Manufacture1 = (props) => {
             <TemThanhPham listCheck={listTem} ref={componentRef2} />
           </div>
           <Col span={24}>
-            <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <DndContext sensors={sensors} collisionDetection={rectIntersection} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragEnd={onDragEnd}>
               <SortableContext
                 // rowKey array
                 items={data.map((i) => i.key)}

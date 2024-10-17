@@ -159,7 +159,7 @@ const EditableTable = forwardRef((props, ref) => {
       // onCreate && onCreate({ ...record, ...row }, editingKey);
       if (onCreate) {
         var res = await onCreate({ ...record, ...row }, editingKey);
-        if (typeof res === 'boolean') {
+        if (res !== undefined && typeof res === 'boolean') {
           if (res) {
             setDataSource(data)
           } else {
@@ -171,7 +171,7 @@ const EditableTable = forwardRef((props, ref) => {
       if (onUpdate) {
         var res = await onUpdate({ ...record, ...row }, editingKey);
         console.log(res);
-        if (typeof res === 'boolean') {
+        if (res !== undefined && typeof res === 'boolean') {
           if (res) {
             setDataSource(data);
             setData(data);

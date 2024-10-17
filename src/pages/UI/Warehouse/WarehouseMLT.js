@@ -16,6 +16,7 @@ import {
   Space,
   Typography,
   Spin,
+  Select,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
@@ -39,6 +40,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import EditableTable from "../../../components/Table/EditableTable";
 import { EditOutlined } from "@ant-design/icons";
 import Actions from "../../../components/Table/Actions";
+import { getShifts } from "../../../api";
 
 const columns1 = [
   {
@@ -168,6 +170,7 @@ const WarehouseMLT = (props) => {
 
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
+  const [shiftList, setShiftList] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
   const [params, setParams] = useState({
     start_date: dayjs(),
@@ -323,7 +326,13 @@ const WarehouseMLT = (props) => {
   }, [currentTab, exportParams.page, exportParams.pageSize]);
   useEffect(() => {
     getReceiptNote();
-  }, [])
+    getShiftList();
+  }, []);
+
+  const getShiftList = async () => {
+    var shifts = await getShifts();
+    setShiftList(shifts.map(e => ({ ...e, value: e.id, label: e.name })));
+  }
 
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -625,6 +634,19 @@ const WarehouseMLT = (props) => {
                       }
                     />
                   </Form.Item>
+                  {currentTab === '2' && <Form.Item
+                    label={"Ca làm việc"}
+                    className="mb-3"
+                  >
+                    <Select
+                      placeholder={"Chọn ca"}
+                      options={shiftList}
+                      onChange={(value) =>
+                        setParams({ ...params, export_shift: value })
+                      }
+                      allowClear
+                    />
+                  </Form.Item>}
                 </Form>
               </div>
             </Card>
