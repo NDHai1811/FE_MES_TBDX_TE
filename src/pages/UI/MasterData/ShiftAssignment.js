@@ -70,7 +70,7 @@ const ShiftAssignment = () => {
             dataIndex: "user_id",
             key: "user_id",
             align: "center",
-            render: (_, record)=>userList.find(e=>e.id === _)?.name,
+            render: (_, record) => userList.find(e => e.id === _)?.name,
             editable: true,
             inputType: 'select',
             options: userList,
@@ -81,7 +81,7 @@ const ShiftAssignment = () => {
             dataIndex: "shift_id",
             key: "shift_id",
             align: "center",
-            render: (_, record)=>shiftList.find(e=>e.id === _)?.name,
+            render: (_, record) => shiftList.find(e => e.id === _)?.name,
             editable: true,
             inputType: 'select',
             options: shiftList,
@@ -218,6 +218,16 @@ const ShiftAssignment = () => {
                                                 setParams({ ...params, name: e.target.value })
                                             }
                                             placeholder="Nhập tên nhân viên"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="Ca làm việc" className="mb-3">
+                                        <Select
+                                            placeholder={"Chọn ca"}
+                                            options={shiftList}
+                                            onChange={(value) =>
+                                                setParams({ ...params, shift_id: value })
+                                            }
+                                            allowClear
                                         />
                                     </Form.Item>
                                     <Button hidden htmlType="submit"></Button>
