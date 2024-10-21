@@ -338,6 +338,7 @@ const NhapTay = (props) => {
   };
 
   const onChangeLine = (value) => {
+    localStorage.setItem('machine_id', value);
     window.location.href = ("/oi/manufacture/" + value);
   };
 

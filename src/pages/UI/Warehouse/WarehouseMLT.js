@@ -151,18 +151,18 @@ const columns1 = [
     width: 60,
   },
   {
-    title: "Thời gian cần dự kiến",
-    dataIndex: "time_need",
-    key: "time_need",
+    title: "Thời gian xuất",
+    dataIndex: "thoi_gian_xuat",
+    key: "thoi_gian_xuat",
     align: "center",
     width: 160,
   },
   {
-    title: "Ca làm việc",
-    dataIndex: "ca_sx",
-    key: "ca_sx",
+    title: "Người xuất",
+    dataIndex: "nhan_vien_xuat",
+    key: "nhan_vien_xuat",
     align: "center",
-    width: 90,
+    width: 150,
   },
 ];
 const WarehouseMLT = (props) => {

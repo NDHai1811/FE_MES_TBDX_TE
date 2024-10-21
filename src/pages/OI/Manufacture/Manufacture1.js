@@ -52,7 +52,7 @@ import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
 import { baseHost, baseURL } from "../../../config";
-import { DndContext, MouseSensor, useSensor, useSensors, TouchSensor, rectIntersection } from '@dnd-kit/core';
+import { DndContext, MouseSensor, useSensor, useSensors, TouchSensor, rectIntersection, DragOverlay } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
   arrayMove,
@@ -134,7 +134,7 @@ const columns = [
     dataIndex: "khach_hang",
     key: "khach_hang",
     align: "center",
-    width: 90,
+    width: 130,
   },
   {
     title: "MDH",
@@ -171,75 +171,68 @@ const columns = [
     align: "center",
     width: 70
   },
-  // {
-  //   title: "Số dao",
-  //   dataIndex: "so_dao",
-  //   key: "so_dao",
-  //   align: "center",
-  //   width: 70
-  // },
   {
     title: "SL thực tế",
     dataIndex: "sl_dau_ra_hang_loat",
     key: "sl_dau_ra_hang_loat",
     align: "center",
-    width: 80
+    width: 90
   },
   {
     title: "Mặt F",
     dataIndex: "ma_cuon_f",
     key: "ma_cuon_f",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Sóng E",
     dataIndex: "ma_cuon_se",
     key: "ma_cuon_se",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Láng E",
     dataIndex: "ma_cuon_le",
     key: "ma_cuon_le",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Sóng B",
     dataIndex: "ma_cuon_sb",
     key: "ma_cuon_sb",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Láng B",
     dataIndex: "ma_cuon_lb",
     key: "sl",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Sóng C",
     dataIndex: "ma_cuon_sc",
     key: "ma_cuon_sc",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Láng C",
     dataIndex: "ma_cuon_lc",
     key: "ma_cuon_lc",
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "Số mét tới",
     dataIndex: "so_m_toi",
     key: "so_m_toi",
     align: "center",
-    width: 80
+    width: 90
   },
   {
     title: "SL phế",
@@ -253,7 +246,7 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    width: 70,
+    width: 90,
     render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
   },
   {
@@ -400,15 +393,11 @@ const Manufacture1 = (props) => {
     })();
   }, []);
 
-  document.addEventListener('dragover', (event) => {
-    console.log('dragging');
-
-    event.preventDefault();
-  });
-
   useEffect(() => {
-    reloadData();
-    fetchPausedPlan();
+    if(machine_id){
+      reloadData();
+      fetchPausedPlan();
+    }
   }, [params, machine_id]);
 
   const getOverAllDetail = () => {
@@ -437,6 +426,7 @@ const Manufacture1 = (props) => {
   }
 
   const onChangeLine = (value) => {
+    localStorage.setItem('machine_id', value);
     window.location.href = ("/oi/manufacture/" + value);
   };
 
@@ -502,9 +492,6 @@ const Manufacture1 = (props) => {
     },
   };
 
-  const onClickRow = (record) => {
-    record.status <= 1 && isPaused && setSelectedLot(record);
-  }
   const [messageApi, contextHolder] = message.useMessage();
   const [loadingAction, setLoadingAction] = useState(false)
   const onStart = async () => {
@@ -553,15 +540,14 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        // console.log(e.data);
+        if (e.data?.reload) {
+          getListLotDetail();
+        }
         if (e.data?.info_cong_doan?.machine_id !== machine_id) {
           return;
-        }
-        // console.log(e.data);
-        if (e.data?.reload) {
-          reloadData();
         } else {
           if (e.data?.info_cong_doan) {
+            console.log(e.data);
             setData(prevData => [...prevData].map(lo => {
               if (e.data?.info_cong_doan?.lo_sx == lo.lo_sx) {
                 const current = { ...lo, ...e.data?.info_cong_doan };
@@ -628,6 +614,11 @@ const Manufacture1 = (props) => {
     if (listCheck.includes(over?.id)) {
       return;
     }
+    const activeItem = data.find(e => e.lo_sx === active?.id);
+    const overItem = data.find(e => e.lo_sx === over?.id);
+    if (!activeItem || !overItem || !activeItem?.priority || !overItem?.priority) {
+      return;
+    }
     if (over && active.id !== over?.id) {
       var newArray = [];
       var oldData = data;
@@ -652,8 +643,8 @@ const Manufacture1 = (props) => {
         const oldLot = oldData.find((lot, oldIndex) => oldIndex === newIndex);
         return {
           id: newLot.id,                       // id của lô
-          oldPriority: newLot.thu_tu_uu_tien,  // Giá trị thứ tự ưu tiên cũ
-          newPriority: oldLot.thu_tu_uu_tien   // Giá trị thứ tự ưu tiên mới
+          oldPriority: newLot.priority,  // Giá trị thứ tự ưu tiên cũ
+          newPriority: oldLot.priority   // Giá trị thứ tự ưu tiên mới
         };
       }).filter((lot) => {
         return lot.oldPriority !== lot.newPriority; // Lô nào có sự thay đổi TTƯT thì trả về
@@ -690,12 +681,14 @@ const Manufacture1 = (props) => {
     }
     setPausing(true);
     var res = await pausePlan({ info_ids: data.filter(e => listCheck.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    reloadData();
-    fetchPausedPlan();
-    setListCheck([]);
-    setSelectedPausedKeys([]);
+    if(res.success){
+      reloadData();
+      fetchPausedPlan();
+      setListCheck([]);
+      setSelectedPausedKeys([]);
+      setActiveKey('paused_manufacture_tab');
+    }
     setPausing(false);
-    setActiveKey('paused_manufacture_tab');
   }
   const resume = async () => {
     if (selectedPausedKeys.length <= 0) {
@@ -704,12 +697,14 @@ const Manufacture1 = (props) => {
     }
     setResuming(true);
     var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    reloadData();
-    fetchPausedPlan();
-    setListCheck([]);
-    setSelectedPausedKeys([]);
+    if(res.success){
+      reloadData();
+      fetchPausedPlan();
+      setListCheck([]);
+      setSelectedPausedKeys([]);
+      setActiveKey('currrent_manufacture_tab');
+    }
     setResuming(false);
-    setActiveKey('currrent_manufacture_tab');
   }
   const [activeKey, setActiveKey] = useState('currrent_manufacture_tab');
   const openModal = () => {
@@ -780,7 +775,7 @@ const Manufacture1 = (props) => {
             title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
             icon={!isDraggable ? <DragOutlined /> : <StopOutlined />}
           >{!isDraggable ? "Di chuyển" : "Dừng di chuyển"}</Button></Col>
-          <Col {...buttonResponsive} span={4}><OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList}/></Col>
+          <Col {...buttonResponsive} span={4}><OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList} /></Col>
           {/* </div> */}
           <div className="report-history-invoice">
             {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
@@ -797,7 +792,7 @@ const Manufacture1 = (props) => {
                 <Table
                   loading={loading}
                   scroll={{
-                    x: '100%',
+                    x: tableRef.current?.innerWidth ?? 0,
                     y: 'calc(100vh - 56vh)',
                   }}
                   size="small"
@@ -821,14 +816,9 @@ const Manufacture1 = (props) => {
                     align: 'center',
                     width: 40,
                     fixed: 'left',
-                    render: () => <DragHandle />,
+                    render: (_, record) => record?.status === 0 ? <DragHandle /> : null,
                   }, ...columns] : columns}
                   rowSelection={rowSelection}
-                  // onRow={(record, rowIndex) => {
-                  //   return {
-                  //     onClick: (event) => { onClickRow(record) },
-                  //   };
-                  // }}
                   // virtual
                   dataSource={data.filter(e => !cloneItems.filter(key => key !== activeId).includes(e.key))}
                 />
