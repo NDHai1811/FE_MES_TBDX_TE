@@ -58,6 +58,7 @@ import WarehouseExportCommand from "../pages/UI/Warehouse/WarehouseExportCommand
 import MachineAssignment from "../pages/UI/MasterData/MachineAssignment";
 import Pallet from "../pages/UI/Warehouse/Pallet";
 import QualityIQC from "../pages/UI/Quality/IQC";
+import ShiftAssignment from "../pages/UI/MasterData/ShiftAssignment";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -95,7 +96,8 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/san-xuat/cong-doan", component: Line, label: 'Quản lý công đoạn', permission: 'ui-master-data-san-xuat-cong-doan' },
   { path: "/ui/master-data/san-xuat/error-machines", component: ErrorMachines, label: 'Quản lý lỗi máy', permission: 'ui-master-data-san-xuat-error-machines' },
   { path: "/ui/master-data/san-xuat/material", component: Materials, label: 'Quản lý NVL', permission: 'ui-master-data-san-xuat-material' },
-  { path: "/ui/master-data/san-xuat/customer", component: Customer, label: "Quản lý khách hàng" },
+  { path: "/ui/master-data/san-xuat/customer", component: Customer, label: "Quản lý khách hàng", permission: 'ui-master-data-san-xuat-customer' },
+  { path: "/ui/master-data/san-xuat/shift-assignment", component: ShiftAssignment, label: 'Phân ca theo tài khoản', permission: 'ui-master-data-san-xuat-shift-assignment' },
   { path: "/ui/master-data/to-chuc/users", component: Users, label: 'Quản lý tài khoản', permission: 'ui-master-data-to-chuc-users' },
   { path: "/ui/master-data/to-chuc/assign-machine", component: MachineAssignment, label: 'Phân bổ máy cho tài khoản', permission: 'ui-master-data-machine-assignment' },
   { path: "/ui/master-data/to-chuc/roles", component: Roles, label: 'Quản lý bộ phận', permission: 'ui-master-data-to-chuc-roles' },

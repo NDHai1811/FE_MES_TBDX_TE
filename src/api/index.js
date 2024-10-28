@@ -666,3 +666,25 @@ export async function deleteMachineAssignment(params) {
   const res = await axios.post('/machine-assignment/delete', params);
   return res.data;
 }
+
+//ShiftAssignment
+export async function getShiftAssignment(params) {
+  const res = await axios.get('/shift-assignment/list', { params });
+  return res;
+}
+export async function createShiftAssignment(params) {
+  const res = await axios.post('/shift-assignment/create', params);
+  return res;
+}
+export async function updateShiftAssignment(params) {
+  const res = await axios.patch('/shift-assignment/update', params);
+  return res;
+}
+export async function deleteShiftAssignment(params) {
+  const res = await axios.post('/shift-assignment/delete', params);
+  return res;
+}
+export async function getShifts(params) {
+  const res = await axios.get('/shift/list', { params });
+  return res.data;
+}

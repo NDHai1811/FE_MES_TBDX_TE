@@ -12,6 +12,7 @@ import {
   InputNumber,
   Table,
   message,
+  Select,
 } from "antd";
 import { baseURL } from "../../../config";
 import React, { useState, useEffect } from "react";
@@ -158,7 +159,7 @@ const WarehouseExportPlan = () => {
       key: "exporter_ids",
       align: "center",
       render: (value) => <Space align="center" direction="vertical">
-        {listUsers.filter(e=>(value ?? []).includes(parseInt(e.id))).map(e=>{
+        {listUsers.filter(e => (value ?? []).includes(parseInt(e.id))).map(e => {
           return e.name
         })}
       </Space>,
@@ -255,23 +256,23 @@ const WarehouseExportPlan = () => {
   const [openModal, setOpenModal] = useState(false)
   const [inputData, setInputData] = useState([]);
   const addonAction = (record) => {
-    return <ArrowsAltOutlined onClick={() => {setSelectedDividerPlan(record); setOpenModal(true);}} style={{ fontSize: 18 }} title="Tách kế hoạch" />
+    return <ArrowsAltOutlined onClick={() => { setSelectedDividerPlan(record); setOpenModal(true); }} style={{ fontSize: 18 }} title="Tách kế hoạch" />
   }
   const renderInputData = (item, index) => {
     return (
-        <Col span={24} key={index}>
-          <p3 style={{ display: "block" }} className={"mb-1"}>Số lượng cần xuất</p3>
-          <div className="d-flex">
-            <InputNumber
-              min={0}
-              placeholder="Nhập số lượng cần xuất"
-              onChange={(value) => setInputData(prev=>prev.map((e, i)=>(i===index) ? value : e))}
-              value={item}
-              style={{ width: "50%" }}
-            />
-            <CloseOutlined style={{margin: 8}} onClick={()=>setInputData(prev=>prev.filter((e, i)=>i!==index))}/>
-          </div>
-        </Col>
+      <Col span={24} key={index}>
+        <p3 style={{ display: "block" }} className={"mb-1"}>Số lượng cần xuất</p3>
+        <div className="d-flex">
+          <InputNumber
+            min={0}
+            placeholder="Nhập số lượng cần xuất"
+            onChange={(value) => setInputData(prev => prev.map((e, i) => (i === index) ? value : e))}
+            value={item}
+            style={{ width: "50%" }}
+          />
+          <CloseOutlined style={{ margin: 8 }} onClick={() => setInputData(prev => prev.filter((e, i) => i !== index))} />
+        </div>
+      </Col>
     );
   };
   const columns = ['ngay_xuat', 'thoi_gian_xuat', 'customer_id', 'mdh', 'mql', 'so_luong_dh', 'so_luong', 'xuong_giao'];
@@ -281,19 +282,19 @@ const WarehouseExportPlan = () => {
     setInputData([])
   }
   const handleOk = async () => {
-    if(!selectedDividerPlan){
+    if (!selectedDividerPlan) {
       messageApi.warning('Không có kế hoạch cần tách');
       return 0;
     }
-    if(inputData.length <= 0){
+    if (inputData.length <= 0) {
       messageApi.warning('Không có số lượng tách');
       return 0;
     }
-    if((inputData??[]).reduce(function(prev, cur) {return prev + cur;}, 0) > selectedDividerPlan.so_luong){
+    if ((inputData ?? []).reduce(function (prev, cur) { return prev + cur; }, 0) > selectedDividerPlan.so_luong) {
       messageApi.warning('Số lượng tách lớn hơn số lượng của kế hoạch');
       return 0;
     }
-    var params = {...selectedDividerPlan}
+    var params = { ...selectedDividerPlan }
     params.so_luong_tach = inputData;
     var res = await divideFGExportPlan(params);
     handleCancel();
@@ -310,7 +311,7 @@ const WarehouseExportPlan = () => {
   };
   return (
     <>
-    {contextHolder}
+      {contextHolder}
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
@@ -394,22 +395,28 @@ const WarehouseExportPlan = () => {
                     />
                   </Form.Item>
                   <Form.Item label="MDH" className="mb-3">
-                    <Input
+                    <Select
                       allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, mdh: e.target.value, page: 1 });
-                      }
-                      }
+                      mode="tags"
+                      onChange={(value) => {
+                        setParams({ ...params, mdh: value, page: 1 });
+                      }}
+                      options={[]}
+                      open={false}
+                      suffixIcon={null}
                       placeholder="Nhập MDH"
                     />
                   </Form.Item>
                   <Form.Item label="MQL" className="mb-3">
-                    <Input
+                    <Select
                       allowClear
-                      onChange={(e) => {
-                        setParams({ ...params, mql: e.target.value });
-                      }
-                      }
+                      mode="tags"
+                      onChange={(value) => {
+                        setParams({ ...params, mql: value, page: 1 });
+                      }}
+                      options={[]}
+                      open={false}
+                      suffixIcon={null}
                       placeholder="Nhập MQL"
                     />
                   </Form.Item>
@@ -476,16 +483,16 @@ const WarehouseExportPlan = () => {
           gutter={[8, 8]}
         >
           <Col span={24}>
-            <Table 
-            size="small" 
-            bordered 
-            pagination={false} 
-            columns={col_detailTable.filter(e => columns.includes(e.dataIndex))} 
-            dataSource={selectedDividerPlan ? [{...selectedDividerPlan, so_luong: (selectedDividerPlan.so_luong ?? 0) - (inputData??[]).reduce(function(prev, cur) {return prev + cur;}, 0)}] : []} />
+            <Table
+              size="small"
+              bordered
+              pagination={false}
+              columns={col_detailTable.filter(e => columns.includes(e.dataIndex))}
+              dataSource={selectedDividerPlan ? [{ ...selectedDividerPlan, so_luong: (selectedDividerPlan.so_luong ?? 0) - (inputData ?? []).reduce(function (prev, cur) { return prev + cur; }, 0) }] : []} />
           </Col>
           {inputData.map(renderInputData)}
         </Row>
-        <Button type="primary" onClick={() => setInputData(prev => [...prev,  0])} style={{ marginBottom: 12 }}>
+        <Button type="primary" onClick={() => setInputData(prev => [...prev, 0])} style={{ marginBottom: 12 }}>
           Thêm dòng
         </Button>
       </Modal>

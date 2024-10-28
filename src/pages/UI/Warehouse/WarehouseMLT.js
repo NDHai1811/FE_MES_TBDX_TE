@@ -16,6 +16,7 @@ import {
   Space,
   Typography,
   Spin,
+  Select,
 } from "antd";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
@@ -25,6 +26,7 @@ import {
   createWarehouseImport,
   deleteGoodsReceiptNote,
   deleteWarehouseImport,
+  exportListMaterialExport,
   exportVehicleWeightTicket,
   exportWarehouseTicket,
   getGoodsReceiptNote,
@@ -38,6 +40,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import EditableTable from "../../../components/Table/EditableTable";
 import { EditOutlined } from "@ant-design/icons";
 import Actions from "../../../components/Table/Actions";
+import { getShifts } from "../../../api";
 
 const columns1 = [
   {
@@ -45,6 +48,7 @@ const columns1 = [
     dataIndex: "index",
     key: "index",
     align: "center",
+    width: 50,
     render: (value, item, index) => index + 1,
   },
   {
@@ -52,42 +56,49 @@ const columns1 = [
     dataIndex: "machine",
     key: "machine",
     align: "center",
+    width: 50,
   },
   {
     title: "Đầu sóng",
     dataIndex: "dau_may",
     key: "dau_may",
     align: "center",
+    width: 100,
   },
   {
     title: "Mã vật tư",
     dataIndex: "ma_vat_tu",
     key: "ma_vat_tu",
     align: "center",
+    width: 100,
   },
   {
     title: "Mã cuộn",
     dataIndex: "material_id",
     key: "material_id",
     align: "center",
+    width: 100,
   },
   {
     title: "Vị trí",
     dataIndex: "locator_id",
     key: "locator_id",
     align: "center",
+    width: 70,
   },
   {
     title: "Loại giấy",
     dataIndex: "loai_giay",
     key: "loai_giay",
     align: "center",
+    width: 80,
   },
   {
     title: "FSC",
     dataIndex: "fsc",
     key: "fsc",
     align: "center",
+    width: 50,
     render: (value) => value ? "X" : ""
   },
   {
@@ -95,54 +106,63 @@ const columns1 = [
     dataIndex: "kho_giay",
     key: "kho_giay",
     align: "center",
+    width: 80,
   },
   {
     title: "Định lượng",
     dataIndex: "dinh_luong",
     key: "dinh_luong",
     align: "center",
+    width: 90,
   },
   {
     title: "Số ký nhập",
     dataIndex: "so_kg_nhap",
     key: "so_kg_nhap",
     align: "center",
+    width: 100,
   },
   {
     title: "Số ký ban đầu",
     dataIndex: "so_kg_ban_dau",
     key: "so_kg_ban_dau",
     align: "center",
+    width: 120,
   },
   {
     title: "Số ký xuất",
     dataIndex: "so_kg_xuat",
     key: "so_kg_xuat",
     align: "center",
+    width: 100,
   },
   {
     title: "Số ký còn lại",
     dataIndex: "so_kg_con_lai",
     key: "so_kg_con_lai",
     align: "center",
+    width: 100,
   },
   {
     title: "Số m",
     dataIndex: "so_m_toi",
     key: "so_m_toi",
     align: "center",
+    width: 60,
   },
   {
-    title: "Thời gian cần dự kiếm",
-    dataIndex: "time_need",
-    key: "time_need",
+    title: "Thời gian xuất",
+    dataIndex: "thoi_gian_xuat",
+    key: "thoi_gian_xuat",
     align: "center",
+    width: 160,
   },
   {
-    title: "Ca làm việc",
-    dataIndex: "ca_sx",
-    key: "ca_sx",
+    title: "Người xuất",
+    dataIndex: "nhan_vien_xuat",
+    key: "nhan_vien_xuat",
     align: "center",
+    width: 150,
   },
 ];
 const WarehouseMLT = (props) => {
@@ -150,6 +170,7 @@ const WarehouseMLT = (props) => {
 
   const [listCheck, setListCheck] = useState([]);
   const [listMaterialCheck, setListMaterialCheck] = useState([]);
+  const [shiftList, setShiftList] = useState([]);
   const [currentTab, setCurrentTab] = useState("1");
   const [params, setParams] = useState({
     start_date: dayjs(),
@@ -305,7 +326,13 @@ const WarehouseMLT = (props) => {
   }, [currentTab, exportParams.page, exportParams.pageSize]);
   useEffect(() => {
     getReceiptNote();
-  }, [])
+    getShiftList();
+  }, []);
+
+  const getShiftList = async () => {
+    var shifts = await getShifts();
+    setShiftList(shifts.map(e => ({ ...e, value: e.id, label: e.name })));
+  }
 
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -389,7 +416,7 @@ const WarehouseMLT = (props) => {
         columns={columns1}
         dataSource={exportList}
         scroll={{
-          x: "100vw",
+          // x: "100vw",
           y: tableHeight,
         }}
         className="h-100"
@@ -502,6 +529,15 @@ const WarehouseMLT = (props) => {
     var res = await deleteGoodsReceiptNote(record);
     getReceiptNote();
   }
+
+  const exportFileExcel = async () => {
+    setExportLoading(true);
+    const res = await exportListMaterialExport({ ...params, ...exportParams });
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading(false);
+  }
   return (
     <>
       {contextHolder}
@@ -598,6 +634,19 @@ const WarehouseMLT = (props) => {
                       }
                     />
                   </Form.Item>
+                  {currentTab === '2' && <Form.Item
+                    label={"Ca làm việc"}
+                    className="mb-3"
+                  >
+                    <Select
+                      placeholder={"Chọn ca"}
+                      options={shiftList}
+                      onChange={(value) =>
+                        setParams({ ...params, export_shift: value })
+                      }
+                      allowClear
+                    />
+                  </Form.Item>}
                 </Form>
               </div>
             </Card>
@@ -661,7 +710,15 @@ const WarehouseMLT = (props) => {
                       />
                     </div>
                   </Space>
-                ) : null
+                ) : <Space>
+                  <Button
+                    type="primary"
+                    onClick={() => exportFileExcel()}
+                    loading={exportLoading}
+                  >
+                    Excel
+                  </Button>
+                </Space>
               }
             ></Tabs>
           </Card>

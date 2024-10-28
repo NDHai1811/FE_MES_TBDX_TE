@@ -321,34 +321,35 @@ const QCByMachine = (props) => {
   }
   useEffect(() => {
     if (machine_id) {
-      setParams({ ...params, machine: [machine_id] })
-    }
-    setSelectedRow()
-  }, [machine_id]);
-  useEffect(() => {
-    if (params?.machine?.length) {
       getData();
     }
-  }, [params.machine, params.end_date, params.start_date]);
+  }, [params, machine_id]);
   useEffect(() => {
     if (machineOptions.length > 0) {
       var target = machineOptions.find((e) => e.value === machine_id);
       if (!target) {
-        target = machineOptions[0];
+        const machineId = localStorage.getItem('machine_id');
+        const machine = machineOptions.find((e) => e.value === machineId);
+        if (machine) {
+          target = machine
+        } else {
+          target = machineOptions[0];
+        }
       }
-      if(target.is_iot){
+      localStorage.setItem('machine_id', target.value);
+      if (target.is_iot) {
         history.push("/oi/quality/machine-iot/" + target.value);
-      }else{
+      } else {
         history.push("/oi/quality/machine/" + target.value);
       }
     }
-  }, [machineOptions]);
+  }, [machineOptions, machine_id]);
   const onChangeLine = (value, option) => {
     console.log(option);
-    setParams({ ...params, machine: value ? [value] : [] });
-    if(option.is_iot){
+    setParams({ ...params, machine_id: value });
+    if (option.is_iot) {
       history.push("/oi/quality/machine-iot/" + value);
-    }else{
+    } else {
       history.push("/oi/quality/machine/" + value);
     }
   };

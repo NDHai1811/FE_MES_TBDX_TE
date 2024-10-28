@@ -170,7 +170,6 @@ const InDan = (props) => {
   const location = useLocation();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
-  const componentRef3 = useRef();
 
   const [params, setParams] = useState({
     machine_id: machine_id,
@@ -179,14 +178,10 @@ const InDan = (props) => {
   });
   const { machineOptions = [] } = props
   const [loading, setLoading] = useState(false);
-  const [loadData, setLoadData] = useState(false);
   const [data, setData] = useState([]);
   const [selectedLot, setSelectedLot] = useState();
   const [listCheck, setListCheck] = useState([]);
   const [listTem, setListTem] = useState([]);
-  const [deviceID, setDeviceID] = useState(
-    "e9aba8d0-85da-11ee-8392-a51389126dc6"
-  );
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
@@ -275,6 +270,7 @@ const InDan = (props) => {
   };
 
   const onChangeLine = (value) => {
+    localStorage.setItem('machine_id', value);
     window.location.href = ("/oi/manufacture/" + value);
   };
 
@@ -358,20 +354,6 @@ const InDan = (props) => {
     }
   }
 
-  const onConfirmPrint = async () => {
-    console.log(quantity);
-
-    if (data.find(e => e.key === listCheck[0])?.so_luong < quantity) {
-      message.error('Số lượng nhập vượt quá số lượng thực tế');
-    } else {
-      const res = { ...data.find(e => e.key === listCheck[0]), so_luong: quantity };
-      setListTem([res]);
-      setSelectedLot();
-      setQuantity(0);
-      setVisiblePrint(false);
-      setListCheck([]);
-    }
-  };
   const rowSelection = {
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -422,7 +404,7 @@ const InDan = (props) => {
         return state;
     }
   };
-  const [dataTable, tableDispatch] = useReducer(dataTableReducer, []);
+
   useEffect(() => {
     if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
       return 0;
@@ -484,19 +466,6 @@ const InDan = (props) => {
       handleScrollToRow(specifiedRowKey);
     }
   }, [specifiedRowKey]);
-  useEffect(() => {
-    const updateItems = dataTable.map(item => {
-      const record = updatedData.find(e => e?.lo_sx === item.lo_sx);
-      if (record) {
-        return {
-          ...item,
-          ...record
-        };
-      }
-      return item;
-    });
-    tableDispatch({ type: 'UPDATE_DATA', payload: updateItems });
-  }, [updatedData]);
 
   const [trackingStatus, setTrackingStatus] = useState(0);
   const fetchTrackingStatus = async () => {
@@ -530,9 +499,9 @@ const InDan = (props) => {
       return;
     }
     let target = null
-    if(activeKey === 'currrent_manufacture_tab' ){
+    if (activeKey === 'currrent_manufacture_tab') {
       target = data.find(e => e.key === listCheck[0]);
-    }else{
+    } else {
       target = pausedList.find(e => e.lo_sx === selectedPausedKeys[0]);
     }
     console.log(target);
@@ -572,27 +541,31 @@ const InDan = (props) => {
     }
     setPausing(true);
     var res = await pausePlan({ info_ids: data.filter(e => listCheck.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    reloadData();
-    fetchPausedPlan();
-    setListCheck([]);
-    setSelectedPausedKeys([]);
+    if (res.success) {
+      reloadData();
+      fetchPausedPlan();
+      setListCheck([]);
+      setSelectedPausedKeys([]);
+      setActiveKey('paused_manufacture_tab')
+    }
     setPausing(false);
-    setActiveKey('paused_manufacture_tab')
+
   }
   const resume = async () => {
     if (selectedPausedKeys.length <= 0) {
       message.info('Chưa chọn kế hoạch muốn tiếp tục');
       return;
     }
-
     setResuming(true);
     var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    reloadData();
-    fetchPausedPlan();
-    setListCheck([]);
-    setSelectedPausedKeys([]);
+    if(res.success){
+      reloadData();
+      fetchPausedPlan();
+      setListCheck([]);
+      setSelectedPausedKeys([]);
+      setActiveKey('currrent_manufacture_tab');
+    }
     setResuming(false);
-    setActiveKey('currrent_manufacture_tab');
   }
   const items = [
     {
@@ -601,8 +574,8 @@ const InDan = (props) => {
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
-              {(machine_id === 'P15' || machine_id === 'P06') ? <Button
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+              {(machine_id === 'Pr15' || machine_id === 'Pr06') ? <Button
                 size="medium"
                 type="primary"
                 style={{ width: "100%" }}
@@ -659,7 +632,7 @@ const InDan = (props) => {
       children:
         <Row gutter={[8, 8]}>
           <Col span={24}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
               <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
               <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
             </div>

@@ -112,11 +112,18 @@ const Equipment = (props) => {
     if (machines.length > 0) {
       var target = machines.find(e=>e.value === machine_id);
       if(!target){
-        target = machines[0];
+        const machineId = localStorage.getItem('machine_id');
+        const machine = machines.find((e) => e.value === machineId);
+        if(machine){
+          target = machine
+        }else{
+          target = machines[0];
+        }
       }
+      localStorage.setItem('machine_id', target.value);
       history.push('/oi/equipment/' + target.value);
     }
-  }, [machines])
+  }, [machines, machine_id])
 
   const items = [
     {

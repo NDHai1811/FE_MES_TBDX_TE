@@ -21,3 +21,6 @@
 .manufacture-tabs .ant-tabs-nav-operations {
     display: none !important;
 }
+/* .draggable-table tr.ant-table-row{
+    display: flex !important;
+} */

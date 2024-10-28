@@ -39,7 +39,7 @@ const QCByMachine = (props) => {
   const [selectedRow, setSelectedRow] = useState();
   const [data, setData] = useState([]);
   const [machineOptions, setMachineOptions] = useState([]);
-  const [params, setParams] = useState({ machine: [machine_id], start_date: dayjs(), end_date: dayjs() });
+  const [params, setParams] = useState({ machine_id: machine_id, start_date: dayjs(), end_date: dayjs() });
   const [overall, setOverall] = useState([{}]);
   const { userProfile } = useProfile();
   const [openModalCK1, setOpenModalCK1] = useState(false);
@@ -352,32 +352,31 @@ const QCByMachine = (props) => {
     setLoading(false);
   }
   useEffect(() => {
-    if (machine_id && params.machine.length > 0 && machine_id !== params.machine[0]) {
-      setParams({ ...params, machine: [machine_id] })
-    }
-    setSelectedRow()
-  }, [machine_id]);
-  useEffect(() => {
-    if (params?.machine?.length) {
+    if (machine_id) {
       getData();
     }
-  }, [params]);
+  }, [params, machine_id]);
   useEffect(() => {
     if (machineOptions.length > 0) {
       var target = machineOptions.find((e) => e.value === machine_id);
       if (!target) {
-        target = machineOptions[0];
+        const machineId = localStorage.getItem('machine_id');
+        const machine = machineOptions.find((e) => e.value === machineId);
+        if(machine){
+          target = machine
+        }else{
+          target = machineOptions[0];
+        }
       }
+      localStorage.setItem('machine_id', target.value);
       if (target.is_iot) {
         history.push("/oi/quality/machine-iot/" + target.value);
       } else {
         history.push("/oi/quality/machine/" + target.value);
       }
     }
-  }, [machineOptions]);
+  }, [machineOptions, machine_id]);
   const onChangeLine = (value, option) => {
-    console.log(option);
-    setParams({ ...params, machine: value ? [value] : [] })
     if (option.is_iot) {
       history.push("/oi/quality/machine-iot/" + value);
     } else {
