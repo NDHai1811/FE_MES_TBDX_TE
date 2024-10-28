@@ -678,7 +678,6 @@ const InDan = (props) => {
               pagination={false}
               bordered
               columns={columns}
-              // virtual
               dataSource={pausedList}
             />
           </Col>
