@@ -121,151 +121,7 @@ const DragHandle = () => {
   );
 };
 
-const columns = [
-  {
-    title: "STT tem",
-    dataIndex: "thu_tu_uu_tien",
-    key: "thu_tu_uu_tien",
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "Tên khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    width: 130,
-  },
-  {
-    title: "MDH",
-    dataIndex: "mdh",
-    key: "mdh",
-    align: "center",
-    width: 90
-  },
-  {
-    title: "Kích chạy",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-    width: 100
-  },
-  {
-    title: "Khổ",
-    dataIndex: "kho_tong",
-    key: "kho_tong",
-    align: "center",
-    width: 60
-  },
-  {
-    title: "Dài tấm",
-    dataIndex: "dai_tam",
-    key: "dai_tam",
-    align: "center",
-    width: 70
-  },
-  {
-    title: "SL KH",
-    dataIndex: "san_luong_kh",
-    key: "san_luong_kh",
-    align: "center",
-    width: 70
-  },
-  {
-    title: "SL thực tế",
-    dataIndex: "sl_dau_ra_hang_loat",
-    key: "sl_dau_ra_hang_loat",
-    align: "center",
-    width: 90
-  },
-  {
-    title: "Mặt F",
-    dataIndex: "ma_cuon_f",
-    key: "ma_cuon_f",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Sóng E",
-    dataIndex: "ma_cuon_se",
-    key: "ma_cuon_se",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Láng E",
-    dataIndex: "ma_cuon_le",
-    key: "ma_cuon_le",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Sóng B",
-    dataIndex: "ma_cuon_sb",
-    key: "ma_cuon_sb",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Láng B",
-    dataIndex: "ma_cuon_lb",
-    key: "sl",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Sóng C",
-    dataIndex: "ma_cuon_sc",
-    key: "ma_cuon_sc",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Láng C",
-    dataIndex: "ma_cuon_lc",
-    key: "ma_cuon_lc",
-    align: "center",
-    width: 75,
-  },
-  {
-    title: "Số mét tới",
-    dataIndex: "so_m_toi",
-    key: "so_m_toi",
-    align: "center",
-    width: 90
-  },
-  {
-    title: "SL phế",
-    dataIndex: "sl_ng_sx",
-    key: "sl_ng_sx",
-    align: "center",
-    width: 70
-  },
-  {
-    title: "Phán định",
-    dataIndex: "phan_dinh",
-    key: "phan_dinh",
-    align: "center",
-    width: 90,
-    render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
-  },
-  {
-    title: "Ngày SX KH",
-    dataIndex: "ngay_sx",
-    key: "ngay_sx",
-    align: "center",
-    width: 120,
-    // fixed: 'right'
-  },
-  {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    width: 120,
-    // fixed: 'right'
-  },
-];
+
 
 const Manufacture1 = (props) => {
   document.title = "Sản xuất máy Sóng";
@@ -312,11 +168,9 @@ const Manufacture1 = (props) => {
       render: (value) => value ?? "-",
     },
   ];
-  const history = useHistory();
   const location = useLocation();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
-  const componentRef3 = useRef();
 
   const [params, setParams] = useState({
     machine_id: machine_id,
@@ -335,10 +189,193 @@ const Manufacture1 = (props) => {
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
+  const [inputValues, setInputValues] = useState({});
+  useEffect(() => {
+    // Khi thay đổi vị trí hàng, cập nhật lại giá trị của InputNumber
+    let values = {};
+    data.forEach((record, index) => {
+      values[record.lo_sx] = index + 1;
+    });
+    setInputValues(values);
+  }, [data]);
+  const columns = [
+    {
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      align: "center",
+      width: 70,
+      render: (_, record, index) => isDraggable ?
+        <InputNumber
+          style={{ width: '100%' }}
+          onBlur={(event) => onChangePriority(record.lo_sx, event.target.value)}
+          onPressEnter={(event) => onChangePriority(record.lo_sx, event.target.value)}
+          onChange={(value) => setInputValues({ ...inputValues, [record.lo_sx]: value })}
+          value={inputValues[record.lo_sx] || index + 1}
+        />
+        :
+        (index + 1),
+    },
+    {
+      title: "TTƯT",
+      dataIndex: "thu_tu_uu_tien",
+      key: "thu_tu_uu_tien",
+      align: "center",
+      width: 60,
+    },
+    {
+      title: "Tên khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+      width: 130,
+    },
+    {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      width: 90,
+      filters: [...new Set(data.map(item => item.mdh))].map(e => ({ value: e, text: e })),
+      filterMultiple: true,
+      onFilter: (value, record) => record.mdh.startsWith(value),
+      filterSearch: true,
+    },
+    {
+      title: "Kích chạy",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+      width: 100
+    },
+    {
+      title: "Khổ",
+      dataIndex: "kho_tong",
+      key: "kho_tong",
+      align: "center",
+      width: 60
+    },
+    {
+      title: "Dài tấm",
+      dataIndex: "dai_tam",
+      key: "dai_tam",
+      align: "center",
+      width: 70
+    },
+    {
+      title: "SL KH",
+      dataIndex: "san_luong_kh",
+      key: "san_luong_kh",
+      align: "center",
+      width: 70
+    },
+    {
+      title: "Số dao",
+      dataIndex: "so_dao",
+      key: "so_dao",
+      align: "center",
+      width: 70
+    },
+    {
+      title: "SL thực tế",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
+      align: "center",
+      width: 90
+    },
+    {
+      title: "Mặt F",
+      dataIndex: "ma_cuon_f",
+      key: "ma_cuon_f",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Sóng E",
+      dataIndex: "ma_cuon_se",
+      key: "ma_cuon_se",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Láng E",
+      dataIndex: "ma_cuon_le",
+      key: "ma_cuon_le",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Sóng B",
+      dataIndex: "ma_cuon_sb",
+      key: "ma_cuon_sb",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Láng B",
+      dataIndex: "ma_cuon_lb",
+      key: "sl",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Sóng C",
+      dataIndex: "ma_cuon_sc",
+      key: "ma_cuon_sc",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Láng C",
+      dataIndex: "ma_cuon_lc",
+      key: "ma_cuon_lc",
+      align: "center",
+      width: 75,
+    },
+    {
+      title: "Số mét tới",
+      dataIndex: "so_m_toi",
+      key: "so_m_toi",
+      align: "center",
+      width: 90
+    },
+    {
+      title: "SL phế",
+      dataIndex: "sl_ng_sx",
+      key: "sl_ng_sx",
+      align: "center",
+      width: 70
+    },
+    {
+      title: "Phán định",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
+      align: "center",
+      width: 90,
+      render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
+    },
+    {
+      title: "Ngày SX KH",
+      dataIndex: "ngay_sx",
+      key: "ngay_sx",
+      align: "center",
+      width: 120,
+      // fixed: 'right'
+    },
+    {
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      width: 120,
+      // fixed: 'right'
+    },
+  ];
 
   const reloadData = async () => {
     await getListLotDetail();
     await getOverAllDetail();
+    await fetchTracking();
   };
   const overallColumns = [
     {
@@ -382,19 +419,15 @@ const Manufacture1 = (props) => {
     },
   ];
 
-  useEffect(() => {
-    (async () => {
-      var res = await getTrackingStatus({ machine_id: machine_id });
-      if (res.success) {
-        setIsPasued(!res.data?.is_running);
-      }
-      // var tem = await getTem();
-      // setListTem(tem)
-    })();
-  }, []);
+  async function fetchTracking() {
+    var res = await getTrackingStatus({ machine_id: machine_id });
+    if (res.success) {
+      setIsPasued(!res.data?.is_running);
+    }
+  }
 
   useEffect(() => {
-    if(machine_id){
+    if (machine_id) {
       reloadData();
       fetchPausedPlan();
     }
@@ -540,12 +573,12 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        if (e.data?.reload) {
-          getListLotDetail();
-        }
         if (e.data?.info_cong_doan?.machine_id !== machine_id) {
           return;
         } else {
+          if (e.data?.reload) {
+            reloadData();
+          }
           if (e.data?.info_cong_doan) {
             console.log(e.data);
             setData(prevData => [...prevData].map(lo => {
@@ -656,6 +689,49 @@ const Manufacture1 = (props) => {
     }
   };
 
+  const onChangePriority = async (activeId, overPriority) => {
+    setCloneItems([]);
+    setListCheck([]);
+    if (overPriority <= 0 || overPriority > data.length) {
+      message.error('Vị trí đến không phù hợp');
+      let values = {};
+      data.forEach((record, index) => {
+        values[record.lo_sx] = index + 1;
+      });
+      setInputValues(values);
+      return;
+    }
+    const activeItem = data.find(e => e.lo_sx === activeId);
+    const overItem = data[overPriority - 1];
+    console.log(activeItem, overItem, activeId, overPriority);
+
+    if (!activeItem || !overItem || !activeItem?.priority || !overItem?.priority) {
+      return;
+    }
+    var newArray = [];
+    var oldData = data;
+    await setData((prev) => {
+      const activeIndex = prev.findIndex((i) => i.key === activeItem?.lo_sx);
+      const overIndex = prev.findIndex((i) => i.key === overItem?.lo_sx);
+      newArray = arrayMove(prev, activeIndex, overIndex);
+      return newArray;
+    });
+    var changes = newArray.map((newLot, newIndex) => {
+      const oldLot = oldData.find((lot, oldIndex) => oldIndex === newIndex);
+      return {
+        id: newLot.id,                       // id của lô
+        oldPriority: newLot.priority,  // Giá trị thứ tự ưu tiên cũ
+        newPriority: oldLot.priority   // Giá trị thứ tự ưu tiên mới
+      };
+    }).filter((lot) => {
+      return lot.oldPriority !== lot.newPriority; // Lô nào có sự thay đổi TTƯT thì trả về
+    });
+    if (changes.length > 0) {
+      await reorderPriority({ changes });
+      getListLotDetail();
+    }
+  }
+
   const [isDraggable, setIsDraggable] = useState(false);
 
   const [pausing, setPausing] = useState(false);
@@ -681,7 +757,7 @@ const Manufacture1 = (props) => {
     }
     setPausing(true);
     var res = await pausePlan({ info_ids: data.filter(e => listCheck.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    if(res.success){
+    if (res.success) {
       reloadData();
       fetchPausedPlan();
       setListCheck([]);
@@ -697,7 +773,7 @@ const Manufacture1 = (props) => {
     }
     setResuming(true);
     var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    if(res.success){
+    if (res.success) {
       reloadData();
       fetchPausedPlan();
       setListCheck([]);
