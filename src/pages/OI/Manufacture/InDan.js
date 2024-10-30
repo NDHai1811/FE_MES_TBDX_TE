@@ -343,17 +343,6 @@ const InDan = (props) => {
     setParams({ ...params, end_date: value });
   };
 
-  const [visiblePrint, setVisiblePrint] = useState();
-  const [quantity, setQuantity] = useState(0);
-  const openMdlPrint = () => {
-    if (listCheck.length === 1) {
-      setVisiblePrint(true);
-      setQuantity(data.find(e => e.key === listCheck[0])?.san_luong);
-    } else {
-      message.info('Chọn 1 lô để in tem');
-    }
-  }
-
   const rowSelection = {
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -395,15 +384,6 @@ const InDan = (props) => {
         return state;
     }
   };
-  const [updatedData, dispatch] = useReducer(dataReducer, []);
-  const dataTableReducer = (state, action) => {
-    switch (action.type) {
-      case 'UPDATE_DATA':
-        return action.payload;
-      default:
-        return state;
-    }
-  };
 
   useEffect(() => {
     if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
@@ -432,8 +412,7 @@ const InDan = (props) => {
         }
         console.log(e.data);
         if (e.data?.reload) {
-          getOverAllDetail();
-          getListLotDetail();
+          reloadData();
         } else {
           if (e.data?.info_cong_doan) {
             setData(prevData => [...prevData].map(lo => {

@@ -267,7 +267,11 @@ const Manufacture1 = (props) => {
       dataIndex: "san_luong_kh",
       key: "san_luong_kh",
       align: "center",
-      width: 70
+      width: 80,
+      filters: [...new Set(data.map(item => item.san_luong_kh))].map(e => ({ value: e, text: e })),
+      filterMultiple: true,
+      onFilter: (value, record) => record.san_luong_kh === value,
+      filterSearch: true,
     },
     {
       title: "Số dao",
@@ -444,12 +448,14 @@ const Manufacture1 = (props) => {
   const getListLotDetail = async () => {
     setLoading(true);
     const res = await getLotByMachine(params);
+    let current = null;
     setData(res.data.map(e => {
       if (e?.status === 1) {
-        setCurrent(e)
+        current = e;
       }
       return { ...e, key: e?.lo_sx }
     }));
+    setCurrent(current);
     setLoading(false);
   };
 
