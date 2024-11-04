@@ -29,6 +29,7 @@ import TemLayout from "./TemLayout";
 import { useReactToPrint } from "react-to-print";
 import "../style.scss";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { render } from "@testing-library/react";
 
 const EditableCell = ({
   editing,
@@ -114,8 +115,8 @@ const Layout = () => {
     "ma_khuon",
     "vt_khuon",
     "al_khuon",
-    'vi_tri_khuon',
-    'vt_lo_bat_khuon'
+    "vi_tri_khuon",
+    "vt_lo_bat_khuon",
   ]);
   const isEditing = (record) => record.key === editingKey;
 
@@ -183,13 +184,22 @@ const Layout = () => {
   };
   const col_detailTable = [
     {
+      title: "STT",
+      dataIndex: "STT",
+      key: "STT",
+      align: "center",
+      width: "50px",
+      fixed: "left",
+      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
+    },
+    {
       title: "Khách hàng",
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
       width: "170px",
       editable: hasEditColumn("customer_id"),
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "Mã máy in và mã layout",
@@ -198,7 +208,7 @@ const Layout = () => {
       align: "center",
       width: "170px",
       editable: hasEditColumn("machine_layout_id"),
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "Tên máy",
@@ -207,7 +217,7 @@ const Layout = () => {
       align: "center",
       editable: hasEditColumn("machine_id"),
       width: "80px",
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "Mã layout",
@@ -216,7 +226,7 @@ const Layout = () => {
       align: "center",
       width: "4%",
       editable: hasEditColumn("layout_id"),
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "Tốc độ",
@@ -528,7 +538,10 @@ const Layout = () => {
       key: "updated_at",
       align: "center",
       width: 150,
-      render: (value) => value && dayjs(value).isValid() ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : ""
+      render: (value) =>
+        value && dayjs(value).isValid()
+          ? dayjs(value).format("DD/MM/YYYY HH:mm:ss")
+          : "",
     },
     {
       title: "Hành động",
@@ -637,7 +650,7 @@ const Layout = () => {
     setData(newData);
     setEditingKey(data.length + 1);
     setType("add");
-    tableRef.current?.scrollTo({key: 0})
+    tableRef.current?.scrollTo({ key: 0 });
   };
 
   const cancel = (record) => {
@@ -738,36 +751,51 @@ const Layout = () => {
 
   const [loadingExport, setLoadingExport] = useState(false);
   const [loading, setLoading] = useState(false);
-  const header = document.querySelector('.custom-card .ant-table-header');
-  const pagination = document.querySelector('.custom-card .ant-pagination');
-  const card = document.querySelector('.custom-card .ant-card-body');
-  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  const header = document.querySelector(".custom-card .ant-table-header");
+  const pagination = document.querySelector(".custom-card .ant-pagination");
+  const card = document.querySelector(".custom-card .ant-card-body");
+  const [tableHeight, setTableHeight] = useState(
+    (card?.offsetHeight ?? 0) -
+      48 -
+      (header?.offsetHeight ?? 0) -
+      (pagination?.offsetHeight ?? 0)
+  );
   useEffect(() => {
     const handleWindowResize = () => {
-      const header = document.querySelector('.custom-card .ant-table-header');
-      const pagination = document.querySelector('.custom-card .ant-pagination');
-      const card = document.querySelector('.custom-card .ant-card-body');
-      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      const header = document.querySelector(".custom-card .ant-table-header");
+      const pagination = document.querySelector(".custom-card .ant-pagination");
+      const card = document.querySelector(".custom-card .ant-card-body");
+      setTableHeight(
+        (card?.offsetHeight ?? 0) -
+          48 -
+          (header?.offsetHeight ?? 0) -
+          (pagination?.offsetHeight ?? 0)
+      );
     };
     handleWindowResize();
-    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener("resize", handleWindowResize);
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener("resize", handleWindowResize);
     };
   }, [data]);
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)' }} gutter={[8, 8]}>
+      <Row
+        style={{ padding: "8px", marginRight: 0, height: "calc(100vh - 70px)" }}
+        gutter={[8, 8]}
+      >
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              bodyStyle={{ paddingInline: 0, paddingTop: 0, height: 'calc(100vh - 145px)' }}
+              bodyStyle={{
+                paddingInline: 0,
+                paddingTop: 0,
+                height: "calc(100vh - 145px)",
+              }}
               className="custom-card scroll"
               actions={[
-                <div
-                  layout="vertical"
-                >
+                <div layout="vertical">
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
@@ -775,7 +803,7 @@ const Layout = () => {
                   >
                     Truy vấn
                   </Button>
-                </div>
+                </div>,
               ]}
             >
               <Divider>Điều kiện truy vấn</Divider>
@@ -785,10 +813,13 @@ const Layout = () => {
                     <Input
                       allowClear
                       onChange={(e) => {
-                        setParams({ ...params, machine_id: e.target.value, page: 1 });
+                        setParams({
+                          ...params,
+                          machine_id: e.target.value,
+                          page: 1,
+                        });
                         setPage(1);
-                      }
-                      }
+                      }}
                       placeholder="Nhập máy"
                     />
                   </Form.Item>
@@ -796,10 +827,13 @@ const Layout = () => {
                     <Input
                       allowClear
                       onChange={(e) => {
-                        setParams({ ...params, customer_id: e.target.value, page: 1 });
+                        setParams({
+                          ...params,
+                          customer_id: e.target.value,
+                          page: 1,
+                        });
                         setPage(1);
-                      }
-                      }
+                      }}
                       placeholder="Nhập khách hàng"
                     />
                   </Form.Item>
@@ -809,8 +843,7 @@ const Layout = () => {
                       onChange={(e) => {
                         setParams({ ...params, layout_id: e.target.value });
                         setPage(1);
-                      }
-                      }
+                      }}
                       placeholder="Nhập mã layout"
                     />
                   </Form.Item>
@@ -885,7 +918,7 @@ const Layout = () => {
                   }}
                   scroll={{
                     x: "280vw",
-                    y: 'calc(100vh - 340px)',
+                    y: "calc(100vh - 340px)",
                   }}
                   components={{
                     body: {

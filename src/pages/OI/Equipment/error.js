@@ -22,10 +22,11 @@ const Error = () => {
   const [loading, setLoading] = useState(false);
   const tableColumns = [
     {
-      title: "TT",
+      title: "STT",
       dataIndex: "thu_tu",
       key: "thu_tu",
       align: "center",
+      width: "50px",
       render: (value, record, index) => index + 1,
     },
     {
@@ -33,20 +34,62 @@ const Error = () => {
       dataIndex: "start_time",
       key: "start_time",
       align: "center",
-      render: (value) => value && dayjs(value).isValid() && dayjs(value).format(date.startDate.isSame(date.endDate) ? 'HH:mm:ss' : 'DD/MM/YYYY HH:mm:ss')
+      width: "180px",
+      render: (value) =>
+        value &&
+        dayjs(value).isValid() &&
+        dayjs(value).format(
+          date.startDate.isSame(date.endDate)
+            ? "HH:mm:ss"
+            : "DD/MM/YYYY HH:mm:ss"
+        ),
     },
     {
       title: "Thời gian chạy",
       dataIndex: "end_time",
       key: "end_time",
       align: "center",
-      render: (value) => value && dayjs(value).isValid() && dayjs(value).format(date.startDate.isSame(date.endDate) ? 'HH:mm:ss' : 'DD/MM/YYYY HH:mm:ss')
+      width: "180px",
+      render: (value) =>
+        value &&
+        dayjs(value).isValid() &&
+        dayjs(value).format(
+          date.startDate.isSame(date.endDate)
+            ? "HH:mm:ss"
+            : "DD/MM/YYYY HH:mm:ss"
+        ),
+    },
+    {
+      title: "Khoảng dừng",
+      dataIndex: "duration",
+      key: "duration",
+      align: "center",
+      width: "120px",
+      render: (value, record) => {
+        if (record.start_time && record.end_time) {
+          const start = dayjs(record.start_time);
+          const end = dayjs(record.end_time);
+          const durationInSeconds = end.diff(start, "second");
+
+          // Tính toán giờ, phút, giây từ tổng số giây
+          const hours = Math.floor(durationInSeconds / 3600);
+          const minutes = Math.floor((durationInSeconds % 3600) / 60);
+          const seconds = durationInSeconds % 60;
+
+          // Định dạng lại theo nhu cầu, ví dụ: "2 giờ 15 phút 10 giây"
+          return `${hours > 0 ? `${hours} giờ ` : ""}${
+            minutes > 0 ? `${minutes} phút ` : ""
+          }`;
+        }
+        return null;
+      },
     },
     {
       title: "Mã sự cố",
       dataIndex: "code",
       key: "code",
       align: "center",
+      width: "120px",
     },
     {
       title: "Tên sự cố",
@@ -67,14 +110,18 @@ const Error = () => {
       align: "center",
     },
   ];
-  
+
   useEffect(() => {
     getLogs();
   }, [machine_id, date]);
 
   const getLogs = async () => {
     setLoading(true);
-    var res = await getErrorLogs({ machine_id: machine_id, start_date: date.startDate, end_date: date.endDate })
+    var res = await getErrorLogs({
+      machine_id: machine_id,
+      start_date: date.startDate,
+      end_date: date.endDate,
+    });
     setLogs(res.data);
     setLoading(false);
   };
@@ -192,7 +239,9 @@ const Error = () => {
       </Row>
       <Row className="mt-2" style={{ justifyContent: "space-between" }}>
         <Table
-          rowClassName={(record, index) =>record.ten_su_co ? "table-row-grey" : "table-row-light"}
+          rowClassName={(record, index) =>
+            record.ten_su_co ? "table-row-grey" : "table-row-light"
+          }
           locale={{ emptyText: "Trống" }}
           pagination={false}
           bordered={true}
