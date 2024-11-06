@@ -69,6 +69,11 @@ const Screen = (props) => {
       link: `/oi/warehouse/kho-nvl/nhap`,
       permission: "oi-warehouse-nvl",
     },
+    {
+      title: `VOC`,
+      link: `/oi/voc`,
+      permission: "oi-voc",
+    },
   ];
   const permissionOI = (listOI ?? []).filter(
     (e) =>

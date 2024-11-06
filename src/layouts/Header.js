@@ -24,6 +24,9 @@ const Header = () => {
     else if(window.location.pathname.includes('kho-tp')){
       setTitle("Quản lý Kho TP");
     }
+    else if(window.location.pathname.includes('voc')){
+      setTitle("VOC");
+    }
   }, [location]);
 
   return (
