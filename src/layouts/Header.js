@@ -25,7 +25,7 @@ const Header = () => {
       setTitle("Quản lý Kho TP");
     }
     else if(window.location.pathname.includes('voc')){
-      setTitle("VOC");
+      setTitle("Ý kiến người sử dụng");
     }
   }, [location]);
 

@@ -35,17 +35,17 @@ const VOCRegister = () => {
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
   const col_detailTable = [
+    // {
+    //   title: "STT",
+    //   dataIndex: "stt",
+    //   key: "stt",
+    //   align: "left",
+    //   render: (value, item, index) => index + 1,
+    //   width: 60,
+    //   fixed: "left",
+    // },
     {
-      title: "STT",
-      dataIndex: "stt",
-      key: "stt",
-      align: "left",
-      render: (value, item, index) => index + 1,
-      width: 60,
-      fixed: "left",
-    },
-    {
-      title: "VOC.No",
+      title: "Thứ tự",
       dataIndex: "no",
       key: "no",
       align: "left",

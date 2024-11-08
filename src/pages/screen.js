@@ -73,6 +73,7 @@ const Screen = (props) => {
       title: `Ý kiến người sử dụng`,
       link: `/oi/voc`,
       permission: "oi-voc",
+      color: "green",
     },
   ];
   const permissionOI = (listOI ?? []).filter(
@@ -94,6 +95,7 @@ const Screen = (props) => {
     title: `QL ý kiến người sử dụng`,
     link: `/ui/voc`,
     permission: "ui-voc",
+    color: "green",
   });
 
   const logout = () => {
@@ -142,7 +144,7 @@ const Screen = (props) => {
                     return (
                       <Col span={12} key={index}>
                         <Link to={e.link}>
-                          <Button type="primary" className="w-100" style={{paddingInline: 0}}>
+                          <Button type={e?.color ? undefined : "primary"} className="w-100" style={e?.color ? {paddingInline: 0, color: "white", backgroundColor: "#1a791e"} : {paddingInline: 0}}>
                             {e.title}
                           </Button>
                         </Link>
@@ -160,7 +162,7 @@ const Screen = (props) => {
                     return (
                       <Col span={12} key={index}>
                         <Link to={e.link}>
-                          <Button type="primary" className="w-100" style={{paddingInline: 0}}>
+                          <Button type={e?.color ? undefined : "primary"} className="w-100" style={e?.color ? {paddingInline: 0, color: "white", backgroundColor: "#1a791e"} : {paddingInline: 0}}>
                             {e.title}
                           </Button>
                         </Link>
