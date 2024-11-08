@@ -70,7 +70,7 @@ const Screen = (props) => {
       permission: "oi-warehouse-nvl",
     },
     {
-      title: `VOC`,
+      title: `Ý kiến người sử dụng`,
       link: `/oi/voc`,
       permission: "oi-voc",
     },
@@ -89,6 +89,11 @@ const Screen = (props) => {
     if(routes.length > 0){
       permissionUI.push({title: e.title, link: routes[0].link, permission: routes[0].permission})
     }
+  });
+  permissionUI.push({
+    title: `QL ý kiến người sử dụng`,
+    link: `/ui/voc`,
+    permission: "ui-voc",
   });
 
   const logout = () => {
