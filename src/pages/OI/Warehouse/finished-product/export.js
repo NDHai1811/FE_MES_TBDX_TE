@@ -426,6 +426,9 @@ const Export = (props) => {
                   ? "table-row-grey"
                   : ""
             }
+            scroll={{
+              x: '100%'
+            }}
             pagination={false}
             bordered
             className="mb-4"
