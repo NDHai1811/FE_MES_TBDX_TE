@@ -51,7 +51,7 @@ import TaoTem from "../pages/UI/Manufacture/TaoTem";
 import Vehicle from "../pages/UI/MasterData/Vehicle";
 import TaoTon from "../pages/UI/Warehouse/TaoTon";
 import TinhHinhSanXuat from "../pages/DB/TinhHinhSanXuat";
-import EmptyPage from "../pages/EmptyPage";
+import EmptyPage from "../pages/emptyPage";
 import QCByMachineIOT from "../pages/OI/Quality/QCByMachineIOT";
 import IQC from "../pages/OI/Quality/IQC";
 import WarehouseExportCommand from "../pages/UI/Warehouse/WarehouseExportCommand";
@@ -59,6 +59,8 @@ import MachineAssignment from "../pages/UI/MasterData/MachineAssignment";
 import Pallet from "../pages/UI/Warehouse/Pallet";
 import QualityIQC from "../pages/UI/Quality/IQC";
 import ShiftAssignment from "../pages/UI/MasterData/ShiftAssignment";
+import Register from "../pages/OI/VOC/Register";
+import VOCRegister from "../pages/UI/VOC/VOCRegister";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -88,6 +90,7 @@ const authProtectedRoutes = [
   { path: "/ui/kpi", component: UIKPI, label: 'KPI', permission: 'ui-kpi' },
   { path: "/ui/abnormal/kich-ban-bat-thuong", component: Kichban },
   { path: "/ui/abnormal/lich-su-bat-thuong", component: Giamsat },
+  { path: "/ui/voc", component: VOCRegister },
 
   //Master Data
   { path: "/ui/master-data/san-xuat/may", component: Machine, label: 'Máy', permission: 'ui-master-data-san-xuat-may' },
@@ -120,6 +123,7 @@ const authProtectedRoutes = [
   { path: ["/oi/equipment", "/oi/equipment/:machine_id"], component: Equipment, permission: 'oi-equipment' },
   { path: ["/oi/warehouse/kho-nvl", "/oi/warehouse/kho-nvl/:line"], component: Warehouse, permission: 'oi-warehouse-nvl' },
   { path: ["/oi/warehouse/kho-tp", "/oi/warehouse/kho-tp/:line"], component: WarehouseTP, permission: 'oi-warehouse-tp' },
+  { path: ["/oi/voc", "/oi/voc"], component: Register, permission: 'oi-voc' },
   { path: '*', component: EmptyPage }
 ];
 

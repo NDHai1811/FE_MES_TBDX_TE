@@ -189,6 +189,42 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+    },
+    {
+      title: "MĐH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+    },
+    {
+      title: "Quy cách",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "san_luong",
+      key: "san_luong",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+    },
+    {
       title: "SL lỗi tính năng",
       dataIndex: "sl_tinh_nang",
       key: "sl_loi",
@@ -225,49 +261,7 @@ const QCByMachine = (props) => {
             return "";
         }
       },
-    },
-    {
-      title: "Mã layout",
-      dataIndex: "layout_id",
-      key: "layout_id",
-      align: "center",
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
-      align: "center",
-    },
-    {
-      title: "MĐH",
-      dataIndex: "mdh",
-      key: "mdh",
-      align: "center",
-    },
-    {
-      title: "MQL",
-      dataIndex: "mql",
-      key: "mql",
-      align: "center",
-    },
-    {
-      title: "Quy cách",
-      dataIndex: "quy_cach",
-      key: "quy_cach",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đầu ra",
-      dataIndex: "san_luong",
-      key: "san_luong",
-      align: "center",
-    },
-    {
-      title: "Sản lượng đạt",
-      dataIndex: "sl_ok",
-      key: "sl_ok",
-      align: "center",
-    },
+    }
   ];
 
   const rowClassName = (record, index) => {

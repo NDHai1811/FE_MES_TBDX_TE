@@ -104,12 +104,21 @@ const Buyer = () => {
 
   const col_detailTable = [
     {
+      title: "STT",
+      dataIndex: "STT",
+      key: "STT",
+      align: "center",
+      width: "50px",
+      fixed: "left",
+      render: (value, record, index) => (page - 1) * pageSize + index + 1,
+    },
+    {
       title: "Mã buyer",
       dataIndex: "id",
       key: "id",
       fixed: "left",
       editable: hasEditColumn("id"),
-      width: '240px'
+      width: "240px",
     },
     {
       title: "Mã khách hàng",
@@ -117,16 +126,16 @@ const Buyer = () => {
       key: "customer_id",
       align: "center",
       editable: hasEditColumn("customer_id"),
-      width: '115px'
+      width: "115px",
     },
     {
       title: "Tên khách hàng",
       dataIndex: "customer_name",
       key: "customer_name",
       render: (_, record) => {
-        return record?.customershort?.short_name
+        return record?.customershort?.short_name;
       },
-      width: '200px',
+      width: "200px",
     },
     {
       title: "Buyer viết tắt",
@@ -134,7 +143,7 @@ const Buyer = () => {
       key: "buyer_vt",
       align: "center",
       editable: hasEditColumn("buyer_vt"),
-      width: '160px',
+      width: "160px",
     },
     {
       title: "Phân loại 1",
@@ -142,7 +151,7 @@ const Buyer = () => {
       key: "phan_loai_1",
       align: "center",
       editable: hasEditColumn("phan_loai_1"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Số lớp",
@@ -150,14 +159,14 @@ const Buyer = () => {
       key: "so_lop",
       align: "center",
       editable: hasEditColumn("so_lop"),
-      width: '60px',
+      width: "60px",
     },
     {
       title: "Kết cấu giấy",
       dataIndex: "ket_cau_giay",
       key: "ket_cau_giay",
       editable: hasEditColumn("ket_cau_giay"),
-      width: '650px',
+      width: "650px",
     },
     {
       title: "Ghi chú",
@@ -172,7 +181,7 @@ const Buyer = () => {
       key: "ma_cuon_f",
       align: "center",
       editable: hasEditColumn("ma_cuon_f"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Sóng E",
@@ -180,7 +189,7 @@ const Buyer = () => {
       key: "ma_cuon_se",
       align: "center",
       editable: hasEditColumn("ma_cuon_se"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Láng E",
@@ -188,7 +197,7 @@ const Buyer = () => {
       key: "ma_cuon_le",
       align: "center",
       editable: hasEditColumn("ma_cuon_le"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Sóng B",
@@ -196,7 +205,7 @@ const Buyer = () => {
       key: "ma_cuon_sb",
       align: "center",
       editable: hasEditColumn("ma_cuon_sb"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Láng B",
@@ -204,7 +213,7 @@ const Buyer = () => {
       key: "sl",
       align: "center",
       editable: hasEditColumn("ma_cuon_lb"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Sóng C",
@@ -212,7 +221,7 @@ const Buyer = () => {
       key: "ma_cuon_sc",
       align: "center",
       editable: hasEditColumn("ma_cuon_sc"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Láng C",
@@ -220,7 +229,7 @@ const Buyer = () => {
       key: "ma_cuon_lc",
       align: "center",
       editable: hasEditColumn("ma_cuon_lc"),
-      width: '90px',
+      width: "90px",
     },
     {
       title: "Hành động",
@@ -265,7 +274,7 @@ const Buyer = () => {
           </span>
         );
       },
-      width: '100px',
+      width: "100px",
     },
   ];
 
@@ -437,50 +446,66 @@ const Buyer = () => {
 
   useEffect(() => {
     loadListTable(params);
-  }, [page, pageSize])
-  const header = document.querySelector('.custom-card .ant-table-header');
-  const pagination = document.querySelector('.custom-card .ant-pagination');
-  const card = document.querySelector('.custom-card .ant-card-body');
-  const [tableHeight, setTableHeight] = useState((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+  }, [page, pageSize]);
+  const header = document.querySelector(".custom-card .ant-table-header");
+  const pagination = document.querySelector(".custom-card .ant-pagination");
+  const card = document.querySelector(".custom-card .ant-card-body");
+  const [tableHeight, setTableHeight] = useState(
+    (card?.offsetHeight ?? 0) -
+      48 -
+      (header?.offsetHeight ?? 0) -
+      (pagination?.offsetHeight ?? 0)
+  );
   useEffect(() => {
     const handleWindowResize = () => {
-      const header = document.querySelector('.custom-card .ant-table-header');
-      const pagination = document.querySelector('.custom-card .ant-pagination');
-      const card = document.querySelector('.custom-card .ant-card-body');
-      setTableHeight((card?.offsetHeight ?? 0) - 48 - (header?.offsetHeight ?? 0) - (pagination?.offsetHeight ?? 0));
+      const header = document.querySelector(".custom-card .ant-table-header");
+      const pagination = document.querySelector(".custom-card .ant-pagination");
+      const card = document.querySelector(".custom-card .ant-card-body");
+      setTableHeight(
+        (card?.offsetHeight ?? 0) -
+          48 -
+          (header?.offsetHeight ?? 0) -
+          (pagination?.offsetHeight ?? 0)
+      );
     };
     handleWindowResize();
-    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener("resize", handleWindowResize);
     return () => {
-      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener("resize", handleWindowResize);
     };
   }, [data]);
   return (
     <>
       {contextHolder}
-      <Row style={{ padding: "8px", marginRight: 0, height: 'calc(100vh - 70px)', overflow: 'hidden' }} gutter={[8, 8]}>
+      <Row
+        style={{
+          padding: "8px",
+          marginRight: 0,
+          height: "calc(100vh - 70px)",
+          overflow: "hidden",
+        }}
+        gutter={[8, 8]}
+      >
         <Col span={4}>
           <div className="slide-bar">
             <Card
-              style={{ height: '100%' }}
+              style={{ height: "100%" }}
               className="custom-card scroll"
               actions={[
-
                 <Button
                   type="primary"
                   style={{ width: "80%" }}
                   onClick={btn_click}
                 >
                   Truy vấn
-                </Button>
-
+                </Button>,
               ]}
             >
               <Divider>Tìm kiếm</Divider>
               <div className="mb-3">
                 <Form
                   layout="vertical"
-                // onFinish={btn_click}
+                  // onFinish={btn_click}
                 >
                   <Form.Item label="Mã buyer" className="mb-3">
                     <Input
@@ -535,12 +560,16 @@ const Buyer = () => {
         <Col span={20}>
           <Card
             style={{ height: "100%" }}
-            bodyStyle={{ paddingBottom: 0, height: '100%' }}
+            bodyStyle={{ paddingBottom: 0, height: "100%" }}
             className="custom-card"
             title="Quản lý Buyer"
             extra={
               <Space>
-                <Button type="primary" loading={exportLoading} onClick={exportFile}>
+                <Button
+                  type="primary"
+                  loading={exportLoading}
+                  onClick={exportFile}
+                >
                   Xuất file
                 </Button>
                 <Upload
@@ -568,10 +597,7 @@ const Buyer = () => {
                     }
                   }}
                 >
-                  <Button
-                    type="primary"
-                    loading={loadingExport}
-                  >
+                  <Button type="primary" loading={loadingExport}>
                     Upload Excel
                   </Button>
                 </Upload>
@@ -582,7 +608,7 @@ const Buyer = () => {
             }
           >
             <Spin spinning={loading}>
-              <Form form={form} component={false} style={{ height: '100%' }}>
+              <Form form={form} component={false} style={{ height: "100%" }}>
                 <Table
                   size="small"
                   bordered
