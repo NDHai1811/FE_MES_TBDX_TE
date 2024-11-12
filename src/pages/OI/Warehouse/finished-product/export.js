@@ -243,7 +243,7 @@ const Export = (props) => {
 
   const onSelectItem = (val) => {
     setSelectedItem(val);
-    form.setFieldsValue(val?.lo_sx);
+    // form.setFieldsValue(val?.lo_sx);
   };
 
   const [data, setData] = useState([]);
@@ -385,11 +385,11 @@ const Export = (props) => {
             size="small"
             columns={exportColumns}
             dataSource={data}
-          // onRow={(record) => {
-          //   return {
-          //     onClick: () => onSelectItem(record),
-          //   };
-          // }}
+            onRow={(record) => {
+              return {
+                onClick: () => onSelectItem(record),
+              };
+            }}
           />
         </Col>
       </Row>

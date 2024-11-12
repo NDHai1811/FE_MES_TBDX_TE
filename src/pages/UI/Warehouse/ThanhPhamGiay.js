@@ -26,18 +26,15 @@ const ThanhPhamGiay = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({
-    page: 1,
-    pageSize: 20,
     start_date: dayjs(),
     end_date: dayjs(),
-    totalPage: 1
   });
   const table = [
     {
       title: "STT",
       dataIndex: "index",
       key: "index",
-      render: (value, record, index) => ((params.page - 1) * params.pageSize) + index + 1,
+      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
       align: "center",
       fixed: 'left',
       width: 50
@@ -257,19 +254,21 @@ const ThanhPhamGiay = (props) => {
     setExportLoading(false);
   };
   const [loading, setLoading] = useState(false);
-  async function btn_click() {
+  async function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize);
     setLoading(true);
-    const res = await getHistoryWareHouseFG(params);
+    const res = await getHistoryWareHouseFG({...params, page, pageSize});
     setDataTable(res.data.map(e=>({
       ...e,
       tg_xuat: (e.tg_xuat && dayjs(e.tg_xuat)) || null
     })));
-    setParams({ ...params, totalPage: res.totalPage })
+    setTotalPage(res?.totalPage ?? 1);
     setLoading(false);
   }
-  useEffect(() => {
-    btn_click();
-  }, [params.page, params.pageSize]);
+  // useEffect(() => {
+  //   btn_click();
+  // }, [params]);
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -287,10 +286,10 @@ const ThanhPhamGiay = (props) => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, [dataTable]);
-  const formSubmition = () => {
-    console.log(params);
-    params.page === 1 ? btn_click() : setParams({ ...params, page: 1 });
-  }
+  // const formSubmition = () => {
+  //   console.log(params);
+  //   params.page === 1 ? btn_click() : setParams({ ...params, page: 1 });
+  // }
 
   const onUpdate = async (rowData) => {
     //update sl_xuat only
@@ -307,9 +306,9 @@ const ThanhPhamGiay = (props) => {
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Form layout="vertical" onFinish={() => formSubmition()} onKeyPress={(e) => {
+            <Form layout="vertical" onFinish={() => btn_click()} onKeyPress={(e) => {
               if (e.key === "Enter") {
-                formSubmition();
+                btn_click();
               }
             }}>
               <Card
@@ -424,15 +423,13 @@ const ThanhPhamGiay = (props) => {
               bordered
               loading={loading}
               pagination={{
-                current: params.page,
+                current: page,
                 size: "small",
-                total: params.totalPage,
-                pageSize: params.pageSize,
+                total: totalPage,
+                pageSize: pageSize,
                 showSizeChanger: true,
                 onChange: (page, pageSize) => {
-                  setPage(page);
-                  setPageSize(pageSize);
-                  setParams({ ...params, page: page, pageSize: pageSize });
+                  btn_click(page, pageSize);
                 },
               }}
               scroll={{

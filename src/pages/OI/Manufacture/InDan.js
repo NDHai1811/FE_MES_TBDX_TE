@@ -197,6 +197,7 @@ const InDan = (props) => {
         <Select
           options={machineOptions}
           value={machine_id}
+          showSearch
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
