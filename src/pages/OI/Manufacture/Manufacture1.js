@@ -608,28 +608,8 @@ const Manufacture1 = (props) => {
   const [specifiedRowKey, setSpecifiedRowKey] = useState(null);
   const handleScrollToRow = (specifiedRowKey) => {
     if (specifiedRowKey !== null && tableRef.current) {
-      scrollToRow(specifiedRowKey);
+      tableRef.current?.scrollTo({ key: specifiedRowKey, behavior: 'smooth' });
     }
-  };
-  const scrollToRow = (key) => {
-    // Truy cập container của bảng
-    const tableBody = document.querySelector('div.ant-table-body');
-    if (!tableBody) return;
-
-    // Truy vấn tất cả các hàng hiển thị
-    const rows = tableBody.querySelectorAll('.ant-table-row');
-    let scrollPosition = 0;
-
-    // Tìm hàng có key mong muốn và tính tổng chiều cao các hàng trước đó
-    for (let row of rows) {
-      if (row.getAttribute('data-row-key') === key) {
-        break;
-      }
-      scrollPosition += row.offsetHeight;
-    }
-
-    // Cuộn đến vị trí đã tính toán
-    tableBody.scrollTop = scrollPosition;
   };
   useEffect(() => {
     if (data.length > 0) {
@@ -852,7 +832,6 @@ const Manufacture1 = (props) => {
     lg: 6,
     xl: 4,
   }
-
   const items = [
     {
       label: 'Danh sách sản xuất',
@@ -897,26 +876,33 @@ const Manufacture1 = (props) => {
                   loading={loading}
                   scroll={{
                     x: tableRef.current?.innerWidth ?? 0,
-                    y: 500,
+                    y: 'calc(100vh - 56vh)',
                   }}
                   size="small"
                   rowClassName={(record, index) =>
                     rowClassName(record, index)
                   }
-                  // components={{
-                  //   body: {
-                  //     row: isDraggable ? DraggableRow : null,
-                  //   },
-                  // }}
+                  components={{
+                    body: {
+                      row: isDraggable ? DraggableRow : null,
+                    },
+                  }}
                   rowKey={'lo_sx'}
                   rowHoverable={false}
                   className="draggable-table"
                   ref={tableRef}
                   pagination={false}
                   bordered
-                  columns={columns}
+                  columns={isDraggable ? [{
+                    key: 'sort',
+                    title: ' ',
+                    align: 'center',
+                    width: 40,
+                    fixed: 'left',
+                    render: (_, record) => record?.status === 0 ? <DragHandle /> : null,
+                  }, ...columns] : columns}
                   rowSelection={rowSelection}
-                  virtual
+                  // virtual
                   dataSource={data.filter(e => !cloneItems.filter(key => key !== activeId).includes(e.key))}
                 />
               </SortableContext>

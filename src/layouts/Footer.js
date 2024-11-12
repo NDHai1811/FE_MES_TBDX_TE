@@ -92,6 +92,7 @@ const Footer = () => {
                   display: "flex",
                   cursor: "pointer",
                   textDecoration: 'none',
+                  textAlign: 'center',
                   opacity: window.location.pathname.includes(e.key) ? 1 : 0.5,
                 }}
                 key={e.key}
