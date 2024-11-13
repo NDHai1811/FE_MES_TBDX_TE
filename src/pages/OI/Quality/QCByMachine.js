@@ -56,6 +56,7 @@ const QCByMachine = (props) => {
         <Select
           options={machineOptions}
           value={machine_id}
+          showSearch
           onChange={onChangeLine}
           style={{ width: "100%" }}
           bordered={false}
@@ -105,7 +106,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow?.checked_tinh_nang === false && setOpenModalCK1(true);
+            !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
           },
           style: {
             cursor: 'pointer'
@@ -129,7 +130,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow?.checked_ngoai_quan === false && setOpenModalCK2(true);
+            !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
           },
           style: {
             cursor: 'pointer'
@@ -153,7 +154,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow?.checked_sl_ng === false && setOpenModalCK3(true);
+            !selectedRow?.checked_sl_ng && setOpenModalCK3(true);
           },
           style: {
             cursor: 'pointer'
@@ -339,9 +340,9 @@ const QCByMachine = (props) => {
   };
   async function getData() {
     setLoading(true);
-    var overall = await getQCOverall({ ...params });
+    var overall = await getQCOverall({ ...params, machine_id });
     setOverall(overall.data);
-    var res = await getLotQCList({ ...params });
+    var res = await getLotQCList({ ...params, machine_id });
     setData(res.data);
     if (res.data.length > 0) {
       var current = res.data.find((e) => e?.id === selectedRow?.id);

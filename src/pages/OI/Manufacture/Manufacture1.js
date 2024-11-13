@@ -391,6 +391,7 @@ const Manufacture1 = (props) => {
         <Select
           options={machineOptions}
           value={machine_id}
+          showSearch
           onChange={onChangeLine}
           style={{ width: "100%" }}
           variant="bordered"

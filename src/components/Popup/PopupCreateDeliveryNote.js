@@ -289,6 +289,7 @@ const PopupCreateDeliveryNote = (props) => {
     });
   }
   const onCreate = async () => {
+    console.log(exportCommandParams);
     if (!exportCommandParams?.vehicle_id) {
       messageApi.warning('Chưa chọn xe!');
       return 0;

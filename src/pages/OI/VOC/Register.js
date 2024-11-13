@@ -81,7 +81,7 @@ const Register = (props) => {
   return (
     <React.Fragment>
       <Card title="Ý kiến người sử dụng" size="small">
-        <Descriptions style={{ marginBottom: '10px' }} size="small" items={items} column={2} layout="horizontal" bordered />
+        <Descriptions style={{ marginBottom: '10px' }} size="small" items={items} column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 } } layout="horizontal" bordered />
         <Form form={form} name="suggest_form" layout="vertical" onFinish={onFinish}>
           <Form.Item
             style={{ marginBottom: '10px' }}
