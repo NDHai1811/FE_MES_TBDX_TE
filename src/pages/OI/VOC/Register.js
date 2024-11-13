@@ -86,7 +86,7 @@ const Register = (props) => {
           <Form.Item
             style={{ marginBottom: '10px' }}
             name="title"
-            label="Tiêu đề"
+            label="Chủ đề"
             rules={[{ required: true, message: "Vui lòng nhập" }]}
           >
             <Input placeholder="Vui lòng nhập" />
