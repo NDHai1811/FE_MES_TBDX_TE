@@ -90,7 +90,7 @@ const authProtectedRoutes = [
   { path: "/ui/kpi", component: UIKPI, label: 'KPI', permission: 'ui-kpi' },
   { path: "/ui/abnormal/kich-ban-bat-thuong", component: Kichban },
   { path: "/ui/abnormal/lich-su-bat-thuong", component: Giamsat },
-  { path: "/ui/voc", component: VOCRegister },
+  { path: "/ui/voc", component: VOCRegister, permission: 'ui-voc' },
 
   //Master Data
   { path: "/ui/master-data/san-xuat/may", component: Machine, label: 'Máy', permission: 'ui-master-data-san-xuat-may' },
@@ -123,7 +123,7 @@ const authProtectedRoutes = [
   { path: ["/oi/equipment", "/oi/equipment/:machine_id"], component: Equipment, permission: 'oi-equipment' },
   { path: ["/oi/warehouse/kho-nvl", "/oi/warehouse/kho-nvl/:line"], component: Warehouse, permission: 'oi-warehouse-nvl' },
   { path: ["/oi/warehouse/kho-tp", "/oi/warehouse/kho-tp/:line"], component: WarehouseTP, permission: 'oi-warehouse-tp' },
-  { path: ["/oi/voc", "/oi/voc"], component: Register, permission: 'oi-voc' },
+  { path: ["/oi/voc", "/oi/voc"], component: Register },
   { path: '*', component: EmptyPage }
 ];
 
