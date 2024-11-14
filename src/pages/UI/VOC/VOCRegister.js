@@ -1,5 +1,6 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
 import {
+  Popconfirm,
   Button,
   Card,
   Col,
@@ -8,23 +9,17 @@ import {
   Form,
   Input,
   Modal,
-  Popconfirm,
   Row,
   Space,
   Spin,
   Table,
   Tag,
-  message
+  Select,
 } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
-import {
-  deleteMachines,
-  exportMachines
-} from "../../../api";
-import { deleteVOC, getVOC, updateVOC } from "../../../api/oi/voc";
+import { deleteVOC, getVOC, updateVOC, getVOCTypes } from "../../../api/oi/voc";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { baseURL } from "../../../config";
 
 const VOCRegister = () => {
   document.title = "VOC";
@@ -32,101 +27,93 @@ const VOCRegister = () => {
   const [openMdl, setOpenMdl] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [dataRecord, setDataRecord] = useState();
+  const [openReplyModal, setOpenReplyModal] = useState(false); // State để quản lý hiển thị popup
+  const [selectedReplyContent, setSelectedReplyContent] = useState(""); // Nội dung phản hồi
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Hàm hiển thị popup nội dung phản hồi
+  const showReplyContent = (content) => {
+    setSelectedReplyContent(content || "Chưa có phản hồi");
+    setOpenReplyModal(true);
+  };
+
+  const [typeOptions, setTypeOptions] = useState([]);
+
   const col_detailTable = [
-    // {
-    //   title: "STT",
-    //   dataIndex: "stt",
-    //   key: "stt",
-    //   align: "left",
-    //   render: (value, item, index) => index + 1,
-    //   width: 60,
-    //   fixed: "left",
-    // },
     {
-      title: "Thứ tự",
-      dataIndex: "no",
-      key: "no",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
       align: "left",
+      render: (value, item, index) => index + 1,
+      width: 30,
       fixed: "left",
-      width: 110,
     },
     {
-      title: "Tiêu đề",
-      dataIndex: "title",
-      key: "title",
+      title: "Ngày/ giờ",
+      dataIndex: "registered_at",
+      key: "registered_at",
       align: "left",
-      width: 200,
-    },
-    {
-      title: "Nội dung",
-      dataIndex: "content",
-      key: "content",
-      align: "left",
-      width: 200,
-    },
-    {
-      title: "Đề xuất",
-      dataIndex: "solution",
-      key: "solution",
-      align: "left",
-      width: 200,
+      width: 85,
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY HH:mm") : ""),
     },
     {
       title: "Người ý kiến",
       dataIndex: "registered_by",
       key: "registered_by",
       align: "left",
-      width: 120,
+      width: 100,
       render: (_, record) => record?.register?.name,
     },
     {
-      title: "Ngày ý kiến",
-      dataIndex: "registered_at",
-      key: "registered_at",
+      title: "Phân loại",
+      dataIndex: "type",
+      key: "type",
       align: "left",
-      width: 120,
-      render: (value) => value ? dayjs(value).format('DD/MM/YYYY HH:mm') : '',
+      width: 80,
+      render: (_, record) => record?.type?.name,
     },
     {
-      title: "Nội dung phản hồi",
-      dataIndex: "reply",
-      key: "reply",
-      align: "left",
-      width: 200,
-    },
-    {
-      title: "Người phản hồi",
-      dataIndex: "replied_by",
-      key: "replied_by",
+      title: "Chủ đề",
+      dataIndex: "title",
+      key: "title",
       align: "left",
       width: 120,
-      render: (_, record) => record?.replier?.name,
-    },
-    {
-      title: "Ngày phản hồi",
-      dataIndex: "replied_at",
-      key: "replied_at",
-      align: "left",
-      width: 120,
-      render: (value) => value ? dayjs(value).format('DD/MM/YYYY HH:mm') : '',
+      render: (text, record) => (
+        <a onClick={() => showReplyContent(record.reply)}>{text}</a> // Sự kiện onClick hiển thị nội dung phản hồi
+      ),
     },
     {
       title: "Kết quả phản hồi",
       dataIndex: "status",
       key: "status",
       align: "center",
-      fixed: "right",
-      width: 110,
-      render: (value) => {
-        switch (value) {
-          case 1:
-            return <Tag color="green">Đã phản hồi</Tag>;
-          default:
-            return <Tag color="warning">Đang chờ</Tag>;
-        }
-      }
+      width: 95,
+      render: (value) =>
+        value === 1 ? (
+          <Tag color="green">Đã phản hồi</Tag>
+        ) : (
+          <Tag color="red">Chưa phản hồi</Tag>
+        ),
+    },
+    {
+      title: "Người phản hồi",
+      dataIndex: "replied_by",
+      key: "replied_by",
+      align: "left",
+      width: 100,
+      render: (_, record) => record?.replier?.name,
+    },
+    {
+      title: "Ngày/ giờ phản hồi",
+      dataIndex: "replied_at",
+      key: "replied_at",
+      align: "left",
+      width: 120,
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY HH:mm") : ""),
     },
     {
       title: "Thao tác",
@@ -134,14 +121,17 @@ const VOCRegister = () => {
       key: "action",
       align: "center",
       fixed: "right",
-      width: 100,
+      width: 70,
       render: (text, record) => (
         <Space>
           <EditOutlined
             style={{ color: "blue", fontSize: 18 }}
             onClick={() => editRecord(record)}
           />
-          <Popconfirm title="Xác nhận xóa?" onConfirm={() => deleteRecord(record)}>
+          <Popconfirm
+            title="Xác nhận xóa?"
+            onConfirm={() => deleteRecord(record)}
+          >
             <DeleteOutlined style={{ color: "red", fontSize: 18 }} />
           </Popconfirm>
         </Space>
@@ -149,28 +139,33 @@ const VOCRegister = () => {
     },
   ];
 
-  function btn_click() {
-    loadListTable(params);
-  }
+  const statusOptions = [
+    { label: "Đã phản hồi", value: 1 },
+    { label: "Chưa phản hồi", value: 0 },
+  ];
 
-  const [data, setData] = useState([]);
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getVOC(params);
-    setData(
-      (res?.data || []).map((e) => {
-        return { ...e, key: e.id };
-      })
-    );
+    setData((res?.data || []).map((e) => ({ ...e, key: e.id })));
     setLoading(false);
   };
+
+  const loadVOCTypes = async () => {
+    const res = await getVOCTypes();
+    setTypeOptions(
+      Array.isArray(res?.data)
+        ? res.data.map((e) => ({ ...e, key: e.id, value: e.name }))
+        : []
+    );
+  };
+
   useEffect(() => {
     (async () => {
       loadListTable(params);
+      loadVOCTypes();
     })();
   }, []);
-
-  const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = async (values) => {
     if (isEdit) {
@@ -197,33 +192,30 @@ const VOCRegister = () => {
     form.setFieldsValue({ ...record });
     setOpenMdl(true);
   };
-  const [loading, setLoading] = useState(false);
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setListCheck(selectedRowKeys);
-    },
-  };
+
   const { userProfile } = useProfile();
   const items = [
     {
-      key: 'registered_by',
-      label: 'Người ý kiến',
+      key: "registered_by",
+      label: "Người ý kiến",
       children: dataRecord?.register?.name,
     },
     {
-      key: 'registered_at',
-      label: 'Ngày ý kiến',
-      children: dataRecord?.registered_at ? dayjs(dataRecord.registered_at).format('DD/MM/YYYY HH:mm') : '',
+      key: "registered_at",
+      label: "Ngày ý kiến",
+      children: dataRecord?.registered_at
+        ? dayjs(dataRecord.registered_at).format("DD/MM/YYYY HH:mm")
+        : "",
     },
     {
-      key: 'content',
-      label: 'Nội dung',
+      key: "content",
+      label: "Nội dung",
       children: dataRecord?.content,
       span: 2,
     },
     {
-      key: 'solution',
-      label: 'Đề xuất',
+      key: "solution",
+      label: "Đề xuất",
       children: dataRecord?.solution,
       span: 2,
     },
@@ -231,47 +223,58 @@ const VOCRegister = () => {
 
   return (
     <>
-      {contextHolder}
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Card style={{ height: "100%" }} bodyStyle={{ padding: 0 }} className="custom-card" actions={[
-              <Button
-                type="primary"
-                onClick={btn_click}
-                style={{ width: "80%" }}
-              >
-                Tìm kiếm
-              </Button>
-            ]}>
-              <Divider>Tìm kiếm</Divider>
-              <div className="mb-3">
-                <Form
-                  style={{ margin: "0 15px" }}
-                  layout="vertical"
-                  onFinish={btn_click}
+            <Card
+              style={{ height: "100%" }}
+              bodyStyle={{ padding: 0 }}
+              className="custom-card"
+              actions={[
+                <Button
+                  type="primary"
+                  onClick={() => loadListTable(params)}
+                  style={{ width: "80%" }}
                 >
-                  <Form.Item label="Mã" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, id: e.target.value })
-                      }
-                      placeholder="Nhập mã"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Tên" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) =>
-                        setParams({ ...params, name: e.target.value })
-                      }
-                      placeholder="Nhập tên"
-                    />
-                  </Form.Item>
-                  <Button hidden htmlType="submit"></Button>
-                </Form>
-              </div>
+                  Tìm kiếm
+                </Button>,
+              ]}
+            >
+              <Divider>Tìm kiếm</Divider>
+              <Form
+                style={{ margin: "0 15px" }}
+                layout="vertical"
+                onFinish={() => loadListTable(params)}
+              >
+                <Form.Item label="Người ý kiến" className="mb-3">
+                  <Input
+                    allowClear
+                    onChange={(e) =>
+                      setParams({ ...params, id: e.target.value })
+                    }
+                    placeholder="Nhập người ý kiến"
+                  />
+                </Form.Item>
+                <Form.Item label="Phân loại" className="mb-3">
+                  <Select
+                    allowClear
+                    onChange={(value) => setParams({ ...params, type: value })}
+                    placeholder="Chọn phân loại"
+                    options={typeOptions} // Sử dụng options đã khai báo
+                  />
+                </Form.Item>
+                <Form.Item label="Kết quả phản hồi" className="mb-3">
+                  <Select
+                    allowClear
+                    onChange={(value) =>
+                      setParams({ ...params, status: value })
+                    }
+                    placeholder="Chọn kết quả phản hồi"
+                    options={statusOptions} // Sử dụng options đã khai báo
+                  />
+                </Form.Item>
+                <Button hidden htmlType="submit"></Button>
+              </Form>
             </Card>
           </div>
         </Col>
@@ -280,25 +283,30 @@ const VOCRegister = () => {
             style={{ height: "100%" }}
             bodyStyle={{ paddingBottom: 0 }}
             className="custom-card scroll"
-            title="VOC"
+            title="QUẢN LÝ Ý KIẾN NGƯỜI SỬ DỤNG"
           >
             <Spin spinning={loading}>
               <Table
                 size="small"
                 bordered
-                pagination={true}
+                pagination
                 columns={col_detailTable}
                 dataSource={data}
-                scroll={{
-                  x: 2000,
-                  y: 'calc(100vh - 290px)',
-                }}
-              // rowSelection={rowSelection}
+                scroll={{ x: 1200, y: "calc(100vh - 290px)" }}
               />
             </Spin>
           </Card>
         </Col>
       </Row>
+      <Modal
+        title="Nội dung phản hồi"
+        open={openReplyModal}
+        onCancel={() => setOpenReplyModal(false)}
+        footer={null}
+      >
+        <Divider style={{ marginBottom: "15px", marginTop: "10px" }}></Divider>
+        <p>{selectedReplyContent}</p>
+      </Modal>
       <Modal
         title={isEdit ? "Cập nhật" : "Thêm mới"}
         open={openMdl}
@@ -306,9 +314,14 @@ const VOCRegister = () => {
         footer={null}
         width={800}
       >
-        <div style={{ padding: '0 16px' }}>
-          <Descriptions style={{ marginBottom: '10px' }} size="small" items={items} column={2} layout="horizontal" bordered />
-        </div>
+        <Descriptions
+          style={{ marginBottom: "10px" }}
+          size="small"
+          items={items}
+          column={2}
+          layout="horizontal"
+          bordered
+        />
         <Form
           style={{ margin: "0 15px" }}
           layout="vertical"

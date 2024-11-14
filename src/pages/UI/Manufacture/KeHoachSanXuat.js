@@ -103,7 +103,7 @@ const KeHoachSanXuat = () => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
-      width: 50,
+      width: 200,
     },
     {
       title: "L",
