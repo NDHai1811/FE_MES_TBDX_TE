@@ -90,7 +90,7 @@ const authProtectedRoutes = [
   { path: "/ui/kpi", component: UIKPI, label: 'KPI', permission: 'ui-kpi' },
   { path: "/ui/abnormal/kich-ban-bat-thuong", component: Kichban },
   { path: "/ui/abnormal/lich-su-bat-thuong", component: Giamsat },
-  { path: "/ui/voc", component: VOCRegister, permission: 'ui-voc' },
+  { path: "/ui/voc", component: VOCRegister, permission: 'ui-voc', color: "green", label: 'QL ý kiến người dùng'},
 
   //Master Data
   { path: "/ui/master-data/san-xuat/may", component: Machine, label: 'Máy', permission: 'ui-master-data-san-xuat-may' },

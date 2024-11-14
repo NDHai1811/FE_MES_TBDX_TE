@@ -84,19 +84,19 @@ const Screen = (props) => {
   );
   const permissionUI = [];
   const availableUI = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && (userProfile?.username === 'admin' || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, title: e?.label, link: e.path, permission: e.permission }));
-  const uiKeys = [{title: 'Sản xuất', key: 'manufacture'}, {title: 'Chất lượng', key: 'quality'}, {title: 'Thiết bị', key: 'equipment'}, {title: 'Kho', key: 'warehouse'}, {title: 'KPI', key: 'kpi'}, {title: 'Master Data', key: 'master-data'}];
+  const uiKeys = [{title: 'Sản xuất', key: 'manufacture'}, {title: 'Chất lượng', key: 'quality'}, {title: 'Thiết bị', key: 'equipment'}, {title: 'Kho', key: 'warehouse'}, {title: 'KPI', key: 'kpi'}, {title: 'Master Data', key: 'master-data'}, {title: 'QL ý kiến người dùng', key: 'voc'}];
   uiKeys.forEach(e=>{
     const routes = availableUI.filter(r=>r.path.includes(e.key));
     if(routes.length > 0){
-      permissionUI.push({title: e.title, link: routes[0].link, permission: routes[0].permission})
+      permissionUI.push({title: e.title, ...routes[0]})
     }
   });
-  permissionUI.push({
-    title: `QL ý kiến người sử dụng`,
-    link: `/ui/voc`,
-    permission: "ui-voc",
-    color: "green",
-  });
+  // permissionUI.push({
+  //   title: `QL ý kiến người sử dụng`,
+  //   link: `/ui/voc`,
+  //   permission: "ui-voc",
+  //   color: "green",
+  // });
 
   const logout = () => {
     window.location.href = "/logout";
