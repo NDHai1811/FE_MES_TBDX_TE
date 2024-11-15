@@ -8,8 +8,8 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "https://backtbdx.ouransoft.vn/api",
+    API_URL: "https://backmes.ouransoft.vn/api",
   },
-  baseURL: "https://backtbdx.ouransoft.vn",
-  baseHost: "https://backtbdx.ouransoft.vn"
+  baseURL: "https://backmes.ouransoft.vn",
+  baseHost: "https://backmes.ouransoft.vn"
 }
