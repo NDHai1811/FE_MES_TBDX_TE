@@ -72,12 +72,12 @@ const Screen = (props) => {
     {
       title: `Ý kiến người sử dụng`,
       link: `/oi/voc`,
-      permission: "oi-voc",
       color: "green",
     },
   ];
   const permissionOI = (listOI ?? []).filter(
     (e) =>
+    !e?.permission ||
     userProfile.username === 'admin' || 
     (userProfile?.permission ?? []).includes("*") ||
     (userProfile?.permission ?? []).includes(e.permission) || (e.permission === 'oi-kho' && is_warehouse)

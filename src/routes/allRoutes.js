@@ -114,7 +114,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/bao-tri/maintenance/edit/:maintenanceId", component: EditMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
 
   //OI
-  { path: ["/tao-tem"], component: InTem },
+  // { path: ["/tao-tem"], component: InTem },
   { path: ["/oi/manufacture", "/oi/manufacture/:machine_id"], component: Manufacture, permission: 'oi-manufacture' },
   // { path: ["/oi/quality/:type"], component: Quality, permission: 'oi-quality' },
   { path: ["/oi/quality/machine-iot", "/oi/quality/machine-iot/:machine_id"], component: QCByMachineIOT, permission: 'oi-quality-machine-iot' },
@@ -123,7 +123,7 @@ const authProtectedRoutes = [
   { path: ["/oi/equipment", "/oi/equipment/:machine_id"], component: Equipment, permission: 'oi-equipment' },
   { path: ["/oi/warehouse/kho-nvl", "/oi/warehouse/kho-nvl/:line"], component: Warehouse, permission: 'oi-warehouse-nvl' },
   { path: ["/oi/warehouse/kho-tp", "/oi/warehouse/kho-tp/:line"], component: WarehouseTP, permission: 'oi-warehouse-tp' },
-  { path: ["/oi/voc", "/oi/voc"], component: Register },
+  { path: ["/oi/voc"], component: Register },
   { path: '*', component: EmptyPage }
 ];
 
