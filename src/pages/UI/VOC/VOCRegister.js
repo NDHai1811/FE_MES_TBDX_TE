@@ -250,7 +250,7 @@ const VOCRegister = () => {
                   <Input
                     allowClear
                     onChange={(e) =>
-                      setParams({ ...params, id: e.target.value })
+                      setParams({ ...params, register: e.target.value })
                     }
                     placeholder="Nhập người ý kiến"
                   />
