@@ -155,7 +155,7 @@ const VOCRegister = () => {
     const res = await getVOCTypes();
     setTypeOptions(
       Array.isArray(res?.data)
-        ? res.data.map((e) => ({ ...e, key: e.id, value: e.name }))
+        ? res.data.map((e) => ({ ...e, key: e.id, value: e.id, label: e.name }))
         : []
     );
   };
