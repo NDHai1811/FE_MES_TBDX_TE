@@ -17,7 +17,7 @@ import {
   Select,
   DatePicker,
 } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { deleteVOC, getVOC, updateVOC, getVOCTypes } from "../../../api/oi/voc";
 import { useProfile } from "../../../components/hooks/UserHooks";
@@ -31,7 +31,10 @@ const VOCRegister = () => {
   const [openReplyModal, setOpenReplyModal] = useState(false); // State để quản lý hiển thị popup
   const [selectedReplyContent, setSelectedReplyContent] = useState(""); // Nội dung phản hồi
   const [form] = Form.useForm();
-  const [params, setParams] = useState({});
+  const [params, setParams] = useState({
+    start_date: dayjs(),
+    end_date: dayjs(),
+  });
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -78,14 +81,22 @@ const VOCRegister = () => {
       render: (_, record) => record?.type?.name,
     },
     {
+      title: "Ngày dự kiến HT",
+      dataIndex: "expected_date",
+      key: "expected_date",
+      align: "left",
+      width: 85,
+      render: (value) => (value ? dayjs(value).format("DD/MM/YYYY HH:mm") : ""),
+    },
+    {
       title: "Chủ đề",
       dataIndex: "title",
       key: "title",
       align: "left",
       width: 120,
-      render: (text, record) => (
-        <a onClick={() => showReplyContent(record.reply)}>{text}</a> // Sự kiện onClick hiển thị nội dung phản hồi
-      ),
+      // render: (text, record) => (
+      //   <a onClick={() => showReplyContent(record.reply)}>{text}</a> // Sự kiện onClick hiển thị nội dung phản hồi
+      // ),
     },
     {
       title: "Kết quả phản hồi",
@@ -148,7 +159,12 @@ const VOCRegister = () => {
   const loadListTable = async (params) => {
     setLoading(true);
     const res = await getVOC(params);
-    setData((res?.data || []).map((e) => ({ ...e, key: e.id })));
+    setData((res?.data || []).map((e) => {
+      if(selectedRow && e.id === selectedRow?.id){
+        setSelectedRow(e);
+      }
+      return { ...e, key: e.id }
+    }));
     setLoading(false);
   };
 
@@ -222,6 +238,44 @@ const VOCRegister = () => {
     },
   ];
 
+  const [selectedRow, setSelectedRow] = useState();
+  const onRowClick = (record) => {
+    setSelectedRow(record);
+    console.log(record);
+
+  }
+
+  const descriptionVOC = [
+    {
+      key: 'created_by',
+      label: 'Người ý kiến',
+      children: selectedRow?.register?.name ?? "",
+    },
+    {
+      key: 'type',
+      label: 'Phân loại',
+      children: selectedRow?.type?.name ?? "",
+    },
+    {
+      key: 'no',
+      label: 'Số thứ tự',
+      children: selectedRow?.no ?? "",
+    },
+    {
+      key: 'date',
+      label: 'Ngày ý kiến',
+      children: dayjs().format('DD/MM/YYYY'),
+    },
+  ];
+
+  const rowClassName = (record) => {
+    if (record?.id === selectedRow?.id) {
+      return "table-row-light-blue";
+    } else if(record?.status === 1){
+      return "table-row-grey";
+    }
+    return "";
+  }
   return (
     <>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -310,14 +364,34 @@ const VOCRegister = () => {
             title="QUẢN LÝ Ý KIẾN NGƯỜI SỬ DỤNG"
           >
             <Spin spinning={loading}>
-              <Table
-                size="small"
-                bordered
-                pagination
-                columns={col_detailTable}
-                dataSource={data}
-                scroll={{ x: 1200, y: "calc(100vh - 290px)" }}
-              />
+              <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+                <Table
+                  size="small"
+                  bordered
+                  pagination
+                  columns={col_detailTable}
+                  dataSource={data}
+                  scroll={{ x: 1200, y: "calc(100vh - 290px)" }}
+                  onRow={(record, index) => {
+                    return {
+                      onClick: () => onRowClick(record),
+                    };
+                  }}
+                  rowClassName={rowClassName}
+                />
+                {
+                  selectedRow && <>
+                    <CloseOutlined onClick={() => setSelectedRow()} style={{ alignSelf: "self-end" }} />
+                    <Descriptions style={{ marginBottom: '10px' }} size="small" items={descriptionVOC} column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }} layout="horizontal" bordered />
+                    <Descriptions layout="vertical" column={1}>
+                      <Descriptions.Item label={"Chủ đề"}>{selectedRow?.title}</Descriptions.Item>
+                      <Descriptions.Item label={"Nội dung"}>{selectedRow?.content}</Descriptions.Item>
+                      <Descriptions.Item label={"Đề xuất"}>{selectedRow?.solution}</Descriptions.Item>
+                      <Descriptions.Item label={"Nội dung trả lời"}>{selectedRow?.reply}</Descriptions.Item>
+                    </Descriptions>
+                  </>
+                }
+              </div>
             </Spin>
           </Card>
         </Col>
