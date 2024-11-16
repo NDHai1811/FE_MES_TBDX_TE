@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Tabs, Card, Table, Select, Form, Input, Button, Descriptions, message, DatePicker, Tag, Modal, Divider } from "antd";
+import { Row, Col, Tabs, Card, Table, Select, Form, Input, Button, Descriptions, message, DatePicker, Tag, Modal, Divider, Upload } from "antd";
 import { withRouter } from "react-router-dom";
 import "../style.scss";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import dayjs from "dayjs";
-import { createVOC, getVOC, getVOCTypes } from "../../../api/oi/voc";
+import { createVOC, getVOC, getVOCTypes, uploadFileVOC } from "../../../api/oi/voc";
+import { UploadOutlined } from "@ant-design/icons";
 
 const Register = (props) => {
   document.title = "VOC";
@@ -158,6 +159,7 @@ const Register = (props) => {
   const [selectedRow, setSelectedRow] = useState();
   const [openReplyModal, setOpenReplyModal] = useState(false); // State để quản lý hiển thị popup
   const [selectedReplyContent, setSelectedReplyContent] = useState(""); // Nội dung phản hồi
+  const [uploading, setUploading] = useState(false);
   const showReplyContent = (content) => {
     setSelectedReplyContent(content || "Chưa có phản hồi");
     setOpenReplyModal(true);
@@ -168,9 +170,9 @@ const Register = (props) => {
   }
   const loadListTable = async (params) => {
     setLoadingData(true);
-    const res = await getVOC({requested_by: userProfile?.username});
+    const res = await getVOC({ requested_by: userProfile?.username });
     setData((res?.data || []).map((e) => {
-      if(selectedRow && e.id === selectedRow?.id){
+      if (selectedRow && e.id === selectedRow?.id) {
         setSelectedRow(e);
       }
       return { ...e, key: e.id }
@@ -180,75 +182,95 @@ const Register = (props) => {
   const rowClassName = (record) => {
     if (record?.id === selectedRow?.id) {
       return "table-row-light-blue";
-    } else if(record?.status === 1){
+    } else if (record?.status === 1) {
       return "table-row-grey";
     }
     return "";
   }
+
+
   return (
     <React.Fragment>
-      <Card title="Ý kiến người sử dụng" size="small">
-        <Descriptions style={{ marginBottom: '10px' }} size="small" items={items} column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }} layout="horizontal" bordered />
-        <Form form={form} name="suggest_form" layout="vertical" onFinish={onFinish}>
-          {typeSelected === 2 && <Form.Item
-            style={{ marginBottom: '10px' }}
-            name="expected_date"
-            label="Ngày dự kiến hoàn thành"
-            rules={[{ required: true, message: "Vui lòng nhập" }]}
-          >
-            <DatePicker minDate={dayjs()} format={"DD-MM-YYYY HH:mm:ss"} showTime needConfirm={false} />
-          </Form.Item>}
-          <Form.Item
-            style={{ marginBottom: '10px' }}
-            name="title"
-            label="Chủ đề"
-            rules={[{ required: true, message: "Vui lòng nhập" }]}
-          >
-            <Input placeholder="Vui lòng nhập" />
-          </Form.Item>
-          <Form.Item
-            style={{ marginBottom: '10px' }}
-            name="content"
-            label="Nội dung"
-            rules={[{ required: true, message: "Vui lòng nhập" }]}
-          >
-            <Input.TextArea placeholder="Vui lòng nhập" rows={2} />
-          </Form.Item>
-          <Form.Item
-            style={{ marginBottom: '20px' }}
-            name="solution"
-            label="Đề xuất"
-          >
-            <Input.TextArea placeholder="Vui lòng nhập" rows={2} />
-          </Form.Item>
-          <Form.Item style={{ marginBottom: '0' }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-            >
-              Gửi ý kiến
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
-      <Card title="Lịch sử ý kiến" size="small">
-        <Table
-          loading={loadingData}
-          size="small"
-          bordered
-          pagination
-          columns={columns}
-          dataSource={data}
-          scroll={{ x: 1200, y: "calc(100vh - 290px)" }}
-          onRow={(record, index) => {
-            return {
-              onClick: () => onRowClick(record),
-            };
-          }}
-          rowClassName={rowClassName}
-        />
-      </Card>
+      <Row gutter={[8, 8]} style={{marginTop: 4}}>
+        <Col span={24}>
+          <Card title="Ý kiến người sử dụng" size="small">
+            <Descriptions style={{ marginBottom: '10px' }} size="small" items={items} column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }} layout="horizontal" bordered />
+            <Form form={form} name="suggest_form" layout="vertical" onFinish={onFinish}>
+              {typeSelected === 2 && <Form.Item
+                style={{ marginBottom: '10px' }}
+                name="expected_date"
+                label="Ngày dự kiến hoàn thành"
+                rules={[{ required: true, message: "Vui lòng nhập" }]}
+              >
+                <DatePicker minDate={dayjs()} format={"DD-MM-YYYY HH:mm:ss"} showTime needConfirm={false} />
+              </Form.Item>}
+              <Form.Item
+                style={{ marginBottom: '10px' }}
+                name="title"
+                label="Chủ đề"
+                rules={[{ required: true, message: "Vui lòng nhập" }]}
+              >
+                <Input placeholder="Vui lòng nhập" />
+              </Form.Item>
+              <Form.Item
+                style={{ marginBottom: '10px' }}
+                name="content"
+                label="Nội dung"
+                rules={[{ required: true, message: "Vui lòng nhập" }]}
+              >
+                <Input.TextArea placeholder="Vui lòng nhập" rows={2} />
+              </Form.Item>
+              <Form.Item
+                style={{ marginBottom: '20px' }}
+                name="solution"
+                label="Đề xuất"
+              >
+                <Input.TextArea placeholder="Vui lòng nhập" rows={2} />
+              </Form.Item>
+              <Form.Item style={{ marginBottom: '20px', width: 300 }}>
+                <Upload
+                  // showUploadList={false}
+                  customRequest={async ({ file, onSuccess, onError }) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    setUploading(true);
+                    const res = await uploadFileVOC(formData);
+                    setUploading(false);
+                  }}
+                ><Button icon={<UploadOutlined />} loading={uploading}>Đính kèm file/ảnh</Button></Upload>
+              </Form.Item>
+              <Form.Item style={{ marginBottom: '0' }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                >
+                  Gửi ý kiến
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </Col>
+        <Col span={24}>
+          <Card title="Lịch sử ý kiến" size="small">
+            <Table
+              loading={loadingData}
+              size="small"
+              bordered
+              pagination
+              columns={columns}
+              dataSource={data}
+              scroll={{ x: 1200, y: "calc(100vh - 290px)" }}
+              onRow={(record, index) => {
+                return {
+                  onClick: () => onRowClick(record),
+                };
+              }}
+              rowClassName={rowClassName}
+            />
+          </Card>
+        </Col>
+      </Row>
       <Modal
         title="Nội dung phản hồi"
         open={openReplyModal}

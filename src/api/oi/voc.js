@@ -19,3 +19,10 @@ export async function updateVOC(params, id) {
 export async function deleteVOC(id) {
   return await axios.delete(`/voc/${id}`);
 }
+
+export async function uploadFileVOC(params) {
+  const res = await axios.post('/voc/upload-file', params, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res;
+}
