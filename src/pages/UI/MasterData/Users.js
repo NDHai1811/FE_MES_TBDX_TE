@@ -68,6 +68,18 @@ const Users = () => {
         </Space>
       ),
     },
+    {
+      title: "Số lần truy cập trong ngày",
+      dataIndex: "login_times_in_day",
+      key: "login_times_in_day",
+      align: "center",
+    },
+    {
+      title: "Thời gian sử dụng trong ngày (phút)",
+      dataIndex: "usage_time",
+      key: "usage_time",
+      align: "center",
+    },
   ];
   const formFields = [
     {

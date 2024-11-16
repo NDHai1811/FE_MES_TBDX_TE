@@ -688,3 +688,7 @@ export async function getShifts(params) {
   const res = await axios.get('/shift/list', { params });
   return res.data;
 }
+export async function getSystemUsage(params) {
+  const res = await axios.get('/getTableSystemUsageRate', { params });
+  return res;
+}

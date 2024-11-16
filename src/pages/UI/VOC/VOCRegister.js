@@ -15,6 +15,7 @@ import {
   Table,
   Tag,
   Select,
+  DatePicker,
 } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -240,12 +241,35 @@ const VOCRegister = () => {
                 </Button>,
               ]}
             >
-              <Divider>Tìm kiếm</Divider>
               <Form
                 style={{ margin: "0 15px" }}
                 layout="vertical"
                 onFinish={() => loadListTable(params)}
               >
+                <Divider>Thời gian truy vấn</Divider>
+                <div className="mb-3">
+                  <Space direction="vertical" style={{ width: "100%" }}>
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Bắt đầu"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, start_date: value })
+                      }
+                      value={params.start_date}
+                    />
+                    <DatePicker
+                      allowClear={false}
+                      placeholder="Kết thúc"
+                      style={{ width: "100%" }}
+                      onChange={(value) =>
+                        setParams({ ...params, end_date: value })
+                      }
+                      value={params.end_date}
+                    />
+                  </Space>
+                </div>
+                <Divider>Tìm kiếm</Divider>
                 <Form.Item label="Người ý kiến" className="mb-3">
                   <Input
                     allowClear

@@ -88,7 +88,7 @@ const Screen = (props) => {
   uiKeys.forEach(e=>{
     const routes = availableUI.filter(r=>r.path.includes(e.key));
     if(routes.length > 0){
-      permissionUI.push({title: e.title, ...routes[0]})
+      permissionUI.push({title: e.title, link: routes[0].link, permission: routes[0].permission, color: routes[0].color});
     }
   });
   // permissionUI.push({

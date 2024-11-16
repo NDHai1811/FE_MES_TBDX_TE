@@ -1,0 +1,4 @@
+.system-usage-card .ant-card-body::before,
+.system-usage-card .ant-card-body::after {
+  content: none !important;
+}

@@ -61,6 +61,7 @@ import QualityIQC from "../pages/UI/Quality/IQC";
 import ShiftAssignment from "../pages/UI/MasterData/ShiftAssignment";
 import Register from "../pages/OI/VOC/Register";
 import VOCRegister from "../pages/UI/VOC/VOCRegister";
+import SystemUsage from "../pages/UI/MasterData/SystemUsage";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -112,6 +113,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/bao-tri/maintenance", component: Maintenance, label: 'Bảo trì', permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/master-data/bao-tri/maintenance/create", component: CreateMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/master-data/bao-tri/maintenance/edit/:maintenanceId", component: EditMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
+  { path: "/ui/master-data/system/usage", component: SystemUsage, label: 'Tỷ lệ sử dụng MES'},
 
   //OI
   // { path: ["/tao-tem"], component: InTem },
