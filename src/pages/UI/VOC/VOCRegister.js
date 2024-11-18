@@ -16,11 +16,13 @@ import {
   Tag,
   Select,
   DatePicker,
+  Upload,
 } from "antd";
 import { CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { deleteVOC, getVOC, updateVOC, getVOCTypes } from "../../../api/oi/voc";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { baseURL } from "../../../config";
 
 const VOCRegister = () => {
   document.title = "VOC";
@@ -160,7 +162,7 @@ const VOCRegister = () => {
     setLoading(true);
     const res = await getVOC(params);
     setData((res?.data || []).map((e) => {
-      if(selectedRow && e.id === selectedRow?.id){
+      if (selectedRow && e.id === selectedRow?.id) {
         setSelectedRow(e);
       }
       return { ...e, key: e.id }
@@ -271,7 +273,7 @@ const VOCRegister = () => {
   const rowClassName = (record) => {
     if (record?.id === selectedRow?.id) {
       return "table-row-light-blue";
-    } else if(record?.status === 1){
+    } else if (record?.status === 1) {
       return "table-row-grey";
     }
     return "";
@@ -364,7 +366,7 @@ const VOCRegister = () => {
             title="QUẢN LÝ Ý KIẾN NGƯỜI SỬ DỤNG"
           >
             <Spin spinning={loading}>
-              <div style={{display: "flex", flexDirection: "column", gap: 8}}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <Table
                   size="small"
                   bordered
@@ -387,6 +389,18 @@ const VOCRegister = () => {
                       <Descriptions.Item label={"Chủ đề"}>{selectedRow?.title}</Descriptions.Item>
                       <Descriptions.Item label={"Nội dung"}>{selectedRow?.content}</Descriptions.Item>
                       <Descriptions.Item label={"Đề xuất"}>{selectedRow?.solution}</Descriptions.Item>
+                      <Descriptions.Item label={"File/ảnh"}>{
+                        <Upload
+                          fileList={(selectedRow?.file_names ?? []).map((e, i) => {
+                            return {
+                              uid: i + 1,
+                              name: e?.substring(e?.lastIndexOf('/') + 1),
+                              status: 'done',
+                              url: baseURL + "/" + e,
+                            }
+                          })}
+                        ></Upload>
+                      }</Descriptions.Item>
                       <Descriptions.Item label={"Nội dung trả lời"}>{selectedRow?.reply}</Descriptions.Item>
                     </Descriptions>
                   </>

@@ -6,6 +6,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import dayjs from "dayjs";
 import { createVOC, getVOC, getVOCTypes, uploadFileVOC } from "../../../api/oi/voc";
 import { UploadOutlined } from "@ant-design/icons";
+import { baseURL } from "../../../config";
 
 const Register = (props) => {
   document.title = "VOC";
@@ -22,6 +23,7 @@ const Register = (props) => {
       const res = await createVOC({
         ...values,
         voc_type_id: typeSelected,
+        file_names: fileList
       });
       if (res.success) {
         await getVOCNo();
@@ -32,6 +34,7 @@ const Register = (props) => {
     } finally {
       setLoading(false);
     }
+    setFileList([]);
   }
 
   const items = [
@@ -160,6 +163,7 @@ const Register = (props) => {
   const [openReplyModal, setOpenReplyModal] = useState(false); // State để quản lý hiển thị popup
   const [selectedReplyContent, setSelectedReplyContent] = useState(""); // Nội dung phản hồi
   const [uploading, setUploading] = useState(false);
+  const [fileList, setFileList] = useState([]);
   const showReplyContent = (content) => {
     setSelectedReplyContent(content || "Chưa có phản hồi");
     setOpenReplyModal(true);
@@ -191,7 +195,7 @@ const Register = (props) => {
 
   return (
     <React.Fragment>
-      <Row gutter={[8, 8]} style={{marginTop: 4}}>
+      <Row gutter={[8, 8]} style={{ marginTop: 4 }}>
         <Col span={24}>
           <Card title="Ý kiến người sử dụng" size="small">
             <Descriptions style={{ marginBottom: '10px' }} size="small" items={items} column={{ xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }} layout="horizontal" bordered />
@@ -230,12 +234,25 @@ const Register = (props) => {
               <Form.Item style={{ marginBottom: '20px', width: 300 }}>
                 <Upload
                   // showUploadList={false}
+                  fileList={fileList}
                   customRequest={async ({ file, onSuccess, onError }) => {
                     const formData = new FormData();
-                    formData.append("file", file);
+                    formData.append("files", file);
                     setUploading(true);
                     const res = await uploadFileVOC(formData);
+                    setFileList([...fileList, {
+                      uid: fileList.length + 1,
+                      name: res?.data?.substring(res?.data?.lastIndexOf('/') + 1),
+                      status: 'done',
+                      url: baseURL+"/"+res?.data,
+                    }])
                     setUploading(false);
+                  }}
+                  onRemove={(file) => {
+                    const index = fileList.indexOf(file);
+                    const newFileList = fileList.slice();
+                    newFileList.splice(index, 1);
+                    setFileList(newFileList);
                   }}
                 ><Button icon={<UploadOutlined />} loading={uploading}>Đính kèm file/ảnh</Button></Upload>
               </Form.Item>
