@@ -113,7 +113,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/bao-tri/maintenance", component: Maintenance, label: 'Bảo trì', permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/master-data/bao-tri/maintenance/create", component: CreateMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/master-data/bao-tri/maintenance/edit/:maintenanceId", component: EditMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
-  { path: "/ui/master-data/system/usage", component: SystemUsage, label: 'Tỷ lệ sử dụng MES'},
+  { path: "/ui/system/usage", component: SystemUsage, label: 'Tỷ lệ sử dụng MES', color: "green"},
 
   //OI
   // { path: ["/tao-tem"], component: InTem },

@@ -1,0 +1,61 @@
+import { Card } from "antd";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import Highcharts from "highcharts";
+
+const TyLeKeHoachSong = ({data = null, loading = false}) => {    
+    useEffect(() => {
+        if (!data) {
+            return;
+        }
+        const options = {
+            chart: {
+                height: 300,
+                type: 'column',
+            },
+            title: {
+                text: "Tỷ lệ kế hoạch/dợn sóng",
+                style: {
+                    fontSize: '16px', // Kích thước font nhỏ hơn
+                }
+            },
+            xAxis: {
+                categories: data.categories,
+                title: false
+            },
+            yAxis: {
+                min: 0,
+                title: false
+            },
+            plotOptions: {
+                column: {
+                    borderRadius: 0,
+                }
+            },
+            series: [
+                {
+                    name: 'Tất cả công đoạn',
+                    data: data.plannedQuantity
+                },
+                {
+                    name: 'Công đoạn Dợn sóng',
+                    data: data.actualQuantity
+                }
+            ],
+            exporting: false,
+            credits: { enabled: false }
+        };
+
+        Highcharts.chart("ty-le-ke-hoach-song-chart", options);
+    }, [data]);
+    return (
+        <Card
+            style={{ padding: "0px"}}
+            styles={{body: {padding: 8}}}
+            loading={loading}
+        >
+            <div id="ty-le-ke-hoach-song-chart" />
+        </Card>
+    )
+}
+
+export default TyLeKeHoachSong;

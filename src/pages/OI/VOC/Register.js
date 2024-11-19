@@ -35,6 +35,7 @@ const Register = (props) => {
       setLoading(false);
     }
     setFileList([]);
+    loadListTable();
   }
 
   const items = [

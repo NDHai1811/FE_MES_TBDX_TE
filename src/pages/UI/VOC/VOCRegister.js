@@ -202,6 +202,7 @@ const VOCRegister = () => {
     if (record?.id) {
       await deleteVOC(record.id);
       loadListTable(params);
+      setSelectedRow();
     }
   };
 
@@ -243,8 +244,6 @@ const VOCRegister = () => {
   const [selectedRow, setSelectedRow] = useState();
   const onRowClick = (record) => {
     setSelectedRow(record);
-    console.log(record);
-
   }
 
   const descriptionVOC = [

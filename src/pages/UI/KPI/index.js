@@ -32,6 +32,14 @@ import {
 } from "../../../api/ui/main";
 import dayjs from "dayjs";
 import { baseURL } from "../../../config";
+import TyLeKeHoach from "./Chart/TyLeKeHoachSong";
+import { kpiTonKhoNVL, kpiTyLeKeHoach, kpiTyLeKeHoachIn, kpiTyLeLoiMay, kpiTyLeNGPQC, kpiTyLeVanHanh } from "../../../api/ui/kpi";
+import TonKhoNVL from "./Chart/TonKhoNVL";
+import TyLeNGPQC from "./Chart/TyLeNGPQC";
+import TyLeVanHanhThietBi from "./Chart/TyLeVanHanhThietBi";
+import TyLeKeHoachSong from "./Chart/TyLeKeHoachSong";
+import TyLeKeHoachIn from "./Chart/TyLeKeHoachIn";
+import TyLeKeLoiMay from "./Chart/TyLeKeLoiMay";
 
 const { Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -330,134 +338,57 @@ const KPI = (props) => {
     btn_click();
   }, []);
 
+  const [tyLeKeHoachSong, setTyLeKeHoachSong] = useState({ data: {}, loading: false });
+  const [tonKhoNVL, setTonKhoNVL] = useState({ data: {}, loading: false });
+  const [tyLeNGPQC, setTyleNGPQC] = useState({ data: {}, loading: false });
+  const [tyLeVanHanhTB, setTyLeVanHanhTB] = useState({ data: {}, loading: false });
+  const [tyLeKeHoachIn, setTyLeKeHoachIn] = useState({ data: {}, loading: false });
+  const [tyLeLoiMay, setTyLeLoiMay] = useState({ data: {}, loading: false });
+  const fetchChart1 = async () => {
+    setTyLeKeHoachSong({ ...tyLeKeHoachSong, loading: true });
+    var res = await kpiTyLeKeHoach(params);
+    setTyLeKeHoachSong({ data: res.data, loading: false });
+  }
+  const fetchChart2 = async () => {
+    setTonKhoNVL({ ...tonKhoNVL, loading: true });
+    var res = await kpiTonKhoNVL(params);
+    setTonKhoNVL({ data: res.data, loading: false });
+  }
+  const fetchChart3 = async () => {
+    setTyleNGPQC({ ...tyLeNGPQC, loading: true });
+    var res = await kpiTyLeNGPQC(params);
+    setTyleNGPQC({ data: res.data, loading: false });
+  }
+  const fetchChart4 = async () => {
+    setTyLeVanHanhTB({ ...tyLeVanHanhTB, loading: true });
+    var res = await kpiTyLeVanHanh(params);
+    setTyLeVanHanhTB({ data: res.data, loading: false });
+  }
+  const fetchChart5 = async () => {
+    setTyLeKeHoachIn({ ...tyLeKeHoachIn, loading: true });
+    var res = await kpiTyLeKeHoachIn(params);
+    setTyLeKeHoachIn({ data: res.data, loading: false });
+  }
+  const fetchChart6 = async () => {
+    
+  }
+  const fetchChart7 = async () => {
+    
+  }
+  const fetchChart8 = async () => {
+    setTyLeLoiMay({ ...tyLeLoiMay, loading: true });
+    var res = await kpiTyLeLoiMay(params);
+    setTyLeLoiMay({ data: res.data, loading: false });
+  }
   async function btn_click() {
-    // const res = await getKpi(params);
-    // if (res.success) {
-    //   const data = [];
-    //   Object.keys(res.data).map((key, index) => {
-    //     data.push({
-    //       ...res.data[key],
-    //       ...res.data[key].data,
-    //       last_year: "-",
-    //     });
-    //   });
-    //   console.log(data);
-    //   setDataTable(data);
-    //   let list1 = [];
-    //   Object.keys(res.data.ti_le_sx.data ?? {}).map((key, index) => {
-    //     list1.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_sx.data[key]),
-    //       type: "TL Hoàn thành KHSX",
-    //     });
-    //     list1.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 82,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartTiLeHoanThanhKHSX(list1);
-    //   let list2 = [];
-    //   Object.keys(res.data.ti_le_dat_thang.data ?? {}).map((key, index) => {
-    //     list2.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_dat_thang.data[key]),
-    //       type: "TL Đạt thẳng",
-    //     });
-    //     list2.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 80,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartTiLeDatThang(list2);
-    //   let list3 = [];
-    //   Object.keys(res.data.ti_le_ng.data ?? {}).map((key, index) => {
-    //     list3.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_ng.data[key]),
-    //       type: "TL NG",
-    //     });
-    //     list3.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 8,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartTiLeLoiCongDoan(list3);
-    //   let list4 = [];
-    //   Object.keys(res.data.ti_le_van_hanh_may.data ?? {}).map((key, index) => {
-    //     list4.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_van_hanh_may.data[key]),
-    //       type: "TL Vận hành máy",
-    //     });
-    //     list4.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 75,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartTiLeVanHanhThietBi(list4);
-    //   let list5 = [];
-    //   Object.keys(res.data.ti_le_giao_hang_dung_han.data ?? {}).map(
-    //     (key, index) => {
-    //       list5.push({
-    //         date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //         value: parseInt(res.data.ti_le_giao_hang_dung_han.data[key]),
-    //         type: "TL Giao hàng đúng hạn",
-    //       });
-    //       list5.push({
-    //         date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //         value: 100,
-    //         type: "Tỉ lệ tiêu chuẩn",
-    //       });
-    //     }
-    //   );
-    //   setDataChartTiLeGiaoHangDungHan(list5);
-    //   let list6 = [];
-    //   Object.keys(res.data.ti_le_ton.data ?? {}).map((key, index) => {
-    //     list6.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_ton.data[key]),
-    //       type: "TL ngày tồn",
-    //     });
-    //     list6.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 90,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartNgayTon(list6);
-    //   let list7 = [];
-    //   Object.keys(res.data.ti_le_ng_oqc.data ?? {}).map((key, index) => {
-    //     list7.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_ng_oqc.data[key]),
-    //       type: "TL NG OQC",
-    //     });
-    //     list7.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 1,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartTiLeNgOQC(list7);
-    //   let list8 = [];
-    //   Object.keys(res.data.ti_le_leadtime.data ?? {}).map((key, index) => {
-    //     list8.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: parseInt(res.data.ti_le_leadtime.data[key]),
-    //       type: "TL Leadtime",
-    //     });
-    //     list8.push({
-    //       date: dayjs(key, "YYYY-MM-DD").format("D/M"),
-    //       value: 95,
-    //       type: "Tỉ lệ tiêu chuẩn",
-    //     });
-    //   });
-    //   setDataChartLeadTime(list8);
-    // }
+    fetchChart1();
+    fetchChart2();
+    fetchChart3();
+    fetchChart4();
+    fetchChart5();
+    fetchChart6();
+    fetchChart7();
+    fetchChart8();
   }
 
   const [exportLoading, setExportLoading] = useState(false);
@@ -534,52 +465,34 @@ const KPI = (props) => {
         </Col>
         <Col span={20}>
           <Row gutter={[8, 8]}>
-            {/* <Row gutter={[8, 8]}> */}
-            <Col span={6}>
-              <Card
-                title="Tỉ lệ hoàn thành kế hoạch"
-                style={{ padding: "0px" }}
-              >
-                <Line {...configTiLeHoanThanhKeHoachSanXuat} />
-              </Card>
+            <Col span={24}>
+              <Row gutter={[8, 8]}>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeKeHoachSong {...tyLeKeHoachSong} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TonKhoNVL {...tonKhoNVL} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeNGPQC {...tyLeNGPQC} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeVanHanhThietBi {...tyLeVanHanhTB} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeKeHoachIn {...tyLeKeHoachIn} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeKeHoach {...tyLeKeHoachSong} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeKeHoach {...tyLeKeHoachSong} />
+                </Col>
+                <Col sm={24} md={12} lg={8} xl={6}>
+                  <TyLeKeLoiMay {...tyLeLoiMay} />
+                </Col>
+              </Row>
             </Col>
-            <Col span={6}>
-              <Card title="Tỉ lệ đạt thẳng" style={{ padding: "0px" }}>
-                <Line {...configTiLeDatThang} />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card title="Tỉ lệ lỗi công đoạn" style={{ padding: "0px" }}>
-                <Line {...configTiLeLoiCongDoan} />
-              </Card>
-            </Col>
-
-            <Col span={6}>
-              <Card title="Tỉ lệ vận hành thiết bị" style={{ padding: "0px" }}>
-                <Line {...configTiLeVanHanhThietBi} />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card title="LeadTime" style={{ padding: "0px" }}>
-                <Line {...configLeadTime} />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card title="Tỉ lệ giao hàng đúng hạn" style={{ padding: "0px" }}>
-                <Line {...configTiLeGiaoHangDungHan} />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card title="Ngày tồn" style={{ padding: "0px" }}>
-                <Line {...configNgayTon} />
-              </Card>
-            </Col>
-            <Col span={6}>
-              <Card title="Tỉ lệ NG OQC" style={{ padding: "0px" }}>
-                <Line {...configTiLeNgOQC} />
-              </Card>
-            </Col>
-            {/* </Row> */}
             <Col span={24}>
               <Card
                 style={{ height: "100%" }}

@@ -84,7 +84,7 @@ const Screen = (props) => {
   );
   const permissionUI = [];
   const availableUI = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && (userProfile?.username === 'admin' || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, title: e?.label, link: e.path, permission: e.permission }));
-  const uiKeys = [{title: 'Sản xuất', key: 'manufacture'}, {title: 'Chất lượng', key: 'quality'}, {title: 'Thiết bị', key: 'equipment'}, {title: 'Kho', key: 'warehouse'}, {title: 'KPI', key: 'kpi'}, {title: 'Master Data', key: 'master-data'}, {title: 'QL ý kiến người dùng', key: 'voc'}];
+  const uiKeys = [{title: 'Sản xuất', key: 'manufacture'}, {title: 'Chất lượng', key: 'quality'}, {title: 'Thiết bị', key: 'equipment'}, {title: 'Kho', key: 'warehouse'}, {title: 'KPI', key: 'kpi'}, {title: 'Master Data', key: 'master-data'}, {title: 'QL ý kiến người dùng', key: 'voc'}, {title: 'Đánh giá tỷ lệ sử dụng MES', key: 'system/usage'}];
   uiKeys.forEach(e=>{
     const routes = availableUI.filter(r=>r.path.includes(e.key));
     if(routes.length > 0){

@@ -61,12 +61,20 @@ const Khuon = () => {
   const [machineList, setMachineList] = useState([]);
   const col_detailTable = [
     {
+      title: "STT",
+      dataIndex: "stt",
+      align: "center",
+      width: 50,
+      // fixed: 'left',
+      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
+    },
+    {
       title: "Khách hàng",
       dataIndex: "customer_id",
       align: "center",
       editable: true,
       width: 150,
-      fixed: 'left' 
+      // fixed: 'left' 
     },
     {
       title: "Kích thước ĐH",
@@ -79,7 +87,7 @@ const Khuon = () => {
           dataIndex: "dai",
           align: "center",
           editable: true,
-          fixed: 'left',
+          // fixed: 'left',
           width: 70
         },
         {
@@ -87,7 +95,7 @@ const Khuon = () => {
           dataIndex: "rong",
           align: "center",
           editable: true,
-          fixed: 'left',
+          // fixed: 'left',
           width: 70
         },
         {
@@ -95,7 +103,7 @@ const Khuon = () => {
           dataIndex: "cao",
           align: "center",
           editable: true,
-          fixed: 'left',
+          // fixed: 'left',
           width: 70
         },
         {
@@ -103,7 +111,7 @@ const Khuon = () => {
           dataIndex: "kich_thuoc",
           align: "center",
           editable: true,
-          fixed: 'left',
+          // fixed: 'left',
           width: 120
         },
       ]
@@ -160,6 +168,13 @@ const Khuon = () => {
       width: 90
     },
     {
+      title: "Pad xẻ rãnh",
+      dataIndex: "pad_xe_ranh",
+      align: "center",
+      editable: true,
+      width: 100
+    },
+    {
       title: "Mã khuôn bế",
       dataIndex: "khuon_id",
       align: "center",
@@ -172,20 +187,6 @@ const Khuon = () => {
       align: "center",
       editable: true,
       width: 70
-    },
-    {
-      title: "SL khuôn \n (số khuôn/bộ)",
-      dataIndex: "sl_khuon",
-      align: "center",
-      editable: true,
-      width: 120
-    },
-    {
-      title: "Pad xẻ rãnh",
-      dataIndex: "pad_xe_ranh",
-      align: "center",
-      editable: true,
-      width: 100
     },
     {
       title: "Ghi chú khác",
@@ -211,6 +212,13 @@ const Khuon = () => {
     {
       title: "Ngày đặt khuôn",
       dataIndex: "ngay_dat_khuon",
+      align: "center",
+      editable: true,
+      width: 120
+    },
+    {
+      title: "Người thiết kế",
+      dataIndex: "designer_name",
       align: "center",
       editable: true,
       width: 120
@@ -422,13 +430,13 @@ const Khuon = () => {
                     Upload Excel
                   </Button>
                 </Upload>
-                {/* <Button
+                <Button
                   type="primary"
                   onClick={exportFile}
                   loading={exportLoading}
                 >
                   Export Excel
-                </Button> */}
+                </Button>
                 {/* <Button
                   type="primary"
                   onClick={editRecord}
