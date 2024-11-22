@@ -292,7 +292,7 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '70vh'
+            y: '40vh'
           }
         }
         tableLayout="fixed"
@@ -307,8 +307,8 @@ const PopupCreateExportPlanFG = (props) => {
         pagination={false}
         scroll={
           {
-            x: '260vw',
-            y: '70vh'
+            x: '170vw',
+            y: '40vh'
           }
         }
         tableLayout="fixed"
@@ -320,7 +320,7 @@ const PopupCreateExportPlanFG = (props) => {
               {selectedRowsColumns.map((e, index) => {
                 if (index === 0) {
                   return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
-                } else if (index === 10) {
+                } else if (index === 8) {
                   return <Table.Summary.Cell align="center" index={index}>{
                     selectedRows.reduce((sum, { sl }) => sum + parseInt(sl), 0)
                   }</Table.Summary.Cell>
@@ -344,14 +344,12 @@ const PopupCreateExportPlanFG = (props) => {
         open={open}
         onCancel={() => setOpen(false)}
         footer={null}
+        className="popup"
         title="Tạo KHXK từ đơn hàng"
         width={'98vw'}
-        height={'100vh'}
+        height={'100%'}
         style={{
-          // position: 'fixed',
-          left: '0',
-          right: '0',
-          top: '5px',
+          top: 0,
         }}
       >
         <Form layout="vertical">

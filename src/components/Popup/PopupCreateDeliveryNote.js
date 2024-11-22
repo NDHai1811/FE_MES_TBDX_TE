@@ -237,6 +237,9 @@ const PopupCreateDeliveryNote = (props) => {
         });
       });
     },
+    getCheckboxProps: (record) => ({
+      disabled: record.sl_ton <= 0,
+    }),
     optionFilterProp: 'label',
     onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
     onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])
@@ -335,7 +338,7 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '70vh'
+            y: '45vh'
           }
         }
         tableLayout="fixed"
@@ -351,7 +354,7 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '260vw',
-            y: '70vh'
+            y: '45vh'
           }
         }
         tableLayout="fixed"
@@ -387,14 +390,12 @@ const PopupCreateDeliveryNote = (props) => {
         open={open}
         onCancel={() => setOpen(false)}
         footer={null}
+        className="popup"
         title="Tạo lệnh xuất kho từ đơn hàng"
         width={'98vw'}
-        height={'100vh'}
+        height={"100%"}
         style={{
-          // position: 'fixed',
-          left: '0',
-          right: '0',
-          top: '5px',
+          top: 0,
         }}
       >
         <Form layout="vertical">

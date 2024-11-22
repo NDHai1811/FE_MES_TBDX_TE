@@ -74,7 +74,8 @@ const Khuon = () => {
       align: "center",
       editable: true,
       width: 150,
-      // fixed: 'left' 
+      // fixed: 'left',
+      render: (value) => value ?? "x",
     },
     {
       title: "Kích thước ĐH",
@@ -88,7 +89,8 @@ const Khuon = () => {
           align: "center",
           editable: true,
           // fixed: 'left',
-          width: 70
+          width: 70,
+          render: (value) => value ?? "x",
         },
         {
           title: "Rộng",
@@ -96,7 +98,8 @@ const Khuon = () => {
           align: "center",
           editable: true,
           // fixed: 'left',
-          width: 70
+          width: 70,
+          render: (value) => value ?? "x",
         },
         {
           title: "Cao",
@@ -104,7 +107,8 @@ const Khuon = () => {
           align: "center",
           editable: true,
           // fixed: 'left',
-          width: 70
+          width: 70,
+          render: (value) => value ?? "x",
         },
         {
           title: "Kích thước chuẩn",
@@ -112,7 +116,8 @@ const Khuon = () => {
           align: "center",
           editable: true,
           // fixed: 'left',
-          width: 120
+          width: 120,
+          render: (value) => value ?? "x",
         },
       ]
     },
@@ -121,15 +126,16 @@ const Khuon = () => {
       dataIndex: "phan_loai_1",
       align: "center",
       editable: true,
-      render: (value) => PL1s.find(e => e.value === value)?.label ?? "",
-      width: 120
+      render: (value) => PL1s.find(e => e.value === value)?.label ?? "x",
+      width: 120,
     },
     {
       title: "Mã buyer",
       dataIndex: "buyer_id",
       align: "center",
       editable: true,
-      width: 190
+      width: 190,
+      render: (value) => value ?? "x",
     },
     {
       title: "Khuôn bế",
@@ -142,21 +148,24 @@ const Khuon = () => {
           dataIndex: "kho_khuon",
           align: "center",
           editable: true,
-          width: 70
+          width: 70,
+          render: (value) => value ?? "x",
         },
         {
           title: "Dài",
           dataIndex: "dai_khuon",
           align: "center",
           editable: true,
-          width: 70
+          width: 70,
+          render: (value) => value ?? "x",
         },
         {
           title: "Số con",
           dataIndex: "so_con",
           align: "center",
           editable: true,
-          width: 70
+          width: 70,
+          render: (value) => value ?? "x",
         },
       ]
     },
@@ -165,63 +174,72 @@ const Khuon = () => {
       dataIndex: "so_manh_ghep",
       align: "center",
       editable: true,
-      width: 90
+      width: 90,
+      render: (value) => value ?? "x",
     },
     {
       title: "Pad xẻ rãnh",
       dataIndex: "pad_xe_ranh",
       align: "center",
       editable: true,
-      width: 100
+      width: 100,
+      render: (value) => value ?? "x",
     },
     {
       title: "Mã khuôn bế",
       dataIndex: "khuon_id",
       align: "center",
       editable: true,
-      width: 220
+      width: 220,
+      render: (value) => value ?? "x",
     },
     {
       title: "Máy",
       dataIndex: "machine_id",
       align: "center",
       editable: true,
-      width: 70
+      width: 70,
+      render: (value) => value ?? "x",
     },
     {
       title: "Ghi chú khác",
       dataIndex: "note",
       align: "center",
       editable: true,
-      width: 120
+      width: 120,
+      render: (value) => value ?? "x",
     },
     {
       title: "Layout",
       dataIndex: "layout",
       align: "center",
       editable: true,
-      width: 100
+      width: 100,
+      render: (value) => value ?? "x",
     },
     {
       title: "Nhà cung cấp",
       dataIndex: "supplier",
       align: "center",
       editable: true,
-      width: 100
+      width: 100,
+      render: (value) => value ?? "x",
     },
     {
       title: "Ngày đặt khuôn",
       dataIndex: "ngay_dat_khuon",
       align: "center",
       editable: true,
-      width: 120
+      width: 120,
+      render: (value) => value ?? "x",
     },
     {
       title: "Người thiết kế",
       dataIndex: "designer_name",
       align: "center",
       editable: true,
-      width: 120
+      width: 120,
+      render: (value) => value ?? "x",
     },
   ];
 

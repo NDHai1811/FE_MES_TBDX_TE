@@ -40,3 +40,7 @@
 .disable-overlay{
   pointer-events: none;
 }
+.popup .ant-modal-content{
+  height: 100%;
+  margin-top: 10px;
+}
