@@ -29,15 +29,18 @@ const TyLeKeHoachSong = ({data = null, loading = false}) => {
             plotOptions: {
                 column: {
                     borderRadius: 0,
+                    dataLabels: {
+                        enabled: true,
+                    },
                 }
             },
             series: [
                 {
-                    name: 'Tất cả công đoạn',
+                    name: 'SLg KH',
                     data: data.plannedQuantity
                 },
                 {
-                    name: 'Công đoạn Dợn sóng',
+                    name: 'SL dợn sóng',
                     data: data.actualQuantity
                 }
             ],

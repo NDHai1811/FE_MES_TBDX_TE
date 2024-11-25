@@ -29,6 +29,9 @@ const TonKhoTP = ({data = null, loading = false}) => {
             plotOptions: {
                 column: {
                     borderRadius: 0,
+                    dataLabels: {
+                        enabled: true,
+                    },
                 }
             },
             series: [
@@ -41,7 +44,7 @@ const TonKhoTP = ({data = null, loading = false}) => {
             credits: { enabled: false }
         };
 
-        Highcharts.chart("ton-kho-tp", options);
+        Highcharts.chart("ton-kho-tp-chart", options);
     }, [data]);
     return (
         <Card
@@ -49,7 +52,7 @@ const TonKhoTP = ({data = null, loading = false}) => {
             styles={{body: {padding: 8}}}
             loading={loading}
         >
-            <div id="ton-kho-tp" />
+            <div id="ton-kho-tp-chart" />
         </Card>
     )
 }

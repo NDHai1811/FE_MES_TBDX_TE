@@ -29,6 +29,9 @@ const TonKhoNVL = ({data = null, loading = false}) => {
             plotOptions: {
                 column: {
                     borderRadius: 0,
+                    dataLabels: {
+                        enabled: true,
+                    },
                 }
             },
             series: [
@@ -41,7 +44,7 @@ const TonKhoNVL = ({data = null, loading = false}) => {
             credits: { enabled: false }
         };
 
-        Highcharts.chart("ton-kho-nvl", options);
+        Highcharts.chart("ton-kho-nvl-chart", options);
     }, [data]);
     return (
         <Card
@@ -49,7 +52,7 @@ const TonKhoNVL = ({data = null, loading = false}) => {
             styles={{body: {padding: 8}}}
             loading={loading}
         >
-            <div id="ton-kho-nvl" />
+            <div id="ton-kho-nvl-chart" />
         </Card>
     )
 }

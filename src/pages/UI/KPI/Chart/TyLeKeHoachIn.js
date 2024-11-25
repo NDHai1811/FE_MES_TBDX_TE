@@ -29,6 +29,9 @@ const TyLeKeHoachIn = ({data = null, loading = false}) => {
             plotOptions: {
                 column: {
                     borderRadius: 0,
+                    dataLabels: {
+                        enabled: true,
+                    },
                 }
             },
             series: [

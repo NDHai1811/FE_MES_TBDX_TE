@@ -16,7 +16,7 @@ export async function kpiTyLeNGPQC(params) {
 }
 
 export async function kpiTyLeVanHanh(params) {
-    const res = await axios.get('kpi-ty-le-vanh-hanh-thiet-bi', {params});
+    const res = await axios.get('kpi-ty-le-van-hanh-thiet-bi', {params});
     return res;
 }
 
@@ -27,5 +27,15 @@ export async function kpiTyLeKeHoachIn(params) {
 
 export async function kpiTyLeLoiMay(params) {
     const res = await axios.get('kpi-ty-le-loi-may', {params});
+    return res;
+}
+
+export async function kpiTonKhoTP(params) {
+    const res = await axios.get('kpi-ton-kho-tp', {params});
+    return res;
+}
+
+export async function kpiTyLeNGOQC(params) {
+    const res = await axios.get('kpi-ty-le-ng-oqc', {params});
     return res;
 }

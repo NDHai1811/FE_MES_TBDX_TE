@@ -33,13 +33,15 @@ import {
 import dayjs from "dayjs";
 import { baseURL } from "../../../config";
 import TyLeKeHoach from "./Chart/TyLeKeHoachSong";
-import { kpiTonKhoNVL, kpiTyLeKeHoach, kpiTyLeKeHoachIn, kpiTyLeLoiMay, kpiTyLeNGPQC, kpiTyLeVanHanh } from "../../../api/ui/kpi";
+import { kpiTonKhoNVL, kpiTonKhoTP, kpiTyLeKeHoach, kpiTyLeKeHoachIn, kpiTyLeLoiMay, kpiTyLeNGOQC, kpiTyLeNGPQC, kpiTyLeVanHanh } from "../../../api/ui/kpi";
 import TonKhoNVL from "./Chart/TonKhoNVL";
 import TyLeNGPQC from "./Chart/TyLeNGPQC";
 import TyLeVanHanhThietBi from "./Chart/TyLeVanHanhThietBi";
 import TyLeKeHoachSong from "./Chart/TyLeKeHoachSong";
 import TyLeKeHoachIn from "./Chart/TyLeKeHoachIn";
 import TyLeKeLoiMay from "./Chart/TyLeKeLoiMay";
+import TonKhoTP from "./Chart/TonKhoTP";
+import TyLeNGOQC from "./Chart/TyLeNGOQC";
 
 const { Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -344,6 +346,8 @@ const KPI = (props) => {
   const [tyLeVanHanhTB, setTyLeVanHanhTB] = useState({ data: {}, loading: false });
   const [tyLeKeHoachIn, setTyLeKeHoachIn] = useState({ data: {}, loading: false });
   const [tyLeLoiMay, setTyLeLoiMay] = useState({ data: {}, loading: false });
+  const [tonKhoTP, setTonKhoTP] = useState({ data: {}, loading: false });
+  const [tyLeNGOQC, setTyleNGOQC] = useState({ data: {}, loading: false });
   const fetchChart1 = async () => {
     setTyLeKeHoachSong({ ...tyLeKeHoachSong, loading: true });
     var res = await kpiTyLeKeHoach(params);
@@ -370,10 +374,14 @@ const KPI = (props) => {
     setTyLeKeHoachIn({ data: res.data, loading: false });
   }
   const fetchChart6 = async () => {
-    
+    setTonKhoTP({ ...tonKhoTP, loading: true });
+    var res = await kpiTonKhoTP(params);
+    setTonKhoTP({ data: res.data, loading: false });
   }
   const fetchChart7 = async () => {
-    
+    setTyleNGOQC({ ...tyLeNGOQC, loading: true });
+    var res = await kpiTyLeNGOQC(params);
+    setTyleNGOQC({ data: res.data, loading: false });
   }
   const fetchChart8 = async () => {
     setTyLeLoiMay({ ...tyLeLoiMay, loading: true });
@@ -483,10 +491,10 @@ const KPI = (props) => {
                   <TyLeKeHoachIn {...tyLeKeHoachIn} />
                 </Col>
                 <Col sm={24} md={12} lg={8} xl={6}>
-                  <TyLeKeHoach {...tyLeKeHoachSong} />
+                  <TonKhoTP {...tonKhoTP} />
                 </Col>
                 <Col sm={24} md={12} lg={8} xl={6}>
-                  <TyLeKeHoach {...tyLeKeHoachSong} />
+                  <TyLeNGOQC {...tyLeNGOQC} />
                 </Col>
                 <Col sm={24} md={12} lg={8} xl={6}>
                   <TyLeKeLoiMay {...tyLeLoiMay} />

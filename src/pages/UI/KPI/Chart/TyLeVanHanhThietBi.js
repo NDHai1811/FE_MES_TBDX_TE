@@ -44,14 +44,14 @@ const TyLeVanHanhThietBi = ({data = null, loading = false}) => {
             series: [
                 {
                     name: 'Tỷ lệ vận hành',
-                    data: data.ty_le_van_hanh
+                    data: data.ti_le_van_hanh
                 },
             ],
             exporting: false,
             credits: { enabled: false }
         };
 
-        Highcharts.chart("ty-le-van-hanh-thiet-bi", options);
+        Highcharts.chart("ty-le-van-hanh-thiet-bi-chart", options);
     }, [data]);
     return (
         <Card
@@ -59,7 +59,7 @@ const TyLeVanHanhThietBi = ({data = null, loading = false}) => {
             styles={{body: {padding: 8}}}
             loading={loading}
         >
-            <div id="ty-le-van-hanh-thiet-bi" />
+            <div id="ty-le-van-hanh-thiet-bi-chart" />
         </Card>
     )
 }

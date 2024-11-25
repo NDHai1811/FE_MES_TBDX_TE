@@ -51,7 +51,7 @@ const TyLeNGPQC = ({data = null, loading = false}) => {
             credits: { enabled: false }
         };
 
-        Highcharts.chart("ty-le-ng-pqc", options);
+        Highcharts.chart("ty-le-ng-pqc-chart", options);
     }, [data]);
     return (
         <Card
@@ -59,7 +59,7 @@ const TyLeNGPQC = ({data = null, loading = false}) => {
             styles={{body: {padding: 8}}}
             loading={loading}
         >
-            <div id="ty-le-ng-pqc" />
+            <div id="ty-le-ng-pqc-chart" />
         </Card>
     )
 }
