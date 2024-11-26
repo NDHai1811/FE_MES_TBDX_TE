@@ -107,7 +107,9 @@ const SystemUsage = () => {
         typeData.map(type => {
           let value = res.data[date][e][type] ?? 0;
           if (type === 'rate') {
-            value = `${parseFloat(value) * 100}%`;
+            value = `${Math.round((parseFloat(value) * 100) * 100) / 100}%`;
+          }else{
+            value = Math.round(value * 100) / 100
           }
           row[`${date}-${type}`] = value;
         })

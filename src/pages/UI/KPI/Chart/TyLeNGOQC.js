@@ -13,7 +13,7 @@ const TyLeNGOQC = ({data = null, loading = false}) => {
                 type: 'line',
             },
             title: {
-                text: "Tỷ lệ NG PQC",
+                text: "Tỷ lệ NG OQC",
                 style: {
                     fontSize: '16px', // Kích thước font nhỏ hơn
                 }

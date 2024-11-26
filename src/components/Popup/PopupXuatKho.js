@@ -27,6 +27,12 @@ function PopupXuatKhoNvl(props) {
       align: "center",
     },
     {
+      title: "Mã NCC",
+      dataIndex: "ma_cuon_ncc",
+      key: "ma_cuon_ncc",
+      align: "center",
+    },
+    {
       title: "Số kg",
       dataIndex: "so_kg",
       key: "so_kg",

@@ -419,7 +419,7 @@ const PopupCreateDeliveryNote = (props) => {
                 label="Tài xế"
                 className="mb-2"
               >
-                <Select options={listVehicles.map(e => ({ ...e, value: e?.user1, label: e?.driver?.name }))}
+                <Select options={listVehicles.map((e, i) => ({ ...e, value: e?.user1, label: e?.driver?.name, key: i }))}
                   value={exportCommandParams?.driver_id}
                   showSearch
                   optionFilterProp="label"
