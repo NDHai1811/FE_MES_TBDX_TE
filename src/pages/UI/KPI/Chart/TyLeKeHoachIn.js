@@ -36,11 +36,11 @@ const TyLeKeHoachIn = ({data = null, loading = false}) => {
             },
             series: [
                 {
-                    name: 'Tất cả công đoạn',
+                    name: 'SLg KH',
                     data: data.plannedQuantity
                 },
                 {
-                    name: 'Công đoạn In',
+                    name: 'Slg In',
                     data: data.actualQuantity
                 }
             ],

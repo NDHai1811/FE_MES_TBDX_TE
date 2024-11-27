@@ -33,7 +33,7 @@ const TyLeVanHanhThietBi = ({data = null, loading = false}) => {
                 line: {
                     dataLabels: {
                         enabled: true,
-                        format: '{y}%'  
+                        format: '{point.y:0.1f}%'  
                     },
                     lineWidth: 2,
                     marker: {
