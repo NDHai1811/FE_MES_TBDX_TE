@@ -110,14 +110,6 @@ const KhoNvl = (props) => {
       width:'90px'
     },
     {
-      title: "Số kg nhập",
-      dataIndex: "so_kg_nhap",
-      key: "so_kg_nhap",
-      align: "center",
-      render: (value) => value || 0,
-      width:'100px'
-    },
-    {
       title: "Mã cuộn NCC",
       dataIndex: "ma_cuon_ncc",
       key: "ma_cuon_ncc",
@@ -132,19 +124,19 @@ const KhoNvl = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "Ngày nhập",
-      dataIndex: "tg_nhap",
-      key: "tg_nhap",
-      align: "center",
-      render: (value) => value || "-",
-    },
-    {
       title: "Số phiếu nhập kho",
       dataIndex: "so_phieu_nhap_kho",
       key: "kho_giay",
       align: "center",
       render: (value) => value || "-",
       width:'140px'
+    },
+    {
+      title: "Ngày nhập",
+      dataIndex: "tg_nhap",
+      key: "tg_nhap",
+      align: "center",
+      render: (value) => value || "-",
     },
     {
       title: "Sl đầu (kg)",
@@ -154,9 +146,17 @@ const KhoNvl = (props) => {
       render: (value) => value || 0,
     },
     {
+      title: "Sl nhập (kg)",
+      dataIndex: "so_kg_nhap",
+      key: "so_kg_nhap",
+      align: "center",
+      render: (value) => value || 0,
+      width:'100px'
+    },
+    {
       title: "Sl xuất (kg)",
-      dataIndex: "sl_xuat",
-      key: "dinh_luong",
+      dataIndex: "so_kg_xuat",
+      key: "so_kg_xuat",
       align: "center",
       render: (value) => value || 0,
     },
