@@ -244,18 +244,18 @@ const WarehouseMLT = (props) => {
       width: 90,
     },
     {
-      title: "Số ký nhập",
-      dataIndex: "so_kg_nhap",
-      key: "so_kg_nhap",
-      align: "center",
-      width: 100,
-    },
-    {
       title: "Số ký ban đầu",
       dataIndex: "so_kg_ban_dau",
       key: "so_kg_ban_dau",
       align: "center",
       width: 120,
+    },
+    {
+      title: "Số ký nhập",
+      dataIndex: "so_kg_nhap",
+      key: "so_kg_nhap",
+      align: "center",
+      width: 100,
     },
     {
       title: "Số ký xuất",
