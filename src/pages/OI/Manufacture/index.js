@@ -24,10 +24,16 @@ const Manufacture = () => {
     var res = await getMachines();
     if (res.data.length > 0) {
       setMachineOptions(res.data);
-      if(!machine_id){
+      if (!machine_id) {
         const machineId = localStorage.getItem('machine_id');
-        if (machineId) {
+        if (machineId && res.data.some(e => e.value === machineId)) {
           history.push('/oi/manufacture/' + machineId);
+        } else {
+          history.push('/oi/manufacture/' + res.data[0]?.value);
+        }
+      }else{
+        if(res.data.some(e => e.value === machine_id)) {
+          history.push('/oi/manufacture/' + machine_id);
         } else {
           history.push('/oi/manufacture/' + res.data[0]?.value);
         }
@@ -44,15 +50,12 @@ const Manufacture = () => {
       if (machine_id === 'So01') {
         setContent(<Manufacture1 machineOptions={machineOptions} />);
       } else {
-        machineOptions.forEach(e => {
-          if (e.value === machine_id) {
-            if (e.is_iot) {
-              setContent(<InDan machineOptions={machineOptions} />);
-            } else {
-              setContent(<NhapTay machineOptions={machineOptions} />);
-            }
-          }
-        })
+        const machine = machineOptions.find(e => e.value === machine_id);
+        if (machine.is_iot) {
+          setContent(<InDan machineOptions={machineOptions} />);
+        } else {
+          setContent(<NhapTay machineOptions={machineOptions} />);
+        }
       }
     }
   }, [machineOptions, machine_id]);

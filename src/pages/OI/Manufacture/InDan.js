@@ -278,11 +278,10 @@ const InDan = (props) => {
   const onScan = async (result) => {
     const qrResult = JSON.parse(result);
     const lo_sx = qrResult?.lo_sx;
-    scanQrCode({ lo_sx: lo_sx, machine_id: machine_id, so_luong: qrResult?.so_luong })
-      .then((response) => response.success && getListLotDetail())
-      .catch((err) => console.log("Quét mã qr thất bại: ", err));
-    setIsOpenQRScanner(false);
-    setIsScan(2)
+    var response = await scanQrCode({ lo_sx: lo_sx, machine_id: machine_id, so_luong: qrResult?.so_luong });
+    getListLotDetail();
+    // setIsOpenQRScanner(false);
+    // setIsScan(2);
   };
 
   const rowClassName = (record, index) => {
@@ -710,7 +709,7 @@ const InDan = (props) => {
             isScan={isOpenQRScanner}
             onResult={(res) => {
               onScan(res);
-              setIsOpenQRScanner(false);
+              // setIsOpenQRScanner(false);
             }}
           />
         </Modal>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   DatePicker,
   Col,
@@ -16,14 +16,21 @@ import {
   Select,
 } from "antd";
 import { exportWarehouse, exportWarehouseFGLogs } from "../../../api/ui/export";
-import { exportLSXPallet, getHistoryWareHouseFG, getLSXPallet } from "../../../api/ui/warehouse";
+import { exportLSXPallet, getHistoryWareHouseFG, getLSXPallet, printPallet } from "../../../api/ui/warehouse";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import "../style.scss";
+import { PrinterOutlined } from "@ant-design/icons";
+import TemPallet from "../../OI/Warehouse/TemPallet";
+import { useReactToPrint } from "react-to-print";
 
 const Pallet = (props) => {
   document.title = "UI - Quản lý tem gộp";
+  const componentRef1 = useRef();
+  const print = useReactToPrint({
+    content: () => componentRef1.current,
+  });
   const [dataTable, setDataTable] = useState([]);
   const [params, setParams] = useState({
     page: 1,
@@ -137,7 +144,28 @@ const Pallet = (props) => {
       width: 120,
       render: (value) => value || "-",
     },
+    {
+      title: "In tem",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+      width: 60,
+      render: (_, record) => <PrinterOutlined onClick={()=>handlePrint(record)} style={{fontSize: 16, color: '#1677ff'}}/>,
+    },
   ];
+
+  const [palletData, setPalletData] = useState([]);
+  const handlePrint = async (record) => {
+    var res = await printPallet({pallet_id: record?.pallet_id});
+    setPalletData(res.data);
+  }
+
+  useEffect(()=>{
+    if(palletData.length > 0){
+      print();
+      setPalletData([]);
+    }
+  }, [palletData])
   const [totalPage, setTotalPage] = useState(1);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -317,6 +345,9 @@ const Pallet = (props) => {
           </Card>
         </Col>
       </Row>
+      <div className="report-history-invoice">
+        <TemPallet listCheck={[palletData]} ref={componentRef1} />
+      </div>
     </>
   );
 };

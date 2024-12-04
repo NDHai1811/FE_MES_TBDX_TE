@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import "./scanner.scss";
 const qrcodeRegionId = "html5qr-code-full-region";
 
+let previousScannedResult;
 // Creates the configuration object for Html5QrcodeScanner.
 const createConfig = (props) => {
   let config = {};
@@ -64,7 +65,10 @@ const ScanQR = (props) => {
   const { isHideButton } = props;
 
   const onNewScanResult = (decodedText, decodedResult) => {
-    props.onResult(decodedText);
+    if(previousScannedResult !== decodedText){
+      props.onResult(decodedText);
+      previousScannedResult = decodedText;
+    }
   };
 
   return (

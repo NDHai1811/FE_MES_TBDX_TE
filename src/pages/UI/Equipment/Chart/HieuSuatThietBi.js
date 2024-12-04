@@ -2,24 +2,21 @@ import { Card } from "antd";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Highcharts from "highcharts";
 
-const TyLeNGOQC = ({data = null, loading = false}) => {    
+const HieuSuatThietBi = ({data = null, loading = false}) => {    
     useEffect(() => {
         if (!data) {
             return;
         }
+        const categories = data.map(e=>e.name);
+        const percents = data.map(e=>e.percent)
         const options = {
             chart: {
-                height: 300,
-                type: 'line',
+                height: 200,
+                type: 'column',
             },
-            title: {
-                text: "Tỷ lệ NG OQC",
-                style: {
-                    fontSize: '16px', // Kích thước font nhỏ hơn
-                }
-            },
+            title: false,
             xAxis: {
-                categories: data.categories,
+                categories: categories,
                 title: false
             },
             yAxis: {
@@ -31,38 +28,36 @@ const TyLeNGOQC = ({data = null, loading = false}) => {
                 minRange: 10,
             },
             plotOptions: {
-                line: {
+                column: {
+                    borderRadius: 0,
                     dataLabels: {
                         enabled: true,
-                        format: '{y}%'  
+                        format: '{y}%'
                     },
-                    lineWidth: 2,
-                    marker: {
-                        radius: 0,
-                    },
-                },
+                }
             },
             series: [
                 {
-                    name: 'Tỷ lệ NG',
-                    data: data.ty_le_ng
+                    name: 'Hiệu suất',
+                    data: percents
                 },
             ],
             exporting: false,
             credits: { enabled: false }
         };
 
-        Highcharts.chart("ty-le-ng-oqc-chart", options);
+        Highcharts.chart("hieu-suat-thiet-bi-chart", options);
     }, [data]);
     return (
         <Card
             style={{ padding: "0px"}}
             styles={{body: {padding: 8}}}
             loading={loading}
+            title="Hiệu suất thiết bị"
         >
-            <div id="ty-le-ng-oqc-chart" />
+            <div id="hieu-suat-thiet-bi-chart" />
         </Card>
     )
 }
 
-export default TyLeNGOQC;
+export default HieuSuatThietBi;

@@ -28,6 +28,8 @@ import {
   getMachinePerformance,
 } from "../../../api/ui/machine";
 import { getUIItemMenu } from "../../../api/ui/main";
+import TanSuatPhatSinhLoi from "./Chart/TanSuatPhatSinhLoi";
+import HieuSuatThietBi from "./Chart/HieuSuatThietBi";
 
 const columnTable = [
   {
@@ -156,7 +158,6 @@ const Equipment1 = (props) => {
   const [dataColChart, setDataColChart] = useState([]);
 
   const [params, setParams] = useState({
-    machine: SONG_MACHINE,
     start_date: dayjs(),
     end_date: dayjs(),
   });
@@ -241,7 +242,7 @@ const Equipment1 = (props) => {
     (async () => {
       const res1 = await getUIItemMenu();
       setItemMenu(res1.data);
-      setParams({ ...params, machine: (res1.data.find(e => e.id === LINE_SONG_ID)?.children ?? []).map(e => e.id) })
+      // setParams({ ...params, machine: (res1.data.find(e => e.id === LINE_SONG_ID)?.children ?? []).map(e => e.id) })
     })();
   }, []);
   const onCheck = (selectedKeys, e) => {
@@ -263,7 +264,7 @@ const Equipment1 = (props) => {
           <div className="slide-bar">
             <Card
               bodyStyle={{ paddingInline: 0, paddingTop: 0 }}
-              className="scroll"
+              className="custom-card scroll"
               actions={[
                 <div layout="vertical">
                   <Button
@@ -376,27 +377,12 @@ const Equipment1 = (props) => {
           </div>
         </Col>
         <Col span={20}>
-          <Row gutter={[8, 8]} style={{ height: '100%' }}>
+          <Row gutter={[8, 8]}>
             <Col span={12}>
-              <Card
-                title="Tần suất phát sinh lỗi"
-                bodyStyle={{ padding: 12, height: 200 }}
-                style={{
-                  height: '100%',
-                  padding: "0px",
-                }}
-              >
-                {memoizedPieChart}
-              </Card>
+              <TanSuatPhatSinhLoi data={dataPieChart} />
             </Col>
             <Col span={12}>
-              <Card
-                title="Hiệu suất máy"
-                bodyStyle={{ padding: 12, height: 200 }}
-                style={{ height: "100%", padding: "0px" }}
-              >
-                {memoizedColumnChart}
-              </Card>
+              <HieuSuatThietBi data={dataColChart} />
             </Col>
             <Col span={24}>
               <Card
@@ -419,7 +405,7 @@ const Equipment1 = (props) => {
                   loading={loading}
                   scroll={{
                     x: "150vw",
-                    y: "50vh",
+                    y: "calc(100vh - 53vh)",
                   }}
                   columns={columnTable}
                   dataSource={data}

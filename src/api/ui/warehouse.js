@@ -126,3 +126,6 @@ export const exportLSXPallet = async (params) => {
 export const exportListMaterialExport = async (params) => {
   return await axios.get("/ui/warehouse/export-list-material-export", { params });
 }
+export const printPallet = async (params) => {
+  return await axios.get("/ui/lsx-pallet/print-pallet", { params });
+}

@@ -68,21 +68,18 @@ const Vehicle = () => {
                     dataIndex: "user1_name",
                     key: "user1_name",
                     align: "center",
-                    render: (value, record) => record?.driver?.name
                 },
                 {
                     title: "Mã NV",
                     dataIndex: "user1_username",
                     key: "user1_username",
                     align: "center",
-                    render: (value, record) => record?.driver?.username
                 },
                 {
                     title: "SĐT",
                     dataIndex: "user1_phone_number",
                     key: "user1_phone_number",
                     align: "center",
-                    render: (value, record) => record?.driver?.phone_number
                 },
             ]
         },
@@ -94,21 +91,18 @@ const Vehicle = () => {
                     dataIndex: "user2_name",
                     key: "user2_name",
                     align: "center",
-                    render: (value, record) => record?.assistant_driver1?.name
                 },
                 {
                     title: "Mã NV",
                     dataIndex: "user2_username",
                     key: "user2_username",
                     align: "center",
-                    render: (value, record) => record?.assistant_driver1?.username
                 },
                 {
                     title: "SĐT",
                     dataIndex: "user2_phone_number",
                     key: "user2_phone_number",
                     align: "center",
-                    render: (value, record) => record?.assistant_driver1?.phone_number
                 },
             ]
         },
@@ -120,21 +114,18 @@ const Vehicle = () => {
                     dataIndex: "user3_name",
                     key: "user3_name",
                     align: "center",
-                    render: (value, record) => record?.assistant_driver2?.name
                 },
                 {
                     title: "Mã NV",
                     dataIndex: "user3_username",
                     key: "user3_username",
                     align: "center",
-                    render: (value, record) => record?.assistant_driver2?.username
                 },
                 {
                     title: "SĐT",
                     dataIndex: "user3_phone_number",
                     key: "user3_phone_number",
                     align: "center",
-                    render: (value, record) => record?.assistant_driver2?.phone_number
                 },
             ]
         },
@@ -155,7 +146,12 @@ const Vehicle = () => {
             key: "user1",
             select: {
                 options: users,
+                onChange: (value) => onChangeUserPhone(value, 'user1_phone_number')
             },
+        },
+        {
+            title: "SĐT lái xe",
+            key: "user1_phone_number",
         },
         {
             title: "Phụ xe 1",
@@ -165,13 +161,26 @@ const Vehicle = () => {
             },
         },
         {
+            title: "SĐT phụ xe 1",
+            key: "user2_phone_number",
+        },
+        {
             title: "Phụ xe 2",
             key: "user3",
             select: {
                 options: users,
             },
         },
+        {
+            title: "SĐT phụ xe 2",
+            key: "user3_phone_number",
+        },
     ];
+
+    const onChangeUserPhone = (value, key) => {
+        const phoneNumber = users.find(e => e.value === value)?.phone_number;
+        form.setFieldValue(key, phoneNumber);
+    }
 
     function btn_click() {
         loadListTable(params);
@@ -186,14 +195,12 @@ const Vehicle = () => {
                 return { ...e, key: e.id };
             })
         );
+        var userRes = await getUsers({ all_user: true });
+        setUsers(userRes.map(e => ({ ...e, value: e?.id?.toString(), label: e?.name })));
         setLoading(false);
     };
     useEffect(() => {
-        (async () => {
-            loadListTable(params);
-            var res = await getUsers();
-            setUsers(res.map(e => ({ ...e, value: e?.id?.toString(), label: e?.name })));
-        })();
+        loadListTable(params);
     }, []);
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -418,41 +425,80 @@ const Vehicle = () => {
                     onFinish={onFinish}
                 >
                     <Row gutter={[16, 16]}>
-                        {formFields.map((e) => {
-                            if (e.key !== "select" && e.key !== "stt")
-                                return (
-                                    <Col span={!e.hidden ? 12 : 0}>
-                                        <Form.Item
-                                            name={e.key}
-                                            className="mb-3"
-                                            label={e.title}
-                                            hidden={e.hidden}
-                                            rules={[{ required: e.required }]}
-                                        >
-                                            {!e.isTrueFalse ? (
-                                                e.select ? (
-                                                    <Select
-                                                        allowClear
-                                                        showSearch
-                                                        optionFilterProp="label"
-                                                        mode={e.select.mode}
-                                                        options={e.select.options}
-                                                    />
-                                                ) : (
-                                                    <Input
-                                                        disabled={e.disabled || (isEdit && e.key === "id")}
-                                                    ></Input>
-                                                )
-                                            ) : (
-                                                <Select>
-                                                    <Select.Option value={1}>Có</Select.Option>
-                                                    <Select.Option value={0}>Không</Select.Option>
-                                                </Select>
-                                            )}
-                                        </Form.Item>
-                                    </Col>
-                                );
-                        })}
+                        <Col span={12}>
+                            <Form.Item
+                                name={'id'}
+                                className="mb-3"
+                                label={'Số xe'}
+                                rules={[{ required: true }]}
+                            >
+                            <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'weight'}
+                                className="mb-3"
+                                label={'Tải trọng'}
+                                rules={[{ required: true }]}
+                            >
+                            <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'user1'}
+                                className="mb-3"
+                                label={'Lái xe'}
+                            >
+                            <Select options={users} allowClear showSearch optionFilterProp="label" onChange={(value)=>onChangeUserPhone(value, 'user1_phone_number')}/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'user1_phone_number'}
+                                className="mb-3"
+                                label={'SĐT lái xe'}
+                            >
+                            <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'user2'}
+                                className="mb-3"
+                                label={'Phụ xe 1'}
+                            >
+                            <Select options={users} allowClear showSearch optionFilterProp="label" onChange={(value)=>onChangeUserPhone(value, 'user2_phone_number')}/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'user2_phone_number'}
+                                className="mb-3"
+                                label={'SĐT phụ xe 1'}
+                            >
+                            <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'user3'}
+                                className="mb-3"
+                                label={'Phụ xe 2'}
+                            >
+                            <Select options={users} allowClear showSearch optionFilterProp="label" onChange={(value)=>onChangeUserPhone(value, 'user3_phone_number')}/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name={'user3_phone_number'}
+                                className="mb-3"
+                                label={'SĐT phụ xe 2'}
+                            >
+                            <Input/>
+                            </Form.Item>
+                        </Col>
                     </Row>
                     <Form.Item className="mb-0">
                         <Button type="primary" htmlType="submit">

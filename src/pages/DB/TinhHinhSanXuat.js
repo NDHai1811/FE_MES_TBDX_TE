@@ -91,7 +91,6 @@ const TinhHinhSanXuat = () => {
   };
   useEffect(() => {
     setInterval(() => tick(), 1000);
-    getData();
   }, []);
 
   const getData = async () => {
@@ -104,10 +103,18 @@ const TinhHinhSanXuat = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      getData();
-    }, 3000);
-    return () => clearInterval(interval);
+    let intervalId;
+    const startFetching = async () => {
+      await getData(); // Gọi API lần đầu
+      intervalId = setTimeout(async () => {
+        await startFetching(); // Đợi API trả về kết quả trước khi gọi lần tiếp theo
+      }, 3000); // 3 giây
+    };
+
+    startFetching();
+
+    // Xóa interval khi component bị huỷ
+    return () => clearTimeout(intervalId);
   }, []);
 
   const [dataTable, setDataTable] = useState([]);

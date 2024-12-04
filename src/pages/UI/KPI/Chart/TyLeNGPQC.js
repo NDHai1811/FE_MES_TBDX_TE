@@ -28,6 +28,7 @@ const TyLeNGPQC = ({data = null, loading = false}) => {
                 labels: {
                     format: '{value}%',
                 },
+                minRange: 10,
             },
             plotOptions: {
                 line: {
