@@ -692,3 +692,25 @@ export async function getSystemUsage(params) {
   const res = await axios.get('/getTableSystemUsageRate', { params });
   return res;
 }
+
+//Departments
+export async function getDepartments(params) {
+  const res = await axios.get("/departments/list", { params });
+  return res.data;
+}
+export async function createDepartments(params) {
+  const res = await axios.post("/departments/create", params);
+  return res.data;
+}
+export async function updateDepartments(params) {
+  const res = await axios.patch("/departments/update", params);
+  return res.data;
+}
+export async function deleteDepartments(params) {
+  const res = await axios.post("/departments/delete", params);
+  return res.data;
+}
+export async function exportDepartments(params) {
+  const res = await axios.get("/departments/export", { params });
+  return res;
+}

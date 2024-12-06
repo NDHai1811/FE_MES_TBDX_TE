@@ -31,7 +31,7 @@ import Errors from "../pages/UI/MasterData/Errors";
 import TestCriteria from "../pages/UI/MasterData/TestCriteria";
 import Line from "../pages/UI/MasterData/Line";
 import Users from "../pages/UI/MasterData/Users";
-import Roles from "../pages/UI/MasterData/Roles";
+import Roles from "../pages/UI/MasterData/Departments";
 import Permissions from "../pages/UI/MasterData/Permissions";
 import ErrorMachines from "../pages/UI/MasterData/ErrorMachine";
 import Materials from "../pages/UI/MasterData/Material";

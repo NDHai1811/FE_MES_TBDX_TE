@@ -14,18 +14,25 @@ import {
   Spin,
   Popconfirm,
   Space,
+  Badge,
 } from "antd";
 import { baseURL } from "../../../config";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   createPermissions,
+  createRoles,
   deletePermissions,
+  deleteRoles,
   exportPermissions,
+  exportRoles,
   getPermissions,
+  getRolesList,
   updatePermissions,
+  updateRoles,
 } from "../../../api";
 import { authProtectedRoutes } from "../../../routes/allRoutes";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { PlusOutlined } from "@ant-design/icons";
 
 const Permissions = () => {
   document.title = "Quản lý phân quyền";
@@ -41,26 +48,29 @@ const Permissions = () => {
       dataIndex: "stt",
       key: "stt",
       align: "center",
+      width: 50,
       render: (value, record, index) => index + 1,
     },
     {
-      title: "Tên",
+      title: "Tên quyền",
       dataIndex: "name",
       key: "name",
       align: "center",
+      width: 170
     },
     {
-      title: "Slug",
-      dataIndex: "slug",
-      key: "slug",
+      title: "Chức năng",
+      dataIndex: "permissions",
+      key: "permissions",
       align: "center",
+      render: (value) => (
+        <Space wrap style={{ justifyContent: "center" }}>
+          {(value ?? []).map((e) => (
+            <Badge count={e?.name}></Badge>
+          ))}
+        </Space>
+      ),
     },
-    // {
-    //   title: "Link",
-    //   dataIndex: "link",
-    //   key: "link",
-    //   align: "center",
-    // },
   ];
   const formFields = [
     {
@@ -83,21 +93,29 @@ const Permissions = () => {
   }
 
   const [data, setData] = useState([]);
+  const [permissions, setPermissions] = useState([]);
   const loadListTable = async (params) => {
     setLoading(true);
-    const res = await getPermissions(params);
+    const res = await getRolesList(params);
     setData(
       res.map((e) => {
         return { ...e, key: e.id };
       })
     );
+
     setLoading(false);
   };
   useEffect(() => {
     (async () => {
       loadListTable(params);
+      fetchPermission();
     })();
   }, []);
+
+  const fetchPermission = async () => {
+    var res = await getPermissions();
+    setPermissions(res.map(e => ({ ...e, value: e.id, label: e.name })));
+  }
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -118,7 +136,7 @@ const Permissions = () => {
   const onFinish = async (values) => {
     console.log(values);
     if (isEdit) {
-      const res = await updatePermissions(values);
+      const res = await updateRoles(values);
       console.log(res);
       if (res) {
         form.resetFields();
@@ -126,7 +144,7 @@ const Permissions = () => {
         loadListTable(params);
       }
     } else {
-      const res = await createPermissions(values);
+      const res = await createRoles(values);
       console.log(res);
       if (res) {
         form.resetFields();
@@ -139,7 +157,7 @@ const Permissions = () => {
 
   const deleteRecord = async () => {
     if (listCheck.length > 0) {
-      const res = await deletePermissions(listCheck);
+      const res = await deleteRoles(listCheck);
       setListCheck([]);
       loadListTable(params);
     } else {
@@ -166,26 +184,32 @@ const Permissions = () => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportPermissions(params);
+    const res = await exportRoles(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
   };
-  const handleSelectAll = (value) => {
-    if (value && value.length && value.includes("all")) {
-      if (value.length === authProtectedRoutes.map(r => r.path).flat().length + 1) {
-        return [];
-      }
-      return [...authProtectedRoutes.map(r => r.path).flat()];
-    }
-    return value;
-  }
+  const [name, setName] = useState('');
+  const inputRef = useRef(null);
+  const onNameChange = (event) => {
+    setName(event.target.value);
+  };
+  const addPermisson = async (e) => {
+    e.preventDefault();
+    var res = await createPermissions({ name });
+    fetchPermission();
+    setName('');
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
   return (
     <>
       {contextHolder}
@@ -208,13 +232,13 @@ const Permissions = () => {
                   layout="vertical"
                   onFinish={btn_click}
                 >
-                  <Form.Item label="Tên" className="mb-3">
+                  <Form.Item label="Tên quyền" className="mb-3">
                     <Input
                       allowClear
                       onChange={(e) =>
                         setParams({ ...params, name: e.target.value })
                       }
-                      placeholder="Nhập mã"
+                      placeholder="Nhập tên quyền"
                     />
                   </Form.Item>
                   <Button hidden htmlType="submit"></Button>
@@ -233,7 +257,7 @@ const Permissions = () => {
                 <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/permissions/import"}
+                  action={baseURL + "/api/roles/import"}
                   headers={{
                     authorization: "Bearer " + userProfile.token,
                   }}
@@ -327,60 +351,56 @@ const Permissions = () => {
           onFinish={onFinish}
         >
           <Row gutter={[16, 8]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt")
-                return (
-                  <Col span={!e.hidden ? 12 : 0}>
-                    <Form.Item
-                      name={e.key}
-                      className="mb-3"
-                      label={e.title}
-                      hidden={e.hidden}
-                      rules={[{ required: e.required }]}
-                    >
-                      {!e.isTrueFalse ? (
-                        e.select ? (
-                          <Select
-                            mode={e.select.mode}
-                            options={e.select.options}
-
-                          />
-                        ) : (
-                          <Input
-                            disabled={e.disabled || (isEdit && e.key === "id")}
-                          ></Input>
-                        )
-                      ) : (
-                        <Select>
-                          <Select.Option value={1}>Có</Select.Option>
-                          <Select.Option value={0}>Không</Select.Option>
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Col>
-                );
-            })}
-            {/* <Col span={24}>
+            <Col span={0}>
               <Form.Item
-                name={'link'}
+                hidden
+                name={"id"}
                 className="mb-3"
-                label={'Link'}
-                getValueFromEvent={handleSelectAll}
+              >
+                <Input></Input>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"name"}
+                className="mb-3"
+                label={"Tên quyền"}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"permissions"}
+                className="mb-3"
+                label={"Chức năng"}
               >
                 <Select
-                  mode={'multiple'}
-                  showSearch
+                  mode="multiple"
                   allowClear
-                  maxTagCount={5}
-                // options={authProtectedRoutes.map(r => r.path).flat().map(e => ({ value: e, label: e }))}
-                >
-                  <Select.Option value="all">---Chọn tất cả---</Select.Option>
-                  {authProtectedRoutes.map(r => r.path).flat().map(e => (
-                    <Select.Option value={e}>{e}</Select.Option>
-                  ))}
-                </Select>
+                  showSearch
+                  optionFilterProp="label"
+                  options={permissions}
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider style={{ margin: '8px 0' }} />
+                      <Space style={{ padding: '0 8px 4px' }}>
+                        <Input
+                          placeholder="Thêm chức năng"
+                          ref={inputRef}
+                          value={name}
+                          onChange={onNameChange}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        />
+                        <Button type="text" icon={<PlusOutlined />} onClick={addPermisson}>Thêm</Button>
+                      </Space>
+                    </>
+                  )}
+                />
               </Form.Item>
-            </Col> */}
+            </Col>
           </Row>
           <Form.Item className="mb-0">
             <Button type="primary" htmlType="submit">

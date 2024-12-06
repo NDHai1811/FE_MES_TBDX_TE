@@ -25,18 +25,23 @@ import {
 import { baseURL } from "../../../config";
 import React, { useState, useRef, useEffect } from "react";
 import {
-  createRoles,
-  deleteRoles,
-  exportRoles,
-  getRoles,
-  updateRoles,
+  createDepaexportDepartments,
+  deleteDepaexportDepartments,
+  exportDepartments,
+  getDepaexportDepartments,
+  updateDepaexportDepartments,
   getRolePermissions,
-  getRolesTree,
-  getRolesList,
+  getDepaexportDepartmentsTree,
+  getDepaex,
+  exportDepartmentsportDepartmentsList,
+  deleteDepartments,
+  createDepartments,
+  updateDepartments,
+  getDepartments,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
 
-const Roles = () => {
+const Departments = () => {
   document.title = "Quản lý bộ phận";
   const [listCheck, setListCheck] = useState([]);
   const [openMdl, setOpenMdl] = useState(false);
@@ -48,32 +53,19 @@ const Roles = () => {
   const [options, setOptions] = useState([]);
   const col_detailTable = [
     {
-      title: "Tên",
+      title: "STT",
+      dataIndex: "stt",
+      key: "stt",
+      align: "center",
+      width: 50,
+      render: (_, record, index) => index + 1
+    },
+    {
+      title: "Tên bộ phận",
       dataIndex: "name",
       key: "name",
       align: "center",
       width: 170
-    },
-    {
-      title: "Thuộc bộ phận",
-      dataIndex: "parent",
-      key: "parent",
-      align: "center",
-      render: (value) => value?.name,
-      width: 150
-    },
-    {
-      title: "Quyền",
-      dataIndex: "permissions",
-      key: "permissions",
-      align: "center",
-      render: (value) => (
-        <Space wrap style={{ justifyContent: "center" }}>
-          {(value ?? []).map((e) => (
-            <Badge count={e?.name}></Badge>
-          ))}
-        </Space>
-      ),
     },
   ];
   const formFields = [
@@ -109,7 +101,7 @@ const Roles = () => {
 
   const loadListTable = async (params) => {
     setLoading(true);
-    var res = await getRolesList(params)
+    var res = await getDepartments(params)
     setData(res);
     setOptions(res);
     setLoading(false);
@@ -141,7 +133,7 @@ const Roles = () => {
   const onFinish = async (values) => {
     console.log(values);
     if (isEdit) {
-      const res = await updateRoles(values);
+      const res = await updateDepartments(values);
       console.log(res);
       if (res) {
         form.resetFields();
@@ -149,7 +141,7 @@ const Roles = () => {
         loadListTable(params);
       }
     } else {
-      const res = await createRoles(values);
+      const res = await createDepartments(values);
       console.log(res);
       if (res) {
         form.resetFields();
@@ -157,12 +149,12 @@ const Roles = () => {
         loadListTable(params);
       }
     }
-    setListCheck([])
+    setListCheck([]);
   };
 
   const deleteRecord = async () => {
     if (listCheck.length > 0) {
-      const res = await deleteRoles(listCheck);
+      const res = await deleteDepartments(listCheck);
       setListCheck([]);
       loadListTable(params);
     } else {
@@ -174,7 +166,7 @@ const Roles = () => {
     if (listCheck.length !== 1) {
       message.info("Chọn 1 bản ghi để chỉnh sửa");
     } else {
-      const result = listCheck[0];
+      const result = data.find(e => e.id === listCheck[0]);
       console.log(result);
       form.setFieldsValue({
         ...result,
@@ -193,16 +185,17 @@ const Roles = () => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportRoles(params);
+    const res = await exportDepartments(params);
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(selectedRowKeys, selectedRows);
-      setListCheck(selectedRows);
+      setListCheck(selectedRowKeys);
     },
   };
   const { userProfile } = useProfile();
@@ -250,10 +243,10 @@ const Roles = () => {
             className="custom-card scroll"
             extra={
               <Space>
-                <Upload
+                {/* <Upload
                   showUploadList={false}
                   name="files"
-                  action={baseURL + "/api/roles/import"}
+                  action={baseURL + "/api/DepaexportDepartments/import"}
                   headers={{
                     authorization: "Bearer " + userProfile.token,
                   }}
@@ -289,7 +282,7 @@ const Roles = () => {
                   loading={exportLoading}
                 >
                   Export Excel
-                </Button>
+                </Button> */}
                 <Button
                   type="primary"
                   onClick={editRecord}
@@ -321,12 +314,13 @@ const Roles = () => {
               <Table
                 size="small"
                 bordered
-                pagination={true}
+                pagination={false}
                 scroll={{
                   x: "100%",
                   y: 'calc(100vh - 290px)',
                 }}
-                columns={col_detailTable} 
+                rowKey={"id"}
+                columns={col_detailTable}
                 dataSource={data}
                 rowSelection={rowSelection}
               />
@@ -339,7 +333,7 @@ const Roles = () => {
         open={openMdl}
         onCancel={() => setOpenMdl(false)}
         footer={null}
-        width={800}
+        width={400}
       >
         <Form
           style={{ margin: "0 15px" }}
@@ -348,41 +342,25 @@ const Roles = () => {
           onFinish={onFinish}
         >
           <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt")
-                return (
-                  <Col span={!e.hidden ? 12 : 0}>
-                    <Form.Item
-                      name={e.key}
-                      className="mb-3"
-                      label={e.title}
-                      hidden={e.hidden}
-                      rules={[{ required: e.required }]}
-                    >
-                      {!e.isTrueFalse ? (
-                        e.select ? (
-                          <Select
-                            optionFilterProp="label"
-                            allowClear
-                            maxTagCount={3}
-                            mode={e.select.mode}
-                            options={e.select.options}
-                          />
-                        ) : (
-                          <Input
-                            disabled={e.disabled || (isEdit && e.key === "id")}
-                          ></Input>
-                        )
-                      ) : (
-                        <Select>
-                          <Select.Option value={1}>Có</Select.Option>
-                          <Select.Option value={0}>Không</Select.Option>
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Col>
-                );
-            })}
+            <Col span={0}>
+              <Form.Item
+                hidden
+                name={"id"}
+                className="mb-3"
+              >
+                <Input></Input>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                name={"name"}
+                className="mb-3"
+                label={"Tên bộ phận"}
+                rules={[{ required: true }]}
+              >
+                <Input></Input>
+              </Form.Item>
+            </Col>
           </Row>
           <Form.Item className="mb-0">
             <Button type="primary" htmlType="submit">
@@ -395,4 +373,4 @@ const Roles = () => {
   );
 };
 
-export default Roles;
+export default Departments;

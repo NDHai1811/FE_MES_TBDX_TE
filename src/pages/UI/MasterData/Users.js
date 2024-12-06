@@ -28,11 +28,13 @@ import {
   createUsers,
   deleteUsers,
   exportUsers,
+  getDepartments,
   getUserRoles,
   getUsers,
   updateUsers,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { CheckSquareTwoTone } from "@ant-design/icons";
 
 const Users = () => {
   document.title = "Quản lý tài khoản";
@@ -42,6 +44,7 @@ const Users = () => {
   const [form] = Form.useForm();
   const [params, setParams] = useState({});
   const [roles, setRoles] = useState([]);
+  const [departments, setDepartments] = useState();
   const col_detailTable = [
     {
       title: "Tài khoản",
@@ -57,6 +60,12 @@ const Users = () => {
     },
     {
       title: "Bộ phận",
+      dataIndex: "department_name",
+      key: "department_name",
+      align: "center",
+    },
+    {
+      title: "Phân quyền",
       dataIndex: "roles",
       key: "roles",
       align: "center",
@@ -69,6 +78,13 @@ const Users = () => {
       ),
     },
     {
+      title: "User chức năng",
+      dataIndex: "function_user",
+      key: "function_user",
+      align: "center",
+      render: (value) => value ? <CheckSquareTwoTone style={{ fontSize: 18 }} /> : null
+    },
+    {
       title: "Số lần truy cập trong ngày",
       dataIndex: "login_times_in_day",
       key: "login_times_in_day",
@@ -79,34 +95,6 @@ const Users = () => {
       dataIndex: "usage_time",
       key: "usage_time",
       align: "center",
-    },
-  ];
-  const formFields = [
-    {
-      key: "id",
-      hidden: true,
-    },
-    {
-      title: "Tài khoản",
-      key: "username",
-      required: true,
-    },
-    {
-      title: "Tên",
-      key: "name",
-      required: true,
-    },
-    {
-      title: "SĐT",
-      key: "phone_number",
-    },
-    {
-      title: "Bộ phận",
-      key: "roles",
-      select: {
-        options: roles,
-        mode: "multiple",
-      },
     },
   ];
 
@@ -130,6 +118,8 @@ const Users = () => {
       loadListTable(params);
       var res = await getUserRoles();
       setRoles(res);
+      var departmentRequest = await getDepartments();
+      setDepartments(departmentRequest.map(e=>({...e, value: e.id, label: e.name})));
     })();
   }, []);
 
@@ -208,6 +198,7 @@ const Users = () => {
     setExportLoading(false);
   };
   const rowSelection = {
+    selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
@@ -251,6 +242,15 @@ const Users = () => {
                         setParams({ ...params, username: e.target.value })
                       }
                       placeholder="Nhập mã nhân viên"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Bộ phận" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, department_name: e.target.value })
+                      }
+                      placeholder="Nhập bộ phận"
                     />
                   </Form.Item>
                   <Button hidden htmlType="submit"></Button>
@@ -364,38 +364,77 @@ const Users = () => {
           onFinish={onFinish}
         >
           <Row gutter={[16, 16]}>
-            {formFields.map((e) => {
-              if (e.key !== "select" && e.key !== "stt")
-                return (
-                  <Col span={!e.hidden ? 12 : 0}>
-                    <Form.Item
-                      name={e.key}
-                      className="mb-3"
-                      label={e.title}
-                      hidden={e.hidden}
-                      rules={[{ required: e.required }]}
-                    >
-                      {!e.isTrueFalse ? (
-                        e.select ? (
-                          <Select
-                            mode={e.select.mode}
-                            options={e.select.options}
-                          />
-                        ) : (
-                          <Input
-                            disabled={e.disabled || (isEdit && e.key === "id")}
-                          ></Input>
-                        )
-                      ) : (
-                        <Select>
-                          <Select.Option value={1}>Có</Select.Option>
-                          <Select.Option value={0}>Không</Select.Option>
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Col>
-                );
-            })}
+            <Col span={0}>
+              <Form.Item
+                name={"id"}
+                className="mb-3"
+                hidden
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"username"}
+                className="mb-3"
+                label={"Mã nhân viên"}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"name"}
+                className="mb-3"
+                label={"Họ và tên"}
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"phone_number"}
+                className="mb-3"
+                label={"SĐT"}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"department_id"}
+                className="mb-3"
+                label={"Bộ phận"}
+              >
+                <Select
+                  options={departments}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name={"roles"}
+                className="mb-3"
+                label={"Phân quyền"}
+              >
+                <Select
+                  mode="multiple"
+                  options={roles}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                valuePropName="checked"
+                name={"function_user"}
+                className="mb-3"
+                label={"User chức năng"}
+              >
+                <Checkbox>Xác nhận</Checkbox>
+              </Form.Item>
+            </Col>
           </Row>
           <Form.Item className="mb-0">
             <Button type="primary" htmlType="submit">

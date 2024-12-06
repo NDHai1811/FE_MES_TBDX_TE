@@ -195,7 +195,7 @@ const Vehicle = () => {
                 return { ...e, key: e.id };
             })
         );
-        var userRes = await getUsers({ all_user: true });
+        var userRes = await getUsers({ department_name: 'Xe tải' });
         setUsers(userRes.map(e => ({ ...e, value: e?.id?.toString(), label: e?.name })));
         setLoading(false);
     };
