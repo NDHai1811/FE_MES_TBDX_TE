@@ -34,12 +34,7 @@ const TonKhoTP = ({data = null, loading = false}) => {
                     },
                 }
             },
-            series: [
-                {
-                    name: 'Số kg tồn kho',
-                    data: data.inventory
-                },
-            ],
+            series: data.series,
             exporting: false,
             credits: { enabled: false }
         };
