@@ -291,6 +291,7 @@ const PopupCreateDeliveryNote = (props) => {
       });
     });
   }
+  const [creating, setCreating] = useState(false);
   const onCreate = async () => {
     console.log(exportCommandParams);
     if (!exportCommandParams?.vehicle_id) {
@@ -309,6 +310,7 @@ const PopupCreateDeliveryNote = (props) => {
       messageApi.warning('Chưa chọn đơn hàng cần xuất!');
       return 0;
     }
+    setCreating(true);
     var res = await createDeliveryNote({ ...exportCommandParams, export_ids: selectedRows });
     if (res.success) {
       setOpen(false);
@@ -316,6 +318,7 @@ const PopupCreateDeliveryNote = (props) => {
       onAfterCreate();
       setExportCommandParams({})
     }
+    setCreating(false);
   }
   const items = [
     {
@@ -380,7 +383,7 @@ const PopupCreateDeliveryNote = (props) => {
     }
   ];
   const extraTab = {
-    right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo lệnh XK</Button>,
+    right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()} loading={creating}>Tạo lệnh XK</Button>,
   };
   return (
     <React.Fragment>

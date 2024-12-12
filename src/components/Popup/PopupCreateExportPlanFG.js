@@ -254,6 +254,7 @@ const PopupCreateExportPlanFG = (props) => {
       });
     });
   }
+  const [creating, setCreating] = useState(false);
   const onCreate = async () => {
     if (!planParams.ngay_xuat) {
       messageApi.warning('Chưa chọn ngày xuất!');
@@ -263,6 +264,7 @@ const PopupCreateExportPlanFG = (props) => {
       messageApi.warning('Chưa chọn đơn hàng!');
       return 0;
     }
+    setCreating(true);
     var res = await createWareHouseFGExport({ ngay_xuat: planParams.ngay_xuat, orders: selectedRows });
     if (res.success) {
       setOpen(false);
@@ -270,6 +272,7 @@ const PopupCreateExportPlanFG = (props) => {
       setParams({});
       onAfterCreate();
     }
+    setCreating(false);
   }
   const items = [
     {
@@ -334,7 +337,7 @@ const PopupCreateExportPlanFG = (props) => {
     }
   ];
   const extraTab = {
-    right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()}>Tạo KHXK</Button>,
+    right: <Button type="primary" className="tabs-extra-demo-button" onClick={() => onCreate()} loading={creating}>Tạo KHXK</Button>,
   };
   return (
     <React.Fragment>
