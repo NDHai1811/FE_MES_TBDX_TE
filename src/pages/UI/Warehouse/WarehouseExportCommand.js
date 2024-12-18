@@ -160,15 +160,14 @@ const WarehouseExportCommand = () => {
   useEffect(() => {
     (async () => {
       const res1 = await getVehicles();
-      setListVehicles(res1.map(e => ({ ...e, value: e.id, label: e.id })));
+      setListVehicles(res1.map((e, i) => ({ ...e, value: e.id, label: e.id, key: i })));
       const res2 = await getUsers();
-      setListUsers(res2.map(e => ({ ...e, value: e.id, label: e.name })));
+      setListUsers(res2.map((e, i) => ({ ...e, value: e.id, label: e.name, key: i })));
       const res3 = await getCustomers();
-      setListCustomers(res3.data);
+      setListCustomers(res3.data.map((e, i) => ({ ...e, key: i })));
     })();
   }, []);
   const [orderParams, setOrderParams] = useState({ page: 1, pageSize: 20, totalPage: 1, ngay_xuat: dayjs() });
-  const [exportCommandParams, setExportCommandParams] = useState();
 
   const rowSelection = {
     fixed: true,

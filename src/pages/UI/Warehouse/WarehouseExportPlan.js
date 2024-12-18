@@ -195,13 +195,13 @@ const WarehouseExportPlan = () => {
   useEffect(() => {
     (async () => {
       const res1 = await getVehicles();
-      setListVehicles(res1.map(e => ({ ...e, value: e.id, label: e.id })));
+      setListVehicles(res1.map((e, i) => ({ ...e, value: e.id, label: e.id, key: i })));
       const res2 = await getUsers();
-      setListUsers(res2.map(e => ({ ...e, value: e.id, label: e.name })));
+      setListUsers(res2.map((e, i) => ({ ...e, value: e.id, label: e.name, key: i })));
       const res3 = await getCustomers();
-      setListCustomers(res3.data);
+      setListCustomers(res3.data.map((e, i)=>({...e, key: i})));
       const res4 = await getDeliveryNoteList();
-      setListNote(res4.data.data.map(e => ({ ...e, value: e.id, label: e.id })));
+      setListNote(res4.data.data.map((e, i) => ({ ...e, value: e.id, label: e.id, key: i })));
     })();
   }, []);
 

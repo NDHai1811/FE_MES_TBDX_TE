@@ -554,7 +554,7 @@ const InDan = (props) => {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
-              {(machine_id === 'Pr15' || machine_id === 'Pr06') ? <Button
+              {machineOptions.find(e=>e.value === machine_id)?.line_id == '31' ? <Button
                 size="medium"
                 type="primary"
                 style={{ width: "100%" }}

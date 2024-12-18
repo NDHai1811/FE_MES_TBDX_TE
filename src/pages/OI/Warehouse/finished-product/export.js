@@ -132,6 +132,7 @@ const Export = (props) => {
           options={deliveryNoteList}
           allowClear
           onChange={onChangeDeliveryNote}
+          onClear={loadDataTable}
           style={{ width: "100%" }}
           bordered={false}
         />
@@ -223,7 +224,7 @@ const Export = (props) => {
     setDeliveryNoteID(value);
   }
 
-  const loadDataTable = async () => {
+  const loadDataTable = async (deliveryNoteID) => {
     setLoadingTable(true);
     const res = await getWarehouseFGExportLogs({ ...params, delivery_note_id: deliveryNoteID });
     if (res.success) {
@@ -233,7 +234,7 @@ const Export = (props) => {
   }
   useEffect(() => {
     if (deliveryNoteID) {
-      loadDataTable()
+      loadDataTable(deliveryNoteID)
     }
   }, [deliveryNoteID]);
 
@@ -281,7 +282,7 @@ const Export = (props) => {
       setVisible(false);
       form.resetFields();
       // loadData();
-      loadDataTable();
+      loadDataTable(deliveryNoteID);
     }
   }
   const [isDownloading, setIsDownloading] = useState(false)
@@ -299,7 +300,7 @@ const Export = (props) => {
   }
   useEffect(() => {
     loadData();
-    loadDataTable();
+    loadDataTable(deliveryNoteID);
   }, [params])
   return (
     <React.Fragment>
