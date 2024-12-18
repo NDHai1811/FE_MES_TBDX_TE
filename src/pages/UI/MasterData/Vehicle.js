@@ -277,6 +277,7 @@ const Vehicle = () => {
         setExportLoading(false);
     };
     const rowSelection = {
+        type: 'radio',
         fixed: true,
         onChange: (selectedRowKeys, selectedRows) => {
             setListCheck(selectedRowKeys);

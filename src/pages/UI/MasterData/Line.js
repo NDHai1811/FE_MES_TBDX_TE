@@ -175,6 +175,7 @@ const Line = () => {
     setExportLoading(false);
   };
   const rowSelection = {
+    type: 'radio',
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },

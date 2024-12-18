@@ -255,7 +255,7 @@ const MachineAssignment = () => {
                             loading={loading}
                             columns={col_detailTable}
                             dataSource={data}
-                            rowSelection={rowSelection}
+                            // rowSelection={rowSelection}
                             setDataSource={setData}
                             pagination={{
                                 current: page,

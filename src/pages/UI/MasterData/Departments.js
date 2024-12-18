@@ -192,6 +192,7 @@ const Departments = () => {
     setExportLoading(false);
   };
   const rowSelection = {
+    type: 'radio',
     selectedRowKeys: listCheck,
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(selectedRowKeys, selectedRows);

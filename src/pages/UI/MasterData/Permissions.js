@@ -170,7 +170,7 @@ const Permissions = () => {
       message.info("Chọn 1 bản ghi để chỉnh sửa");
     } else {
       const result = data.find((record) => record.id === listCheck[0]);
-      form.setFieldsValue({ ...result });
+      form.setFieldsValue({ ...result, permissions: (result?.permissions??[]).map(e=>e.id) });
       setOpenMdl(true);
     }
   };
@@ -192,6 +192,7 @@ const Permissions = () => {
   };
   const rowSelection = {
     selectedRowKeys: listCheck,
+    type: 'radio',
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
@@ -343,6 +344,7 @@ const Permissions = () => {
         open={openMdl}
         onCancel={() => setOpenMdl(false)}
         footer={null}
+        width={800}
       >
         <Form
           style={{ margin: "0 15px" }}
@@ -360,7 +362,7 @@ const Permissions = () => {
                 <Input></Input>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={6}>
               <Form.Item
                 name={"name"}
                 className="mb-3"
@@ -370,7 +372,7 @@ const Permissions = () => {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={18}>
               <Form.Item
                 name={"permissions"}
                 className="mb-3"
@@ -382,6 +384,7 @@ const Permissions = () => {
                   showSearch
                   optionFilterProp="label"
                   options={permissions}
+                  popupMatchSelectWidth={permissions.length ? 400 : true}
                   dropdownRender={(menu) => (
                     <>
                       {menu}
