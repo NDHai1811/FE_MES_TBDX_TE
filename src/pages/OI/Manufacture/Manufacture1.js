@@ -848,7 +848,7 @@ const Manufacture1 = (props) => {
             onClick={handlePrint}
             icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
           /></Col>
-          <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button></Col>
+          {/* <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button></Col> */}
           <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Chuyển sang Tab "Tạm dừng"'}</Button></Col>
           <Col {...buttonResponsive} span={4}><Button
             size="medium"
@@ -917,7 +917,7 @@ const Manufacture1 = (props) => {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
-              <Button type="primary" disabled={selectedPausedKeys.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              {/* <Button type="primary" disabled={selectedPausedKeys.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button> */}
               <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
               <Popconfirm title="Việc này sẽ xoá tất cả KH được chọn. Bạn có chắc muốn xoá?" onConfirm={deletePlan}>
                 <Button type="primary" danger disabled={selectedPausedKeys.length <= 0} className="w-100">{'Xoá'}</Button>

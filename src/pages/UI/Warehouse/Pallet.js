@@ -16,7 +16,7 @@ import {
   Select,
 } from "antd";
 import { exportWarehouse, exportWarehouseFGLogs } from "../../../api/ui/export";
-import { exportLSXPallet, getHistoryWareHouseFG, getLSXPallet, printPallet } from "../../../api/ui/warehouse";
+import { exportLSXPallet, getLSXPallet, printPallet } from "../../../api/ui/warehouse";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";

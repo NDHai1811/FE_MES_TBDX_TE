@@ -40,7 +40,7 @@ const TyLeKeHoachIn = ({data = null, loading = false}) => {
                     data: data.plannedQuantity
                 },
                 {
-                    name: 'Slg In',
+                    name: 'SLg In',
                     data: data.actualQuantity
                 }
             ],

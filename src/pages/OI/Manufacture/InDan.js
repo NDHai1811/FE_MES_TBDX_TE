@@ -579,7 +579,7 @@ const InDan = (props) => {
                 <TemGiayTam listCheck={listTem} ref={componentRef1} />
                 <TemThanhPham listCheck={listTem} ref={componentRef2} />
               </div>
-              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              {/* <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button> */}
               <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Chuyển sang Tab "Tạm dừng"'}</Button>
             </div>
           </Col>
@@ -612,7 +612,7 @@ const InDan = (props) => {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
-              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
+              {/* <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button> */}
               <Button type="primary" disabled={selectedPausedKeys.length <= 0} loading={resuming} onClick={resume} className="w-100">{'Chuyển sang Tab "Sản xuất"'}</Button>
             </div>
           </Col>

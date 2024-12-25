@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker, InputNumber } from "antd";
 import "../../style.scss";
 import {
@@ -72,7 +72,7 @@ const Export = (props) => {
   const SCAN_TIME_OUT = 1000;
   const { line } = useParams();
   const history = useHistory();
-  const [selectedItem, setSelectedItem] = useState();
+  const [selectedItem, setSelectedItem] = useState([]);
   const [overall, setOverall] = useState([{}]);
   const [visible, setVisible] = useState(false);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState();
@@ -164,7 +164,7 @@ const Export = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedItem && selectedItem?.lo_sx?.length > 0 && setVisible(true);
+            selectedItem.length > 0 && setVisible(true);
           },
           style: {
             cursor: 'pointer'
@@ -202,15 +202,13 @@ const Export = (props) => {
       key: "so_luong",
       align: "center",
       render: (value, record, index) =>
-        <InputNumber value={value} onChange={(event) => setSelectedItem({
-          ...selectedItem, lo_sx:
-            (selectedItem.lo_sx ?? []).map((e, i) => {
+        <InputNumber value={value} onChange={(value) => setSelectedItem(
+            [...selectedItem].map((e, i) => {
               if (i === index) {
-                return { ...e, so_luong: event.target.value }
+                return { ...e, so_luong: value }
               }
               return e;
             })
-        }
         )} />
       ,
     },
@@ -228,7 +226,9 @@ const Export = (props) => {
     setLoadingTable(true);
     const res = await getWarehouseFGExportLogs({ ...params, delivery_note_id: deliveryNoteID });
     if (res.success) {
-      setData(res.data);
+      setData(res.data.data);
+      setDeliveryNote((res.data.delivery_notes ?? []).map(e=>({label: e.id, value: e.id})));
+      onSelectItem(palletId);
     }
     setLoadingTable(false);
   }
@@ -241,40 +241,22 @@ const Export = (props) => {
   const handleCloseMdl = () => {
     setIsOpenQRScanner(false);
   };
-
-  const onSelectItem = (val) => {
-    setSelectedItem(val);
-    // form.setFieldsValue(val?.lo_sx);
+  const [data, setData] = useState([]);
+  const onSelectItem = (pallet_id) => {
+    const val = data.find((element) => element.pallet_id == pallet_id );
+    setSelectedItem(val?.lo_sx ?? []);
   };
 
-  const [data, setData] = useState([]);
+  const [palletId, setPalletId] = useState();
+  useEffect(()=>{
+    onSelectItem(palletId);
+  }, [palletId, data]);
   const onScan = async (result) => {
-    console.log(result);
-    if (scanRef.current) {
-      clearTimeout(scanRef.current);
-    }
-    scanRef.current = setTimeout(() => {
-      const current_data = data.find((element) => {
-        return element.pallet_id == result;
-      })
-      if (current_data) {
-        onSelectItem(current_data);
-      } else {
-        message.info('Mã pallet không khớp');
-        onSelectItem({});
-      }
-    }, SCAN_TIME_OUT);
+    setPalletId(result);
   };
   const loadData = async () => {
     var res2 = await getWarehouseFGOverall(params);
-    setOverall([res2.data])
-    var res3 = await getDeliveryNoteList(params);
-    const arr = [];
-    res3.data.map((value) => {
-      return arr.push({ 'label': value.id, 'value': value.id });
-    });
-    setDeliveryNote(arr);
-    setSelectedItem();
+    setOverall([res2.data]);
   }
   const saveExportPallet = async () => {
     var res = await exportPallet(selectedItem);
@@ -324,7 +306,7 @@ const Export = (props) => {
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
-            dataSource={selectedItem ? [selectedItem] : [{}]}
+            dataSource={[data.find((element) => element.pallet_id == palletId)]}
           />
         </Col>
         <Col span={8}>
@@ -376,7 +358,7 @@ const Export = (props) => {
         <Col span={24}>
           <Table
             rowClassName={(record, index) =>
-              'no-hover ' + (record?.pallet_id === selectedItem?.pallet_id ? "table-row-green" : "")
+              'no-hover ' + (record?.pallet_id === palletId ? "table-row-green" : "")
             }
             loading={loadingTable}
             pagination={false}
@@ -388,7 +370,7 @@ const Export = (props) => {
             dataSource={data}
             onRow={(record) => {
               return {
-                onClick: () => onSelectItem(record),
+                onClick: () => setPalletId(record?.pallet_id),
               };
             }}
           />
@@ -434,7 +416,7 @@ const Export = (props) => {
             bordered
             className="mb-4"
             columns={lsxColumns}
-            dataSource={selectedItem?.lo_sx ?? []}
+            dataSource={selectedItem}
           />
         </Modal>
       )}

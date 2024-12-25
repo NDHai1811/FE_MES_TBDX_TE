@@ -359,7 +359,7 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '45vh'
+            y: '30vh'
           }
         }
         tableLayout="fixed"
@@ -375,7 +375,7 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '260vw',
-            y: '45vh'
+            y: '30vh'
           }
         }
         tableLayout="fixed"
