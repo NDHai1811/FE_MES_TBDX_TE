@@ -46,14 +46,13 @@ const PopupCreateDeliveryNote = (props) => {
       render: (value) => (value && dayjs(value).isValid()) ? dayjs(value).format('DD/MM/YYYY HH:mm:ss') : "",
       isSearch: true,
       input_type: 'date',
+      width: 160,
     },
     {
       title: 'Người tạo KH',
       dataIndex: 'created_by',
       align: 'center',
-      // isSearch: true,
-      // input_type: 'select',
-      // options: listUsers,
+      width: 160,
       render: (value) => listUsers.find(e => e.id === value)?.name
     },
     {
@@ -359,12 +358,12 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '30vh'
+            y: 'calc(100vh - 55vh)'
           }
         }
         tableLayout="fixed"
         rowSelection={rowSelection}
-        columns={columns}
+        columns={columns.map(e=>({...e, ellipsis: true}))}
         dataSource={data} />
     },
     {
@@ -375,11 +374,11 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '260vw',
-            y: '30vh'
+            y: 'calc(100vh - 55vh)'
           }
         }
         tableLayout="fixed"
-        columns={selectedRowsColumns}
+        columns={selectedRowsColumns.map(e=>({...e, ellipsis: true}))}
         dataSource={selectedRows}
         summary={() => (
           <Table.Summary fixed>

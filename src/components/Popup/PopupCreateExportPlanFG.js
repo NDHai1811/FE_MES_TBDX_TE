@@ -109,7 +109,7 @@ const PopupCreateExportPlanFG = (props) => {
       dataIndex: "sl",
       key: "sl",
       align: "center",
-      width: 70,
+      width: 90,
     },
     {
       title: "TMO",
@@ -295,12 +295,12 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '40vh'
+            y: 'calc(100vh - 53vh)'
           }
         }
         tableLayout="fixed"
         rowSelection={rowSelection}
-        columns={columns}
+        columns={columns.map(e=>({...e, ellipsis: true}))}
         dataSource={data} />
     },
     {
@@ -311,11 +311,11 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '170vw',
-            y: '40vh'
+            y: 'calc(100vh - 53vh)'
           }
         }
         tableLayout="fixed"
-        columns={selectedRowsColumns}
+        columns={selectedRowsColumns.map(e=>({...e, ellipsis: true}))}
         dataSource={selectedRows}
         summary={() => (
           <Table.Summary fixed>
@@ -325,7 +325,7 @@ const PopupCreateExportPlanFG = (props) => {
                   return <Table.Summary.Cell align="center" index={index}>Tổng số lượng</Table.Summary.Cell>
                 } else if (index === 8) {
                   return <Table.Summary.Cell align="center" index={index}>{
-                    selectedRows.reduce((sum, { sl }) => sum + parseInt(sl), 0)
+                    selectedRows.reduce((sum, { sl }) => sum + (sl ? parseInt(sl) : 0), 0)
                   }</Table.Summary.Cell>
                 } else {
                   return <Table.Summary.Cell index={index} />
