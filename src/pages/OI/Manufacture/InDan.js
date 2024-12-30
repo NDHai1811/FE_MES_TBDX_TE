@@ -579,7 +579,7 @@ const InDan = (props) => {
                 <TemGiayTam listCheck={listTem} ref={componentRef1} />
                 <TemThanhPham listCheck={listTem} ref={componentRef2} />
               </div>
-              {/* <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button> */}
+              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} className="w-100">{'Nhập sản lượng tay'}</Button>
               <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} className="w-100">{'Chuyển sang Tab "Tạm dừng"'}</Button>
             </div>
           </Col>

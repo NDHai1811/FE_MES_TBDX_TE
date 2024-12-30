@@ -848,7 +848,7 @@ const Manufacture1 = (props) => {
             onClick={handlePrint}
             icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
           /></Col>
-          {/* <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button></Col> */}
+          <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button></Col>
           <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Chuyển sang Tab "Tạm dừng"'}</Button></Col>
           <Col {...buttonResponsive} span={4}><Button
             size="medium"
