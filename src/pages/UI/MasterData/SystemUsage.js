@@ -129,7 +129,7 @@ const SystemUsage = () => {
   const Chart = () => {
     const chartData = Object.entries(usageData).map(([date, details]) => ({
       date,
-      total: details.total.toFixed(2),
+      total: details.total,
     }));
     console.log(chartData);
 
