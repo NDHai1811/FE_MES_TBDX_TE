@@ -11,6 +11,7 @@ function PopupQuetQrThanhPham(props) {
   const { visible, setVisible, getLogs } = props;
   const [data, setData] = useState([{ pallet_id: "", locator_id: "" }]);
   const [currentData, setCurrentData] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const columns = [
     {
@@ -59,18 +60,21 @@ function PopupQuetQrThanhPham(props) {
   };
 
   const sendResult = () => {
+    setLoading(true);
     importData(data[0])
       .then((res) => {
         if (res.data) {
           console.log(res.data);
           getLogs?.();
           message.success("Nhập kho thành phẩm thành công!");
+          setLoading(false);
           handleCancel();
         }
       })
       .catch((err) => {
         console.log("Nhập kho thành phẩm thất bại: ", err);
         message.error("Nhập kho thành phẩm thất bại!");
+        setLoading(false);
       });
   };
 
@@ -88,6 +92,7 @@ function PopupQuetQrThanhPham(props) {
         title="Quét mã"
         open={visible}
         onOk={sendResult}
+        okButtonProps={{ disabled: data.length <= 0, loading: loading }}
         okText={"Lưu"}
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}

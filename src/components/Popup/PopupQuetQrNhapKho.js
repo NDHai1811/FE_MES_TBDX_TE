@@ -27,7 +27,7 @@ function PopupQuetQrNhapKho(props) {
   const [palletId, setPalletId] = useState("");
   const [item, setItem] = useState({});
   const [isChecking, setIsChecking] = useState(false)
-  const totalQuantity = data?.reduce((sum, val) => sum + parseInt(val?.so_luong), 0);
+  const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   
   const columns = [
@@ -118,7 +118,7 @@ function PopupQuetQrNhapKho(props) {
       // so_luong: totalQuantity,
       inp_arr: arr,
     };
-
+    setLoading(true);
     sendStorePallet(resData)
       .then((res) => {
         if (res.success) {
@@ -135,7 +135,8 @@ function PopupQuetQrNhapKho(props) {
         }
 
       })
-      .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
+      .catch((err) => console.log("Gửi dữ liệu thất bại: ", err))
+      .finally(() => setLoading(false));
   };
 
   const handleOk = () => {
@@ -162,7 +163,7 @@ function PopupQuetQrNhapKho(props) {
         okText="Lưu"
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
-        okButtonProps={{ disabled: data.length <= 0 }}
+        okButtonProps={{ loading: loading, disabled: data.length <= 0 }}
       >
         <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
         <Row className="mt-3">

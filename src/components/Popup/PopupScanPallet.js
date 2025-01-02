@@ -25,7 +25,7 @@ function PopupScanPallet(props) {
   const [data, setData] = useState([]);
   const [palletId, setPalletId] = useState("");
   const [item, setItem] = useState({pallet_id: "", so_luong: 0, locator_id: ""});
-
+  const [loading, setLoading] = useState(false);
   const [totalQuantity, setTotalQuantity] = useState(0);
   useEffect(()=>{
     setTotalQuantity(data?.reduce((sum, val) => sum + parseInt(val?.so_luong), 0));
@@ -124,7 +124,7 @@ function PopupScanPallet(props) {
       so_luong: totalQuantity,
       inp_arr: arr,
     };
-
+    setLoading(true);
     updatePallet(resData)
       .then((res) => {
         setSelectedItem([
@@ -137,7 +137,10 @@ function PopupScanPallet(props) {
         setListCheck([res.data]);
         setResult?.(res.data);
       })
-      .catch((err) => console.log("Gửi dữ liệu thất bại: ", err));
+      .catch((err) => console.log("Gửi dữ liệu thất bại: ", err))
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleOk = () => {
@@ -164,7 +167,7 @@ function PopupScanPallet(props) {
         okText="Lưu"
         onCancel={handleCancel}
         cancelButtonProps={{ style: { display: "none" } }}
-        okButtonProps={{ disabled: data.length <= 0 }}
+        okButtonProps={{ disabled: data.length <= 0, loading: loading }}
       >
         <ScanQR isHideButton={true} onResult={(res) => onScanResult(res)} />
         <Row className="mt-3">

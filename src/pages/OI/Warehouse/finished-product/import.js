@@ -366,7 +366,6 @@ const Import = (props) => {
               <Button
                 block
                 className="h-100 w-100"
-
                 type="primary"
                 onClick={() => setIsScan(true)}
                 style={{
