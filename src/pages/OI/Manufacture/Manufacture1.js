@@ -189,6 +189,7 @@ const Manufacture1 = (props) => {
   const [overall, setOverall] = useState([
     { kh_ca: 0, san_luong: 0, ti_le_ca: 0, tong_phe: 0 },
   ]);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [inputValues, setInputValues] = useState({});
   useEffect(() => {
     // Khi thay đổi vị trí hàng, cập nhật lại giá trị của InputNumber
@@ -375,6 +376,18 @@ const Manufacture1 = (props) => {
       // fixed: 'right'
     },
   ];
+
+  useEffect(()=>{
+    (async () => {
+      var res = await getTem();
+      console.log(res);
+      setListTem(res);
+    })();
+  }, []);
+
+  useEffect(()=>{
+    handlePrint();
+  }, [listTem]);
 
   const reloadData = async () => {
     await getListLotDetail();
@@ -861,9 +874,9 @@ const Manufacture1 = (props) => {
           <Col {...buttonResponsive} span={4}><OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList} /></Col>
           {/* </div> */}
           <div className="report-history-invoice">
-            {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
-            <TemGiayTam listCheck={listTem} ref={componentRef1} />
-            <TemThanhPham listCheck={listTem} ref={componentRef2} />
+            <TemTest listCheck={listTem} ref={componentRef1} />
+            {/* <TemGiayTam listCheck={listTem} ref={componentRef1} />
+            <TemThanhPham listCheck={listTem} ref={componentRef2} /> */}
           </div>
           <Col span={24}>
             <DndContext sensors={sensors} collisionDetection={rectIntersection} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragEnd={onDragEnd}>
@@ -948,12 +961,14 @@ const Manufacture1 = (props) => {
   const [form] = Form.useForm();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const onUpdateQuantity = async (values) => {
+    setIsUpdating(true);
     var res = await updateQuantityInfoCongDoan(values);
     if (res.success) {
       closeModal();
       reloadData();
       setListCheck([]);
     }
+    setIsUpdating(false);
   }
   const onChangeTab = (key) => {
     setActiveKey(key);
@@ -1025,7 +1040,7 @@ const Manufacture1 = (props) => {
           />
         </Col>
       </Row>
-      <Modal title="Nhập sản lượng tay" destroyOnClose open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()}>
+      <Modal title="Nhập sản lượng tay" destroyOnClose open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()} okButtonProps={{ loading: isUpdating }}>
         <Form form={form} layout="vertical" onFinish={onUpdateQuantity}>
           <Form.Item name={"id"} hidden>
             <Input />

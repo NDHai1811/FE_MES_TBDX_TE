@@ -166,7 +166,7 @@ const InDan = (props) => {
       render: (value) => value || "-",
     },
   ];
-  const history = useHistory();
+  const [isUpdating, setIsUpdating] = useState(false);
   const location = useLocation();
   const componentRef1 = useRef();
   const componentRef2 = useRef();
@@ -464,12 +464,14 @@ const InDan = (props) => {
   const [form] = Form.useForm();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const onUpdateQuantity = async (values) => {
+    setIsUpdating(true);
     var res = await updateQuantityInfoCongDoan(values);
     if (res.success) {
       closeModal();
       getListLotDetail();
       setListCheck([]);
     }
+    setIsUpdating(false);
   }
   const [activeKey, setActiveKey] = useState('currrent_manufacture_tab');
   const openModal = () => {
@@ -714,7 +716,7 @@ const InDan = (props) => {
           />
         </Modal>
       )}
-      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()}>
+      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()} okButtonProps={{loading: isUpdating}}>
         <Form form={form} layout="vertical" onFinish={onUpdateQuantity}>
           <Form.Item name={"id"} hidden>
             <Input />
