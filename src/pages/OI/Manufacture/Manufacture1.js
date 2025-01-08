@@ -377,17 +377,17 @@ const Manufacture1 = (props) => {
     },
   ];
 
-  useEffect(()=>{
-    (async () => {
-      var res = await getTem();
-      console.log(res);
-      setListTem(res);
-    })();
-  }, []);
+  // useEffect(()=>{
+  //   (async () => {
+  //     var res = await getTem();
+  //     console.log(res);
+  //     setListTem(res);
+  //   })();
+  // }, []);
 
-  useEffect(()=>{
-    handlePrint();
-  }, [listTem]);
+  // useEffect(()=>{
+  //   handlePrint();
+  // }, [listTem]);
 
   const reloadData = async () => {
     await getListLotDetail();
