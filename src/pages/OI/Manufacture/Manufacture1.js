@@ -874,9 +874,9 @@ const Manufacture1 = (props) => {
           <Col {...buttonResponsive} span={4}><OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList} /></Col>
           {/* </div> */}
           <div className="report-history-invoice">
-            <TemTest listCheck={listTem} ref={componentRef1} />
-            {/* <TemGiayTam listCheck={listTem} ref={componentRef1} />
-            <TemThanhPham listCheck={listTem} ref={componentRef2} /> */}
+            {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
+            <TemGiayTam listCheck={listTem} ref={componentRef1} />
+            <TemThanhPham listCheck={listTem} ref={componentRef2} />
           </div>
           <Col span={24}>
             <DndContext sensors={sensors} collisionDetection={rectIntersection} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragEnd={onDragEnd}>
