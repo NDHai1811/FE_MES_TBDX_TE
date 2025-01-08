@@ -610,9 +610,6 @@ const TaoTem = () => {
             loadListTable();
         }
     }
-    useEffect(() => {
-        openModal && searchOrder()
-    }, [openModal, orderParams]);
     const tableRef = useRef();
     const header = document.querySelector('.custom-card .ant-table-header');
     const pagination = document.querySelector('.custom-card .ant-pagination');
@@ -1125,6 +1122,9 @@ const TaoTem = () => {
                             </Form.Item>
                         </Col>
                     </Row>
+                    <Form.Item>
+                        <Button type="primary" onClick={searchOrder}>Tìm kiếm</Button>
+                    </Form.Item>
                 </Form>
                 <Tabs
                     type="card"

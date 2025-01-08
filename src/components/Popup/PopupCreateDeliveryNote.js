@@ -284,12 +284,12 @@ const PopupCreateDeliveryNote = (props) => {
       setRoleList(res.map(e => ({ ...e, label: e.name, value: e.id })))
     })()
   }, [])
-  useEffect(() => {
-    if (Object.keys(params).length > 0) {
-      loadData({ ...params, page: 1, pageSize: 20 });
-      setTableParams({ ...tableParams, page: 1, pageSize: 20 });
-    }
-  }, [params]);
+  // useEffect(() => {
+  //   if (Object.keys(params).length > 0) {
+  //     // loadData({ ...params, page: 1, pageSize: 20 });
+  //     setTableParams({ ...tableParams, page: 1, pageSize: 20 });
+  //   }
+  // }, [params]);
   useEffect(() => {
     if (open) {
       loadData({ ...params, page: 1, pageSize: 20 });
@@ -358,7 +358,7 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '170vw',
-            y: 'calc(100vh - 55vh)'
+            y: 'calc(100vh - 57vh)'
           }
         }
         tableLayout="fixed"
@@ -374,7 +374,7 @@ const PopupCreateDeliveryNote = (props) => {
         scroll={
           {
             x: '260vw',
-            y: 'calc(100vh - 55vh)'
+            y: 'calc(100vh - 57vh)'
           }
         }
         tableLayout="fixed"
@@ -586,6 +586,9 @@ const PopupCreateDeliveryNote = (props) => {
               ]}
             />
           </ConfigProvider>
+          <Form.Item>
+            <Button type="primary" onClick={()=>loadData({...params, page: 1, pageSize: 20})}>Tìm kiếm</Button>
+          </Form.Item>
         </Form>
         <Tabs
           className="mt-1"

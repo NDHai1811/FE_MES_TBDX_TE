@@ -231,11 +231,11 @@ const PopupCreateExportPlanFG = (props) => {
     setTotalPage(res.totalPage)
 		setLoading(false);
 	}
-	useEffect(()=>{
-    if(Object.keys(params).length > 0){
-      loadData({...params, page: 1, pageSize: 20});
-    }
-	}, [params]);
+	// useEffect(()=>{
+  //   if(Object.keys(params).length > 0){
+  //     // loadData({...params, page: 1, pageSize: 20});
+  //   }
+	// }, [params]);
 	useEffect(()=>{
     if(open){
       loadData({...params, page: 1, pageSize: 20});
@@ -295,7 +295,7 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '170vw',
-            y: 'calc(100vh - 53vh)'
+            y: 'calc(100vh - 57vh)'
           }
         }
         tableLayout="fixed"
@@ -311,7 +311,7 @@ const PopupCreateExportPlanFG = (props) => {
         scroll={
           {
             x: '170vw',
-            y: 'calc(100vh - 53vh)'
+            y: 'calc(100vh - 57vh)'
           }
         }
         tableLayout="fixed"
@@ -441,6 +441,9 @@ const PopupCreateExportPlanFG = (props) => {
 							]}
 						/>
 					</ConfigProvider>
+          <Form.Item>
+            <Button type="primary" onClick={()=>loadData({...params, page: 1, pageSize: 20})}>Tìm kiếm</Button>
+          </Form.Item>
 				</Form>
 				<Tabs
 					className="mt-1"
