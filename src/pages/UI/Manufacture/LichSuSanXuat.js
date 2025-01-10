@@ -304,7 +304,7 @@ const LichSuSanXuat = (props) => {
     }
   }
   var historyColumns = [];
-  if (userProfile.username === 'admin') {
+  if ((userProfile?.permission ?? []).includes('*')) {
     historyColumns = [...columns3,
     {
       title: 'Hành động',

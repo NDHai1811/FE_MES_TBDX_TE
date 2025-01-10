@@ -38,7 +38,7 @@ const AuthProtected = (props) => {
 const AccessRoute = ({ component: Component, ...rest }) => {
   const { userProfile } = useProfile();
   const checkPermission = (path, permission) => {
-    if(userProfile.username === 'admin'){
+    if((userProfile?.permission ?? []).includes('*')){
       return true;
     }
     if (!userProfile) {

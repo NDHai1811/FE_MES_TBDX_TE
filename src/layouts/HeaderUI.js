@@ -9,7 +9,7 @@ import './layoutStyle.scss';
 import { authProtectedRoutes } from "../routes/allRoutes";
 const HeaderUI = () => {
   const { userProfile } = useProfile();
-  const uiRoutes = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && (userProfile?.username === 'admin' || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, label: e?.label, key: e.path }));
+  const uiRoutes = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && ((userProfile?.permission ?? []).includes('*') || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, label: e?.label, key: e.path }));
   const masterDataSubMenu = [];
   [
     {

@@ -80,7 +80,7 @@ const Footer = () => {
       >
         {items.map((e) => {
           if (
-            userProfile?.username === 'admin' ||
+            (userProfile?.permission ?? []).includes('*') ||
             (userProfile?.permission ?? []).includes(e.permission)
           )
             return (
