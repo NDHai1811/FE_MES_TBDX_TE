@@ -13,6 +13,7 @@ import {
   Input,
   Form,
   Tree,
+  Slider,
 } from "antd";
 import { exportWarehouse, exportWarehouseFGLogs } from "../../../api/ui/export";
 import { getHistoryWareHouseFG, updateExportFGLog } from "../../../api/ui/warehouse";
@@ -25,10 +26,6 @@ import EditableTable from "../../../components/Table/EditableTable";
 const ThanhPhamGiay = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
   const [dataTable, setDataTable] = useState([]);
-  const [params, setParams] = useState({
-    start_date: dayjs(),
-    end_date: dayjs(),
-  });
   const table = [
     {
       title: "STT",
@@ -247,28 +244,28 @@ const ThanhPhamGiay = (props) => {
   const [exportLoading, setExportLoading] = useState(false);
   const exportFile = async () => {
     setExportLoading(true);
-    const res = await exportWarehouseFGLogs(params);
+    const res = await exportWarehouseFGLogs({ ...formSearch.getFieldsValue(true)});
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
     setExportLoading(false);
   };
   const [loading, setLoading] = useState(false);
-  async function btn_click(page = 1, pageSize = 20) {
+  async function btn_click(page = 1, newPageSize = pageSize) {
     setPage(page);
-    setPageSize(pageSize);
+    setPageSize(newPageSize);
+    loadData({ ...formSearch.getFieldsValue(true), page, pageSize: newPageSize });
+  }
+  const loadData = async (params) => {
     setLoading(true);
-    const res = await getHistoryWareHouseFG({...params, page, pageSize});
-    setDataTable(res.data.map(e=>({
+    const res = await getHistoryWareHouseFG(params);
+    setDataTable(res.data.map(e => ({
       ...e,
       tg_xuat: (e.tg_xuat && dayjs(e.tg_xuat)) || null
     })));
     setTotalPage(res?.totalPage ?? 1);
     setLoading(false);
   }
-  // useEffect(() => {
-  //   btn_click();
-  // }, [params]);
   const header = document.querySelector('.custom-card .ant-table-header');
   const pagination = document.querySelector('.custom-card .ant-pagination');
   const card = document.querySelector('.custom-card .ant-card-body');
@@ -294,19 +291,24 @@ const ThanhPhamGiay = (props) => {
   const onUpdate = async (rowData) => {
     //update sl_xuat only
     console.log(rowData);
-    if(!rowData.sl_xuat || isNaN(rowData.sl_xuat)){
+    if (!rowData.sl_xuat || isNaN(rowData.sl_xuat)) {
       message.warning('Số lượng xuất phải là số');
       return false;
     }
     var res = await updateExportFGLog(rowData);
     btn_click();
   }
+
+  const [formSearch] = Form.useForm();
   return (
     <>
       <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
         <Col span={4}>
           <div className="slide-bar">
-            <Form layout="vertical" onFinish={() => btn_click()} onKeyPress={(e) => {
+            <Form layout="vertical" form={formSearch} initialValues={{
+              start_date: dayjs(),
+              end_date: dayjs(),
+            }} onFinish={() => btn_click()} onKeyPress={(e) => {
               if (e.key === "Enter") {
                 btn_click();
               }
@@ -328,71 +330,69 @@ const ThanhPhamGiay = (props) => {
                 ]}
               >
                 <Divider>Thời gian truy vấn</Divider>
-                <div className="mb-3">
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Bắt đầu"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, start_date: value })
-                      }
-                      value={params.start_date}
-                    />
-                    <DatePicker
-                      allowClear={false}
-                      placeholder="Kết thúc"
-                      style={{ width: "100%" }}
-                      onChange={(value) =>
-                        setParams({ ...params, end_date: value })
-                      }
-                      value={params.end_date}
-                    />
-                  </Space>
-                </div>
+                <Form.Item label="Bắt đầu" className="mb-3" name={"start_date"}>
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Bắt đầu"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+                <Form.Item label="Kết thúc" className="mb-3" name={"end_date"}>
+                  <DatePicker
+                    allowClear={false}
+                    placeholder="Kết thúc"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
                 <Divider>Điều kiện truy vấn</Divider>
                 <div className="mb-3">
-                  <Form.Item label="Vị trí" className="mb-3">
-                    <Input placeholder="Nhập mã vị trí" onChange={(event) => setParams({ ...params, locator_id: event.target.value })} />
+                  <Form.Item label="Vị trí" className="mb-3" name={"locator_id"}>
+                    <Input placeholder="Nhập mã vị trí" />
                   </Form.Item>
-                  <Form.Item label="Mã tem (pallet)" className="mb-3">
-                    <Input placeholder="Nhập mã tem (pallet)" onChange={(event) => setParams({ ...params, pallet_id: event.target.value })} />
+                  <Form.Item label="Mã tem (pallet)" className="mb-3" name={"pallet_id"}>
+                    <Input placeholder="Nhập mã tem (pallet)" />
                   </Form.Item>
-                  <Form.Item label="Lô SX" className="mb-3">
-                    <Input placeholder="Nhập lô sx" onChange={(event) => setParams({ ...params, lo_sx: event.target.value })} />
+                  <Form.Item label="Lô SX" className="mb-3" name={"lo_sx"}>
+                    <Input placeholder="Nhập lô sx" />
                   </Form.Item>
-                  <Form.Item label="Khách hàng" className="mb-3">
-                    <Input placeholder="Nhập mã kh" onChange={(event) => setParams({ ...params, khach_hang: event.target.value })} />
+                  <Form.Item label="Khách hàng" className="mb-3" name={"khach_hang"}>
+                    <Input placeholder="Nhập mã kh" />
                   </Form.Item>
-                  <Form.Item label="Đơn hàng" className="mb-3">
-                    <Input placeholder="Nhập đơn hàng" onChange={(event) => setParams({ ...params, mdh: event.target.value })} />
+                  <Form.Item label="Đơn hàng" className="mb-3" name={"mdh"}>
+                    <Input placeholder="Nhập đơn hàng" />
                   </Form.Item>
-                  <Form.Item label="MQL" className="mb-3">
-                    <Input placeholder="Nhập MQL" onChange={(event) => setParams({ ...params, mql: event.target.value })} />
+                  <Form.Item label="MQL" className="mb-3" name={"mql"}>
+                    <Input placeholder="Nhập MQL" />
                   </Form.Item>
-                  <Form.Item label="Kích thước" className="mb-3">
-                    <Input placeholder="Nhập kích thước" onChange={(event) => setParams({ ...params, kich_thuoc: event.target.value })} />
+                  <Form.Item label="Kích thước" className="mb-3" name={"kich_thuoc"}>
+                    <Input placeholder="Nhập kích thước" />
                   </Form.Item>
-                  <Form.Item label="L" className="mb-3">
-                    <Input placeholder="Nhập L" onChange={(event) => setParams({ ...params, length: event.target.value })} />
+                  <Form.Item label="L" className="mb-3" name={"length"}>
+                    <Input placeholder="Nhập L" />
                   </Form.Item>
-                  <Form.Item label="W" className="mb-3">
-                    <Input placeholder="Nhập W" onChange={(event) => setParams({ ...params, width: event.target.value })} />
+                  <Form.Item label="W" className="mb-3" name={"width"}>
+                    <Input placeholder="Nhập W" />
                   </Form.Item>
-                  <Form.Item label="H" className="mb-3">
-                    <Input placeholder="Nhập H" onChange={(event) => setParams({ ...params, height: event.target.value })} />
+                  <Form.Item label="H" className="mb-3" name={"height"}>
+                    <Input placeholder="Nhập H" />
                   </Form.Item>
-                  <Form.Item label="SL tồn min" className="mb-3">
-                    <Input placeholder="Nhập SL tồn min" onChange={(event) => setParams({ ...params, sl_ton_min: event.target.value })} />
+                  {/* <Form.Item label="SL tồn" className="mb-3" name={"sl_ton"} >
+                    <Slider min={0} max={999} range onChange={(value)=>formSearch.setFieldsValue({ sl_ton_min: value[0], sl_ton_max: value[1] })}/>
                   </Form.Item>
-                  <Form.Item label="SL tồn max" className="mb-3">
-                    <Input placeholder="Nhập SL tồn max" onChange={(event) => setParams({ ...params, sl_ton_max: event.target.value })} />
+                  <Form.Item label="Số ngày tồn" className="mb-3" name={"so_ngay_ton"} >
+                    <Slider  min={0} max={999} range onChange={(value)=>formSearch.setFieldsValue({ so_ngay_ton_min: value[0], so_ngay_ton_max: value[1] })}/>
+                  </Form.Item> */}
+                  <Form.Item label="SL tồn min" className="mb-3" name={"sl_ton_min"}>
+                    <Input placeholder="Nhập SL tồn min" />
                   </Form.Item>
-                  <Form.Item label="Số ngày tồn min" className="mb-3">
-                    <Input placeholder="Nhập SL tồn min" onChange={(event) => setParams({ ...params, so_ngay_ton_min: event.target.value })} />
+                  <Form.Item label="SL tồn max" className="mb-3" name={"sl_ton_max"}>
+                    <Input placeholder="Nhập SL tồn max" />
                   </Form.Item>
-                  <Form.Item label="Số ngày tồn max" className="mb-3">
-                    <Input placeholder="Nhập SL tồn max" onChange={(event) => setParams({ ...params, so_ngay_ton_max: event.target.value })} />
+                  <Form.Item label="Số ngày tồn min" className="mb-3" name={"so_ngay_ton_min"}>
+                    <Input placeholder="Nhập SL tồn min" />
+                  </Form.Item>
+                  <Form.Item label="Số ngày tồn max" className="mb-3" name={"so_ngay_ton_max"}>
+                    <Input placeholder="Nhập SL tồn max" />
                   </Form.Item>
 
                 </div>
@@ -429,7 +429,12 @@ const ThanhPhamGiay = (props) => {
                 pageSize: pageSize,
                 showSizeChanger: true,
                 onChange: (page, pageSize) => {
-                  btn_click(page, pageSize);
+                  var targetPage = Math.ceil(totalPage / pageSize);
+                  if(page > targetPage){
+                    btn_click(targetPage, pageSize);
+                  }else{
+                    btn_click(page, pageSize);
+                  }
                 },
               }}
               scroll={{

@@ -139,19 +139,19 @@ const KhoNvl = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "Sl đầu (kg)",
-      dataIndex: "so_kg_dau",
-      key: "so_kg_dau",
-      align: "center",
-      render: (value) => value || 0,
-    },
-    {
       title: "Sl nhập (kg)",
       dataIndex: "so_kg_nhap",
       key: "so_kg_nhap",
       align: "center",
       render: (value) => value || 0,
       width:'100px'
+    },
+    {
+      title: "Sl đầu (kg)",
+      dataIndex: "so_kg_dau",
+      key: "so_kg_dau",
+      align: "center",
+      render: (value) => value || 0,
     },
     {
       title: "Sl xuất (kg)",

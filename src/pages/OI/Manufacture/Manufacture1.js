@@ -269,17 +269,17 @@ const Manufacture1 = (props) => {
       key: "san_luong_kh",
       align: "center",
       width: 80,
-      filters: [...new Set(data.map(item => item.san_luong_kh))].map(e => ({ value: e, text: e })),
-      filterMultiple: true,
-      onFilter: (value, record) => record.san_luong_kh === value,
-      filterSearch: true,
     },
     {
       title: "Số dao",
       dataIndex: "so_dao",
       key: "so_dao",
       align: "center",
-      width: 70
+      width: 90,
+      filters: [...new Set(data.map(item => item.so_dao))].map(e => ({ value: e, text: e })).sort((a, b) => a.value > b.value ? 1 : -1),
+      filterMultiple: true,
+      onFilter: (value, record) => record.so_dao === value,
+      filterSearch: true,
     },
     {
       title: "SL thực tế",
@@ -571,6 +571,47 @@ const Manufacture1 = (props) => {
     setLoadingAction(false);
   }
   const tableRef = useRef();
+
+  var eventQueue = []; // Hàng đợi sự kiện
+  var isProcessing = false; // Cờ trạng thái xử lý
+  // Hàm để xử lý hàng đợi
+  const processEventQueue = async () => {
+    if (isProcessing) return; // Nếu đang xử lý, không làm gì thêm
+    isProcessing = true;
+
+    while (eventQueue.length > 0) {
+      console.log(eventQueue.length);
+      const e = eventQueue.shift(); // Lấy sự kiện đầu tiên từ hàng đợi
+      await handleEvent(e); // Xử lý sự kiện
+    }
+
+    isProcessing = false; // Xử lý xong, đặt cờ về false
+  };
+  
+  const handleEvent = async (e) => {
+    // Nếu yêu cầu reload dữ liệu
+    if (e.reload) {
+      await reloadData(); // Gọi hàm reload (nếu cần, thêm logic bất đồng bộ)
+      return;
+    }
+
+    // Nếu có dữ liệu info_cong_doan
+    if (e.info_cong_doan) {
+      let middleData;
+      await setData((prevData) =>
+        [...prevData].map((lo) => {
+          if (e.info_cong_doan.lo_sx === lo.lo_sx) {
+            middleData = { ...lo, ...e.info_cong_doan };
+            setCurrent(middleData); // Cập nhật dữ liệu hiện tại
+            setSpecifiedRowKey(middleData.lo_sx); // Cập nhật key
+            return middleData;
+          }
+          return {...lo, status: 0};
+        })
+      );
+    }
+  };
+
   useEffect(() => {
     if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
       return 0;
@@ -593,25 +634,11 @@ const Manufacture1 = (props) => {
     });
     window.Echo.channel('laravel_database_mychannel')
       .listen('.my-event', (e) => {
-        if (e.data?.info_cong_doan?.machine_id !== machine_id) {
+        if (e.data.info_cong_doan?.machine_id !== machine_id) {
           return;
-        } else {
-          if (e.data?.reload) {
-            reloadData();
-          }
-          if (e.data?.info_cong_doan) {
-            console.log(e.data);
-            setData(prevData => [...prevData].map(lo => {
-              if (e.data?.info_cong_doan?.lo_sx == lo.lo_sx) {
-                const current = { ...lo, ...e.data?.info_cong_doan };
-                setCurrent(current);
-                setSpecifiedRowKey(current?.lo_sx);
-                return current;
-              }
-              return lo;
-            }));
-          }
         }
+        eventQueue.push(e.data); // Thêm sự kiện vào hàng đợi
+        processEventQueue(); // Gọi xử lý hàng đợi
       });
     return () => {
       window.Echo.leaveChannel('laravel_database_mychannel');
@@ -851,28 +878,29 @@ const Manufacture1 = (props) => {
       key: 'currrent_manufacture_tab',
       children:
         <Row gutter={[8, 8]}>
-          {/* <Col span={6}> */}
-          {/* <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}> */}
-          <Col {...buttonResponsive} span={4}><Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{isPaused ? 'Bắt đầu' : 'Dừng'}</Button></Col>
-          <Col {...buttonResponsive} span={4}><Button
-            size="medium"
-            type="primary"
-            style={{ width: "100%", height: '100%', textWrap: 'wrap' }}
-            onClick={handlePrint}
-            icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
-          /></Col>
-          <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button></Col>
-          <Col {...buttonResponsive} span={4}><Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Chuyển sang Tab "Tạm dừng"'}</Button></Col>
-          <Col {...buttonResponsive} span={4}><Button
-            size="medium"
-            type="primary"
-            style={{ width: "100%", height: '100%', textWrap: 'wrap' }}
-            onClick={() => setIsDraggable(!isDraggable)}
-            title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
-            icon={!isDraggable ? <DragOutlined /> : <StopOutlined />}
-          >{!isDraggable ? "Di chuyển" : "Dừng di chuyển"}</Button></Col>
-          <Col {...buttonResponsive} span={4}><OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList} /></Col>
-          {/* </div> */}
+          <Col span={24}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+              <Button type="primary" loading={loadingAction} onClick={() => isPaused ? onStart() : onStop()} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{isPaused ? 'Bắt đầu' : 'Dừng'}</Button>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%", height: '100%', textWrap: 'wrap' }}
+                onClick={handlePrint}
+                icon={<PrinterOutlined style={{ fontSize: "24px" }} />}
+              />
+              <Button type="primary" disabled={listCheck.length !== 1} onClick={openModal} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Nhập sản lượng tay'}</Button>
+              <Button type="primary" disabled={listCheck.length <= 0} loading={pausing} onClick={pause} style={{ width: "100%", height: '100%', textWrap: 'wrap' }}>{'Chuyển sang Tab "Tạm dừng"'}</Button>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%", height: '100%', textWrap: 'wrap' }}
+                onClick={() => setIsDraggable(!isDraggable)}
+                title={!isDraggable ? "Di chuyển" : "Dừng di chuyển"}
+                icon={!isDraggable ? <DragOutlined /> : <StopOutlined />}
+              >{!isDraggable ? "Di chuyển" : "Dừng di chuyển"}</Button>
+              <OISearchBox data={data} searchedTarget={searchedTarget} setSearchedTarget={setSearchedTarget} searchedList={searchedList} setSearchedList={setSearchedList} />
+            </div>
+          </Col>
           <div className="report-history-invoice">
             {/* <TemTest listCheck={listTem} ref={componentRef1} /> */}
             <TemGiayTam listCheck={listTem} ref={componentRef1} />
