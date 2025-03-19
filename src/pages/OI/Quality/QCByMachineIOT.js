@@ -431,7 +431,7 @@ const QCByMachine = (props) => {
 
         <Table
           rowClassName={(record, index) => {
-            return "no-hover " + rowClassName(record, index);
+            return rowClassName(record, index);
           }}
           scroll={{
             x: "calc(700px + 50%)",
@@ -440,6 +440,7 @@ const QCByMachine = (props) => {
           pagination={false}
           bordered={true}
           className="mt-2 mb-3"
+          rowHoverable={false}
           columns={columns}
           dataSource={data}
           size="small"

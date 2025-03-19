@@ -501,7 +501,7 @@ const QCByMachine = (props) => {
 
         <Table
           rowClassName={(record, index) => {
-            return "no-hover " + rowClassName(record, index);
+            return rowClassName(record, index);
           }}
           scroll={{
             x: '1000px',
@@ -511,6 +511,7 @@ const QCByMachine = (props) => {
           bordered={true}
           className="mt-2 mb-3"
           columns={columns}
+          rowHoverable={false}
           dataSource={data}
           size="small"
           onRow={(record, index) => {
@@ -519,9 +520,6 @@ const QCByMachine = (props) => {
                 onClickRow(event, record);
               },
             };
-          }}
-          components={{
-            rowHoverBg: "#000000",
           }}
         />
       </Spin>

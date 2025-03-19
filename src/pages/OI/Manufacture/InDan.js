@@ -105,7 +105,7 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => (value === 1 ? "OK" : "-"),
+    render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
     width: 90,
   },
   {
@@ -285,6 +285,9 @@ const InDan = (props) => {
   };
 
   const rowClassName = (record, index) => {
+    if(record?.phan_dinh === 2) {
+      return "table-row-red";
+    }
     if (record.status === 1) {
       return "table-row-green";
     }

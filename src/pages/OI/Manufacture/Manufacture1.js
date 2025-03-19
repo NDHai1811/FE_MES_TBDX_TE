@@ -357,7 +357,7 @@ const Manufacture1 = (props) => {
       key: "phan_dinh",
       align: "center",
       width: 90,
-      render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "")),
+      render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
     },
     {
       title: "Ngày SX KH",
@@ -484,6 +484,9 @@ const Manufacture1 = (props) => {
   };
 
   const rowClassName = (record, index) => {
+    if(record?.phan_dinh === 2) {
+      return "table-row-red";
+    }
     if (record?.lo_sx === searchedTarget?.lo_sx) {
       return "table-row-blue";
     }

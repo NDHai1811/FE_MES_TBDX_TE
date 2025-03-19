@@ -93,7 +93,7 @@ const columns = [
     dataIndex: "phan_dinh",
     key: "phan_dinh",
     align: "center",
-    render: (value) => (value === 1 ? "OK" : "-"),
+    render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
     width: "65px",
   },
   {
@@ -350,6 +350,9 @@ const NhapTay = (props) => {
   };
 
   const rowClassName = (record, index) => {
+    if(record?.phan_dinh === 2) {
+      return "table-row-red";
+    }
     if (record?.lo_sx === lotCurrent?.lo_sx) {
       return "table-row-green";
     }
@@ -550,8 +553,9 @@ const NhapTay = (props) => {
               }}
               size="small"
               rowClassName={(record, index) =>
-                "no-hover " + rowClassName(record, index)
+                rowClassName(record, index)
               }
+              rowHoverable={false}
               className="bottom-table"
               pagination={false}
               bordered
