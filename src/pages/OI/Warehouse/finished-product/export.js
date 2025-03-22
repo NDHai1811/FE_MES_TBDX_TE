@@ -176,6 +176,13 @@ const Export = (props) => {
 
   const lsxColumns = [
     {
+      title: "Lô sản xuất",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
       title: "Khách hàng",
       dataIndex: "khach_hang",
       key: "khach_hang",
