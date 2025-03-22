@@ -418,7 +418,7 @@ const ThanhPhamGiay = (props) => {
               </Space>
             }
           >
-            <EditableTable
+            <Table
               size="small"
               bordered
               loading={loading}
