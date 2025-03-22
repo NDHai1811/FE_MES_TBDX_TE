@@ -74,7 +74,7 @@ const QCByMachine = (props) => {
       align: "center",
     },
     {
-      title: "Tỉ lệ OK",
+      title: "% Phế",
       dataIndex: "ti_le",
       key: "ti_le",
       align: "center",

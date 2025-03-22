@@ -102,9 +102,9 @@ const KPI = (props) => {
     fetchChart3();
     fetchChart4();
     fetchChart5();
-    fetchChart6();
     fetchChart7();
     fetchChart8();
+    fetchChart6();
   }
   return (
     <React.Fragment>
