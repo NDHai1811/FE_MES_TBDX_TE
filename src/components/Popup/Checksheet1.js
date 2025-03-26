@@ -35,7 +35,7 @@ const Checksheet1 = (props) => {
   const [checksheet, setChecksheet] = useState([]);
   const [formData, setFormData] = useState([])
 
-  const onFinish = () => {
+  const onFinish = ({phan_dinh = 0}) => {
     console.log(formData);
     if (selectedLot) {
       formData.forEach((e, index) => {
@@ -45,6 +45,9 @@ const Checksheet1 = (props) => {
       });
       closeModal();
       const values = { tinh_nang: formData }
+      if(phan_dinh){
+        values.phan_dinh = phan_dinh;
+      }
       console.log(values);
       onSubmit(values);
     }
@@ -102,9 +105,9 @@ const Checksheet1 = (props) => {
             else result = 2;
           }
         }
-        if(!e.user_decide){
+        if (!e.user_decide) {
           return { ...e, value: value, result: result }
-        }else{
+        } else {
           return { ...e, value: value }
         }
       }
@@ -122,15 +125,28 @@ const Checksheet1 = (props) => {
         bodyStyle={{ maxHeight: 500, overflowX: 'hidden', overflowY: 'auto', paddingRight: 8 }}
         footer={
           <Space>
-            <Tooltip title="Không có lỗi gì, duyệt để bỏ qua kiểm tra">
+            <Tooltip title="Không có lỗi gì, chọn để bỏ qua kiểm tra">
               <Button
                 onClick={() => {
                   onSubmit({ tinh_nang: [] });
                   closeModal();
                 }}
+                style={{ backgroundColor: "#55c32a", color: "white" }}
                 type="primary"
               >
-                Duyệt
+                OK
+              </Button>
+            </Tooltip>
+            <Tooltip title="Phán định NG">
+              <Button
+                onClick={() => {
+                  onFinish({ phan_dinh: 2 });
+                  closeModal();
+                }}
+                danger
+                type="primary"
+              >
+                NG
               </Button>
             </Tooltip>
             <Tooltip title="Lưu lại các chỉ tiêu đã kiểm tra">
@@ -150,171 +166,6 @@ const Checksheet1 = (props) => {
           colon={false}
           onFinishFailed={onSubmitFail}
         >
-          {/* <Form.List name={"tinh_nang"}>
-            {(fields, { add, remove }, { errors }) =>
-              (checksheet ?? []).map((e, index) => {
-                if (e.input) {
-                  return (
-                    <Row gutter={8} className={index === 0 ? "" : "mt-2"}>
-                      <Col
-                        span={12}
-                        style={{ paddingInline: 4 }}
-                        className="d-flex justify-content-center flex-wrap align-items-lg-center"
-                      >
-                        <div
-                          className="d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center p-2"
-                          style={{
-                            backgroundColor: "#EBEBEB",
-                            height: "100%",
-                            flexWrap: "wrap",
-                          }}
-                        >
-                          {e.name}
-                          {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
-                        </div>
-                        <Form.Item
-                          noStyle
-                          name={[e.id, "name"]}
-                          hidden
-                          initialValue={e.name}
-                          shouldUpdate={true}
-                        ></Form.Item>
-                      </Col>
-                      <Col span={6}>
-                        <Form.Item
-                          noStyle
-                          name={[e.id, "value"]}
-                          rules={[{ required: true }]}
-                        >
-                          <InputNumber
-                            className=" text-center h-100 d-flex align-items-center justify-content-center"
-                            inputMode="numeric"
-                            placeholder="Nhập số"
-                            min={0}
-                            style={{ width: "100%" }}
-                            onChange={(value) =>
-                              form.setFieldValue(
-                                ["tinh_nang", e.id, "result"],
-                                !e?.max
-                                  ? value >= parseFloat(e.min)
-                                    ? 1
-                                    : 2
-                                  : parseFloat(value) >= parseFloat(e.min) &&
-                                    value <= parseFloat(e.max)
-                                  ? 1
-                                  : 2
-                              )
-                            }
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={6}>
-                        <Form.Item
-                          noStyle
-                          shouldUpdate={(prevVal, curVal) => true}
-                        >
-                          {({ getFieldValue }) => (
-                            <Form.Item
-                              name={[e.id, "result"]}
-                              noStyle
-                              className="w-100 h-100"
-                              rules={[{ required: true }]}
-                            >
-                              {!getFieldValue(["tinh_nang", e.id, "value"]) ? (
-                                <Button className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
-                                  OK/NG
-                                </Button>
-                              ) : getFieldValue([
-                                  "tinh_nang",
-                                  e.id,
-                                  "result",
-                                ]) === 1 ? (
-                                <Button
-                                  className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
-                                  style={{
-                                    backgroundColor: "#55c32a",
-                                    color: "white",
-                                  }}
-                                >
-                                  OK
-                                </Button>
-                              ) : (
-                                <Button
-                                  className="w-100 text-center h-100 d-flex align-items-center justify-content-center"
-                                  style={{
-                                    backgroundColor: "#fb4b50",
-                                    color: "white",
-                                  }}
-                                >
-                                  NG
-                                </Button>
-                              )}
-                            </Form.Item>
-                          )}
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  );
-                } else {
-                  return (
-                    <Row gutter={8} className={index === 0 ? "" : "mt-2"}>
-                      <Col
-                        span={12}
-                        style={{ paddingInline: 4 }}
-                        className="d-flex justify-content-center flex-wrap align-items-lg-center"
-                      >
-                        <div
-                          className="d-flex justify-content-center align-content-center flex-grow-1 align-items-lg-center p-2"
-                          style={{
-                            backgroundColor: "#EBEBEB",
-                            height: "100%",
-                            flexWrap: "wrap",
-                          }}
-                        >
-                          {e?.name}
-                          {e?.tieu_chuan && ". (" + e?.tieu_chuan + ")"}
-                        </div>
-                        <Form.Item noStyle name={[e.id, "name"]} hidden>
-                          <Input value={e.name} />
-                        </Form.Item>
-                      </Col>
-                      <Col span={12}>
-                        <Form.Item name={[e.id, "result"]} noStyle rules={[{ required: true }]}>
-                          <Radio.Group
-                            style={{
-                              float: "right",
-                              width: "100%",
-                              height: "100%",
-                            }}
-                            className="d-flex"
-                            optionType="button"
-                            buttonStyle="solid"
-                          >
-                            <Radio.Button
-                              value={1}
-                              className={
-                                "positive-radio text-center h-100 d-flex align-items-center justify-content-center"
-                              }
-                              style={{ flex: 1 }}
-                            >
-                              OK
-                            </Radio.Button>
-                            <Radio.Button
-                              value={2}
-                              className="negative-radio text-center h-100 d-flex align-items-center justify-content-center"
-                              style={{ flex: 1 }}
-                            >
-                              NG
-                            </Radio.Button>
-                          </Radio.Group>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  );
-                }
-              })
-            }
-          </Form.List> */}
           <Form.List name={"tinh_nang"}>
             {(fields, { add, remove }, { errors }) =>
               (formData ?? []).map((e, index) => {
@@ -373,18 +224,18 @@ const Checksheet1 = (props) => {
                           name={[e.id, "result"]}
                           rules={[{ required: true }]}
                         >
-                          <Radio.Group 
-                          size="large"
-                          name={e.id}
-                          className=" text-center h-100 d-flex align-items-center justify-content-center"
-                          onChange={(event)=>setFormData(prev=>prev.map(row=>{
-                            if(e.id === row.id){
-                              return {...row, result: event.target.value}
-                            }
-                            return {...row}
-                          }))} optionType="button">
-                            <Radio value={1} className="text-center h-100 d-flex align-items-center justify-content-center" style={e.result === 1 ? {backgroundColor: "#55c32a",color: "white"} : ""}>OK</Radio>
-                            <Radio value={2} className="text-center h-100 d-flex align-items-center justify-content-center" style={e.result === 2 ? {backgroundColor: "#fb4b50",color: "white"} : ""}>NG</Radio>
+                          <Radio.Group
+                            size="large"
+                            name={e.id}
+                            className=" text-center h-100 d-flex align-items-center justify-content-center"
+                            onChange={(event) => setFormData(prev => prev.map(row => {
+                              if (e.id === row.id) {
+                                return { ...row, result: event.target.value }
+                              }
+                              return { ...row }
+                            }))} optionType="button">
+                            <Radio value={1} className="text-center h-100 d-flex align-items-center justify-content-center" style={e.result === 1 ? { backgroundColor: "#55c32a", color: "white" } : ""}>OK</Radio>
+                            <Radio value={2} className="text-center h-100 d-flex align-items-center justify-content-center" style={e.result === 2 ? { backgroundColor: "#fb4b50", color: "white" } : ""}>NG</Radio>
                           </Radio.Group>
                         </Form.Item>
                       </Col>

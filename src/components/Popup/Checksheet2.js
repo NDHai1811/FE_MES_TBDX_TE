@@ -38,14 +38,17 @@ const Checksheet2 = (props) => {
   const [form] = Form.useForm();
   const [checksheet, setChecksheet] = useState([]);
 
-  const onFinish = async () => {
+  const onFinish = async ({phan_dinh = 0}) => {
     if (selectedLot) {
       errorsList.forEach((e, index) => {
         if (!e.value && !e.result) {
           errorsList.splice(index, 1);
         }
       });
-      const values = { ngoai_quan: errorsList }
+      const values = { ngoai_quan: errorsList };
+      if(phan_dinh){
+        values.phan_dinh = phan_dinh;
+      }
       closeModal();
       onSubmit(values);
     }
@@ -130,15 +133,28 @@ const Checksheet2 = (props) => {
         bodyStyle={{ maxHeight: 500, overflowX: 'hidden', overflowY: 'auto', paddingRight: 8 }}
         footer={
           <Space>
-            <Tooltip title="Không có lỗi gì, duyệt để bỏ qua kiểm tra">
+            <Tooltip title="Không có lỗi gì, chọn để bỏ qua kiểm tra">
               <Button
                 onClick={() => {
                   onSubmit({ ngoai_quan: [] });
                   closeModal();
                 }}
+                style={{ backgroundColor: "#55c32a", color: "white" }}
                 type="primary"
               >
-                Duyệt
+                OK
+              </Button>
+            </Tooltip>
+            <Tooltip title="Phán định NG">
+              <Button
+                onClick={() => {
+                  onFinish({ phan_dinh: 2 });
+                  closeModal();
+                }}
+                danger
+                type="primary"
+              >
+                NG
               </Button>
             </Tooltip>
             <Tooltip title="Lưu lại các chỉ tiêu đã kiểm tra">

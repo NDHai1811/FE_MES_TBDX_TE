@@ -90,7 +90,7 @@ const IQC = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow?.checked_tinh_nang === false && setOpenModalCK1(true);
+            selectedRow && selectedRow?.checked_tinh_nang === false && setOpenModalCK1(true);
           },
           style: {
             cursor: 'pointer'
@@ -114,7 +114,7 @@ const IQC = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            selectedRow?.checked_ngoai_quan === false && setOpenModalCK2(true);
+            selectedRow && selectedRow?.checked_ngoai_quan === false && setOpenModalCK2(true);
           },
           style: {
             cursor: 'pointer'
@@ -308,19 +308,21 @@ const IQC = (props) => {
   const [openModal2, setOpenModal2] = useState(false);
 
   const onSubmitResult = async (values) => {
-    if (values?.tinh_nang) {
-      setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
-    } else if (values?.ngoai_quan) {
-      setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
-    } else if (values?.sl_ng_sx) {
-      setSelectedRow({ ...selectedRow, checked_sl_ng: true });
-    }
     var res = await sendIQCResult({
       line_id: line_id,
       ma_cuon_ncc: selectedRow?.ma_cuon_ncc,
       lo_sx: selectedRow?.lo_sx,
       data: values,
     });
+    if(res.success){
+      if (values?.tinh_nang) {
+        setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
+      } else if (values?.ngoai_quan) {
+        setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
+      } else if (values?.sl_ng_sx) {
+        setSelectedRow({ ...selectedRow, checked_sl_ng: true });
+      }
+    }
     getData();
   };
   return (

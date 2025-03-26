@@ -98,7 +98,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
+            selectedRow && !selectedRow?.checked_tinh_nang && setOpenModalCK1(true);
           },
           style: {
             cursor: 'pointer'
@@ -122,7 +122,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
+            selectedRow && !selectedRow?.checked_ngoai_quan && setOpenModalCK2(true);
           },
           style: {
             cursor: 'pointer'
@@ -146,7 +146,7 @@ const QCByMachine = (props) => {
       onHeaderCell: (column) => {
         return {
           onClick: () => {
-            !selectedRow?.checked_sl_ng && setOpenModalCK3(true);
+            selectedRow && !selectedRow?.checked_sl_ng && setOpenModalCK3(true);
           },
           style: {
             cursor: 'pointer'
@@ -289,11 +289,9 @@ const QCByMachine = (props) => {
   }, []);
 
   const getListOption = async () => {
-    setLoading(true);
     var machine = await getListMachine({ is_iot: 1 });
     if (machine.length > 0) {
       setMachineOptions(machine);
-      setLoading(false);
     } else {
       history.push('/screen');
     }
@@ -349,18 +347,20 @@ const QCByMachine = (props) => {
   };
 
   const onSubmitResult = async (values) => {
-    if (values?.tinh_nang) {
-      setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
-    } else if (values?.ngoai_quan) {
-      setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
-    } else if (values?.sl_ng_sx) {
-      setSelectedRow({ ...selectedRow, checked_sl_ng: true });
-    }
     var res = await sendQCResult({
       machine_id: machine_id,
       lo_sx: selectedRow?.lo_sx,
       data: values,
     });
+    if(res.success){
+      if (values?.tinh_nang) {
+        setSelectedRow({ ...selectedRow, checked_tinh_nang: true });
+      } else if (values?.ngoai_quan) {
+        setSelectedRow({ ...selectedRow, checked_ngoai_quan: true });
+      } else if (values?.sl_ng_sx) {
+        setSelectedRow({ ...selectedRow, checked_sl_ng: true });
+      }
+    }
     getData();
   };
   return (

@@ -38,7 +38,7 @@ const Checksheet4 = (props) => {
   const [form] = Form.useForm();
   const [checksheet, setChecksheet] = useState([]);
 
-  const onFinish = async () => {
+  const onFinish = async ({phan_dinh = 0}) => {
     if (selectedLot) {
       errorsList.forEach((e, index) => {
         if (!e.value && !e.result) {
@@ -46,6 +46,9 @@ const Checksheet4 = (props) => {
         }
       });
       const values = { ngoai_quan: errorsList }
+      if(phan_dinh){
+        values.phan_dinh = phan_dinh;
+      }
       closeModal();
       onSubmit(values);
     }
@@ -54,7 +57,7 @@ const Checksheet4 = (props) => {
     form.resetFields();
     setErrorsList(checksheet);
   }, [open]);
-  
+
   const [errorsList, setErrorsList] = useState([]);
   const getErrorList = async () => {
     var res = await getIQCErrorList();
@@ -90,7 +93,7 @@ const Checksheet4 = (props) => {
             else result = 2;
           }
         }
-        if(e.input_type){
+        if (e.input_type) {
           return { ...e, value: value, result: value }
         }
         return { ...e, value: value, result: result }
@@ -109,15 +112,28 @@ const Checksheet4 = (props) => {
         bodyStyle={{ maxHeight: 500, overflowX: 'hidden', overflowY: 'auto', paddingRight: 8 }}
         footer={
           <Space>
-            <Tooltip title="Không có lỗi gì, duyệt để bỏ qua kiểm tra">
+            <Tooltip title="Không có lỗi gì, chọn để bỏ qua kiểm tra">
               <Button
                 onClick={() => {
-                  onSubmit({ ngoai_quan: [] });
+                  onSubmit({ tinh_nang: [] });
                   closeModal();
                 }}
+                style={{ backgroundColor: "#55c32a", color: "white" }}
                 type="primary"
               >
-                Duyệt
+                OK
+              </Button>
+            </Tooltip>
+            <Tooltip title="Phán định NG">
+              <Button
+                onClick={() => {
+                  onFinish({ phan_dinh: 2 });
+                  closeModal();
+                }}
+                danger
+                type="primary"
+              >
+                NG
               </Button>
             </Tooltip>
             <Tooltip title="Lưu lại các chỉ tiêu đã kiểm tra">
@@ -166,13 +182,13 @@ const Checksheet4 = (props) => {
                           name={[e.id, "value"]}
                           rules={[{ required: true }]}
                         >
-                          <Radio.Group 
-                          size="large"
-                          name={e.id}
-                          className=" text-center h-100 d-flex align-items-center justify-content-center"
-                          onChange={(event)=>onChangeData(event.target.value, e.id)} optionType="button" buttonStyle="solid">
-                            <Radio value={1} className="w-100" style={e.result === 1 && {backgroundColor: "#55c32a",color: "white"}}>OK</Radio>
-                            <Radio value={2} className="w-100" style={e.result === 2 && {backgroundColor: "#fb4b50",color: "white"}}>NG</Radio>
+                          <Radio.Group
+                            size="large"
+                            name={e.id}
+                            className=" text-center h-100 d-flex align-items-center justify-content-center"
+                            onChange={(event) => onChangeData(event.target.value, e.id)} optionType="button" buttonStyle="solid">
+                            <Radio value={1} className="w-100" style={e.result === 1 && { backgroundColor: "#55c32a", color: "white" }}>OK</Radio>
+                            <Radio value={2} className="w-100" style={e.result === 2 && { backgroundColor: "#fb4b50", color: "white" }}>NG</Radio>
                           </Radio.Group>
                         </Form.Item>
                       </Col>
