@@ -145,6 +145,7 @@ const VOCRegister = () => {
           <Popconfirm
             title="Xác nhận xóa?"
             onConfirm={() => deleteRecord(record)}
+            placement="topRight"
           >
             <DeleteOutlined style={{ color: "red", fontSize: 18 }} />
           </Popconfirm>

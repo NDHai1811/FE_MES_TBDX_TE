@@ -268,6 +268,7 @@ const KeHoachSanXuat = () => {
             <Popconfirm
               title="Bạn có chắc chắn muốn xóa?"
               onConfirm={() => onDetele(record)}
+              placement="topRight"
             >
               <DeleteOutlined
                 style={{

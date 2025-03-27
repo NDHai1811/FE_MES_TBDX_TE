@@ -564,6 +564,7 @@ const Layout = () => {
             <Popconfirm
               title="Bạn có chắc chắn muốn hủy?"
               onConfirm={() => cancel(record)}
+              placement="topRight"
             >
               <a>Hủy</a>
             </Popconfirm>

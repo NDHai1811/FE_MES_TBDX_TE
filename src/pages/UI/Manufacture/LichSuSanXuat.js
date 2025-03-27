@@ -317,6 +317,7 @@ const LichSuSanXuat = (props) => {
           <Popconfirm
             title="Bạn có chắc chắn muốn xóa?"
             onConfirm={() => deleteItem(record.id)}
+            placement="topRight"
           >
             <DeleteOutlined
               style={{

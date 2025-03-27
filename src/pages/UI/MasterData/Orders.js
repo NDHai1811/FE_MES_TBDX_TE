@@ -876,6 +876,7 @@ const Orders = () => {
               <Popconfirm
                 title="Bạn có chắc chắn muốn xóa?"
                 onConfirm={() => onDetele([record.id])}
+                placement="topRight"
               >
                 <DeleteOutlined
                   title="Xoá"

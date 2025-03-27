@@ -286,7 +286,7 @@ const TaoTem = () => {
                             disabled={editingKey !== ""}
                             onClick={() => edit(record)}
                         />
-                        <Popconfirm title="Bạn có chắc chắn muốn xoá?" onConfirm={()=>deleteRecord(record)}>
+                        <Popconfirm title="Bạn có chắc chắn muốn xoá?" onConfirm={()=>deleteRecord(record)} placement="topRight">
                             <DeleteOutlined
                                 style={{ color: "red", fontSize: 18 }}
                                 disabled={editingKey !== ""}
