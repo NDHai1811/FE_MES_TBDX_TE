@@ -223,6 +223,10 @@ const Manufacture1 = (props) => {
       key: "thu_tu_uu_tien",
       align: "center",
       width: 60,
+      sorter: {
+        compare: (a, b) => a.thu_tu_uu_tien - b.thu_tu_uu_tien,
+        multiple: 3,
+      },
     },
     {
       title: "Tên khách hàng",
@@ -280,6 +284,10 @@ const Manufacture1 = (props) => {
       filterMultiple: true,
       onFilter: (value, record) => record.so_dao === value,
       filterSearch: true,
+      sorter: {
+        compare: (a, b) => a.so_dao - b.so_dao,
+        multiple: 2,
+      },
     },
     {
       title: "SL thực tế",
@@ -365,6 +373,10 @@ const Manufacture1 = (props) => {
       key: "ngay_sx",
       align: "center",
       width: 120,
+      sorter: {
+        compare: (a, b) => new Date(a.ngay_sx) - new Date(b.ngay_sx),
+        multiple: 1,
+      },
       // fixed: 'right'
     },
     {

@@ -410,46 +410,6 @@ const Orders = () => {
       width: 115,
     },
     {
-      title: "L",
-      dataIndex: "length",
-      key: "length",
-      align: "center",
-      editable: true,
-      checked: true,
-      fixed: "left",
-      width: 60,
-    },
-    {
-      title: "W",
-      dataIndex: "width",
-      key: "width",
-      align: "center",
-      editable: true,
-      checked: true,
-      fixed: "left",
-      width: 60,
-    },
-    {
-      title: "H",
-      dataIndex: "height",
-      key: "height",
-      align: "center",
-      editable: true,
-      checked: true,
-      fixed: "left",
-      width: 60,
-    },
-    {
-      title: "Kích thước ĐH",
-      dataIndex: "kich_thuoc",
-      key: "kich_thuoc",
-      align: "center",
-      editable: true,
-      fixed: "left",
-      checked: true,
-      width: 140
-    },
-    {
       title: "MQL",
       dataIndex: "mql",
       key: "mql",
@@ -460,6 +420,42 @@ const Orders = () => {
       fixed: "left",
     },
     {
+      title: "L",
+      dataIndex: "length",
+      key: "length",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: 60,
+    },
+    {
+      title: "W",
+      dataIndex: "width",
+      key: "width",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: 60,
+    },
+    {
+      title: "H",
+      dataIndex: "height",
+      key: "height",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: 60,
+    },
+    {
+      title: "Kích thước ĐH",
+      dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: 140
+    },
+    {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
@@ -467,7 +463,6 @@ const Orders = () => {
       width: 60,
       editable: true,
       checked: true,
-      fixed: "left",
     },
     {
       title: "Đơn vị tính",
@@ -855,7 +850,7 @@ const Orders = () => {
             >
               Lưu
             </Button>
-            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+            <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel} placement="topRight">
               <Button size="small" type="primary" danger style={{ margin: 2, }}>Hủy</Button>
             </Popconfirm>
           </span>

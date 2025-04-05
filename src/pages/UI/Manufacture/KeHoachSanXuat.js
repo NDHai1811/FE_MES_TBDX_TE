@@ -253,7 +253,7 @@ const KeHoachSanXuat = () => {
                 >
                   Lưu
                 </Typography.Link>
-                <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel}>
+                <Popconfirm title="Bạn có chắc chắn muốn hủy?" onConfirm={cancel} placement="topRight">
                   <a>Hủy</a>
                 </Popconfirm>
               </>}

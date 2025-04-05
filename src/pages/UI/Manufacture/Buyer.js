@@ -262,6 +262,7 @@ const Buyer = () => {
             <Popconfirm
               title="Bạn có chắc chắn muốn xóa?"
               onConfirm={() => deleteItem(record.key)}
+              placement="topRight"
             >
               <DeleteOutlined
                 style={{

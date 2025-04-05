@@ -551,6 +551,26 @@ const InDan = (props) => {
     }
     setResuming(false);
   }
+
+  const onStartProduction = async () => {
+    if (listCheck.length <= 0) {
+      message.info('Chưa chọn kế hoạch muốn sản xuất');
+      return;
+    }
+    const check = data.find(e => listCheck.includes(e.key) && e.status > 1)
+    if (check) {
+      message.info('Lô ' + check?.lo_sx + " đã sản xuất");
+      return;
+    }
+    setLoading(true);
+    var res = await resumePlan({ info_ids: data.filter(e => listCheck.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
+    if (res.success) {
+      reloadData();
+      setListCheck([]);
+      setSelectedPausedKeys([]);
+    }
+    setLoading(false);
+  }
   const items = [
     {
       label: 'Danh sách sản xuất',
@@ -559,13 +579,20 @@ const InDan = (props) => {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+              <Button
+                size="medium"
+                type="primary"
+                style={{ width: "100%" }}
+                disabled={data.some(e => e.status === 1) || listCheck.length !== 1}
+                onClick={() => onStartProduction()}
+              >Chạy sản xuất</Button>
               {machineOptions.find(e=>e.value === machine_id)?.line_id == '31' ? <Button
                 size="medium"
                 type="primary"
                 style={{ width: "100%" }}
                 disabled={trackingStatus === 1}
                 onClick={() => onChangeTrackingStatus()}
-              >Bắt đầu</Button> : null}
+              >Bắt đầu chạy hàng loạt</Button> : null}
               <Button
                 size="medium"
                 type="primary"

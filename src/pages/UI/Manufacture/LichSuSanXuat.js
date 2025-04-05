@@ -103,112 +103,6 @@ const columns2 = [
     render: (value) => value ?? 0,
   },
 ];
-const columns3 = [
-  {
-    title: "STT",
-    dataIndex: "index",
-    key: "index",
-    align: "center",
-    width: "3%",
-    render: (value, record, index) => index + 1,
-  },
-  {
-    title: "Ngày sản xuất",
-    dataIndex: "ngay_sx",
-    key: "ngay_sx",
-    align: "center",
-    width: "6%",
-  },
-  {
-    title: "Máy",
-    dataIndex: "machine_id",
-    key: "machine_id",
-    align: "center",
-    width: "4%",
-  },
-  {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    width: "6%",
-  },
-  {
-    title: "MDH",
-    dataIndex: "mdh",
-    key: "mdh",
-    align: "center",
-    width: "6%",
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    width: "3%",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-  },
-  {
-    title: "Thời gian bắt đầu",
-    dataIndex: "thoi_gian_bat_dau",
-    key: "thoi_gian_bat_dau",
-    align: "center",
-  },
-  {
-    title: "Thời gian kết thúc",
-    dataIndex: "thoi_gian_ket_thuc",
-    key: "thoi_gian_ket_thuc",
-    align: "center",
-  },
-  {
-    title: "Sản lượng đầu ra",
-    dataIndex: "sl_dau_ra_hang_loat",
-    key: "sl_dau_ra_hang_loat",
-    align: "center",
-  },
-  {
-    title: "Sản lượng sau QC",
-    dataIndex: "sl_ok",
-    key: "sl_ok",
-    align: "center",
-  },
-  {
-    title: "Số lượng phế",
-    dataIndex: "sl_phe",
-    key: "sl_phe",
-    align: "center",
-  },
-  {
-    title: "Đợt",
-    dataIndex: "dot",
-    key: "dot",
-    align: "center",
-  },
-  {
-    title: "Tên công nhân sản xuất",
-    dataIndex: "user_name",
-    key: "user_name",
-    align: "center",
-  },
-  {
-    title: "Lô sản xuất",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-  },
-  {
-    title: "Bước",
-    dataIndex: "step",
-    key: "step",
-    align: "center",
-    render: (value) => value ? 'Bước' : '',
-  },
-];
 
 const LichSuSanXuat = (props) => {
   document.title = "UI - Lịch sử sản xuất";
@@ -226,22 +120,130 @@ const LichSuSanXuat = (props) => {
       const res1 = await getUIItemMenu();
       setItemMenu(res1.data);
     })();
-    // btn_click();
-  }, []);
-  useEffect(() => {
     btn_click();
-  }, [params]);
+  }, []);
+  
+  
+
+  const columns3 = [
+    {
+      title: "STT",
+      dataIndex: "index",
+      key: "index",
+      align: "center",
+      width: "3%",
+      render: (value, record, index) => ((page - 1) * pageSize) + index + 1,
+    },
+    {
+      title: "Ngày sản xuất",
+      dataIndex: "ngay_sx",
+      key: "ngay_sx",
+      align: "center",
+      width: "6%",
+    },
+    {
+      title: "Máy",
+      dataIndex: "machine_id",
+      key: "machine_id",
+      align: "center",
+      width: "4%",
+    },
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+      width: "6%",
+    },
+    {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      width: "6%",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      width: "3%",
+    },
+    {
+      title: "Quy cách",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+    },
+    {
+      title: "Thời gian bắt đầu",
+      dataIndex: "thoi_gian_bat_dau",
+      key: "thoi_gian_bat_dau",
+      align: "center",
+    },
+    {
+      title: "Thời gian kết thúc",
+      dataIndex: "thoi_gian_ket_thuc",
+      key: "thoi_gian_ket_thuc",
+      align: "center",
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
+      align: "center",
+    },
+    {
+      title: "Sản lượng sau QC",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+    },
+    {
+      title: "Số lượng phế",
+      dataIndex: "sl_phe",
+      key: "sl_phe",
+      align: "center",
+    },
+    {
+      title: "Đợt",
+      dataIndex: "dot",
+      key: "dot",
+      align: "center",
+    },
+    {
+      title: "Tên công nhân sản xuất",
+      dataIndex: "user_name",
+      key: "user_name",
+      align: "center",
+    },
+    {
+      title: "Lô sản xuất",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+    },
+    {
+      title: "Bước",
+      dataIndex: "step",
+      key: "step",
+      align: "center",
+      render: (value) => value ? 'Bước' : '',
+    },
+  ];
 
   const [dataTable1, setDataTable1] = useState([]);
   const [dataTable2, setDataTable2] = useState([]);
   const [dataTable3, setDataTable3] = useState([]);
 
-  function btn_click() {
+  function btn_click(page = 1, pageSize = 20) {
+    setPage(page);
+    setPageSize(pageSize);
     (async () => {
       setLoading(true);
       // const res1 = await getProduceOverall(params);
       // const res2 = await getProducePercent(params);
-      const res3 = await getProduceTable(params);
+      const res3 = await getProduceTable({...params, page, pageSize});
       // setDataTable1(res1.data);
       // setDataTable2(
       //   Object.keys(res2.data ?? {}).map((key) => {
@@ -349,7 +351,7 @@ const LichSuSanXuat = (props) => {
                   <Button
                     type="primary"
                     style={{ width: "80%" }}
-                    onClick={btn_click}
+                    onClick={()=>btn_click()}
                   >
                     Truy vấn
                   </Button>
@@ -547,9 +549,7 @@ const LichSuSanXuat = (props) => {
                   pageSize: pageSize,
                   showSizeChanger: true,
                   onChange: (page, pageSize) => {
-                    setPage(page);
-                    setPageSize(pageSize);
-                    setParams({ ...params, page: page, pageSize: pageSize });
+                    btn_click(page, pageSize);
                   },
                 }}
                 scroll={{
