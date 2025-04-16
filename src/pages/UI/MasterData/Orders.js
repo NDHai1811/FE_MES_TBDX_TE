@@ -387,7 +387,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 100,
+      width: 130,
     },
     {
       title: "Khách hàng",
@@ -469,7 +469,7 @@ const Orders = () => {
       dataIndex: "unit",
       key: "unit",
       align: "center",
-      width: 60,
+      width: 100,
       editable: true,
       checked: true,
     },
@@ -480,7 +480,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 100
+      width: 150
     },
     {
       title: "Phân loại 1",
@@ -508,7 +508,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "5%",
+      width: 200,
     },
     {
       title: "Phân loại 2",
@@ -525,24 +525,8 @@ const Orders = () => {
       dataIndex: "khuon_id",
       key: "khuon_id",
       align: "center",
-      width: "5%",
+      width: 100,
       editable: true
-    },
-    {
-      title: "Tốc độ",
-      dataIndex: "toc_do",
-      key: "toc_do",
-      align: "center",
-      editable: true,
-      checked: true,
-    },
-    {
-      title: "Thời gian thay model",
-      dataIndex: "tg_doi_model",
-      key: "tg_doi_model",
-      align: "center",
-      editable: true,
-      checked: true,
     },
     {
       title: "Ghi chú sóng",
@@ -559,6 +543,7 @@ const Orders = () => {
       key: "dai",
       align: "center",
       checked: true,
+      width: 60,
     },
     {
       title: "Rộng",
@@ -566,6 +551,7 @@ const Orders = () => {
       key: "rong",
       align: "center",
       checked: true,
+      width: 60,
     },
     {
       title: "Cao",
@@ -573,6 +559,7 @@ const Orders = () => {
       key: "cao",
       align: "center",
       checked: true,
+      width: 60,
     },
     {
       title: "Số ra",
@@ -581,6 +568,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "Khổ",
@@ -589,6 +577,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "Khổ tổng",
@@ -597,6 +586,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 80,
     },
     {
       title: "Dài tấm",
@@ -605,6 +595,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 80,
     },
     {
       title: "Số dao",
@@ -613,6 +604,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 80,
     },
     {
       title: "Số mét tới",
@@ -621,6 +613,25 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 100,
+    },
+    {
+      title: "Tốc độ",
+      dataIndex: "toc_do",
+      key: "toc_do",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: 80,
+    },
+    {
+      title: "Thời gian thay model",
+      dataIndex: "tg_doi_model",
+      key: "tg_doi_model",
+      align: "center",
+      editable: true,
+      checked: true,
+      width: 170,
     },
     {
       title: "Chia máy + p8",
@@ -629,7 +640,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "2%",
+      width: 120,
     },
     {
       title: "Mã layout",
@@ -638,7 +649,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "4%",
+      width: 100,
     },
     {
       title: "Order",
@@ -647,7 +658,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "6%",
+      width: 100,
     },
     {
       title: "SLG",
@@ -656,6 +667,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "SLT",
@@ -664,6 +676,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "TMO",
@@ -672,6 +685,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 100,
     },
     {
       title: "PO",
@@ -680,7 +694,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "3%",
+      width: 150,
     },
     {
       title: "STYLE",
@@ -689,7 +703,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: "10%",
+      width: 150,
     },
     {
       title: "STYLE NO",
@@ -698,6 +712,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 100,
     },
     {
       title: "COLOR",
@@ -706,6 +721,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 80,
     },
     {
       title: "ITEM",
@@ -714,6 +730,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "RM",
@@ -722,6 +739,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "SIZE",
@@ -730,6 +748,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "Đơn giá",
@@ -738,6 +757,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 90,
     },
     {
       title: "Thành tiền",
@@ -746,6 +766,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 90,
     },
     {
       title: "Xưởng giao",
@@ -754,6 +775,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 100,
     },
     {
       title: "Ghi chú khách hàng",
@@ -762,24 +784,25 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 150,
     },
     {
       title: "Ngày giao hàng trên đơn",
       dataIndex: "han_giao",
       key: "han_giao",
       align: "center",
-      width: "2.6%",
       editable: true,
       checked: true,
+      width: 180,
     },
     {
       title: "Ngày giao hàng SX",
       dataIndex: "han_giao_sx",
       key: "han_giao_sx",
       align: "center",
-      width: "2.6%",
       editable: true,
       checked: true,
+      width: 150,
     },
     {
       title: "Người đặt hàng",
@@ -788,15 +811,16 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 120,
     },
     {
       title: "Ngày đặt hàng",
       dataIndex: "ngay_dat_hang",
       key: "ngay_dat_hang",
       align: "center",
-      width: "2.6%",
       editable: true,
       checked: true,
+      width: 150,
     },
     {
       title: "Ghi chú của TBDX",
@@ -805,6 +829,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 150,
     },
     {
       title: "Đợt",
@@ -813,13 +838,14 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
+      width: 60,
     },
     {
       title: "Ngày thực hiện KH",
       dataIndex: "ngay_kh",
       key: "ngay_kh",
       align: "center",
-      width: '2%',
+      width: 150,
       render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.thoi_gian_bat_dau).format('DD-MM-YYYY') : '',
     },
     {
@@ -827,7 +853,7 @@ const Orders = () => {
       dataIndex: "creator",
       key: "creator",
       align: "center",
-      width: '2%',
+      width: 150,
       render: (value) => value?.name ?? '',
     },
     {
@@ -837,7 +863,7 @@ const Orders = () => {
       checked: true,
       align: "center",
       fixed: "right",
-      width: "2%",
+      width: 120,
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -1736,7 +1762,7 @@ const Orders = () => {
                   </Form.Item>
                   <Form.Item label="Ngày giao hàng trên đơn" className="mb-3">
                     <DatePicker
-                      allowClear={false}
+                      allowClear
                       placeholder="Ngày giao hàng trên đơn"
                       style={{ width: "100%" }}
                       onChange={(value) => {
@@ -1744,12 +1770,13 @@ const Orders = () => {
                         setPage(1);
                       }
                       }
+                      needConfirm={false}
                       value={params.han_giao}
                     />
                   </Form.Item>
                   <Form.Item label="Ngày giao hàng sản xuất" className="mb-3">
                     <DatePicker
-                      allowClear={false}
+                      allowClear
                       placeholder="Ngày giao hàng sản xuất"
                       style={{ width: "100%" }}
                       onChange={(value) => {
@@ -1757,12 +1784,13 @@ const Orders = () => {
                         setPage(1);
                       }
                       }
+                      needConfirm={false}
                       value={params.han_giao_sx}
                     />
                   </Form.Item>
                   <Form.Item label="Ngày thực hiện kế hoạch" className="mb-3">
                     <DatePicker
-                      allowClear={false}
+                      allowClear
                       placeholder="Ngày thực hiện kế hoạch"
                       style={{ width: "100%" }}
                       onChange={(value) => {
@@ -1770,7 +1798,28 @@ const Orders = () => {
                         setPage(1);
                       }
                       }
+                      needConfirm={false}
                       value={params.ngay_kh}
+                    />
+                  </Form.Item>
+                  <Form.Item label="Lên kế hoạch" className="mb-3">
+                    <Select
+                      allowClear
+                      onChange={(value) => {
+                        setParams({
+                          ...params,
+                          is_planned: value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      optionFilterProp="label"
+                      options={[
+                        { value: 0, label: 'Tất cả' },
+                        { value: 1, label: 'Đã tạo KH' },
+                        { value: 2, label: 'Chưa tạo KH' },
+                      ]}
+                      placeholder="Chọn loại thực hiện"
                     />
                   </Form.Item>
                   <Form.Item label="Đợt" className="mb-3">
@@ -1922,7 +1971,7 @@ const Orders = () => {
                 }}
                 rowClassName="editable-row"
                 scroll={{
-                  x: "380vw",
+                  // x: "380vw",
                   y: tableHeight,
                 }}
                 columns={mergedColumns.filter(

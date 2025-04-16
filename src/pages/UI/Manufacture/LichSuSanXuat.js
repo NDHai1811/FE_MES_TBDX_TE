@@ -236,14 +236,19 @@ const LichSuSanXuat = (props) => {
   const [dataTable2, setDataTable2] = useState([]);
   const [dataTable3, setDataTable3] = useState([]);
 
-  function btn_click(page = 1, pageSize = 20) {
-    setPage(page);
-    setPageSize(pageSize);
+  function btn_click(page = 1, pz = pageSize) {
+    setPageSize(pz);
+    var maxP = Math.ceil(totalPage / pz);
+    if (page > maxP) {
+      setPage(maxP);
+    } else {
+      setPage(page);
+    }
     (async () => {
       setLoading(true);
       // const res1 = await getProduceOverall(params);
       // const res2 = await getProducePercent(params);
-      const res3 = await getProduceTable({...params, page, pageSize});
+      const res3 = await getProduceTable({...params, page, pageSize: pz});
       // setDataTable1(res1.data);
       // setDataTable2(
       //   Object.keys(res2.data ?? {}).map((key) => {

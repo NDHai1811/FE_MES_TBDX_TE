@@ -553,6 +553,69 @@ const Buyer = () => {
                       placeholder="Nhập số lớp"
                     />
                   </Form.Item>
+                  <Form.Item label="Mặt F" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_f: e.target.value })
+                      }
+                      placeholder="Nhập Mặt F"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Sóng E" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_se: e.target.value })
+                      }
+                      placeholder="Nhập Sóng E"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Láng E" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_le: e.target.value })
+                      }
+                      placeholder="Nhập Láng E"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Sóng B" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_sb: e.target.value })
+                      }
+                      placeholder="Nhập Sóng B"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Láng B" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_lb: e.target.value })
+                      }
+                      placeholder="Nhập Láng B"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Sóng C" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_sc: e.target.value })
+                      }
+                      placeholder="Nhập Sóng C"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Láng C" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) =>
+                        setParams({ ...params, ma_cuon_lc: e.target.value })
+                      }
+                      placeholder="Nhập Láng C"
+                    />
+                  </Form.Item>
                 </Form>
               </div>
             </Card>

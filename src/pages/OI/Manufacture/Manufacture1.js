@@ -258,7 +258,11 @@ const Manufacture1 = (props) => {
       dataIndex: "kho_tong",
       key: "kho_tong",
       align: "center",
-      width: 60
+      width: 60,
+      sorter: {
+        compare: (a, b) => a.kho_tong - b.kho_tong,
+        multiple: 3,
+      },
     },
     {
       title: "Dài tấm",
