@@ -27,6 +27,8 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   createUsers,
   deleteUsers,
+  disableUsers,
+  enableUsers,
   exportUsers,
   getDepartments,
   getUserRoles,
@@ -34,7 +36,7 @@ import {
   updateUsers,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
-import { CheckSquareTwoTone } from "@ant-design/icons";
+import { CheckSquareTwoTone, DeleteOutlined, EditOutlined, StopOutlined, SyncOutlined } from "@ant-design/icons";
 
 const Users = () => {
   document.title = "Quản lý tài khoản";
@@ -96,6 +98,31 @@ const Users = () => {
       key: "usage_time",
       align: "center",
     },
+    {
+      title: "Thao tác",
+      dataIndex: "action",
+      key: "action",
+      align: "center",
+      render: (value, record) => (
+        <Space size="middle">
+          <EditOutlined
+            className="edit-btn"
+            onClick={() => editRecord(record)}
+          />
+          {record?.deleted_at ? <SyncOutlined className="check-btn" onClick={() => enableRecord(record)} title="Khôi phục" /> : <StopOutlined className="delete-btn" onClick={() => disableRecord(record)} title="Vô hiệu" />}
+          <Popconfirm
+            title="Xoá tài khoản vĩnh viễn"
+            description="Bạn có chắc xoá tài khoản này?"
+            onConfirm={() => deleteRecord(record)}
+            placement="topRight"
+            okText="Có"
+            cancelText="Không"
+          >
+            <DeleteOutlined className="delete-btn" title="Xoá" />
+          </Popconfirm>
+        </Space>
+      ),
+    }
   ];
 
   function btn_click() {
@@ -105,7 +132,7 @@ const Users = () => {
   const [data, setData] = useState([]);
   const loadListTable = async (params) => {
     setLoading(true);
-    const res = await getUsers(params);
+    const res = await getUsers({ ...params, all_user: true });
     setData(
       res.map((e) => {
         return { ...e, key: e.id };
@@ -119,7 +146,7 @@ const Users = () => {
       var res = await getUserRoles();
       setRoles(res);
       var departmentRequest = await getDepartments();
-      setDepartments(departmentRequest.map(e=>({...e, value: e.id, label: e.name})));
+      setDepartments(departmentRequest.map(e => ({ ...e, value: e.id, label: e.name })));
     })();
   }, []);
 
@@ -161,25 +188,28 @@ const Users = () => {
     setListCheck([])
   };
 
-  const deleteRecord = async () => {
-    if (listCheck.length > 0) {
-      const res = await deleteUsers(listCheck);
-      setListCheck([]);
-      loadListTable(params);
-    } else {
-      message.info("Chưa chọn bản ghi cần xóa");
-    }
+  const deleteRecord = async (record) => {
+    const res = await deleteUsers({ id: record?.id });
+    setListCheck([]);
+    loadListTable(params);
   };
-  const editRecord = () => {
+
+  const disableRecord = async (record) => {
+    const res = await disableUsers({ id: record?.id });
+    setListCheck([]);
+    loadListTable(params);
+  };
+
+  const enableRecord = async (record) => {
+    const res = await enableUsers({ id: record?.id });
+    setListCheck([]);
+    loadListTable(params);
+  };
+
+  const editRecord = (record) => {
+    form.setFieldsValue({ ...record, roles: record?.roles.map((e) => e.id) });
+    setOpenMdl(true);
     setIsEdit(true);
-    if (listCheck.length !== 1) {
-      message.info("Chọn 1 bản ghi để chỉnh sửa");
-    } else {
-      const result = data.find((record) => record.id === listCheck[0]);
-      console.log(result?.roles.map((e) => e.id));
-      form.setFieldsValue({ ...result, roles: result?.roles.map((e) => e.id) });
-      setOpenMdl(true);
-    }
   };
   const insertRecord = () => {
     setIsEdit(false);
@@ -307,22 +337,22 @@ const Users = () => {
                 >
                   Export Excel
                 </Button>
-                <Button
+                {/* <Button
                   type="primary"
                   onClick={editRecord}
                   disabled={listCheck.length <= 0}
                 >
                   Edit
-                </Button>
+                </Button> */}
                 <Button type="primary" onClick={insertRecord}>
                   Insert
                 </Button>
-                <Popconfirm
+                {/* <Popconfirm
                   title="Xoá bản ghi"
                   description={
                     "Bạn có chắc xoá " + listCheck.length + " bản ghi đã chọn?"
                   }
-                  onConfirm={deleteRecord}
+                  onConfirm={() => deleteRecord()}
                   okText="Có"
                   cancelText="Không"
                   placement="bottomRight"
@@ -330,7 +360,7 @@ const Users = () => {
                   <Button type="primary" disabled={listCheck.length <= 0}>
                     Delete
                   </Button>
-                </Popconfirm>
+                </Popconfirm> */}
               </Space>
             }
           >
@@ -345,7 +375,7 @@ const Users = () => {
                 }}
                 columns={col_detailTable}
                 dataSource={data}
-                rowSelection={rowSelection}
+                // rowSelection={rowSelection}
               />
             </Spin>
           </Card>

@@ -2,3 +2,18 @@
 .system-usage-card .ant-card-body::after {
   content: none !important;
 }
+.edit-btn{
+  font-size: 18px;
+  color: #1890ff;
+  cursor: pointer;
+}
+.delete-btn{
+  font-size: 18px;
+  color: #ff4d4f;
+  cursor: pointer;
+}
+.check-btn{
+  font-size: 18px;
+  color: #52c41a;
+  cursor: pointer;
+}

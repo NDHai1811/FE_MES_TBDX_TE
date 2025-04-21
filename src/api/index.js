@@ -310,6 +310,14 @@ export async function deleteUsers(params) {
   const res = await axios.post("/users/delete", params);
   return res.data;
 }
+export async function disableUsers(params) {
+  const res = await axios.post("/users/disable", params);
+  return res.data;
+}
+export async function enableUsers(params) {
+  const res = await axios.post("/users/enable", params);
+  return res.data;
+}
 export async function exportUsers(params) {
   const res = await axios.get("/users/export", { params });
   return res;
