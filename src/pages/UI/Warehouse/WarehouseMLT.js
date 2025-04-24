@@ -634,7 +634,7 @@ const WarehouseMLT = (props) => {
                       }
                     />
                   </Form.Item>
-                  {currentTab === '2' && <Form.Item
+                  {/* {currentTab === '2' && <Form.Item
                     label={"Ca làm việc"}
                     className="mb-3"
                   >
@@ -646,7 +646,7 @@ const WarehouseMLT = (props) => {
                       }
                       allowClear
                     />
-                  </Form.Item>}
+                  </Form.Item>} */}
                 </Form>
               </div>
             </Card>

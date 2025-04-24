@@ -40,6 +40,13 @@ const PopupCreateDeliveryNote = (props) => {
   const [roleList, setRoleList] = useState([]);
   const columns = [
     {
+      title: 'Order Code',
+      dataIndex: 'order_id',
+      align: 'center',
+      isSearch: true,
+      width: 180,
+    },
+    {
       title: 'Thời gian xuất',
       dataIndex: 'ngay_xuat',
       align: 'center',

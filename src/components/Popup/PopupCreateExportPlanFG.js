@@ -38,6 +38,13 @@ const PopupCreateExportPlanFG = (props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const columns = [
     {
+      title: 'Order Code',
+      dataIndex: 'id',
+      align: 'center',
+      isSearch: true,
+      width: 180,
+    },
+    {
       title: "Khách hàng",
       dataIndex: "short_name",
       key: "short_name",
