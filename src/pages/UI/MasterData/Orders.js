@@ -1497,6 +1497,14 @@ const Orders = () => {
       form.setFieldsValue(formData);
     }
   }
+
+  const rowClassName = (record) => {
+    var customClassName = "";
+    if(record?.red_text){
+      customClassName = "red-text";
+    }
+    return "editable-row " + customClassName;
+  }
   return (
     <>
       {contextHolder}
@@ -1969,7 +1977,7 @@ const Orders = () => {
                     cell: EditableCell,
                   },
                 }}
-                rowClassName="editable-row"
+                rowClassName={rowClassName}
                 scroll={{
                   // x: "380vw",
                   y: tableHeight,

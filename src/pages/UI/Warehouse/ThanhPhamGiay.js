@@ -60,7 +60,7 @@ const ThanhPhamGiay = (props) => {
       key: "mdh",
       align: "center",
       fixed: 'left',
-      width: 70,
+      width: 90,
       render: (value) => value || "-",
     },
     {
@@ -70,6 +70,15 @@ const ThanhPhamGiay = (props) => {
       align: "center",
       fixed: 'left',
       width: 50,
+      render: (value) => value || "-",
+    },
+    {
+      title: "Order Code",
+      dataIndex: "order_id",
+      key: "order_id",
+      align: "center",
+      fixed: 'left',
+      width: 120,
       render: (value) => value || "-",
     },
     {
@@ -347,34 +356,37 @@ const ThanhPhamGiay = (props) => {
                 <Divider>Điều kiện truy vấn</Divider>
                 <div className="mb-3">
                   <Form.Item label="Vị trí" className="mb-3" name={"locator_id"}>
-                    <Input placeholder="Nhập mã vị trí" />
+                    <Input placeholder="Nhập mã vị trí" allowClear/>
                   </Form.Item>
                   <Form.Item label="Mã tem (pallet)" className="mb-3" name={"pallet_id"}>
-                    <Input placeholder="Nhập mã tem (pallet)" />
+                    <Input placeholder="Nhập mã tem (pallet)" allowClear/>
                   </Form.Item>
                   <Form.Item label="Lô SX" className="mb-3" name={"lo_sx"}>
-                    <Input placeholder="Nhập lô sx" />
+                    <Input placeholder="Nhập lô sx" allowClear/>
                   </Form.Item>
                   <Form.Item label="Khách hàng" className="mb-3" name={"khach_hang"}>
-                    <Input placeholder="Nhập mã kh" />
+                    <Input placeholder="Nhập mã kh" allowClear/>
+                  </Form.Item>
+                  <Form.Item label="Order Code" className="mb-3" name={"order_id"}>
+                    <Input placeholder="Nhập mã đơn hàng" allowClear/>
                   </Form.Item>
                   <Form.Item label="Đơn hàng" className="mb-3" name={"mdh"}>
-                    <Input placeholder="Nhập đơn hàng" />
+                    <Input placeholder="Nhập đơn hàng" allowClear/>
                   </Form.Item>
                   <Form.Item label="MQL" className="mb-3" name={"mql"}>
-                    <Input placeholder="Nhập MQL" />
+                    <Input placeholder="Nhập MQL" allowClear/>
                   </Form.Item>
                   <Form.Item label="Kích thước" className="mb-3" name={"kich_thuoc"}>
-                    <Input placeholder="Nhập kích thước" />
+                    <Input placeholder="Nhập kích thước" allowClear/>
                   </Form.Item>
                   <Form.Item label="L" className="mb-3" name={"length"}>
-                    <Input placeholder="Nhập L" />
+                    <Input placeholder="Nhập L" allowClear/>
                   </Form.Item>
                   <Form.Item label="W" className="mb-3" name={"width"}>
-                    <Input placeholder="Nhập W" />
+                    <Input placeholder="Nhập W" allowClear/>
                   </Form.Item>
                   <Form.Item label="H" className="mb-3" name={"height"}>
-                    <Input placeholder="Nhập H" />
+                    <Input placeholder="Nhập H" allowClear/>
                   </Form.Item>
                   {/* <Form.Item label="SL tồn" className="mb-3" name={"sl_ton"} >
                     <Slider min={0} max={999} range onChange={(value)=>formSearch.setFieldsValue({ sl_ton_min: value[0], sl_ton_max: value[1] })}/>

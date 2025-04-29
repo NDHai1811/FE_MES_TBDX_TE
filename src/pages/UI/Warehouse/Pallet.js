@@ -186,10 +186,10 @@ const Pallet = (props) => {
     setExportLoading(false);
   };
   const [loading, setLoading] = useState(false);
-  async function btn_click(page = 1, pageSize = 20) {
+  async function btn_click(page = 1, pz = pageSize) {
     setPage(page);
-    setPageSize(pageSize)
-    loadDataTable({ ...params, page, pageSize });
+    setPageSize(pz)
+    loadDataTable({ ...params, page, pageSize: pz });
   }
   useEffect(() => {
     btn_click();
@@ -330,8 +330,6 @@ const Pallet = (props) => {
                 pageSize: pageSize,
                 showSizeChanger: true,
                 onChange: (page, pageSize) => {
-                  setPage(page);
-                  setPageSize(pageSize);
                   btn_click(page, pageSize)
                 },
               }}
