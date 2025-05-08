@@ -230,6 +230,24 @@ const MachineAssignment = () => {
                                             placeholder="Nhập tên nhân viên"
                                         />
                                     </Form.Item>
+                                    <Form.Item label="Tổ" className="mb-3">
+                                        <Input
+                                            allowClear
+                                            onChange={(e) =>
+                                                setParams({ ...params, line_name: e.target.value })
+                                            }
+                                            placeholder="Nhập tổ"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="Máy" className="mb-3">
+                                        <Input
+                                            allowClear
+                                            onChange={(e) =>
+                                                setParams({ ...params, machine_id: e.target.value })
+                                            }
+                                            placeholder="Nhập mã máy"
+                                        />
+                                    </Form.Item>
                                     <Button hidden htmlType="submit"></Button>
                                 </Form>
                             </div>

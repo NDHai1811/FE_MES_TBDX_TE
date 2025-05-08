@@ -134,6 +134,8 @@ const Export = (props) => {
           onChange={onChangeDeliveryNote}
           onClear={loadDataTable}
           style={{ width: "100%" }}
+          showSearch
+          optionFilterProp="label"
           bordered={false}
         />
       ),
