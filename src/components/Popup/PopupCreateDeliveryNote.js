@@ -261,9 +261,9 @@ const PopupCreateDeliveryNote = (props) => {
         });
       });
     },
-    getCheckboxProps: (record) => ({
-      disabled: record.sl_ton <= 0,
-    }),
+    // getCheckboxProps: (record) => ({
+    //   disabled: record.sl_ton <= 0,
+    // }),
     optionFilterProp: 'label',
     onSelectAll: (selected, selectedRows, changeRows) => !selected && onDeselectOrders(changeRows),
     onSelect: (record, selected, selectedRows, nativeEvent) => !selected && onDeselectOrders([record])

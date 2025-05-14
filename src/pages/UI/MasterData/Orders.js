@@ -115,6 +115,10 @@ const layoutTypes = [
     label: "P8",
     value: "P8",
   },
+  {
+    label: "0",
+    value: "0",
+  },
 ];
 const PL1s = [
   {
@@ -386,7 +390,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      fixed: "left",
+      // fixed: "left",
       width: 130,
     },
     {
@@ -397,7 +401,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 100,
+      width: 150,
     },
     {
       title: "MDH",
@@ -407,7 +411,7 @@ const Orders = () => {
       editable: true,
       checked: true,
       fixed: "left",
-      width: 115,
+      width: 120,
     },
     {
       title: "MQL",
@@ -416,7 +420,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 50,
+      width: 60,
       fixed: "left",
     },
     {
@@ -426,7 +430,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 60,
+      width: 70,
     },
     {
       title: "W",
@@ -435,7 +439,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 60,
+      width: 70,
     },
     {
       title: "H",
@@ -444,7 +448,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 60,
+      width: 70,
     },
     {
       title: "Kích thước ĐH",
@@ -453,7 +457,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 140
+      width: 180
     },
     {
       title: "SL",
@@ -487,7 +491,7 @@ const Orders = () => {
       dataIndex: "phan_loai_1",
       key: "phan_loai_1",
       align: "center",
-      width: 90,
+      width: 120,
       editable: true,
       checked: true,
       render: (value) => PL1s.find((e) => e.value === value)?.label,
@@ -497,7 +501,7 @@ const Orders = () => {
       dataIndex: "quy_cach_drc",
       key: "quy_cach_drc",
       align: "center",
-      width: 120,
+      width: 180,
       editable: true,
       checked: true,
     },
@@ -508,7 +512,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 200,
+      width: 240,
     },
     {
       title: "Phân loại 2",
@@ -525,7 +529,7 @@ const Orders = () => {
       dataIndex: "khuon_id",
       key: "khuon_id",
       align: "center",
-      width: 100,
+      width: 150,
       editable: true
     },
     {
@@ -649,7 +653,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 100,
+      width: 160,
     },
     {
       title: "Order",
@@ -676,7 +680,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 60,
+      width: 100,
     },
     {
       title: "TMO",
@@ -712,7 +716,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 100,
+      width: 150,
     },
     {
       title: "COLOR",
@@ -757,7 +761,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 90,
+      width: 120,
     },
     {
       title: "Thành tiền",
@@ -766,7 +770,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 90,
+      width: 110,
     },
     {
       title: "Xưởng giao",
@@ -775,7 +779,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 100,
+      width: 120,
     },
     {
       title: "Ghi chú khách hàng",
@@ -838,7 +842,7 @@ const Orders = () => {
       align: "center",
       editable: true,
       checked: true,
-      width: 60,
+      width: 90,
     },
     {
       title: "Ngày thực hiện KH",
@@ -988,7 +992,7 @@ const Orders = () => {
         filteredOptions = layoutTypes;
         break;
       case "layout_id":
-        filteredOptions = layouts;
+        filteredOptions = layouts.filter(e => e?.customer_id === record?.short_name);
         break;
       case "phan_loai_1":
         filteredOptions = PL1s;
@@ -1125,6 +1129,7 @@ const Orders = () => {
     onChange: (selectedRowKeys, selectedRows) => {
       setListCheck(selectedRowKeys);
     },
+    fixed: "left",
   };
 
   const getBuyerList = async () => {
@@ -1140,7 +1145,7 @@ const Orders = () => {
     res.map((val) => {
       if (!check_arr.includes(val.layout_id)) {
         check_arr.push(val.layout_id);
-        result.push({ label: val.layout_id, value: val.layout_id });
+        result.push({ ...val, label: val.layout_id, value: val.layout_id });
       }
     })
     setLayouts(result);
@@ -1662,6 +1667,35 @@ const Orders = () => {
                         setPage(1);
                       }}
                       placeholder="Nhập kích thước"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Chia máy + p8" className="mb-3">
+                    <Select
+                      allowClear
+                      options={[{value: 'is_null', label: 'Chưa có Chia máy + p8'}, ...layoutTypes]}
+                      onChange={(value) => {
+                        setParams({
+                          ...params,
+                          layout_type: value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập chia máy + p8"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Mã layout" className="mb-3">
+                    <Input
+                      allowClear
+                      onChange={(e) => {
+                        setParams({
+                          ...params,
+                          layout_id: e.target.value,
+                          page: 1,
+                        });
+                        setPage(1);
+                      }}
+                      placeholder="Nhập mã layout"
                     />
                   </Form.Item>
                   <Form.Item label="Order" className="mb-3">
