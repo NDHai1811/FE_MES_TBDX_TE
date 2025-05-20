@@ -868,8 +868,14 @@ const Orders = () => {
       align: "center",
       fixed: "right",
       width: 120,
+      hidden: !(userProfile?.permission ?? []).includes('edit-order') && !(userProfile?.permission ?? []).includes('delete-order') && !(userProfile?.permission ?? []).includes('split-order') && !(userProfile?.permission ?? []).includes('restore-order'),
       render: (_, record) => {
         const editable = isEditing(record);
+        const permissions = userProfile?.permission ?? []
+        const editOrderPermission = permissions.includes('edit-order');
+        const deleteOrderPermission = permissions.includes('delete-order');
+        const splitOrderPermission = permissions.includes('split-order');
+        const restoreOrderPermission = permissions.includes('restore-order');
         return editable ? (
           <span className="d-flex justify-content-evenly flex-wrap">
             <Button
@@ -885,20 +891,20 @@ const Orders = () => {
             </Popconfirm>
           </span>
         ) : (
-          <span>
-            <LinkOutlined
+          <span className="d-flex justify-content-evenly flex-wrap">
+            {splitOrderPermission && <LinkOutlined
               title="Tách"
               style={{ color: "#1677ff", fontSize: 18 }}
               onClick={() => showModal(record)}
-            />
-            <EditOutlined
+            />}
+            {editOrderPermission && <EditOutlined
               title="Chỉnh sửa"
               style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
               disabled={editingKey !== ""}
               onClick={() => edit(record)}
-            />
+            />}
             {!record?.deleted_at ?
-              <Popconfirm
+              (deleteOrderPermission && <Popconfirm
                 title="Bạn có chắc chắn muốn xóa?"
                 onConfirm={() => onDetele([record.id])}
                 placement="topRight"
@@ -911,14 +917,14 @@ const Orders = () => {
                     fontSize: 18,
                   }}
                 />
-              </Popconfirm>
+              </Popconfirm>)
               :
-              <UndoOutlined
+              (restoreOrderPermission && <UndoOutlined
                 title="Khôi phục"
                 style={{ color: "#1677ff", fontSize: 18, marginLeft: 8 }}
                 disabled={editingKey !== ""}
                 onClick={() => restore(record)}
-              />
+              />)
             }
           </span>
         );
@@ -926,16 +932,7 @@ const Orders = () => {
     },
   ];
 
-  const mergedColumns = colDetailTable.filter(col => {
-    if (col.dataIndex === 'action') {
-      if (!userProfile || !(userProfile?.permission ?? []).includes('edit-order')) {
-        return false;
-      }
-      return true;
-    } else {
-      return true
-    }
-  }).map((col) => {
+  const mergedColumns = colDetailTable.map((col) => {
     if (!editableColumns.includes(col.dataIndex)) {
       return col;
     }
@@ -974,6 +971,16 @@ const Orders = () => {
     };
   });
 
+  function removeVietnameseTones(str) {
+    return str
+      // normalize về dạng NFD, tách ký tự + dấu thành 2 phần
+      .normalize('NFD')
+      // lọc bỏ các ký tự dấu (diacritics)
+      .replace(/[\u0300-\u036f]/g, '')
+      // (Tuỳ chọn) chuyển ơ, ă, â… về ký tự thường
+      .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+  }
+
   const options = (dataIndex) => {
     var record = data.find((e) => e.id === editingKey);
     let filteredOptions = [];
@@ -992,7 +999,17 @@ const Orders = () => {
         filteredOptions = layoutTypes;
         break;
       case "layout_id":
-        filteredOptions = layouts.filter(e => e?.customer_id === record?.short_name);
+        filteredOptions = layouts.filter(e => {
+          // So sánh không dấu + không phân biệt hoa thường
+          const a = removeVietnameseTones(e?.customer_id || '').toLowerCase();
+          const b = removeVietnameseTones(record?.short_name || '').toLowerCase();
+
+          if (a === b) {
+            return true;
+          } else {
+            return false;
+          }
+        });
         break;
       case "phan_loai_1":
         filteredOptions = PL1s;
@@ -1027,7 +1044,7 @@ const Orders = () => {
         break;
       case 'short_name':
         var record = data.find((e) => e.id === editingKey);
-        filteredOptions = customerShorts.filter(e=>e?.customer_id === record?.customer_id);
+        filteredOptions = customerShorts.filter(e => e?.customer_id === record?.customer_id);
         break;
       default:
         break;
@@ -1505,7 +1522,7 @@ const Orders = () => {
 
   const rowClassName = (record) => {
     var customClassName = "";
-    if(record?.red_text){
+    if (record?.red_text) {
       customClassName = "red-text";
     }
     return "editable-row " + customClassName;
@@ -1672,7 +1689,7 @@ const Orders = () => {
                   <Form.Item label="Chia máy + p8" className="mb-3">
                     <Select
                       allowClear
-                      options={[{value: 'is_null', label: 'Chưa có Chia máy + p8'}, ...layoutTypes]}
+                      options={[{ value: 'is_null', label: 'Chưa có Chia máy + p8' }, ...layoutTypes]}
                       onChange={(value) => {
                         setParams({
                           ...params,
@@ -1952,7 +1969,7 @@ const Orders = () => {
                   }}
                 >
                 </Upload>
-                <Upload
+                {(userProfile?.permission ?? []).includes('create-order') && <Upload
                   showUploadList={false}
                   name="files"
                   action={baseURL + "/api/orders/import"}
@@ -1980,10 +1997,10 @@ const Orders = () => {
                   <Button type="primary" loading={loadingExport}>
                     Upload Excel
                   </Button>
-                </Upload>
-                <Button type="primary" onClick={onAdd}>
+                </Upload>}
+                {(userProfile?.permission ?? []).includes('create-order') && <Button type="primary" onClick={onAdd}>
                   Thêm đơn hàng
-                </Button>
+                </Button>}
                 <Button type="primary" onClick={() => exportFile()} loading={exportLoading} className="w-100">Tải file excel</Button>
               </Space>
             }

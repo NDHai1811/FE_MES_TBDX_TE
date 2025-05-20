@@ -132,8 +132,8 @@ const TaoKeHoachSanXuat = () => {
         var thu_tu_cu = record.thu_tu_uu_tien;
         var thu_tu_moi = row.thu_tu_uu_tien;
         const items = [...previewPlan].map((val) => {
-            var element = {...val};
-            if(thu_tu_moi == val.thu_tu_uu_tien){
+            var element = { ...val };
+            if (thu_tu_moi == val.thu_tu_uu_tien) {
                 element = { ...val, thu_tu_uu_tien: thu_tu_cu };
             }
             if (val.key === editingKey) {
@@ -260,7 +260,7 @@ const TaoKeHoachSanXuat = () => {
             dataIndex: 'khach_hang',
             key: 'khach_hang',
             align: 'center',
-            width: '10%'
+            width: '6%'
         },
         {
             title: 'MDH',
@@ -312,21 +312,48 @@ const TaoKeHoachSanXuat = () => {
             width: '5%'
         },
         {
-            title: 'Ghi chú TBDX',
-            dataIndex: 'note_2',
-            key: 'note_2',
+            title: 'PO',
+            dataIndex: 'po',
+            key: 'po',
             align: 'center',
+            width: '5%',
+            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+        },
+        {
+            title: 'Kích thước',
+            dataIndex: 'kich_thuoc',
+            key: 'kich_thuoc',
+            align: 'center',
+            width: '5%',
+            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+        },
+        {
+            title: 'Chia máy + p8',
+            dataIndex: 'layout_type',
+            key: 'layout_type',
+            align: 'center',
+            width: '5%',
+            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+        },
+        {
+            title: 'Mã layout',
+            dataIndex: 'layout_id',
+            key: 'layout_id',
+            align: 'center',
+            width: '5%',
+            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
         },
         {
             title: 'Kết cấu giấy',
             dataIndex: 'ket_cau_giay',
             key: 'ket_cau_giay',
             align: 'center',
+            width: '12%',
         },
         {
-            title: 'Mã Layout',
-            dataIndex: 'layout_id',
-            key: 'layout_id',
+            title: 'Ghi chú TBDX',
+            dataIndex: 'note_2',
+            key: 'note_2',
             align: 'center',
         },
         {
@@ -390,18 +417,18 @@ const TaoKeHoachSanXuat = () => {
     const [exportLoading, setExportLoading] = useState(false);
     const exportFile = async () => {
         setExportLoading(false);
-        if(planParams.line_id === '30'){
+        if (planParams.line_id === '30') {
             const res = await exportPreviewPlan({ plans: previewPlan, start_time: planParams.start_date });
             if (res.success) {
                 window.location.href = baseURL + res.data;
             }
-        }else if(planParams.line_id === '33'){
+        } else if (planParams.line_id === '33') {
             const res = await exportPreviewPlanXaLot({ plans: previewPlan, start_time: planParams.start_date });
             if (res.success) {
                 window.location.href = baseURL + res.data;
             }
         }
-        
+
         setExportLoading(false);
     };
 
@@ -604,7 +631,7 @@ const TaoKeHoachSanXuat = () => {
                         <Col span={4}>
                             <Form.Item
                                 label="Khách hàng"
-                                className="mb-3"
+                                className="mb-1"
                             >
                                 <Select
                                     allowClear
@@ -627,7 +654,7 @@ const TaoKeHoachSanXuat = () => {
                         <Col span={4}>
                             <Form.Item
                                 label="MDH"
-                                className="mb-3"
+                                className="mb-1"
                             >
                                 <Select
                                     mode="tags"
@@ -647,7 +674,7 @@ const TaoKeHoachSanXuat = () => {
                         <Col span={4}>
                             <Form.Item
                                 label="Đợt"
-                                className="mb-3"
+                                className="mb-1"
                             >
                                 <Select
                                     mode="tags"
@@ -667,7 +694,7 @@ const TaoKeHoachSanXuat = () => {
                         <Col span={6}>
                             <Form.Item
                                 label="Bắt đầu"
-                                className="mb-3"
+                                className="mb-1"
                             >
                                 <DatePicker
                                     allowClear={false}
@@ -683,10 +710,10 @@ const TaoKeHoachSanXuat = () => {
                         <Col span={6}>
                             <Form.Item
                                 label="Kết thúc"
-                                className="mb-3"
+                                className="mb-1"
                             >
                                 <DatePicker
-                                allowClear={false}
+                                    allowClear={false}
                                     placeholder="Kết thúc"
                                     style={{ width: "100%" }}
                                     onChange={(value) =>
@@ -696,9 +723,75 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
+                        {listMachines.find(e=>e.value === orderParams.machine_id)?.line_id == 31 && <>
+                            <Col span={6}>
+                                <Form.Item
+                                    label="PO"
+                                    className="mb-3"
+                                >
+                                    <Input
+                                        allowClear={true}
+                                        placeholder="PO"
+                                        style={{ width: "100%" }}
+                                        onChange={(e) =>
+                                            setOrderParams({ ...orderParams, po: e.target.value })
+                                        }
+                                        value={orderParams.po}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item
+                                    label="Kích thước"
+                                    className="mb-3"
+                                >
+                                    <Input
+                                        allowClear={true}
+                                        placeholder="Kích thước"
+                                        style={{ width: "100%" }}
+                                        onChange={(e) =>
+                                            setOrderParams({ ...orderParams, kich_thuoc: e.target.value })
+                                        }
+                                        value={orderParams.kich_thuoc}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item
+                                    label="Chia máy + p8"
+                                    className="mb-3"
+                                >
+                                    <Input
+                                        allowClear={true}
+                                        placeholder="Chia máy + p8"
+                                        style={{ width: "100%" }}
+                                        onChange={(e) =>
+                                            setOrderParams({ ...orderParams, layout_type: e.target.value })
+                                        }
+                                        value={orderParams.layout_type}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                                <Form.Item
+                                    label="Mã layout"
+                                    className="mb-3"
+                                >
+                                    <Input
+                                        allowClear={true}
+                                        placeholder="Mã layout"
+                                        style={{ width: "100%" }}
+                                        onChange={(e) =>
+                                            setOrderParams({ ...orderParams, layout_id: e.target.value })
+                                        }
+                                        value={orderParams.layout_id}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </>}
                     </Row>
                 </Form>
-                <Button type="primary" className="mb-1" onClick={insertOrder}>Thêm đơn hàng</Button>
+                <Button type="primary" className="mb-1 mt-2" onClick={insertOrder}>Thêm đơn hàng</Button>
                 <Table size='small' bordered
                     loading={loadingOrders}
                     pagination={true}
