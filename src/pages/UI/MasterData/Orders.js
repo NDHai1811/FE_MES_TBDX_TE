@@ -62,7 +62,7 @@ const EditableCell = ({
   let inputNode;
   switch (inputType) {
     case "number":
-      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)} />;
+      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)}/>;
       break;
     case "select":
       inputNode = (
@@ -71,11 +71,12 @@ const EditableCell = ({
           options={options}
           onChange={(value) => onSelect(value, dataIndex)}
           showSearch
+          allowClear
         />
       );
       break;
     default:
-      inputNode = <Input onChange={(event) => onChange(event.target.value, dataIndex)} />;
+      inputNode = <Input onChange={(event) => onChange(event.target.value, dataIndex)}/>;
   }
   const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
@@ -86,6 +87,7 @@ const EditableCell = ({
             format={COMMON_DATE_TABLE_FORMAT_REQUEST}
             placeholder="Chọn ngày"
             value={dateValue}
+            allowClear
             onChange={(value) => onChange(value, dataIndex)}
           />
         ) : (
@@ -1326,6 +1328,12 @@ const Orders = () => {
 
   const onUpdate = async () => {
     const row = await form.validateFields();
+    Object.keys(row).forEach(key => {
+      if (row[key] === undefined) {
+        row[key] = null;
+      }
+    });
+    console.log(row);
     const item = data.find((val) => val.key === editingKey);
 
     if (item) {
