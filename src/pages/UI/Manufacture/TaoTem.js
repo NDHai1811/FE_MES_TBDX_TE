@@ -233,6 +233,13 @@ const TaoTem = () => {
             width: 150
         },
         {
+            title: "Đợt",
+            dataIndex: "dot",
+            key: "dot",
+            align: "center",
+            width: 100
+        },
+        {
             title: "Ghi chú",
             dataIndex: "note",
             key: "note",
@@ -286,7 +293,7 @@ const TaoTem = () => {
                             disabled={editingKey !== ""}
                             onClick={() => edit(record)}
                         />
-                        <Popconfirm title="Bạn có chắc chắn muốn xoá?" onConfirm={()=>deleteRecord(record)} placement="topRight">
+                        <Popconfirm title="Bạn có chắc chắn muốn xoá?" onConfirm={() => deleteRecord(record)} placement="topRight">
                             <DeleteOutlined
                                 style={{ color: "red", fontSize: 18 }}
                                 disabled={editingKey !== ""}
@@ -299,7 +306,7 @@ const TaoTem = () => {
     ];
     const deleteRecord = async (record) => {
         var res = await deleteTem(record?.id);
-        if(res.success){
+        if (res.success) {
             loadListTable();
         }
     }
@@ -791,6 +798,19 @@ const TaoTem = () => {
                                             mode="tags"
                                             placeholder="Nhập MQL"
                                             options={[]}
+                                        />
+                                    </Form.Item>
+                                    <Form.Item label="Đợt" className="mb-3">
+                                        <Input
+                                            allowClear
+                                            onChange={(e) => {
+                                                setParams({
+                                                    ...params,
+                                                    dot: e.target.value,
+                                                    page: 1,
+                                                });
+                                            }}
+                                            placeholder="Nhập đợt"
                                         />
                                     </Form.Item>
                                     <Button hidden htmlType="submit"></Button>

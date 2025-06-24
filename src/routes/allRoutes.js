@@ -62,6 +62,7 @@ import ShiftAssignment from "../pages/UI/MasterData/ShiftAssignment";
 import Register from "../pages/OI/VOC/Register";
 import VOCRegister from "../pages/UI/VOC/VOCRegister";
 import SystemUsage from "../pages/UI/MasterData/SystemUsage";
+import Chat from "../pages/Chat";
 
 const authProtectedRoutes = [
   // Authentication Page
@@ -114,6 +115,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/bao-tri/maintenance/create", component: CreateMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/master-data/bao-tri/maintenance/edit/:maintenanceId", component: EditMaintenance, permission: 'ui-master-data-bao-tri-maintenance' },
   { path: "/ui/system/usage", component: SystemUsage, label: 'Tỷ lệ sử dụng MES', color: "green"},
+  { path: ["/ui/chat", "/ui/chat/:chat_id"], component: Chat },
 
   //OI
   // { path: ["/tao-tem"], component: InTem },

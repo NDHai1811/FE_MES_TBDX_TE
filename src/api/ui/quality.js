@@ -36,3 +36,7 @@ export async function exportIQCHistory(params) {
     const res = await axios.get("ui/quality/iqc-history/export", { params });
     return res;
 }
+export async function getQCDetailHistory(params) {
+    const res = await axios.get("ui/quality/qc-history/detail", { params });
+    return res;
+}

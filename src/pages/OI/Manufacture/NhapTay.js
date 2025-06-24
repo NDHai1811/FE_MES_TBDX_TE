@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+import { EditOutlined, PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -12,7 +12,8 @@ import {
   InputNumber,
   message,
   Checkbox,
-  Form
+  Form,
+  Input
 } from "antd";
 import "../style.scss";
 import {
@@ -24,6 +25,7 @@ import {
   manualInput,
   manualList,
   manualScan,
+  updateSoDu,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -32,99 +34,113 @@ import ScanQR from "../../../components/Scanner";
 import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
 const SCAN_TIME_OUT = 3000;
-const columns = [
-  {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    width: "65px",
-    render: (value, record, index) => value || "-",
-  },
-  {
-    title: "MDH",
-    dataIndex: "mdh",
-    key: "mdh",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: "55px",
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: "30px",
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: "70px",
-  },
-  {
-    title: "SL kế hoạch",
-    dataIndex: "dinh_muc",
-    key: "dinh_muc",
-    align: "center",
-    width: "60px",
-  },
-  {
-    title: "SL ra",
-    dataIndex: "sl_dau_ra_hang_loat",
-    key: "sl_dau_ra_hang_loat",
-    align: "center",
-    render: (value) => value || "-",
-    width: "30px",
-  },
-  {
-    title: "SL đạt",
-    dataIndex: "sl_ok",
-    key: "sl_ok",
-    align: "center",
-    render: (value) => value || "-",
-    width: "40px",
-  },
-  {
-    title: "Phán định",
-    dataIndex: "phan_dinh",
-    key: "phan_dinh",
-    align: "center",
-    render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
-    width: "65px",
-  },
-  {
-    title: "Mã layout",
-    dataIndex: "layout_id",
-    key: "layout_id",
-    align: "center",
-    render: (value) => value || "-",
-    width: "75px",
-  },
-  {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: "70px",
-  },
-  {
-    title: "Bước",
-    dataIndex: "step",
-    key: "step",
-    align: "center",
-    render: (value, record, index) => value ? 'Bước' : '',
-    width: "35px",
-  },
-];
 
 const NhapTay = (props) => {
   document.title = "Sản xuất máy thủ công";
   const { machine_id } = useParams();
+  const columns = [
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+      width: "65px",
+      render: (value, record, index) => value || "-",
+    },
+    {
+      title: "MDH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: "55px",
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: "30px",
+    },
+    {
+      title: "Quy cách",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: "70px",
+    },
+    {
+      title: "SL kế hoạch",
+      dataIndex: "dinh_muc",
+      key: "dinh_muc",
+      align: "center",
+      width: "60px",
+    },
+    {
+      title: "SL ra",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
+      align: "center",
+      render: (value) => value || "-",
+      width: "30px",
+    },
+    {
+      title: "SL đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+      render: (value) => value || "-",
+      width: "40px",
+    },
+    {
+      title: "Số dư",
+      dataIndex: "so_du",
+      key: "so_du",
+      align: "center",
+      width: 60,
+      render: (value, record) => {
+        return (isEditingRow(record.id) ?
+          <Input className="white-bg-input" style={{ width: '100%' }} onBlur={(event) => submitSoDu(event.target.value, record.id)} onPressEnter={(event) => submitSoDu(event.target.value, record.id)} defaultValue={value}/>
+          :
+          <>{value} <EditOutlined className="edit-btn" onClick={() => setEditingRow(record.id)} /></>
+        )
+      }
+    },
+    {
+      title: "Phán định",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
+      align: "center",
+      render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
+      width: "65px",
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+      render: (value) => value || "-",
+      width: "75px",
+    },
+    {
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: "70px",
+    },
+    {
+      title: "Bước",
+      dataIndex: "step",
+      key: "step",
+      align: "center",
+      render: (value, record, index) => value ? 'Bước' : '',
+      width: "35px",
+    },
+  ];
   const currentColumns = [
     {
       title: "Lô SX",
@@ -200,6 +216,19 @@ const NhapTay = (props) => {
   ]);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
+
+  const [editingRow, setEditingRow] = useState();
+  const isEditingRow = (key) => {
+    return editingRow === key
+  }
+  const submitSoDu = async (value, recordId) => {
+    setData(prev => prev.map(e => {
+      if (e.id === recordId) return { ...e, so_du: value };
+      return e;
+    }))
+    setEditingRow();
+    var res = await updateSoDu({info_id: recordId, so_du: value});
+  }
 
   const onShowPopup = () => {
     setVisible(true);

@@ -127,3 +127,6 @@ export async function updateQuantityInfoCongDoan(params){
 export async function deletePausedPlanList(params){
   return await axios.post("/oi/manufacture/delete-paused-plan-list", params);
 }
+export async function updateSoDu(params){
+  return await axios.post("/oi/manufacture/update-so-du", params);
+}

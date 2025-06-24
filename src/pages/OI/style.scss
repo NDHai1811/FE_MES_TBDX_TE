@@ -134,3 +134,10 @@ thead th[class*="red"] {
 .table-row-selected {
   background-color: limegreen;
 }
+
+.white-bg-input {
+  background-color: white !important;
+  .ant-input-number-input {
+    background-color: white !important;
+  }
+}

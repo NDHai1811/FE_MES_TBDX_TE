@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useReducer } from "react";
-import { PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
+import { EditOutlined, PrinterOutlined, QrcodeOutlined } from "@ant-design/icons";
 import {
   Row,
   Col,
@@ -35,6 +35,7 @@ import {
   getPausedPlanList,
   pausePlan,
   resumePlan,
+  updateSoDu,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
@@ -45,86 +46,6 @@ import TemThanhPham from "./TemThanhPham";
 import { baseHost } from "../../../config";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
-
-const columns = [
-  {
-    title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: 100,
-  },
-  {
-    title: "MĐH",
-    dataIndex: "mdh",
-    key: "mdh",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: 100,
-  },
-  {
-    title: "MQL",
-    dataIndex: "mql",
-    key: "mql",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: 50,
-  },
-  {
-    title: "Quy cách",
-    dataIndex: "quy_cach",
-    key: "quy_cach",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: 130,
-  },
-  {
-    title: "Sản lượng kế hoạch",
-    dataIndex: "dinh_muc",
-    key: "dinh_muc",
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "Sản lượng đầu ra",
-    dataIndex: "sl_dau_ra_hang_loat",
-    key: "sl_dau_ra_hang_loat",
-    align: "center",
-    width: 130,
-  },
-  {
-    title: "Sản lượng đạt",
-    dataIndex: "sl_ok",
-    key: "sl_ok",
-    align: "center",
-    width: 110,
-  },
-  {
-    title: "Phán định",
-    dataIndex: "phan_dinh",
-    key: "phan_dinh",
-    align: "center",
-    render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
-    width: 90,
-  },
-  {
-    title: "Mã layout",
-    dataIndex: "layout_id",
-    key: "layout_id",
-    align: "center",
-    render: (value) => value || "-",
-    width: 90,
-  },
-  {
-    title: "Lô SX",
-    dataIndex: "lo_sx",
-    key: "lo_sx",
-    align: "center",
-    render: (value, record, index) => value || "-",
-    width: 120,
-  },
-];
 
 const InDan = (props) => {
   document.title = "Sản xuất máy tự động";
@@ -166,6 +87,100 @@ const InDan = (props) => {
       render: (value) => value || "-",
     },
   ];
+
+  const columns = [
+    {
+      title: "Khách hàng",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: 100,
+    },
+    {
+      title: "MĐH",
+      dataIndex: "mdh",
+      key: "mdh",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: 100,
+    },
+    {
+      title: "MQL",
+      dataIndex: "mql",
+      key: "mql",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: 50,
+    },
+    {
+      title: "Quy cách",
+      dataIndex: "quy_cach",
+      key: "quy_cach",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: 130,
+    },
+    {
+      title: "Sản lượng kế hoạch",
+      dataIndex: "dinh_muc",
+      key: "dinh_muc",
+      align: "center",
+      width: 150,
+    },
+    {
+      title: "Sản lượng đầu ra",
+      dataIndex: "sl_dau_ra_hang_loat",
+      key: "sl_dau_ra_hang_loat",
+      align: "center",
+      width: 130,
+    },
+    {
+      title: "Sản lượng đạt",
+      dataIndex: "sl_ok",
+      key: "sl_ok",
+      align: "center",
+      width: 110,
+    },
+    {
+      title: "Số dư",
+      dataIndex: "so_du",
+      key: "so_du",
+      align: "center",
+      width: 80,
+      render: (value, record) => {
+        return (isEditingRow(record.id) ?
+          <Input className="white-bg-input" style={{ width: '100%' }} onBlur={(event) => submitSoDu(event.target.value, record.id)} onPressEnter={(event) => submitSoDu(event.target.value, record.id)} defaultValue={value}/>
+          :
+          <>{value} <EditOutlined className="edit-btn" onClick={() => setEditingRow(record.id)} /></>
+        )
+      }
+    },
+    {
+      title: "Phán định",
+      dataIndex: "phan_dinh",
+      key: "phan_dinh",
+      align: "center",
+      render: (value) => (value === 1 ? "OK" : (value === 2 ? "NG" : "-")),
+      width: 90,
+    },
+    {
+      title: "Mã layout",
+      dataIndex: "layout_id",
+      key: "layout_id",
+      align: "center",
+      render: (value) => value || "-",
+      width: 90,
+    },
+    {
+      title: "Lô SX",
+      dataIndex: "lo_sx",
+      key: "lo_sx",
+      align: "center",
+      render: (value, record, index) => value || "-",
+      width: 120,
+    },
+  ];
   const [isUpdating, setIsUpdating] = useState(false);
   const location = useLocation();
   const componentRef1 = useRef();
@@ -187,6 +202,18 @@ const InDan = (props) => {
   ]);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState(false);
   const [isScan, setIsScan] = useState(0);
+  const [editingRow, setEditingRow] = useState();
+  const isEditingRow = (key) => {
+    return editingRow === key
+  }
+  const submitSoDu = async (value, recordId) => {
+    setData(prev => prev.map(e => {
+      if (e.id === recordId) return { ...e, so_du: value };
+      return e;
+    }))
+    setEditingRow();
+    var res = await updateSoDu({info_id: recordId, so_du: value});
+  }
   const overallColumns = [
     {
       title: "Công đoạn",
@@ -285,7 +312,7 @@ const InDan = (props) => {
   };
 
   const rowClassName = (record, index) => {
-    if(record?.phan_dinh === 2) {
+    if (record?.phan_dinh === 2) {
       return "table-row-red";
     }
     if (record.status === 1) {
@@ -402,7 +429,7 @@ const InDan = (props) => {
       console.log('WebSocket connected!');
     });
     window.Echo.connector.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+      // console.error('WebSocket connection error:', error);
     });
 
     window.Echo.connector.socket.on('disconnect', () => {
@@ -542,7 +569,7 @@ const InDan = (props) => {
     }
     setResuming(true);
     var res = await resumePlan({ info_ids: pausedList.filter(e => selectedPausedKeys.includes(e.lo_sx)).map(e => e.id), machine_id: machine_id });
-    if(res.success){
+    if (res.success) {
       reloadData();
       fetchPausedPlan();
       setListCheck([]);
@@ -586,7 +613,7 @@ const InDan = (props) => {
                 disabled={data.some(e => e.status === 1) || listCheck.length !== 1}
                 onClick={() => onStartProduction()}
               >Chạy sản xuất</Button>
-              {machineOptions.find(e=>e.value === machine_id)?.line_id == '31' ? <Button
+              {machineOptions.find(e => e.value === machine_id)?.line_id == '31' ? <Button
                 size="medium"
                 type="primary"
                 style={{ width: "100%" }}
@@ -746,7 +773,7 @@ const InDan = (props) => {
           />
         </Modal>
       )}
-      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()} okButtonProps={{loading: isUpdating}}>
+      <Modal title="Nhập sản lượng tay" open={isOpenModal} onCancel={closeModal} onOk={() => form.submit()} okButtonProps={{ loading: isUpdating }}>
         <Form form={form} layout="vertical" onFinish={onUpdateQuantity}>
           <Form.Item name={"id"} hidden>
             <Input />
@@ -761,3 +788,5 @@ const InDan = (props) => {
 };
 
 export default InDan;
+
+

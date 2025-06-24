@@ -317,7 +317,7 @@ const TaoKeHoachSanXuat = () => {
             key: 'po',
             align: 'center',
             width: '5%',
-            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+            hidden: listMachines.find(e => e.value === orderParams.machine_id)?.line_id != 31
         },
         {
             title: 'Kích thước',
@@ -325,7 +325,7 @@ const TaoKeHoachSanXuat = () => {
             key: 'kich_thuoc',
             align: 'center',
             width: '5%',
-            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+            hidden: listMachines.find(e => e.value === orderParams.machine_id)?.line_id != 31
         },
         {
             title: 'Chia máy + p8',
@@ -333,7 +333,7 @@ const TaoKeHoachSanXuat = () => {
             key: 'layout_type',
             align: 'center',
             width: '5%',
-            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+            hidden: listMachines.find(e => e.value === orderParams.machine_id)?.line_id != 31
         },
         {
             title: 'Mã layout',
@@ -341,7 +341,7 @@ const TaoKeHoachSanXuat = () => {
             key: 'layout_id',
             align: 'center',
             width: '5%',
-            hidden: listMachines.find(e=>e.value === orderParams.machine_id)?.line_id != 31
+            hidden: listMachines.find(e => e.value === orderParams.machine_id)?.line_id != 31
         },
         {
             title: 'Kết cấu giấy',
@@ -549,7 +549,22 @@ const TaoKeHoachSanXuat = () => {
         const line_id = listMachines.find(e => planParams?.machine_id === e.id)?.line_id;
         console.log(line_id);
         setLineId(line_id);
-    }, [planParams.machine_id])
+    }, [planParams.machine_id]);
+
+    const layoutTypes = [
+        {
+            label: "M",
+            value: "M",
+        },
+        {
+            label: "P8",
+            value: "P8",
+        },
+        {
+            label: "0",
+            value: "0",
+        },
+    ];
     return (
         <>
             <Row style={{ padding: "8px", marginRight: 0 }} gutter={[8, 8]}>
@@ -723,7 +738,7 @@ const TaoKeHoachSanXuat = () => {
                                 />
                             </Form.Item>
                         </Col>
-                        {listMachines.find(e=>e.value === orderParams.machine_id)?.line_id == 31 && <>
+                        {listMachines.find(e => e.value === orderParams.machine_id)?.line_id == 31 && <>
                             <Col span={6}>
                                 <Form.Item
                                     label="PO"
@@ -761,14 +776,18 @@ const TaoKeHoachSanXuat = () => {
                                     label="Chia máy + p8"
                                     className="mb-3"
                                 >
-                                    <Input
-                                        allowClear={true}
-                                        placeholder="Chia máy + p8"
-                                        style={{ width: "100%" }}
-                                        onChange={(e) =>
-                                            setOrderParams({ ...orderParams, layout_type: e.target.value })
-                                        }
+                                    <Select
+                                        allowClear
+                                        options={[{ value: 'is_null', label: 'Chưa có Chia máy + p8' }, ...layoutTypes]}
+                                        onChange={(value) => {
+                                            setOrderParams({
+                                                ...orderParams,
+                                                layout_type: value,
+                                                page: 1,
+                                            });
+                                        }}
                                         value={orderParams.layout_type}
+                                        placeholder="Nhập chia máy + p8"
                                     />
                                 </Form.Item>
                             </Col>

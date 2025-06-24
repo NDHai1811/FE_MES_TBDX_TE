@@ -25,6 +25,7 @@ import {
 import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
+import PopupQCHistory from "../../../components/Popup/PopupQCHistory";
 
 const QualityPQC = (props) => {
   document.title = "UI - Quality";
@@ -178,6 +179,14 @@ const QualityPQC = (props) => {
           <Button type="primary" disabled={record?.phan_dinh !== 2}>Tái kiểm</Button>
         </Popconfirm>
       ),
+    },
+    {
+      title: "Lịch sử KT",
+      dataIndex: "qc_history",
+      key: "qc_history",
+      align: "center",
+      width: 100,
+      render: (value, record) => (<PopupQCHistory infoId={record.id}/>),
     },
   ];
 

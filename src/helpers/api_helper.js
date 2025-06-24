@@ -1,6 +1,7 @@
 import axios from "axios";
 import { api } from "../config";
 import { message as messAPI } from "antd";
+import echo from "./echo";
 // default
 axios.defaults.baseURL = api.API_URL;
 // content type
@@ -21,7 +22,8 @@ axios.interceptors.request.use(
     if (config.url !== "/notification/list") {
       // messAPI.loading(conf);
     }
-
+    const socketId = echo.connector.socket.id;
+    if (socketId) config.headers['X-Socket-Id'] = socketId;
     return config;
   },
   function (error) {
@@ -30,6 +32,7 @@ axios.interceptors.request.use(
 );
 axios.interceptors.response.use(
   function (response) {
+
     if (
       response.data.success &&
       response.data.message !== "" &&
@@ -37,7 +40,9 @@ axios.interceptors.response.use(
     ) {
       messAPI.destroy(msgKey);
       messAPI.success({ ...conf, content: response.data.message });
-    } else if (!response.data.success && response.data.message !== "") {
+    } else if (!response.data.success && response.data.message !== "" && !(response.data instanceof Blob)) {
+      console.log(response);
+      
       messAPI.destroy(msgKey);
       messAPI.error({ ...conf, content: response.data.message });
     }

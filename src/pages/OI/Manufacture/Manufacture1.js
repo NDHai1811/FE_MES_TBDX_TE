@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useReducer, useContext, useMemo, useCallback } from "react";
-import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, DragOutlined, HolderOutlined, PrinterOutlined, SearchOutlined, StopOutlined, UpOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, DragOutlined, EditOutlined, HolderOutlined, PrinterOutlined, SearchOutlined, StopOutlined, UpOutlined } from "@ant-design/icons";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
 import {
@@ -41,6 +41,7 @@ import {
   resumePlan,
   updateQuantityInfoCongDoan,
   deletePausedPlanList,
+  updateSoDu,
 } from "../../../api/oi/manufacture";
 import { useReactToPrint } from "react-to-print";
 import {
@@ -301,6 +302,20 @@ const Manufacture1 = (props) => {
       width: 90
     },
     {
+      title: "Số dư",
+      dataIndex: "so_du",
+      key: "so_du",
+      align: "center",
+      width: 100,
+      render: (value, record) => {
+        return (isEditingRow(record.id) ?
+          <Input className="white-bg-input" style={{ width: '100%' }} onBlur={(event) => submitSoDu(event.target.value, record.id)} onPressEnter={(event) => submitSoDu(event.target.value, record.id)} defaultValue={value}/>
+          :
+          <>{value} <EditOutlined className="edit-btn" onClick={() => setEditingRow(record.id)} /></>
+        )
+      }
+    },
+    {
       title: "Mặt F",
       dataIndex: "ma_cuon_f",
       key: "ma_cuon_f",
@@ -404,6 +419,19 @@ const Manufacture1 = (props) => {
   // useEffect(()=>{
   //   handlePrint();
   // }, [listTem]);
+
+  const [editingRow, setEditingRow] = useState();
+  const isEditingRow = (key) => {
+    return editingRow === key
+  }
+  const submitSoDu = async (value, recordId) => {
+    setData(prev => prev.map(e => {
+      if (e.id === recordId) return { ...e, so_du: value };
+      return e;
+    }))
+    setEditingRow();
+    var res = await updateSoDu({info_id: recordId, so_du: value});
+  }
 
   const reloadData = async () => {
     await getListLotDetail();
@@ -651,7 +679,7 @@ const Manufacture1 = (props) => {
     window.Echo.connector.socket.on('disconnect', () => {
       console.log('WebSocket disconnected!');
     });
-    window.Echo.channel('laravel_database_mychannel')
+    window.Echo.channel('mychannel')
       .listen('.my-event', (e) => {
         if (e.data.info_cong_doan?.machine_id !== machine_id) {
           return;
@@ -660,7 +688,7 @@ const Manufacture1 = (props) => {
         processEventQueue(); // Gọi xử lý hàng đợi
       });
     return () => {
-      window.Echo.leaveChannel('laravel_database_mychannel');
+      window.Echo.leaveChannel('mychannel');
     };
   }, [location]);
 

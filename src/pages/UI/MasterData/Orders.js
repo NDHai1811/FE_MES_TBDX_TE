@@ -62,7 +62,7 @@ const EditableCell = ({
   let inputNode;
   switch (inputType) {
     case "number":
-      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)}/>;
+      inputNode = <InputNumber onChange={(value) => onChange(value, dataIndex)} />;
       break;
     case "select":
       inputNode = (
@@ -76,7 +76,7 @@ const EditableCell = ({
       );
       break;
     default:
-      inputNode = <Input onChange={(event) => onChange(event.target.value, dataIndex)}/>;
+      inputNode = <Input onChange={(event) => onChange(event.target.value, dataIndex)} />;
   }
   const dateValue = record?.[dataIndex] ? dayjs(record?.[dataIndex]) : null;
   return (
@@ -1625,17 +1625,22 @@ const Orders = () => {
                     />
                   </Form.Item>
                   <Form.Item label="MQL" className="mb-3">
-                    <Input
-                      allowClear
-                      onChange={(e) => {
+                    <Select
+                      mode="tags"
+                      style={{ width: "100%" }}
+                      placeholder="Nhập mã quản lý"
+                      onChange={(value) => {
                         setParams({
                           ...params,
-                          mql: e.target.value,
+                          mql: value,
                           page: 1,
                         });
                         setPage(1);
                       }}
-                      placeholder="Nhập MQL"
+                      suffixIcon={null}
+                      open={false}
+                      tokenSeparators={[',']}
+                      options={[]}
                     />
                   </Form.Item>
                   <Form.Item label="L" className="mb-3">
