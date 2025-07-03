@@ -23,7 +23,7 @@ const formatTimestamp = (timestamp) => {
     return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   } else {
     // Show date and time for other days
-    return messageDate.toLocaleDateString([], { hour: '2-digit', minute: '2-digit' });
+    return messageDate.toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit' });
   }
 };
 

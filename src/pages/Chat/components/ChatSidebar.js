@@ -155,8 +155,8 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
           {
             chatList.length === 0 && loading && (
               <>
-                <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} onClick={onSelectChat} /></Skeleton>
-                <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} onClick={onSelectChat} /></Skeleton>
+                <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} /></Skeleton>
+                <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} /></Skeleton>
               </>
             )
           }

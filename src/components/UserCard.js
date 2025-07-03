@@ -3,6 +3,7 @@ import { Avatar, Button, Card, Dropdown, Row, Space, Badge } from "antd";
 import React, { useEffect, useState } from "react";
 import { useProfile } from "../components/hooks/UserHooks";
 import { getStatusIOT } from "../api";
+import NotificationBell from "./NotificationBell";
 
 const UserCard = () => {
   const { userProfile } = useProfile();
@@ -51,7 +52,8 @@ const UserCard = () => {
             </Space>
           </Button>
         </Dropdown>
-        <div className="align-content-center d-flex flex-wrap">
+        <div className="align-content-center d-flex flex-wrap gap-2 align-items-center">
+          <NotificationBell color="#000" size={20}/>
           {clock.toLocaleString(["en-GB"], { hour12: false })}{" "}
         </div>
       </div>
