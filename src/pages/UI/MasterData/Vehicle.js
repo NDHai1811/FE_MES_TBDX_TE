@@ -38,6 +38,7 @@ import {
     updateVehicles,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Vehicle = () => {
     document.title = "Quản lý xe";
@@ -512,4 +513,4 @@ const Vehicle = () => {
     );
 };
 
-export default Vehicle;
+export default withRouter(Vehicle);

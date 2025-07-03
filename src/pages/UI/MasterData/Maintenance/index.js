@@ -33,6 +33,7 @@ import {
   updateMaintenance,
 } from "../../../../api";
 import { useHistory, useParams } from "react-router-dom";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Maintenance = () => {
   document.title = "Bảo trì bảo dưỡng";
@@ -237,4 +238,4 @@ const Maintenance = () => {
   );
 };
 
-export default Maintenance;
+export default withRouter(Maintenance);

@@ -19,6 +19,7 @@ import {
   updateScenario,
 } from "../../../api";
 import { useEffect } from "react";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const siderStyle = {
   lineHeight: "120px",
@@ -277,4 +278,4 @@ const Kichban = (props) => {
   );
 };
 
-export default Kichban;
+export default withRouter(Kichban);

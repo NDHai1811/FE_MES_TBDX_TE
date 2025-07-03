@@ -40,6 +40,7 @@ import {
   getDepartments,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Departments = () => {
   document.title = "Quản lý bộ phận";
@@ -374,4 +375,4 @@ const Departments = () => {
   );
 };
 
-export default Departments;
+export default withRouter(Departments);

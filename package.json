@@ -16,6 +16,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@tiptap/extension-link": "^2.22.3",
     "@tiptap/extension-mention": "^2.22.3",
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",

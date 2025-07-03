@@ -22,6 +22,7 @@ import { exportThongSoMay } from "../../../api/ui/export";
 import dayjs from "dayjs";
 import { getMachineList, getMachineParamLogs } from "../../../api/ui/machine";
 import "../style.scss";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Equipment2 = (props) => {
   document.title = "UI - Thông số máy";
@@ -291,4 +292,4 @@ const Equipment2 = (props) => {
   );
 };
 
-export default Equipment2;
+export default withRouter(Equipment2);

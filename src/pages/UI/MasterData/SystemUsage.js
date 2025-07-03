@@ -37,6 +37,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import { Column } from "@ant-design/plots";
 import "./masterDataStyle.css"
 import dayjs from "dayjs";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const SystemUsage = () => {
   document.title = "Đánh giá tỷ lệ sử dụng MES";
@@ -268,4 +269,4 @@ const SystemUsage = () => {
   );
 };
 
-export default SystemUsage;
+export default withRouter(SystemUsage);

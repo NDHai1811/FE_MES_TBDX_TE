@@ -23,6 +23,7 @@ import dayjs from "dayjs";
 import { deleteVOC, getVOC, updateVOC, getVOCTypes } from "../../../api/oi/voc";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { baseURL } from "../../../config";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const VOCRegister = () => {
   document.title = "VOC";
@@ -458,4 +459,4 @@ const VOCRegister = () => {
   );
 };
 
-export default VOCRegister;
+export default withRouter(VOCRegister);

@@ -30,6 +30,7 @@ import { useReactToPrint } from "react-to-print";
 import "../style.scss";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { render } from "@testing-library/react";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const EditableCell = ({
   editing,
@@ -942,4 +943,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default withRouter(Layout);

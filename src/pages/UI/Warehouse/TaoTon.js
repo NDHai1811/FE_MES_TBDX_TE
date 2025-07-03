@@ -30,6 +30,7 @@ import { getMachineList } from "../../../api/ui/machine";
 import { EditOutlined } from "@ant-design/icons";
 import { getTemPallet } from "../../../api/ui/warehouse";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const EditableCell = ({
     editing,
@@ -498,4 +499,4 @@ const TaoTon = () => {
     );
 };
 
-export default TaoTon;
+export default withRouter(TaoTon);

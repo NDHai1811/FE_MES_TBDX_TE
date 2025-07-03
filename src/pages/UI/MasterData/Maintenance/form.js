@@ -36,6 +36,7 @@ import {
 } from "../../../../api";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useHistory, useParams } from "react-router-dom";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const CreateMaintenance = () => {
   document.title = "Bảo trì bảo dưỡng";
@@ -380,4 +381,4 @@ const CreateMaintenance = () => {
   );
 };
 
-export default CreateMaintenance;
+export default withRouter(CreateMaintenance);

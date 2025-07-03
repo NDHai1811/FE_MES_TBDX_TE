@@ -30,7 +30,7 @@ import {
   getListProductPlan,
   updateProductPlan,
 } from "../../../api/ui/manufacture";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, withRouter } from "react-router-dom/cjs/react-router-dom.min";
 import dayjs from "dayjs";
 import {
   DeleteOutlined,
@@ -782,4 +782,4 @@ const KeHoachSanXuat = () => {
   );
 };
 
-export default KeHoachSanXuat;
+export default withRouter(KeHoachSanXuat);

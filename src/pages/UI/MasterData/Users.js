@@ -37,6 +37,7 @@ import {
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { CheckSquareTwoTone, DeleteOutlined, EditOutlined, StopOutlined, SyncOutlined } from "@ant-design/icons";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Users = () => {
   document.title = "Quản lý tài khoản";
@@ -478,4 +479,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default withRouter(Users);

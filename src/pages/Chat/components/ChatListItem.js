@@ -5,6 +5,7 @@ import { getUsers } from "../../../api"
 import { createChat, getChatList } from "../../../api/ui/chat"
 import { useProfile } from "../../../components/hooks/UserHooks"
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min"
+import { fullNameToColor } from "../chat_helper"
 
 const { Sider, Header } = Layout
 const { Title, Text } = Typography
@@ -42,27 +43,23 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
         let lastMsgPreview = '';
         if (last_message) {
             let otherMessage = '';
-            switch (last_message.type) {
-                case 'image':
+            if(last_message?.attachments){
+                if(last_message?.attachments[0]?.file_type?.includes('image/')) {
                     otherMessage = 'Đã gửi hình ảnh';
-                    break;
-                case 'file':
-                    otherMessage = 'Đã gửi tài liệu';
-                    break;
-                default:
-                    break;
+                } else {
+                    otherMessage = 'Đã gửi file';
+                }
             }
             if (last_message.sender?.username === userProfile?.username) {
-                lastMsgPreview = `Bạn: ${last_message.content ?? otherMessage ?? ''}`;
+                lastMsgPreview = `Bạn: ${last_message.content_text ?? otherMessage ?? ''}`;
             } else {
                 if (chat.type === "group") {
                     // Hiển thị tên người gửi: nội dung
-                    lastMsgPreview = `${last_message.sender?.name || ''}: ${last_message.content ?? otherMessage ?? ''}`;
+                    lastMsgPreview = `${last_message.sender?.name || ''}: ${last_message.content_text ?? otherMessage ?? ''}`;
                 } else if (chat.type === "private") {
-                    lastMsgPreview = last_message.content ?? otherMessage ?? '';
+                    lastMsgPreview = last_message.content_text ?? otherMessage ?? '';
                 }
             }
-
         }
         return lastMsgPreview;
     }
@@ -90,31 +87,10 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
                     status={chat.type === "private" && chat.isOnline ? "success" : "default"}
                     offset={[-8, 32]}
                 >
-                    <Avatar size={48} src={chat.avatar} icon={chat.type === "group" ? <TeamOutlined /> : undefined}>
-                        {chat.type === "group" ? <TeamOutlined /> : chat.name.charAt(0)}
+                    <Avatar size={48} src={chat.avatar} icon={chat.type === "group" ? <TeamOutlined /> : undefined} style={{backgroundColor: fullNameToColor(chat?.name)}}>
+                        {chat.type === "group" ? <TeamOutlined /> : chat?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
                     </Avatar>
                 </Badge>
-                {/* {chat.type === "group" && (
-                    <div
-                        style={{
-                            position: "absolute",
-                            bottom: -2,
-                            right: -2,
-                            backgroundColor: "#666",
-                            color: "white",
-                            fontSize: "10px",
-                            borderRadius: "50%",
-                            width: "18px",
-                            height: "18px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            border: "2px solid white",
-                        }}
-                    >
-                        {chat.memberCount}
-                    </div>
-                )} */}
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -134,18 +110,20 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
                         {(chat.participants ?? []).length} thành viên
                     </Text>
                 )} */}
-            </div>
-
-            {chat.unreadCount && (
+                {chat.unread_count ? (
                 <Badge
-                    count={chat.unreadCount}
+                    count={chat.unread_count}
                     style={{
                         position: "absolute",
                         right: "16px",
-                        top: "16px",
+                        bottom: "0",
                     }}
+                    styles={{root: {width: "100%"}}}
                 />
-            )}
+            ) : null}
+            </div>
+
+            
         </div>
     </div>
 }

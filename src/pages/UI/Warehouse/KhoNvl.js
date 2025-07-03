@@ -23,6 +23,7 @@ import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import { getHistoryWareHouseMLT } from "../../../api/ui/warehouse";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const KhoNvl = (props) => {
   document.title = "UI - Quản lý kho NVL";
@@ -362,4 +363,4 @@ const KhoNvl = (props) => {
   );
 };
 
-export default KhoNvl;
+export default withRouter(KhoNvl);

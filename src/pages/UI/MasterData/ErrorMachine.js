@@ -33,6 +33,7 @@ import {
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import EditableTable from "../../../components/Table/EditableTable";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const ErrorMachines = () => {
   document.title = "Quản lý lỗi máy";
@@ -373,4 +374,4 @@ const ErrorMachines = () => {
   );
 };
 
-export default ErrorMachines;
+export default withRouter(ErrorMachines);

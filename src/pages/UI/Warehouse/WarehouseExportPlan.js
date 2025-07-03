@@ -29,6 +29,7 @@ import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
 import PopupCreateExportPlanFG from "../../../components/Popup/PopupCreateExportPlanFG.js";
 import PopupCreateDeliveryNote from "../../../components/Popup/PopupCreateDeliveryNote.js";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min.js";
 
 const WarehouseExportPlan = () => {
   document.title = "Kế hoạch xuất kho";
@@ -500,4 +501,4 @@ const WarehouseExportPlan = () => {
   );
 };
 
-export default WarehouseExportPlan;
+export default withRouter(WarehouseExportPlan);

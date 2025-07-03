@@ -30,6 +30,7 @@ import {
 import { getUIItemMenu } from "../../../api/ui/main";
 import TanSuatPhatSinhLoi from "./Chart/TanSuatPhatSinhLoi";
 import HieuSuatThietBi from "./Chart/HieuSuatThietBi";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const columnTable = [
   {
@@ -419,4 +420,4 @@ const Equipment1 = (props) => {
   );
 };
 
-export default Equipment1;
+export default withRouter(Equipment1);

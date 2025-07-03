@@ -31,6 +31,7 @@ import {
   updateTestCriteria,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const TestCriteria = () => {
   document.title = "Quản lý chỉ tiêu kiểm tra";
@@ -430,4 +431,4 @@ const TestCriteria = () => {
   );
 };
 
-export default TestCriteria;
+export default withRouter(TestCriteria);

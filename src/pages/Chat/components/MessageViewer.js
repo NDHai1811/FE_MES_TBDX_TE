@@ -1,11 +1,10 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Mention from '@tiptap/extension-mention'
+import Link from '@tiptap/extension-link'
 // import Image from '@tiptap/extension-image'
 
 export default function MessageViewer({ contentJson }) {
-    console.log(contentJson);
-    
     const editor = useEditor({
       content: contentJson,
       editable: false,
@@ -16,7 +15,11 @@ export default function MessageViewer({ contentJson }) {
             class: 'mention',
           },
         }),
-        // Image,
+        Link.configure({
+          HTMLAttributes: {
+            class: 'link',
+          },
+        }),
       ],
     })
   

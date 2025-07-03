@@ -40,6 +40,7 @@ import { getCustomers } from "../../../api/ui/main";
 import EditableTable from "../../../components/Table/EditableTable";
 import PopupCreateDeliveryNote from "../../../components/Popup/PopupCreateDeliveryNote";
 import { downloadDeliveryNote } from "../../../api/oi/warehouse";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const WarehouseExportCommand = () => {
   document.title = "Quản lý lệnh xuất kho";
@@ -669,4 +670,4 @@ const WarehouseExportCommand = () => {
   );
 };
 
-export default WarehouseExportCommand;
+export default withRouter(WarehouseExportCommand);

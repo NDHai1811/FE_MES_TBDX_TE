@@ -7,6 +7,7 @@ import { useProfile } from "../components/hooks/UserHooks";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import './layoutStyle.scss';
 import { authProtectedRoutes } from "../routes/allRoutes";
+import NotificationBell from "../components/NotificationBell";
 const HeaderUI = () => {
   const { userProfile } = useProfile();
   const uiRoutes = authProtectedRoutes.filter(e => e?.path.includes('ui/') && e?.label && ((userProfile?.permission ?? []).includes('*') || userProfile?.permission?.includes(e?.permission))).map(e => ({ ...e, label: e?.label, key: e.path }));
@@ -29,7 +30,7 @@ const HeaderUI = () => {
       label: "Bảo trì",
       key: 'master-data/bao-tri',
     },
-  ].map(e => {
+  ].forEach(e => {
     const routes = uiRoutes.filter(r => r.path.includes(e.key));
     if (routes.length > 0) {
       masterDataSubMenu.push({ label: e.label, children: routes})
@@ -82,6 +83,12 @@ const HeaderUI = () => {
         ? false : true,
       children: masterDataSubMenu,
       permission: "master-data",
+    },
+    {
+      label: "Chat",
+      key: "chat",
+      hidden: false,
+      path: '/ui/chat'
     },
   ];
   const generateMenuItems = (routes) => {
@@ -147,6 +154,7 @@ const HeaderUI = () => {
               <img
                 style={{ height: "3.5em", margin: "auto 0" }}
                 src={logolight}
+                alt="Logo"
               />
             </div>
           </Col>
@@ -177,6 +185,7 @@ const HeaderUI = () => {
             span={6}
             className="text-end align-items-center d-flex justify-content-end"
           >
+            <NotificationBell/>
             <Dropdown
               menu={{ items: itemsDropdown }}
               placement="bottomRight"

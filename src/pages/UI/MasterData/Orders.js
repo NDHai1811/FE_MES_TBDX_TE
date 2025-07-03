@@ -45,6 +45,7 @@ import {
 import "../style.scss";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { getCustomers } from "../../../api/ui/main";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const EditableCell = ({
   editing,
@@ -2103,4 +2104,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default withRouter(Orders);

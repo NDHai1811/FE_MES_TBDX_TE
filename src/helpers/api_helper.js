@@ -10,6 +10,8 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 // content type
 const token = JSON.parse(localStorage.getItem("authUser"))?.token;
 axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+console.log(token);
+
 
 // intercepting to capture errors
 const msgKey = Math.random().toString();
@@ -41,8 +43,6 @@ axios.interceptors.response.use(
       messAPI.destroy(msgKey);
       messAPI.success({ ...conf, content: response.data.message });
     } else if (!response.data.success && response.data.message !== "" && !(response.data instanceof Blob)) {
-      console.log(response);
-      
       messAPI.destroy(msgKey);
       messAPI.error({ ...conf, content: response.data.message });
     }
@@ -51,9 +51,9 @@ axios.interceptors.response.use(
   function (error) {
     switch (error.response?.status) {
       case 401:
-        // Handle unauthorized access, e.g., redirect to login page
-        // You can dispatch a logout action or perform any other required operations here
-        window.location.href ='/login';
+        const currentPath = window.location.pathname + window.location.search;
+        const loginPath = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        window.location.href = loginPath;
         break;
 
       default:

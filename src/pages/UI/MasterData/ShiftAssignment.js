@@ -41,6 +41,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import EditableTable from "../../../components/Table/EditableTable";
 import { getUserList } from "../../../store/actions";
 import { render } from "@testing-library/react";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const ShiftAssignment = () => {
     document.title = "Phân ca theo tài khoản";
@@ -281,4 +282,4 @@ const ShiftAssignment = () => {
     );
 };
 
-export default ShiftAssignment;
+export default withRouter(ShiftAssignment);

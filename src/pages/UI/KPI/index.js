@@ -32,6 +32,7 @@ import TyLeKeHoachIn from "./Chart/TyLeKeHoachIn";
 import TyLeKeLoiMay from "./Chart/TyLeKeLoiMay";
 import TonKhoTP from "./Chart/TonKhoTP";
 import TyLeNGOQC from "./Chart/TyLeNGOQC";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const { Sider } = Layout;
 const { RangePicker } = DatePicker;
@@ -203,4 +204,4 @@ const KPI = (props) => {
   );
 };
 
-export default KPI;
+export default withRouter(KPI);

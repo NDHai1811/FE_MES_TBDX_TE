@@ -30,6 +30,7 @@ import { useEffect } from "react";
 import { getMonitor, getMonitorList } from "../../../api/db/main";
 import dayjs from "dayjs";
 import { baseURL } from "../../../config";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 const img = {
   width: "100%",
   display: "flex",
@@ -390,4 +391,4 @@ const Giamsat = (props) => {
   );
 };
 
-export default Giamsat;
+export default withRouter(Giamsat);

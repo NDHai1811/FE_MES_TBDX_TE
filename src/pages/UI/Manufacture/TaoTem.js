@@ -34,6 +34,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
 import dayjs from "dayjs";
 import EditableTable from "../../../components/Table/EditableTable";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const EditableCell = ({
     editing,
@@ -1156,4 +1157,4 @@ const TaoTem = () => {
     );
 };
 
-export default TaoTem;
+export default withRouter(TaoTem);

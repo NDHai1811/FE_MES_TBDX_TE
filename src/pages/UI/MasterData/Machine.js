@@ -31,6 +31,7 @@ import {
   deleteMachines,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Machine = () => {
   document.title = "Quản lý máy";
@@ -412,4 +413,4 @@ const Machine = () => {
   );
 };
 
-export default Machine;
+export default withRouter(Machine);

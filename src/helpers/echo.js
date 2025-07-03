@@ -27,7 +27,7 @@ echo.connector.socket.on('connect', () => {
   const socketId = echo.connector.socket.id;
   // Gán vào header auth để server biết
   echo.connector.options.auth.headers['X-Socket-Id'] = socketId;
-  console.log('WebSocket connected!');
+  console.log('WebSocket connected!, socket id:', echo.connector.socket.id);
 });
 echo.connector.socket.on('disconnect', () => {
   console.log('WebSocket disconnected!');

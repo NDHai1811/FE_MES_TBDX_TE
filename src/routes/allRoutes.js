@@ -31,7 +31,7 @@ import Errors from "../pages/UI/MasterData/Errors";
 import TestCriteria from "../pages/UI/MasterData/TestCriteria";
 import Line from "../pages/UI/MasterData/Line";
 import Users from "../pages/UI/MasterData/Users";
-import Roles from "../pages/UI/MasterData/Departments";
+import Departments from "../pages/UI/MasterData/Departments";
 import Permissions from "../pages/UI/MasterData/Permissions";
 import ErrorMachines from "../pages/UI/MasterData/ErrorMachine";
 import Materials from "../pages/UI/MasterData/Material";
@@ -105,7 +105,7 @@ const authProtectedRoutes = [
   { path: "/ui/master-data/san-xuat/shift-assignment", component: ShiftAssignment, label: 'Phân ca theo tài khoản', permission: 'ui-master-data-san-xuat-shift-assignment' },
   { path: "/ui/master-data/to-chuc/users", component: Users, label: 'Quản lý tài khoản', permission: 'ui-master-data-to-chuc-users' },
   { path: "/ui/master-data/to-chuc/assign-machine", component: MachineAssignment, label: 'Phân bổ máy cho tài khoản', permission: 'ui-master-data-machine-assignment' },
-  { path: "/ui/master-data/to-chuc/roles", component: Roles, label: 'Quản lý bộ phận', permission: 'ui-master-data-to-chuc-roles' },
+  { path: "/ui/master-data/to-chuc/departments", component: Departments, label: 'Quản lý bộ phận', permission: 'ui-master-data-to-chuc-departments' },
   { path: "/ui/master-data/to-chuc/permissions", component: Permissions, label: 'Quản lý phân quyền', permission: 'ui-master-data-to-chuc-permissions' },
   // { path: "/ui/master-data/kho/warehouse", component: Warehouses, label: 'Quản lý kho', permission: 'ui-master-data-kho-warehouse' },
   { path: "/ui/master-data/kho/cell", component: Cells, permission: 'ui-master-data-kho-cell' },

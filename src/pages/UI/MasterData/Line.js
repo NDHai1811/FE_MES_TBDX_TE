@@ -31,6 +31,7 @@ import {
   updateLine,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Line = () => {
   document.title = "Quản lý công đoạn";
@@ -360,4 +361,4 @@ const Line = () => {
   );
 };
 
-export default Line;
+export default withRouter(Line);

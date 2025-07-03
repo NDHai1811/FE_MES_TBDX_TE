@@ -29,6 +29,7 @@ import dayjs from "dayjs";
 import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
 import { EditOutlined } from "@ant-design/icons";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const TaoKeHoachSanXuat = () => {
     const [listCustomers, setListCustomers] = useState([]);
@@ -828,4 +829,4 @@ const TaoKeHoachSanXuat = () => {
     );
 };
 
-export default TaoKeHoachSanXuat;
+export default withRouter(TaoKeHoachSanXuat);

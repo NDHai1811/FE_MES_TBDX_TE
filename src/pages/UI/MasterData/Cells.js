@@ -32,6 +32,7 @@ import {
   updateCell,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Cells = () => {
   document.title = "Quản lý kho";
@@ -431,4 +432,4 @@ const Cells = () => {
   );
 };
 
-export default Cells;
+export default withRouter(Cells);

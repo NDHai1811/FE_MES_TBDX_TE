@@ -41,6 +41,7 @@ import EditableTable from "../../../components/Table/EditableTable";
 import { EditOutlined } from "@ant-design/icons";
 import Actions from "../../../components/Table/Actions";
 import { getShifts } from "../../../api";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const WarehouseMLT = (props) => {
   document.title = "UI - Quản lý giấy cuộn";
@@ -756,4 +757,4 @@ const WarehouseMLT = (props) => {
   );
 };
 
-export default WarehouseMLT;
+export default withRouter(WarehouseMLT);

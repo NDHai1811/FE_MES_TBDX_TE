@@ -1,18 +1,21 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react"
-import { Layout, Menu, Button, Modal, Input, Typography, Select, Form, Tabs, Badge, Avatar, Divider } from "antd"
-import { TeamOutlined, MessageOutlined, PlusOutlined, GroupOutlined, SearchOutlined, MoreOutlined, UserOutlined, UserAddOutlined, UsergroupAddOutlined, LeftOutlined, CloseOutlined } from "@ant-design/icons"
+import { Layout, Menu, Button, Modal, Input, Typography, Select, Form, Tabs, Badge, Avatar, Divider, Radio, Checkbox, Col, Row, Skeleton } from "antd"
+import { TeamOutlined, MessageOutlined, PlusOutlined, GroupOutlined, SearchOutlined, MoreOutlined, UserOutlined, UserAddOutlined, UsergroupAddOutlined, LeftOutlined, CloseOutlined, MessageTwoTone } from "@ant-design/icons"
 import { getUsers } from "../../../api"
 import { createChat, getChatList } from "../../../api/ui/chat"
 import { useProfile } from "../../../components/hooks/UserHooks"
 import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min"
 import ChatListItem from "./ChatListItem"
+import { filterUsersByName, fullNameToColor } from "../chat_helper"
+import echo from "../../../helpers/echo"
 
 const { Sider, Header } = Layout
 const { Title, Text } = Typography
 
-function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose}) {
+function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = false, onClose, loading = false }) {
+  const { userProfile } = useProfile();
   const history = useHistory();
   const { chat_id } = useParams();
   const [loadingCreate, setLoadingCreate] = useState(false);
@@ -25,6 +28,7 @@ function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose
       await refresh();
       history.push('/ui/chat/' + res.data.id);
     }
+    formPrivateChat.resetFields();
     setIsModalCreatePrivateChatOpen(false);
     setLoadingCreate(false);
   }
@@ -37,6 +41,7 @@ function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose
       await refresh();
       history.push('/ui/chat/' + res.data.id);
     }
+    formPublicChat.resetFields();
     setIsModalCreatePublicChatOpen(false);
     setLoadingCreate(false);
   }
@@ -49,38 +54,95 @@ function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose
 
   const [activeRoom, setActiveRoom] = useState();
 
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(()=>{
-    const room = chatList.find(e=>e.id === chat_id);
-    if(room){
+  useEffect(() => {
+    const room = chatList.find(e => e.id === chat_id);
+    if (room) {
       setActiveRoom(room);
     }
   }, [chat_id, chatList]);
 
   const onSelectChat = (chat) => {
-    setActiveRoom(chat);
+    setChatList(prev => prev.map(e => {
+      if (e.id === chat.id) {
+        return { ...e, unread_count: 0 }; // Đặt số lượng tin nhắn chưa đọc về 0 khi chọn chat
+      }
+      return e;
+    }));
+    setSearchQuery('');
     history.push('/ui/chat/' + chat.id);
   }
+
+  const userChat = Form.useWatch('user_chat', formPublicChat) ?? [];
+  const chatName = Form.useWatch('name', formPublicChat) ?? [];
+  const [userSearch, setNewSearch] = useState('');
+
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 992);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth > 992);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (userProfile?.id) {
+      echo.private(`App.Models.CustomUser.${userProfile.id}`)
+        .notification(notif => {
+          const msg = notif?.data ?? notif?.payload?.data;
+          if (msg?.sender?.id == userProfile?.id) return;
+          setChatList(prev => {
+            const updated = prev.filter(e => e.id !== msg.chat_id);
+            const updatedChat = prev.find(e => e.id === msg.chat_id);
+            if (updatedChat) {
+              const newChat = updatedChat;
+              if(newChat.id === chat_id){
+                console.log('update to current chat')
+                newChat.timestamp = msg.created_at;
+                newChat.last_message = msg;
+              }else{
+                console.log('update to other chat')
+                newChat.unread_count = (newChat.unread_count ?? 0) + 1;
+                newChat.timestamp = msg.created_at;
+                newChat.last_message = msg;
+              }
+              console.log(newChat);
+              
+              return [
+                newChat,
+                ...updated
+              ];
+            }
+            return prev;
+          })
+        });
+
+      return () => {
+        echo.leave(`App.Models.CustomUser.${userProfile?.id}`);
+      };
+    }
+  }, [userProfile?.id, chat_id]);
 
   return (
     <React.Fragment>
       <Layout style={{ width: "100%", borderRight: "1px solid #d9d9d9", height: "100%" }}>
-        <Header style={{ background: "#fff", padding: "0 16px", borderBottom: "1px solid #f0f0f0", display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Title level={4} style={{ margin: 0 }}>
-            Đoạn chat
+        <Header style={{ background: "#fff", padding: "0 8px", borderBottom: "1px solid #f0f0f0", display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', whiteSpace: 'break-spaces' }}>
+            <MessageTwoTone style={{ fontSize: 30 }} /> Đoạn chat
           </Title>
           <div>
-            <Button icon={<UserAddOutlined />} type="text" onClick={()=>setIsModalCreatePrivateChatOpen(true)}/>
-            <Button icon={<UsergroupAddOutlined />} type="text" onClick={()=>setIsModalCreatePublicChatOpen(true)}/>
-            {isShowingDrawer && <CloseOutlined style={{fontSize: 18}} onClick={onClose}/>}
+            <Button icon={<UserAddOutlined />} type="text" onClick={() => setIsModalCreatePrivateChatOpen(true)} />
+            <Button icon={<UsergroupAddOutlined />} type="text" onClick={() => setIsModalCreatePublicChatOpen(true)} />
+            {isShowingDrawer && <CloseOutlined style={{ fontSize: 18 }} onClick={onClose} />}
           </div>
         </Header>
         <Divider style={{ margin: 0 }} />
-        <div style={{ padding: "16px 16px 0", borderBottom: "1px solid #f0f0f0", backgroundColor: "white", lineHeight: 0 }}>
+        <div style={{ padding: "8px 8px 0", borderBottom: "1px solid #f0f0f0", backgroundColor: "white", lineHeight: 0 }}>
           {/* Thanh tìm kiếm */}
           <Input
-            placeholder="Tìm kiếm trong Messenger"
+            placeholder="Tìm kiếm chat..."
             prefix={<SearchOutlined />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -88,8 +150,16 @@ function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose
           />
           {/* Danh sách cuộc trò chuyện */}
         </div>
-        <div style={{ height: "calc(100% - 180px)", overflowY: "auto" }}>
-          {chatList.map((e) => <ChatListItem chat={e} isSelected={e.id === activeRoom?.id} onClick={onSelectChat} />)}
+        <div style={{ height: '100%', overflowY: "auto" }}>
+          {filterUsersByName(chatList, searchQuery).map((e) => <ChatListItem chat={e} isSelected={e.id === activeRoom?.id} onClick={onSelectChat} />)}
+          {
+            chatList.length === 0 && loading && (
+              <>
+                <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} onClick={onSelectChat} /></Skeleton>
+                <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} onClick={onSelectChat} /></Skeleton>
+              </>
+            )
+          }
         </div>
       </Layout>
 
@@ -102,9 +172,48 @@ function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose
         okText="Tạo"
       >
         <Form form={formPrivateChat} onFinish={handleCreatePrivateChat}>
-          <Form.Item name="user_chat">
-            <Select options={users} placeholder="Nhập tên hoặc mã tài khoản" />
-          </Form.Item>
+          <div style={{
+            border: '1px solid #00000020',
+            borderRadius: 8,
+            overflow: 'auto',
+            height: 400,
+            position: 'relative'
+          }}>
+            <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', padding: 8, zIndex: 9999 }}>
+              <Input placeholder="Tìm kiếm tài khoản" value={userSearch} style={{ marginBottom: 8 }} addonBefore={<SearchOutlined />} allowClear onChange={(e) => setNewSearch(e.target.value)} />
+            </div>
+            <Form.Item name="user_chat">
+              <Radio.Group
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 8,
+                  padding: '0 8px'
+                }}
+              >
+                {filterUsersByName(users, userSearch).map(user => {
+                  return <Radio {...user}>
+                    {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
+                      {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
+                    </Avatar>}
+                    <span
+                      style={{
+                        marginLeft: 8,
+                        display: 'inline-block',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        verticalAlign: 'middle'
+                      }}
+                      title={user?.name}
+                    >
+                      {user?.name}
+                    </span>
+                  </Radio>
+                })}
+              </Radio.Group>
+            </Form.Item>
+          </div>
         </Form>
       </Modal>
 
@@ -113,16 +222,103 @@ function ChatSidebar({users, chatList, refresh, isShowingDrawer = false, onClose
         open={isModalCreatePublicChatOpen}
         onOk={() => formPublicChat.submit()}
         confirmLoading={loadingCreate}
-        onCancel={() => { setIsModalCreatePublicChatOpen(false); formPrivateChat.resetFields(); }}
+        onCancel={() => { setIsModalCreatePublicChatOpen(false); formPublicChat.resetFields(); }}
         okText="Tạo"
+        okButtonProps={{ disabled: chatName === '' || userChat.length <= 0 }}
+        width={700}
       >
-        <Form form={formPublicChat} onFinish={handleCreatePublicChat}>
+        <Form form={formPublicChat} onFinish={handleCreatePublicChat} initialValues={{ user_chat: [], name: '', user_search: '' }}>
           <Form.Item name="name">
             <Input placeholder="Nhập tên phòng chat" />
           </Form.Item>
-          <Form.Item name="user_chat">
-            <Select mode="multiple" options={users} placeholder="Nhập tên hoặc mã tài khoản" />
-          </Form.Item>
+          <Row gutter={8}>
+            <Col span={12}>
+              <div style={{
+                border: '1px solid #00000020',
+                borderRadius: 8,
+                overflow: 'auto',
+                height: 400,
+                position: 'relative'
+              }}>
+                <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', padding: 8, zIndex: 9999 }}>
+                  <p>Danh sách tài khoản</p>
+                  <Form.Item noStyle>
+                    <Input placeholder="Tìm kiếm tài khoản" value={userSearch} addonBefore={<SearchOutlined />} allowClear onChange={(e) => setNewSearch(e.target.value)} />
+                  </Form.Item>
+                </div>
+                <Form.Item name="user_chat" shouldUpdate style={{ margin: '0 8px' }}>
+                  <Checkbox.Group
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 8,
+                    }}
+                  >
+                    {filterUsersByName(users, userSearch).map(user => {
+                      return <Checkbox {...user}>
+                        {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
+                          {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
+                        </Avatar>}
+                        <span
+                          style={{
+                            marginLeft: 8,
+                            display: 'inline-block',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            verticalAlign: 'middle'
+                          }}
+                          title={user?.name}
+                        >
+                          {user?.name}
+                        </span>
+                      </Checkbox>
+                    })}
+                  </Checkbox.Group>
+                </Form.Item>
+              </div>
+            </Col>
+            <Col span={12}>
+              <div style={{
+                border: '1px solid #00000020',
+                borderRadius: 8,
+                overflow: 'auto',
+                height: 400,
+              }}>
+                <p style={{ position: 'sticky', top: 0, backgroundColor: 'white', padding: 8, zIndex: 9999 }}>Đã chọn</p>
+                <div style={{
+                  margin: '0 8px',
+                  gap: 8,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative'
+                }}>
+                  {users.filter(e => userChat.includes(e.id)).map(user => {
+                    return (
+                      <Checkbox value={user.id} checked onClick={() => formPublicChat.setFieldValue('user_chat', userChat.filter(e => e !== user.id))}>
+                        {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
+                          {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
+                        </Avatar>}
+                        <span
+                          style={{
+                            marginLeft: 8,
+                            display: 'inline-block',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            verticalAlign: 'middle'
+                          }}
+                          title={user?.name}
+                        >
+                          {user?.name}
+                        </span>
+                      </Checkbox>
+                    )
+                  })}
+                </div>
+              </div>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     </React.Fragment>

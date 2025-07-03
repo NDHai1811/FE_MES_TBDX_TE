@@ -26,6 +26,7 @@ import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
 import PopupQCHistory from "../../../components/Popup/PopupQCHistory";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const QualityPQC = (props) => {
   document.title = "UI - Quality";
@@ -457,4 +458,4 @@ const QualityPQC = (props) => {
   );
 };
 
-export default QualityPQC;
+export default withRouter(QualityPQC);

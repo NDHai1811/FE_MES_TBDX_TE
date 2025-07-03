@@ -10,9 +10,11 @@ import { logoutUser } from "../store/actions";
 import { setUserProfile } from "../store/actions";
 import VerticalLayout from "../layouts/index";
 import ForbiddenPage from "../pages/ForbiddenPage";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const AuthProtected = (props) => {
   const dispatch = useDispatch();
+  const history = useHistory(); 
   const { userProfile } = useProfile();
   useEffect(() => {
     if (userProfile) {
@@ -28,8 +30,12 @@ const AuthProtected = (props) => {
     */
 
   if (!userProfile) {
+    const currentPath = window.location.pathname + window.location.search;
+    const loginPath = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    history.push(loginPath);
+    return;
     return (
-      <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
+      <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
     );
   }
   return <>{props.children}</>;

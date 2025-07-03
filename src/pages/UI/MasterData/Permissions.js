@@ -33,6 +33,7 @@ import {
 import { authProtectedRoutes } from "../../../routes/allRoutes";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { PlusOutlined } from "@ant-design/icons";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Permissions = () => {
   document.title = "Quản lý phân quyền";
@@ -416,4 +417,4 @@ const Permissions = () => {
   );
 };
 
-export default Permissions;
+export default withRouter(Permissions);

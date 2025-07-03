@@ -30,6 +30,7 @@ import "../style.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "../style.scss";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const EditableCell = ({
   editing,
@@ -711,4 +712,4 @@ const Buyer = () => {
   );
 };
 
-export default Buyer;
+export default withRouter(Buyer);

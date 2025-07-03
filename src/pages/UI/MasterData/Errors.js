@@ -31,6 +31,7 @@ import {
   updateErrors,
 } from "../../../api";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Errors = () => {
   document.title = "Quản lý lỗi";
@@ -368,4 +369,4 @@ const Errors = () => {
   );
 };
 
-export default Errors;
+export default withRouter(Errors);

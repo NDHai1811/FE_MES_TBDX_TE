@@ -39,6 +39,7 @@ import dayjs from "dayjs";
 import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import EditableTable from "../../../components/Table/EditableTable";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Customer = () => {
   document.title = "Quản lý khách hàng";
@@ -336,4 +337,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default withRouter(Customer);

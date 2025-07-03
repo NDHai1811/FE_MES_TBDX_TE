@@ -40,6 +40,7 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import EditableTable from "../../../components/Table/EditableTable";
 import { getUserList } from "../../../store/actions";
 import { render } from "@testing-library/react";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const MachineAssignment = () => {
     document.title = "Phân bổ máy cho tài khoản";
@@ -299,4 +300,4 @@ const MachineAssignment = () => {
     );
 };
 
-export default MachineAssignment;
+export default withRouter(MachineAssignment);

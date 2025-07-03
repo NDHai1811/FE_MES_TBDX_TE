@@ -10,3 +10,9 @@ export const formatDateTime = (date, dateFormatType = COMMON_DATE_FORMAT) => {
   }
   return dayjs(date).format(dateFormatType);
 };
+
+export const generateUniqueKey = (prefix = 'key') => {
+  const timestamp = new Date().getTime();
+  const random = Math.random().toString(36).substring(2, 8);
+  return `${prefix}_${timestamp}_${random}`;
+}

@@ -33,6 +33,7 @@ import {
 } from "../../../api/ui/manufacture";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { DeleteOutlined } from "@ant-design/icons";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const columns1 = [
   {
@@ -572,4 +573,4 @@ const LichSuSanXuat = (props) => {
   );
 };
 
-export default LichSuSanXuat;
+export default withRouter(LichSuSanXuat);

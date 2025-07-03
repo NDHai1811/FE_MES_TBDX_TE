@@ -24,6 +24,7 @@ import "../style.scss";
 import { PrinterOutlined } from "@ant-design/icons";
 import TemPallet from "../../OI/Warehouse/TemPallet";
 import { useReactToPrint } from "react-to-print";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const Pallet = (props) => {
   document.title = "UI - Quản lý tem gộp";
@@ -350,4 +351,4 @@ const Pallet = (props) => {
   );
 };
 
-export default Pallet;
+export default withRouter(Pallet);

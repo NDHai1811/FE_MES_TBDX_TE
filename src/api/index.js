@@ -1,5 +1,9 @@
 import axios from "axios";
 
+export async function login(params) {
+  const res = await axios.post("/login", params);
+  return res;
+}
 export async function getListMachine(params) {
   const res = await axios.get("/oi/machine/list", {params});
   return res.data;

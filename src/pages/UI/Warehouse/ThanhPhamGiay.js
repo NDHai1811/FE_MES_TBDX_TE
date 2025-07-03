@@ -22,6 +22,7 @@ import dayjs from "dayjs";
 import { COMMON_DATE_FORMAT } from "../../../commons/constants";
 import "../style.scss";
 import EditableTable from "../../../components/Table/EditableTable";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const ThanhPhamGiay = (props) => {
   document.title = "UI - Quản lý thành phẩm giấy";
@@ -465,4 +466,4 @@ const ThanhPhamGiay = (props) => {
   );
 };
 
-export default ThanhPhamGiay;
+export default withRouter(ThanhPhamGiay);

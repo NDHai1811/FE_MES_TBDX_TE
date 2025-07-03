@@ -14,20 +14,34 @@ import { withRouter, Link } from "react-router-dom";
 import { loginUser, resetLoginFlag } from "../../store/actions";
 import logo from "../../assets/images/logo.jpg";
 import background1 from "../../assets/images/bg2.jpg";
+import { login } from "../../api";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import axios from "axios";
 
 const Login = (props) => {
+  const history = useHistory();
   useEffect(() => {
     localStorage.removeItem("authUser");
   }, []);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(resetLoginFlag());
-    }, 4000);
-  }, [dispatch]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     dispatch(resetLoginFlag());
+  //   }, 4000);
+  // }, [dispatch]);
   const onFinish = async (values) => {
-    dispatch(loginUser(values, props.history, setLoading));
+    // dispatch(loginUser(values, props.history, setLoading));
+    setLoading(true);
+    var res = await login({username: values.username, password: values.password});
+    if (res.success) {
+      localStorage.setItem("authUser", JSON.stringify(res.data));
+      axios.defaults.headers.common["Authorization"] = "Bearer " + res?.data?.token;
+      const searchParams = new URLSearchParams(history.location.search);
+      const redirect = searchParams.get("redirect") || "/";
+      history.push(redirect ?? "/screen");
+    }
+    setLoading(false);
   };
   document.title = "Đăng nhập";
   return (
@@ -61,7 +75,7 @@ const Login = (props) => {
               </h6>
               <div className="p-2 mt-3">
                 <Form layout="vertical" onFinish={onFinish}>
-                  <Form.Item className="mb-4" name="username" rules={[{required: true, message: 'Hãy nhập thông tin cho trường Mã nhân viên'}]}>
+                  <Form.Item className="mb-4" name="username" rules={[{ required: true, message: 'Hãy nhập thông tin cho trường Mã nhân viên' }]}>
                     <Input
                       prefix={<UserOutlined className="site-form-item-icon" />}
                       placeholder="Nhập mã nhân viên"
@@ -73,7 +87,7 @@ const Login = (props) => {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item className="mb-4" name="password" rules={[{required: true, message: 'Hãy nhập thông tin cho trường Mật khẩu'}]}>
+                  <Form.Item className="mb-4" name="password" rules={[{ required: true, message: 'Hãy nhập thông tin cho trường Mật khẩu' }]}>
                     <Input.Password
                       placeholder="Mật khẩu"
                       prefix={<LockOutlined className="site-form-item-icon" />}

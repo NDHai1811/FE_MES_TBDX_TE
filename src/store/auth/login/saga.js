@@ -5,6 +5,7 @@ import { LOGIN_USER, LOGOUT_USER } from "./actionTypes";
 import { apiError, loginSuccess, logoutUserSuccess } from "./actions";
 
 import { postFakeLogin } from "../../../helpers/fakebackend_helper";
+import axios from "axios";
 // const fireBaseBackend = getFirebaseBackend();
 function* loginUser({ payload: { user, history, setLoading } }) {
   setLoading(true);
@@ -16,7 +17,9 @@ function* loginUser({ payload: { user, history, setLoading } }) {
   if (response.success === true) {
     localStorage.setItem("authUser", JSON.stringify(response.data));
     yield put(loginSuccess(response));
-    history.push("/screen");
+    const searchParams = new URLSearchParams(history.location.search);
+    const redirect = searchParams.get("redirect") || "/";
+    history.push(redirect ?? "/screen");
   } else {
     yield put(apiError(response));
   }

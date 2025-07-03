@@ -27,6 +27,7 @@ import {
 import { getMachineList } from "../../../api/ui/machine";
 import { baseURL } from "../../../config";
 import dayjs from "dayjs";
+import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 const QualityIQC = (props) => {
   document.title = "UI - IQC";
@@ -367,4 +368,4 @@ const QualityIQC = (props) => {
   );
 };
 
-export default QualityIQC;
+export default withRouter(QualityIQC);
