@@ -105,11 +105,6 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
                 <Text type="secondary" style={{ fontSize: "13px" }} ellipsis>
                     {lastMessage(chat?.last_message)}
                 </Text>
-                {/* {chat.type === "group" && (
-                    <Text type="secondary" style={{ fontSize: "11px", display: "block" }}>
-                        {(chat.participants ?? []).length} thành viên
-                    </Text>
-                )} */}
                 {chat.unread_count ? (
                 <Badge
                     count={chat.unread_count}
