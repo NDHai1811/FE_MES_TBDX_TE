@@ -15,6 +15,20 @@ export async function updateChat(params, chatId) {
     const res = await axios.patch("/chats/" + chatId, params);
     return res;
 }
+export async function deleteChat(chatId) {
+    if (!chatId) {
+        return;
+    }
+    const res = await axios.delete("/chats/" + chatId);
+    return res;
+}
+export async function leaveChat(chatId) {
+    if (!chatId) {
+        return;
+    }
+    const res = await axios.post("/chats/" + chatId + "/leave");
+    return res;
+}
 export async function sendMessage(params, chatId) {
     if (!chatId) {
         return;

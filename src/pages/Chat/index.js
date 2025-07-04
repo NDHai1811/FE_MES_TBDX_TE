@@ -54,7 +54,7 @@ function Chat() {
   }
 
   const [chatList, setChatList] = useState([]);
-  const [loadingChatList, setLoadingChatList] = useState(true);
+  const [loadingChatList, setLoadingChatList] = useState(false);
   const fetchChatList = async () => {
     setLoadingChatList(true);
     var res = await getChatList();
@@ -105,6 +105,7 @@ function Chat() {
     (message.links ?? []).forEach(link => {
       formData.append('links[]', link)
     });
+    formData.append('reply_to_message_id', message?.reply_to_message_id ?? null);
     var res = await sendMessage(formData, activeRoom?.id);
     if(res.success && res.data){
       const msg = res.data;
@@ -171,6 +172,11 @@ function Chat() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobile]);
+
+  const [replyMessage, setReplyMessage] = useState(null);
+  const onReplyMessage = (msg) => {
+    setReplyMessage(msg);
+  }
 
   return (
     <Layout style={{ height: "100%" }}>
@@ -256,8 +262,8 @@ function Chat() {
           </Content>
           :
           <Content style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-            <ChatArea chatId={activeRoom?.id} chat={activeRoom} sentMessage={sentMessage}/>
-            <ChatInput chat={activeRoom} onSendMessage={handleSendMessage} onSendFileMessage={handleSendFileMessage} chatUsers={activeRoom.participants ?? []} />
+            <ChatArea chatId={activeRoom?.id} chat={activeRoom} sentMessage={sentMessage} onReplyMessage={onReplyMessage}/>
+            <ChatInput chat={activeRoom} onSendMessage={handleSendMessage} onSendFileMessage={handleSendFileMessage} chatUsers={activeRoom.participants ?? []} replyMessage={replyMessage} setReplyMessage={setReplyMessage} />
           </Content>
         }
       </Layout>

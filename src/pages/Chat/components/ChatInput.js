@@ -1,19 +1,12 @@
 "use client"
 
 import { Button, Image as PreviewImage, Upload } from "antd"
-import { CloseCircleFilled, LoadingOutlined, PaperClipOutlined, SendOutlined } from "@ant-design/icons"
+import { CloseCircleFilled, CloseOutlined, LoadingOutlined, PaperClipOutlined, SendOutlined } from "@ant-design/icons"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import StarterKit from '@tiptap/starter-kit'
 import Mention from '@tiptap/extension-mention'
-// import Image from '@tiptap/extension-image'
-// import TextStyle from '@tiptap/extension-text-style'
-// import Color from '@tiptap/extension-color'
-// import Highlight from '@tiptap/extension-highlight'
-// import BulletList from '@tiptap/extension-bullet-list'
-// import ListItem from '@tiptap/extension-list-item'
-// import Strike from '@tiptap/extension-strike'
-// import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Link from '@tiptap/extension-link'
+import { SmilieReplacer } from './Mentions/SmilieReplacer'
 import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
 import tippy from 'tippy.js';
 // import 'tippy.js/dist/tippy.css';
@@ -21,7 +14,7 @@ import { MentionList } from "./Mentions/MentionList"
 import echo from "../../../helpers/echo"
 import { useProfile } from "../../../components/hooks/UserHooks"
 
-function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [] }) {
+function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], replyMessage = null, setReplyMessage = () => { } }) {
   const { userProfile } = useProfile();
   const [isSending, setIsSending] = useState(false);
 
@@ -144,6 +137,7 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [] }) {
           }
         },
       }),
+      SmilieReplacer,
     ],
     editorProps: {
       handleKeyDown: (view, event) => {
@@ -224,12 +218,14 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [] }) {
         mentions: mentions,
         images: images,
         links: links,
+        reply_to_message_id: replyMessage?.id,
       };
       setImages([]);
       setPreviews([]);
       setIsSending(true);
       await onSendMessage(payload);
       setIsSending(false);
+      setReplyMessage();
       editor.commands.clearContent();
       editor.commands.unsetLink();
     }
@@ -239,6 +235,7 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [] }) {
     setImages([]);
     setPreviews([]);
     setIsSending(false);
+    setReplyMessage();
     editor.commands.clearContent();
     editor.commands.unsetLink();
   }, [chat]);
@@ -297,6 +294,12 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [] }) {
     };
   }, [chat?.id]);
 
+  useEffect(() => {
+    if (replyMessage) {
+      console.log(replyMessage);
+    }
+  }, [replyMessage]);
+
   return (
     <div
       style={{
@@ -311,67 +314,94 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [] }) {
           💬 {typingUser} đang gõ...
         </div>
       )}
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", width: '100%' }}>
-        <Upload {...uploadProps} style={{ width: '10%' }}><Button size="large" icon={<PaperClipOutlined />} loading={uploading} tabIndex={-1} shape="circle" style={{ color: "#1677ff", flexShrink: 0 }} /></Upload>
-
-        <div style={{ flex: 1, position: "relative", width: '80%' }}>
-          <div className="custom-antd-textarea">
-            <EditorContent editor={editor} />
-          </div>
-          {previews.length > 0 && <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap", maxHeight: 400, overflowY: 'auto', paddingTop: 8 }}>
-            {previews.map((src, idx) => (
-              <div
-                key={idx}
-                style={{
-                  position: "relative",
-                  width: 100,
-                  height: 100,
-                }}
-                className="image-wrapper"
-              >
-                <PreviewImage
-                  src={src}
-                  alt={`Pasted ${idx}`}
-                  width={100}
-                  height={100}
-                  style={{
-                    border: "1px solid #d9d9d9",
-                    borderRadius: 8,
-                    objectFit: "contain",
-                  }}
-                  preview={{ mask: "Nhấn để xem" }} // vẫn giữ chức năng preview
-                />
-                <CloseCircleFilled
-                  onClick={() => handleRemove(idx)}
-                  style={{
-                    position: "absolute",
-                    top: -6,
-                    right: -6,
-                    fontSize: 18,
-                    color: "#ff0000cc",
-                    background: "white",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                    zIndex: 99
-                  }}
-                  className="remove-icon"
-                />
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", width: '100%', flexDirection: 'column' }}>
+        {replyMessage && (
+          <div style={{
+            width: '100%',
+            background: '#e6f4ff',
+            border: '1px solid #91d5ff',
+            borderRadius: 6,
+            padding: 8,
+            position: 'relative'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: 13, color: '#1890ff', fontWeight: 500, marginBottom: 2 }}>
+                Trả lời {replyMessage.sender?.name || ''}
               </div>
-            ))}
-          </div>}
+              <CloseOutlined onClick={() => setReplyMessage(null)} style={{ cursor: 'pointer' }} />
+            </div>
+            <div style={{
+              color: '#00000087',
+              fontSize: 14,
+              marginBottom: 2,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
+            }}>
+              {replyMessage.content_text}
+            </div>
+
+          </div>
+        )}
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 8 }}>
+          <Upload {...uploadProps} style={{ width: '10%' }}><Button size="large" icon={<PaperClipOutlined />} loading={uploading} tabIndex={-1} shape="circle" style={{ color: "#1677ff", flexShrink: 0 }} /></Upload>
+          <div style={{ flex: 1, position: "relative", width: '80%' }}>
+            <div className="custom-antd-textarea">
+              <EditorContent editor={editor} />
+            </div>
+            {previews.length > 0 && <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap", maxHeight: 400, overflowY: 'auto', paddingTop: 8 }}>
+              {previews.map((src, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    position: "relative",
+                    width: 100,
+                    height: 100,
+                  }}
+                  className="image-wrapper"
+                >
+                  <PreviewImage
+                    src={src}
+                    alt={`Pasted ${idx}`}
+                    width={100}
+                    height={100}
+                    style={{
+                      border: "1px solid #d9d9d9",
+                      borderRadius: 8,
+                      objectFit: "contain",
+                    }}
+                    preview={{ mask: "Nhấn để xem" }} // vẫn giữ chức năng preview
+                  />
+                  <CloseCircleFilled
+                    onClick={() => handleRemove(idx)}
+                    style={{
+                      position: "absolute",
+                      top: -6,
+                      right: -6,
+                      fontSize: 18,
+                      color: "#ff0000cc",
+                      background: "white",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      zIndex: 99
+                    }}
+                    className="remove-icon"
+                  />
+                </div>
+              ))}
+            </div>}
+          </div>
+          <Button
+            type="primary"
+            size="large"
+            loading={isSending}
+            icon={<SendOutlined />}
+            onClick={handleSend}
+            shape="circle"
+            style={{ flexShrink: 0 }}
+          ></Button>
         </div>
-        {/* {messageInput.trim() ? ( */}
-        <Button
-          type="primary"
-          size="large"
-          icon={isSending ? <LoadingOutlined spin /> : <SendOutlined />}
-          onClick={handleSend}
-          shape="circle"
-          style={{ flexShrink: 0 }}
-        ></Button>
-        {/* ) : (
-          <Button type="text" icon={<AudioOutlined />} style={{ color: "#1677ff", flexShrink: 0 }} />
-        )} */}
       </div>
     </div>
   )

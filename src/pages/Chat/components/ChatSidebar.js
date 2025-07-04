@@ -218,7 +218,7 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
       </Modal>
 
       <Modal
-        title="Tạo phòng chat riêng mới"
+        title="Tạo phòng chat chung mới"
         open={isModalCreatePublicChatOpen}
         onOk={() => formPublicChat.submit()}
         confirmLoading={loadingCreate}
@@ -228,7 +228,7 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
         width={700}
       >
         <Form form={formPublicChat} onFinish={handleCreatePublicChat} initialValues={{ user_chat: [], name: '', user_search: '' }}>
-          <Form.Item name="name">
+          <Form.Item name="name" rules={[{ required: true, message: 'Vui lòng nhập tên phòng chat' }]}>
             <Input placeholder="Nhập tên phòng chat" />
           </Form.Item>
           <Row gutter={8}>

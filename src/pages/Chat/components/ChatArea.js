@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo, useLayoutEffect } from "react";
-import { Avatar, Button, Empty, Image, message, Space, Spin, Tooltip } from "antd";
-import { DownloadOutlined, DownOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, LeftOutlined, RightOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, UndoOutlined, UserOutlined, ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
+import { Avatar, Button, Dropdown, Empty, Image, Menu, message, Popconfirm, Space, Spin, Tooltip, Typography } from "antd";
+import { CommentOutlined, CopyOutlined, DeleteOutlined, DownloadOutlined, DownOutlined, EllipsisOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, LeftOutlined, RetweetOutlined, RightOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, UndoOutlined, UserOutlined, ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
 import { downloadFileMsg, getMessages, markAsRead } from "../../../api/ui/chat";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { baseURL } from "../../../config";
@@ -53,7 +53,7 @@ const formatDateDivider = (timestamp) => {
 /**
  * ChatArea with message grouping and username displayed above each group
  */
-function ChatArea({ chatId, chat, sentMessage }) {
+function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
   const { userProfile } = useProfile();
   const [messages, setMessages] = useState([]);
   const [incomingMessage, setIncomingMessage] = useState();
@@ -108,7 +108,7 @@ function ChatArea({ chatId, chat, sentMessage }) {
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    if(!hasRefresh.current){
+    if (!hasRefresh.current) {
       const deltaHeight = container.scrollHeight - prevScrollHeightRef.current;
       container.scrollTop = prevScrollTopRef.current + deltaHeight;
     } else {
@@ -185,12 +185,12 @@ function ChatArea({ chatId, chat, sentMessage }) {
 
   //Update messages when receiving new message
   useEffect(() => {
-    if (!incomingMessage) return;
+    if (!incomingMessage || messages.some(e => e.id === incomingMessage.id)) return;
     setMessages(prev => [...prev, { ...incomingMessage, isMine: incomingMessage.sender_id == userProfile.id }]);
   }, [incomingMessage, userProfile]);
 
   useEffect(() => {
-    if (!sentMessage) return;
+    if (!sentMessage || messages.some(e => e.id === sentMessage.id)) return;
     setMessages(prev => [...prev, { ...sentMessage, isMine: sentMessage.sender_id == userProfile.id }]);
   }, [sentMessage, userProfile]);
 
@@ -212,7 +212,48 @@ function ChatArea({ chatId, chat, sentMessage }) {
     }
   }, [messages, userProfile?.id]);
 
-  
+  const deleteMessage = (id) => {
+    console.log(id);
+  }
+
+  const contentMenu = (msg) => ({
+    items: [
+      {
+        key: "reply",
+        icon: <CommentOutlined />,
+        label: "Trả lời",
+        onClick: () => {
+          onReplyMessage(msg);
+        },
+      },
+      {
+        key: "copy",
+        icon: <CopyOutlined />,
+        label: "Copy",
+        onClick: () => {
+          navigator.clipboard.writeText(msg.content_text);
+          message.success('Copied to clipboard');
+        },
+        hidden: !msg.content_text
+      },
+      {
+        key: "recall",
+        label: <Popconfirm title="Bạn có chắc muốn thu hồi tin nhắn này?" arrow={false} onConfirm={() => deleteMessage(msg.id)}><span style={{ width: '100%', display: 'flex' }}><UndoOutlined /> Thu hồi</span></Popconfirm>,
+        style: {
+          color: 'red'
+        },
+        hidden: !msg.isMine
+      },
+      {
+        key: "delete",
+        label: <Popconfirm title="Bạn có chắc muốn xoá tin nhắn này?" arrow={false} onConfirm={() => deleteMessage(msg.id)}><span style={{ width: '100%', display: 'flex' }}><DeleteOutlined /> Xoá</span></Popconfirm>,
+        style: {
+          color: 'red'
+        },
+        hidden: !msg.isMine
+      },
+    ].filter(e => !e.hidden)
+  });
 
   return (
     !messages.length ?
@@ -282,6 +323,7 @@ function ChatArea({ chatId, chat, sentMessage }) {
                       display: "flex",
                       flexDirection: isMineGroup ? "row-reverse" : "row",
                       alignItems: "flex-start",
+                      maxWidth: 'inherit',
                     }}
                   >
                     {/* Avatar */}
@@ -300,12 +342,67 @@ function ChatArea({ chatId, chat, sentMessage }) {
                       >{group.items[0]?.sender?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}</Avatar>
                     </div>
                     {/* Messages */}
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: '100%' }}>
                       {group.items.map((msg, i) => (
                         <div key={msg.id} style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', alignItems: msg.isMine ? 'flex-end' : 'flex-start' }}>
-                          <Tooltip open={false} title={formatTimestamp(msg.created_at)} trigger={'click'} placement={msg.isMine ? "left" : "right"} color="#00000073" mouseLeaveDelay={0} mouseEnterDelay={0.2} getPopupContainer={(triggerNode) => triggerNode.parentNode}>
+                          <Tooltip
+                            // open={false}
+                            title={
+                              <Space direction="horizontal">
+                                <div style={{ padding: '4px 8px', backgroundColor: '#00000020', borderRadius: '50%', cursor: 'pointer' }} onClick={() => onReplyMessage(msg)}>
+                                  <CommentOutlined />
+                                </div>
+                                {msg.content_text && <div style={{ padding: '4px 8px', backgroundColor: '#00000020', borderRadius: '50%', cursor: 'pointer' }} onClick={() => {
+                                  navigator.clipboard.writeText(msg.content_text);
+                                  message.success('Copied to clipboard');
+                                }}>
+                                  <CopyOutlined />
+                                </div>}
+                                <Dropdown menu={contentMenu(msg)} trigger={['click']} placement={"bottomRight"}>
+                                  <div style={{ padding: '4px 8px', backgroundColor: '#00000020', borderRadius: '50%', cursor: 'pointer' }}>
+                                    <EllipsisOutlined />
+                                  </div>
+                                </Dropdown>
+                              </Space>
+                            }
+                            trigger={['click']}
+                            arrow={false}
+                            placement={msg.isMine ? "left" : "right"}
+                            mouseLeaveDelay={0}
+                            mouseEnterDelay={0.2}
+                            overlayInnerStyle={{ borderRadius: '50%', color: '#00000073', backgroundColor: 'transparent', boxShadow: 'none' }}
+                            getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                          >
                             <div style={{ maxWidth: '70%' }}>
                               {/* Text content */}
+                              {msg?.reply_to && (
+                                <div style={{
+                                  background: '#e6f4ff',
+                                  border: '1px solid #91d5ff',
+                                  borderRadius: 6,
+                                  padding: 8,
+                                  position: 'relative',
+                                  maxWidth: '100%',
+                                  justifySelf: msg.isMine ? 'flex-end' : 'flex-start',
+                                }}>
+                                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ fontSize: 13, color: '#1890ff', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap' }}>
+                                      Trả lời {msg?.reply_to?.sender?.name || ''}
+                                    </div>
+                                  </div>
+                                  <div style={{
+                                    color: '#00000087',
+                                    fontSize: 14,
+                                    marginBottom: 2,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
+                                  }}>
+                                    {msg?.reply_to?.content_text}
+                                  </div>
+                                </div>
+                              )}
                               {msg.content_text && (
                                 <div
                                   style={{
@@ -314,8 +411,7 @@ function ChatArea({ chatId, chat, sentMessage }) {
                                     padding: '8px 12px',
                                     borderRadius: 8,
                                     marginBottom: 0,
-                                    whiteSpace: 'pre-wrap',
-                                    wordBreak: 'break-word'
+                                    width: '100%',
                                   }}
                                 >
                                   <div className={`message ${msg.isMine ? 'mine' : ''}`}>
@@ -423,6 +519,7 @@ function ChatArea({ chatId, chat, sentMessage }) {
                                 )}
                             </div>
                           </Tooltip>
+
                           {/* Timestamp */}
                           {i === group.items.length - 1 && <span style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
                             {formatTimestamp(msg.created_at)}
