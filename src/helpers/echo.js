@@ -9,7 +9,7 @@ const echo = new Echo({
   broadcaster: 'socket.io',
   host: `${baseHost}:6001`,
   // client: io,
-  authHost: api.API_URL,      // -> http://127.0.0.1:8001/api
+  authHost: baseURL,      // -> http://127.0.0.1:8001/api
   authEndpoint: '/broadcasting/auth',// -> /broadcasting/auth
   auth: {
     headers: {

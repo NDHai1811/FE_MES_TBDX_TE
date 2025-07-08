@@ -1,7 +1,7 @@
 "use client"
 
 import { Button, Image as PreviewImage, Upload } from "antd"
-import { CloseCircleFilled, CloseOutlined, LoadingOutlined, PaperClipOutlined, SendOutlined } from "@ant-design/icons"
+import { CloseCircleFilled, CloseOutlined, LoadingOutlined, PaperClipOutlined, PictureOutlined, SendOutlined } from "@ant-design/icons"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import StarterKit from '@tiptap/starter-kit'
 import Mention from '@tiptap/extension-mention'
@@ -339,7 +339,7 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
               textOverflow: 'ellipsis',
               maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
             }}>
-              {replyMessage.content_text}
+              {replyMessage?.type === 'image' ? <><PictureOutlined />Hình ảnh</> : replyMessage?.type === 'file' ? <><PaperClipOutlined />{(replyMessage.attachments[0].file_name ?? '')}</> : replyMessage.content_text}
             </div>
 
           </div>

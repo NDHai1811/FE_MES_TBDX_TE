@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, useLayoutEffect } from "react";
-import { Avatar, Button, Dropdown, Empty, Image, Menu, message, Popconfirm, Space, Spin, Tooltip, Typography } from "antd";
-import { CommentOutlined, CopyOutlined, DeleteOutlined, DownloadOutlined, DownOutlined, EllipsisOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, LeftOutlined, RetweetOutlined, RightOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, UndoOutlined, UserOutlined, ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
-import { downloadFileMsg, getMessages, markAsRead } from "../../../api/ui/chat";
+import { Avatar, Button, Dropdown, Empty, Image, Menu, message, Modal, Popconfirm, Space, Spin, Tooltip, Typography } from "antd";
+import { CommentOutlined, CopyOutlined, DeleteOutlined, DownloadOutlined, DownOutlined, EllipsisOutlined, ExclamationCircleOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, LeftOutlined, PaperClipOutlined, PictureOutlined, RetweetOutlined, RightOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, UndoOutlined, UserOutlined, ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
+import { deleteMessage, downloadFileMsg, getMessages, markAsRead, recallMessage } from "../../../api/ui/chat";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { baseURL } from "../../../config";
 import MessageViewer from "./MessageViewer";
@@ -169,30 +169,46 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
   // Nhận tin nhắn mới từ Echo
   useEffect(() => {
     if (!chatId) return;
-    const channel = echo.private(`chat.${chatId}`);
+    const channel = echo.private(`user.${userProfile?.id}`)
     //Listen Event Message Sent
     channel.listen('MessageSent', msg => {
-      if (msg.sender.id == userProfile.id) return;
+      console.log(msg);
+      
+      if (msg.sender_id == userProfile.id) return;
       if (msg.chat_id === chatId) {
         setIncomingMessage(msg);
       }
     });
+    channel.listen('MessageRecall', msg => {
+      setMessages(prev => prev.map(e => e.id === msg.id ? {...msg, isMine: msg.sender_id == userProfile?.id} : e));
+    });
     return () => {
       channel.stopListening('MessageSent');
+      channel.stopListening('MessageRecall');
       echo.leave(`chat.${chatId}`);  // hoặc echo.leaveChannel(...) tùy phiên bản
     };
   }, [chatId, userProfile?.id]);
 
   //Update messages when receiving new message
   useEffect(() => {
-    if (!incomingMessage || messages.some(e => e.id === incomingMessage.id)) return;
-    setMessages(prev => [...prev, { ...incomingMessage, isMine: incomingMessage.sender_id == userProfile.id }]);
-  }, [incomingMessage, userProfile]);
+    if (!incomingMessage) return;
+    setMessages(prev => {
+      if (prev.some(e => e.id === incomingMessage.id)) {
+        return prev;
+      }
+      return [...prev, {...incomingMessage, isMine: incomingMessage.sender_id == userProfile?.id}];
+    });
+  }, [incomingMessage, userProfile?.id]);
 
   useEffect(() => {
-    if (!sentMessage || messages.some(e => e.id === sentMessage.id)) return;
-    setMessages(prev => [...prev, { ...sentMessage, isMine: sentMessage.sender_id == userProfile.id }]);
-  }, [sentMessage, userProfile]);
+    if (!sentMessage) return;
+    setMessages(prev => {
+      if (prev.some(e => e.id === sentMessage.id)) {
+        return prev;
+      }
+      return [...prev, {...sentMessage, isMine: sentMessage.sender_id == userProfile?.id}];
+    });
+  }, [sentMessage]);
 
   // Mark last message as read when user is focused and last message is not read
   useEffect(() => {
@@ -212,15 +228,31 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
     }
   }, [messages, userProfile?.id]);
 
-  const deleteMessage = (id) => {
-    console.log(id);
+  const deleteMsg = async (id, chatId) => {
+    const res = await deleteMessage(id, chatId);
+    if (res.success) {
+      setMessages(prev => prev.filter(e => e.id !== id));
+    }
+  }
+
+  const recall = async (id, chatId) => {
+    Modal.confirm({
+      title: 'Bạn có chắc muốn thu hồi tin nhắn này?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        const res = await recallMessage(id, chatId);
+        setMessages(prev => prev.map(e => e.id === id ? {...res.data, isMine: res.data.sender_id == userProfile?.id} : e));
+      },
+      centered: true,
+    });
+
   }
 
   const contentMenu = (msg) => ({
     items: [
       {
         key: "reply",
-        icon: <CommentOutlined />,
+        icon: <CommentOutlined style={{ fontSize: 16 }} />,
         label: "Trả lời",
         onClick: () => {
           onReplyMessage(msg);
@@ -228,7 +260,7 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
       },
       {
         key: "copy",
-        icon: <CopyOutlined />,
+        icon: <CopyOutlined style={{ fontSize: 16 }} />,
         label: "Copy",
         onClick: () => {
           navigator.clipboard.writeText(msg.content_text);
@@ -238,20 +270,22 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
       },
       {
         key: "recall",
-        label: <Popconfirm title="Bạn có chắc muốn thu hồi tin nhắn này?" arrow={false} onConfirm={() => deleteMessage(msg.id)}><span style={{ width: '100%', display: 'flex' }}><UndoOutlined /> Thu hồi</span></Popconfirm>,
+        icon: <UndoOutlined style={{ fontSize: 16 }} />,
+        label: 'Thu hồi',
         style: {
           color: 'red'
         },
+        onClick: () => recall(msg.id, chatId),
         hidden: !msg.isMine
       },
-      {
-        key: "delete",
-        label: <Popconfirm title="Bạn có chắc muốn xoá tin nhắn này?" arrow={false} onConfirm={() => deleteMessage(msg.id)}><span style={{ width: '100%', display: 'flex' }}><DeleteOutlined /> Xoá</span></Popconfirm>,
-        style: {
-          color: 'red'
-        },
-        hidden: !msg.isMine
-      },
+      // {
+      //   key: "delete",
+      //   label: <Popconfirm title="Bạn có chắc muốn xoá tin nhắn này?" arrow={false} onConfirm={() => deleteMsg(msg.id)}><span style={{ width: '100%', display: 'flex' }}><DeleteOutlined /> Xoá</span></Popconfirm>,
+      //   style: {
+      //     color: 'red'
+      //   },
+      //   hidden: !msg.isMine
+      // },
     ].filter(e => !e.hidden)
   });
 
@@ -345,143 +379,62 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: '100%' }}>
                       {group.items.map((msg, i) => (
                         <div key={msg.id} style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', alignItems: msg.isMine ? 'flex-end' : 'flex-start' }}>
-                          <Tooltip
-                            // open={false}
-                            title={
-                              <Space direction="horizontal">
-                                <div style={{ padding: '4px 8px', backgroundColor: '#00000020', borderRadius: '50%', cursor: 'pointer' }} onClick={() => onReplyMessage(msg)}>
-                                  <CommentOutlined />
-                                </div>
-                                {msg.content_text && <div style={{ padding: '4px 8px', backgroundColor: '#00000020', borderRadius: '50%', cursor: 'pointer' }} onClick={() => {
-                                  navigator.clipboard.writeText(msg.content_text);
-                                  message.success('Copied to clipboard');
-                                }}>
-                                  <CopyOutlined />
-                                </div>}
-                                <Dropdown menu={contentMenu(msg)} trigger={['click']} placement={"bottomRight"}>
-                                  <div style={{ padding: '4px 8px', backgroundColor: '#00000020', borderRadius: '50%', cursor: 'pointer' }}>
-                                    <EllipsisOutlined />
-                                  </div>
-                                </Dropdown>
-                              </Space>
-                            }
-                            trigger={['click']}
-                            arrow={false}
-                            placement={msg.isMine ? "left" : "right"}
-                            mouseLeaveDelay={0}
-                            mouseEnterDelay={0.2}
-                            overlayInnerStyle={{ borderRadius: '50%', color: '#00000073', backgroundColor: 'transparent', boxShadow: 'none' }}
-                            getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                          >
-                            <div style={{ maxWidth: '70%' }}>
-                              {/* Text content */}
-                              {msg?.reply_to && (
-                                <div style={{
-                                  background: '#e6f4ff',
-                                  border: '1px solid #91d5ff',
-                                  borderRadius: 6,
-                                  padding: 8,
-                                  position: 'relative',
-                                  maxWidth: '100%',
-                                  justifySelf: msg.isMine ? 'flex-end' : 'flex-start',
-                                }}>
-                                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <div style={{ fontSize: 13, color: '#1890ff', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap' }}>
-                                      Trả lời {msg?.reply_to?.sender?.name || ''}
+                          {!msg.deleted_at ?
+                            <Tooltip
+                              // open={false}
+                              title={
+                                <Space direction="horizontal">
+                                  <Button shape="circle" onClick={() => onReplyMessage(msg)} icon={<CommentOutlined style={{ fontSize: 16 }} />} />
+                                  {msg.content_text && <Button shape="circle" onClick={() => {
+                                    navigator.clipboard.writeText(msg.content_text);
+                                    message.success('Copied to clipboard');
+                                  }}
+                                    icon={<CopyOutlined style={{ fontSize: 18 }} />}
+                                  />}
+                                  <Dropdown menu={contentMenu(msg)} trigger={['click']} placement={"bottomRight"}>
+                                    <Button shape="circle" icon={<EllipsisOutlined style={{ fontSize: 18 }} />} />
+                                  </Dropdown>
+                                </Space>
+                              }
+                              trigger={['click']}
+                              arrow={false}
+                              placement={msg.isMine ? "left" : "right"}
+                              mouseLeaveDelay={0}
+                              mouseEnterDelay={0.2}
+                              overlayInnerStyle={{ borderRadius: '50%', color: '#00000073', backgroundColor: 'transparent', boxShadow: 'none' }}
+                              getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                            >
+                              <div style={{ maxWidth: '70%' }}>
+                                {/* Text content */}
+                                {msg?.reply_to && (
+                                  <div style={{
+                                    background: '#e6f4ff',
+                                    border: '1px solid #91d5ff',
+                                    borderRadius: 6,
+                                    padding: 8,
+                                    position: 'relative',
+                                    maxWidth: '100%',
+                                    justifySelf: msg.isMine ? 'flex-end' : 'flex-start',
+                                  }}>
+                                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                      <div style={{ fontSize: 13, color: '#1890ff', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap' }}>
+                                        Trả lời {msg?.reply_to?.sender?.name || ''}
+                                      </div>
+                                    </div>
+                                    <div style={{
+                                      color: '#00000087',
+                                      fontSize: 14,
+                                      marginBottom: 2,
+                                      whiteSpace: 'nowrap',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
+                                    }}>
+                                      {msg?.reply_to?.type === 'image' ? <><PictureOutlined />Hình ảnh</> : msg?.reply_to?.type === 'file' ? <><PaperClipOutlined />{(msg.reply_to.attachments[0].file_name ?? '')}</> : msg.reply_to.content_text}
                                     </div>
                                   </div>
-                                  <div style={{
-                                    color: '#00000087',
-                                    fontSize: 14,
-                                    marginBottom: 2,
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
-                                  }}>
-                                    {msg?.reply_to?.content_text}
-                                  </div>
-                                </div>
-                              )}
-                              {msg.content_text && (
-                                <div
-                                  style={{
-                                    background: msg.isMine ? '#1890ff' : '#f0f0f0',
-                                    color: msg.isMine ? '#fff' : '#000',
-                                    padding: '8px 12px',
-                                    borderRadius: 8,
-                                    marginBottom: 0,
-                                    width: '100%',
-                                  }}
-                                >
-                                  <div className={`message ${msg.isMine ? 'mine' : ''}`}>
-                                    <MessageViewer contentJson={msg.content_json} />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Image attachments */}
-                              {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).length > 0 &&
-                                <div style={{
-                                  marginBottom: 8,
-                                  // border: "1px solid #0000005e",
-                                  display: 'grid',
-                                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                                  gap: 2,
-                                }}>
-                                  <Image.PreviewGroup
-                                    preview={{
-                                      toolbarRender: (
-                                        _,
-                                        {
-                                          transform: { scale },
-                                          actions: {
-                                            onActive,
-                                            onFlipY,
-                                            onFlipX,
-                                            onRotateLeft,
-                                            onRotateRight,
-                                            onZoomOut,
-                                            onZoomIn,
-                                            onReset,
-                                          },
-                                        },
-                                      ) => (
-                                        <Space size={12} className="toolbar-wrapper">
-                                          {/* <LeftOutlined
-                                          onClick={() => (onActive === null || onActive === void 0 ? void 0 : onActive(-1))}
-                                        />
-                                        <RightOutlined
-                                          onClick={() => (onActive === null || onActive === void 0 ? void 0 : onActive(1))}
-                                        /> */}
-                                          {/* <DownloadOutlined onClick={onDownload} /> */}
-                                          <SwapOutlined rotate={90} onClick={onFlipY} />
-                                          <SwapOutlined onClick={onFlipX} />
-                                          <RotateLeftOutlined onClick={onRotateLeft} />
-                                          <RotateRightOutlined onClick={onRotateRight} />
-                                          <ZoomOutOutlined disabled={scale === 1} onClick={onZoomOut} />
-                                          <ZoomInOutlined disabled={scale === 50} onClick={onZoomIn} />
-                                          {/* <UndoOutlined onClick={onReset} /> */}
-                                        </Space>
-                                      ),
-                                      // onChange: index => {
-                                      //   setCurrent(index);
-                                      // },
-                                    }}>
-                                    {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).map((att, index) => (
-                                      <Image
-                                        key={index}
-                                        src={`${baseURL}/storage/${att.file_path}`}
-                                        alt={att.file_name}
-                                        style={{ maxWidth: '100%', border: '1px solid #00000020', borderRadius: 8 }}
-                                      />
-                                    ))}
-                                  </Image.PreviewGroup>
-                                </div>
-                              }
-                              {(msg.attachments ?? []).filter(e => !e.file_type.includes('image/') && !e.file_type.includes('text/link')).length > 0 &&
-                                (msg.attachments ?? []).filter(e => !e.file_type.includes('image/') && !e.file_type.includes('text/link')).map(file =>
-                                (
+                                )}
+                                {msg.content_text && (
                                   <div
                                     style={{
                                       background: msg.isMine ? '#1890ff' : '#f0f0f0',
@@ -489,37 +442,130 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
                                       padding: '8px 12px',
                                       borderRadius: 8,
                                       marginBottom: 0,
-                                      whiteSpace: 'pre-wrap',
-                                      wordBreak: 'break-word',
                                       width: '100%',
-                                      display: 'flex',
-                                      alignItems: 'flex-end'
                                     }}
                                   >
-                                    {displayIconFileType(file?.file_type)}
-                                    <span
-                                      style={{
-                                        color: msg.isMine ? '#ffffff' : '#1890ff',
-                                        textDecoration: 'underline',
-                                        cursor: 'pointer',
-                                        display: 'inline-block',
-                                        maxWidth: '100%',           // hoặc giá trị phù hợp với giao diện của bạn
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        verticalAlign: 'middle'
-                                      }}
-                                      title={file?.file_name}
-                                    >
-                                      {file?.file_name}
-                                    </span>
-                                    <Button type="default" icon={<DownloadOutlined style={{ fontSize: 18 }} />} size="small" style={{ marginLeft: 8 }} onClick={() => downloadFile(file)}></Button>
+                                    <div className={`message ${msg.isMine ? 'mine' : ''}`}>
+                                      <MessageViewer contentJson={msg.content_json} />
+                                    </div>
                                   </div>
-                                )
                                 )}
-                            </div>
-                          </Tooltip>
 
+                                {/* Image attachments */}
+                                {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).length > 0 &&
+                                  <div style={{
+                                    marginBottom: 8,
+                                    // border: "1px solid #0000005e",
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                                    gap: 2,
+                                  }}>
+                                    <Image.PreviewGroup
+                                      preview={{
+                                        toolbarRender: (
+                                          _,
+                                          {
+                                            transform: { scale },
+                                            actions: {
+                                              onActive,
+                                              onFlipY,
+                                              onFlipX,
+                                              onRotateLeft,
+                                              onRotateRight,
+                                              onZoomOut,
+                                              onZoomIn,
+                                              onReset,
+                                            },
+                                          },
+                                        ) => (
+                                          <Space size={12} className="toolbar-wrapper">
+                                            {/* <LeftOutlined
+                                          onClick={() => (onActive === null || onActive === void 0 ? void 0 : onActive(-1))}
+                                        />
+                                        <RightOutlined
+                                          onClick={() => (onActive === null || onActive === void 0 ? void 0 : onActive(1))}
+                                        /> */}
+                                            {/* <DownloadOutlined onClick={onDownload} /> */}
+                                            <SwapOutlined rotate={90} onClick={onFlipY} />
+                                            <SwapOutlined onClick={onFlipX} />
+                                            <RotateLeftOutlined onClick={onRotateLeft} />
+                                            <RotateRightOutlined onClick={onRotateRight} />
+                                            <ZoomOutOutlined disabled={scale === 1} onClick={onZoomOut} />
+                                            <ZoomInOutlined disabled={scale === 50} onClick={onZoomIn} />
+                                            {/* <UndoOutlined onClick={onReset} /> */}
+                                          </Space>
+                                        ),
+                                        // onChange: index => {
+                                        //   setCurrent(index);
+                                        // },
+                                      }}>
+                                      {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).map((att, index) => (
+                                        <Image
+                                          key={index}
+                                          src={`${baseURL}/storage/${att.file_path}`}
+                                          alt={att.file_name}
+                                          style={{ maxWidth: '100%', border: '1px solid #00000020', borderRadius: 8 }}
+                                        />
+                                      ))}
+                                    </Image.PreviewGroup>
+                                  </div>
+                                }
+                                {(msg.attachments ?? []).filter(e => !e.file_type.includes('image/') && !e.file_type.includes('text/link')).length > 0 &&
+                                  (msg.attachments ?? []).filter(e => !e.file_type.includes('image/') && !e.file_type.includes('text/link')).map(file =>
+                                  (
+                                    <div
+                                      style={{
+                                        background: msg.isMine ? '#1890ff' : '#f0f0f0',
+                                        color: msg.isMine ? '#fff' : '#000',
+                                        padding: '8px 12px',
+                                        borderRadius: 8,
+                                        marginBottom: 0,
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'flex-end'
+                                      }}
+                                    >
+                                      {displayIconFileType(file?.file_type)}
+                                      <span
+                                        style={{
+                                          color: msg.isMine ? '#ffffff' : '#1890ff',
+                                          textDecoration: 'underline',
+                                          cursor: 'pointer',
+                                          display: 'inline-block',
+                                          maxWidth: '100%',           // hoặc giá trị phù hợp với giao diện của bạn
+                                          whiteSpace: 'nowrap',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          verticalAlign: 'middle'
+                                        }}
+                                        title={file?.file_name}
+                                      >
+                                        {file?.file_name}
+                                      </span>
+                                      <Button type="default" icon={<DownloadOutlined style={{ fontSize: 18 }} />} size="small" style={{ marginLeft: 8 }} onClick={() => downloadFile(file)}></Button>
+                                    </div>
+                                  )
+                                  )}
+                              </div>
+                            </Tooltip>
+                            :
+                            <div style={{ maxWidth: '70%' }}>
+                              <div
+                                style={{
+                                  background: msg.isMine ? '#1890ff' : '#f0f0f0',
+                                  color: msg.isMine ? '#fff' : '#000',
+                                  padding: '8px 12px',
+                                  borderRadius: 8,
+                                  marginBottom: 0,
+                                  width: '100%',
+                                }}
+                              >
+                                <div className={`message ${msg.isMine ? 'mine' : ''}`} style={{ color: msg.isMine ? '#dbcece' : '#00000087' }}>Tin nhắn đã bị thu hồi</div>
+                              </div>
+                            </div>
+                          }
                           {/* Timestamp */}
                           {i === group.items.length - 1 && <span style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
                             {formatTimestamp(msg.created_at)}

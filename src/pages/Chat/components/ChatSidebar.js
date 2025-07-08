@@ -89,38 +89,38 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
 
   useEffect(() => {
     if (userProfile?.id) {
-      echo.private(`App.Models.CustomUser.${userProfile.id}`)
-        .notification(notif => {
-          const msg = notif?.data ?? notif?.payload?.data;
-          if (msg?.sender?.id == userProfile?.id) return;
-          setChatList(prev => {
-            const updated = prev.filter(e => e.id !== msg.chat_id);
-            const updatedChat = prev.find(e => e.id === msg.chat_id);
-            if (updatedChat) {
-              const newChat = updatedChat;
-              if(newChat.id === chat_id){
-                console.log('update to current chat')
-                newChat.timestamp = msg.created_at;
-                newChat.last_message = msg;
-              }else{
-                console.log('update to other chat')
-                newChat.unread_count = (newChat.unread_count ?? 0) + 1;
-                newChat.timestamp = msg.created_at;
-                newChat.last_message = msg;
-              }
-              console.log(newChat);
-              
-              return [
-                newChat,
-                ...updated
-              ];
+      const channel = echo.private(`user.${userProfile?.id}`)
+      channel.listen('MessageSent', msg => {
+        if (msg?.sender_id == userProfile?.id) return;
+        setChatList(prev => {
+          const updated = prev.filter(e => e.id !== msg.chat_id);
+          const updatedChat = prev.find(e => e.id === msg.chat_id);
+          if (updatedChat) {
+            const newChat = { ...updatedChat, last_message: msg, isMine: msg.sender_id == userProfile?.id };
+            if (newChat.id !== chat_id) {
+              console.log('update unread count', msg);
+              newChat.unread_count = (newChat.unread_count ?? 0) + 1;
             }
-            return prev;
-          })
-        });
-
+            return [
+              newChat,
+              ...updated
+            ];
+          }
+          return prev;
+        })
+      });
+      channel.listen('MessageRecall', msg => {
+        setChatList(prev => {
+          return prev.map(e => {
+            if (e.id === msg.chat_id && e.last_message?.id == msg?.id) {
+              return { ...e, last_message: { ...msg, isMine: msg.sender_id == userProfile?.id } };
+            }
+            return e;
+          });
+        })
+      });
       return () => {
-        echo.leave(`App.Models.CustomUser.${userProfile?.id}`);
+        echo.leave(`user.${userProfile?.id}`);
       };
     }
   }, [userProfile?.id, chat_id]);

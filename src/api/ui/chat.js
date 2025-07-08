@@ -69,3 +69,11 @@ export async function getFiles(params, chatId) {
     const res = await axios.get('/files/' + chatId, { params });
     return res;
 }
+export async function recallMessage(messageId, chatId) {
+    const res = await axios.post("/chats/" + chatId + "/messages/" + messageId + "/recall");
+    return res;
+}
+export async function deleteMessage(messageId, chatId) {
+    const res = await axios.delete("/chats/" + chatId + "/messages/" + messageId);
+    return res;
+}

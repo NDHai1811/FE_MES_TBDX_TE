@@ -1,6 +1,6 @@
 import { message } from "antd";
 import { downloadFileMsg } from "../../api/ui/chat";
-import { DownloadOutlined, EyeOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
+import { DownloadOutlined, EyeOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, PaperClipOutlined, PictureOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
 
 export const downloadFile = async (file) => {
     document.body.style.cursor = 'progress';
@@ -87,4 +87,29 @@ export function filterUsersByName(users, keyword) {
     return users.filter(user =>
         removeVietnameseTones(user.name).includes(keywordNormalized)
     );
+}
+
+export function getDescriptionMessage(message, chat) {
+    if (!message) return '';
+    let prefix = '';
+    if (message.isMine) {
+        prefix = 'Bạn: ';
+    } else if (message.sender && chat.type === 'group') {
+        prefix = `${message.sender?.name || ''}: `;
+    }
+    let content = '';
+    if (message) {
+        if(message.deleted_at){
+            content = 'Tin nhắn đã bị thu hồi';
+        }else{
+            if (message?.type === 'image') {
+                content = <><PictureOutlined />Hình ảnh</>;
+            } else if (message?.type === 'file') {
+                content = <><PaperClipOutlined />{(message.attachments[0].file_name ?? '')}</>;
+            } else {
+                content = message.content_text;
+            }
+        }
+    }
+    return <span>{prefix} {content}</span>;
 }

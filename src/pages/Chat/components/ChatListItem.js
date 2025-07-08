@@ -5,7 +5,7 @@ import { getUsers } from "../../../api"
 import { createChat, getChatList } from "../../../api/ui/chat"
 import { useProfile } from "../../../components/hooks/UserHooks"
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min"
-import { fullNameToColor } from "../chat_helper"
+import { fullNameToColor, getDescriptionMessage } from "../chat_helper"
 
 const { Sider, Header } = Layout
 const { Title, Text } = Typography
@@ -37,33 +37,6 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
             boxShadow: "none",
         }
     }
-
-    // Format last message preview
-    const lastMessage = (last_message = null) => {
-        let lastMsgPreview = '';
-        if (last_message) {
-            let otherMessage = '';
-            if(last_message?.attachments){
-                if(last_message?.attachments[0]?.file_type?.includes('image/')) {
-                    otherMessage = 'Đã gửi hình ảnh';
-                } else {
-                    otherMessage = 'Đã gửi file';
-                }
-            }
-            if (last_message.sender?.username === userProfile?.username) {
-                lastMsgPreview = `Bạn: ${last_message.content_text ?? otherMessage ?? ''}`;
-            } else {
-                if (chat.type === "group") {
-                    // Hiển thị tên người gửi: nội dung
-                    lastMsgPreview = `${last_message.sender?.name || ''}: ${last_message.content_text ?? otherMessage ?? ''}`;
-                } else if (chat.type === "private") {
-                    lastMsgPreview = last_message.content_text ?? otherMessage ?? '';
-                }
-            }
-        }
-        return lastMsgPreview;
-    }
-
 
     return <div
         key={chat.id}
@@ -102,17 +75,18 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
                         {chat?.last_message?.from_now}
                     </Text>
                 </div>
-                <Text type="secondary" style={{ fontSize: "13px" }} ellipsis>
-                    {lastMessage(chat?.last_message)}
+                <Text type="secondary" style={{ fontSize: "13px", width: chat?.unread_count ? "85%" : "100%" }} ellipsis>
+                    {getDescriptionMessage(chat?.last_message, chat)}
                 </Text>
                 {chat.unread_count ? (
                 <Badge
                     count={chat.unread_count}
                     style={{
                         position: "absolute",
-                        right: "16px",
+                        right: "0",
                         bottom: "0",
                     }}
+                    overflowCount={9}
                     styles={{root: {width: "100%"}}}
                 />
             ) : null}

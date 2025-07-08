@@ -6,7 +6,7 @@ import ChatSidebar from "./components/ChatSidebar"
 import ChatArea from "./components/ChatArea"
 import ChatInput from "./components/ChatInput"
 import "./chat.css"
-import { ArrowLeftOutlined, InfoCircleOutlined, InfoOutlined, LeftOutlined, MenuOutlined, TeamOutlined } from "@ant-design/icons"
+import { ArrowLeftOutlined, InfoCircleOutlined, InfoCircleTwoTone, InfoOutlined, LeftOutlined, MenuOutlined, TeamOutlined } from "@ant-design/icons"
 import { getUsers } from "../../api"
 import { getChatList, getFiles, sendMessage, uploadFiles } from "../../api/ui/chat"
 import { useProfile } from "../../components/hooks/UserHooks"
@@ -16,9 +16,9 @@ import ChatInfo from "./components/ChatInfo"
 import { fullNameToColor } from "./chat_helper"
 
 const { Header, Sider, Content } = Layout
-document.title = "Chat - MES UI";
 
 function Chat() {
+  document.title = "Chat - MES UI";
   const { chat_id } = useParams();
   const { userProfile } = useProfile();
   const [activeRoom, setActiveRoom] = useState()
@@ -105,7 +105,9 @@ function Chat() {
     (message.links ?? []).forEach(link => {
       formData.append('links[]', link)
     });
-    formData.append('reply_to_message_id', message?.reply_to_message_id ?? null);
+    if(message?.reply_to_message_id){
+      formData.append('reply_to_message_id', message?.reply_to_message_id);
+    }
     var res = await sendMessage(formData, activeRoom?.id);
     if(res.success && res.data){
       const msg = res.data;
@@ -115,7 +117,7 @@ function Chat() {
         const updatedChat = prev.find(e => e.id === msg.chat_id);
         if (updatedChat) {
           return [
-            { ...updatedChat, last_message: msg, timestamp: msg.created_at },
+            { ...updatedChat, last_message: msg },
             ...updated
           ];
         }
@@ -128,7 +130,6 @@ function Chat() {
     // Tạo form data để gửi
     const formData = new FormData();
     formData.append("chat_id", activeRoom?.id);
-    formData.append("type", 'file');
     formData.append(`files[0]`, file);
     var res = await sendMessage(formData, activeRoom?.id);
     if(res.success && res.data){
@@ -139,7 +140,7 @@ function Chat() {
         const updatedChat = prev.find(e => e.id === msg.chat_id);
         if (updatedChat) {
           return [
-            { ...updatedChat, last_message: msg, timestamp: msg.created_at },
+            { ...updatedChat, last_message: msg },
             ...updated
           ];
         }
@@ -247,7 +248,7 @@ function Chat() {
               </div>
             </h1>
             <div className="flex items-center gap-2">
-              <InfoCircleOutlined style={{ fontSize: 18 }} onClick={onToggleChatInfo} />
+              {showChatInfo ? <InfoCircleTwoTone style={{ fontSize: 18 }} onClick={onToggleChatInfo} /> : <InfoCircleOutlined style={{ fontSize: 18 }} onClick={onToggleChatInfo} />}
             </div>
           </div>}
         </Header>
