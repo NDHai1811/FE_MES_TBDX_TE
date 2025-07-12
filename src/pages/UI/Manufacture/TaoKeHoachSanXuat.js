@@ -36,7 +36,8 @@ const TaoKeHoachSanXuat = () => {
     const [listMachines, setListMachines] = useState([]);
     const [listCheck, setListCheck] = useState([]);
     const [form] = Form.useForm();
-    const [orderParams, setOrderParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+    const [totalPage, setTotalPage] = useState(0);
+    const [orderParams, setOrderParams] = useState({ start_date: dayjs(), end_date: dayjs(), page: 1, pageSize: 10 });
     const [lsxParams, setLSXParams] = useState({ start_date: dayjs(), end_date: dayjs() });
     const [planParams, setPlanParams] = useState({ start_date: dayjs() });
     const [data, setData] = useState([]);
@@ -51,7 +52,8 @@ const TaoKeHoachSanXuat = () => {
     const loadListOrders = async () => {
         setLoadingOrders(true);
         const res = await getOrderList(orderParams);
-        setData(res.data.map(e => ({ ...e, key: e.id })));
+        setData((res?.data?.data ?? []).map(e => ({ ...e, key: e.id })));
+        setTotalPage(res?.data?.total);
         setLoadingOrders(false);
     };
 
@@ -814,7 +816,17 @@ const TaoKeHoachSanXuat = () => {
                 <Button type="primary" className="mb-1 mt-2" onClick={insertOrder}>Thêm đơn hàng</Button>
                 <Table size='small' bordered
                     loading={loadingOrders}
-                    pagination={true}
+                    pagination={{
+                        current: orderParams.page,
+                        size: "small",
+                        total: totalPage,
+                        pageSize: orderParams.pageSize,
+                        showSizeChanger: true,
+                        pageSizeOptions: [10, 20, 50, 100, 200, 500, 1000],
+                        onChange: (page, pageSize) => {
+                            setOrderParams({ ...orderParams, page: page, pageSize: pageSize });
+                        },
+                    }}
                     scroll={
                         {
                             x: '130vw',

@@ -28,6 +28,10 @@ export async function exportQCHistory(params) {
     const res = await axios.get("ui/quality/qc-history/export", { params });
     return res;
 }
+export async function exportPQCHistory(params) {
+    const res = await axios.get("ui/quality/pqc-history/export", { params });
+    return res;
+}
 export async function getIQCHistory(params) {
     const res = await axios.get("ui/quality/iqc-history", {params} );
     return res.data;

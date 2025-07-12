@@ -28,14 +28,21 @@ const exportColumns = [
     render: (value) => value || "-",
   },
   {
-    title: "Mã tem (pallet)",
-    dataIndex: "pallet_id",
-    key: "pallet_id",
+    title: "Số xe",
+    dataIndex: "vehicle_id",
+    key: "vehicle_id",
     align: "center",
     render: (value) => value || "-",
   },
   {
-    title: "Số lượng",
+    title: "Order ID",
+    dataIndex: "order_id",
+    key: "order_id",
+    align: "center",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Số lượng xuất KH",
     dataIndex: "so_luong",
     key: "so_luong",
     align: "center",
@@ -49,16 +56,9 @@ const exportColumns = [
     render: (value) => value || "-",
   },
   {
-    title: "Vị trí",
-    dataIndex: "locator_id",
-    key: "locator_id",
-    align: "center",
-    render: (value) => value || "-",
-  },
-  {
     title: "Khách hàng",
-    dataIndex: "khach_hang",
-    key: "khach_hang",
+    dataIndex: "customer_id",
+    key: "customer_id",
     align: "center",
     render: (value) => value || "-",
   },
@@ -85,11 +85,13 @@ const Export = (props) => {
   const [visible, setVisible] = useState(false);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState();
   const [deliveryNoteList, setDeliveryNote] = useState([]);
+  const [vehicleList, setVehicle] = useState([]);
   const [deliveryNoteID, setDeliveryNoteID] = useState();
   const [loadingTable, setLoadingTable] = useState(false);
   const [form] = Form.useForm();
   const scanRef = useRef();
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() })
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
+  const [selectedExportPlan, setSelectedExportPlan] = useState();
   const column2 = [
     {
       title: "Kho",
@@ -134,13 +136,30 @@ const Export = (props) => {
       dataIndex: "lenh_xuat_kho",
       key: "lenh_xuat_kho",
       align: "center",
-      width: '25%',
+      width: '15%',
       render: () => (
         <Select
           options={deliveryNoteList}
           allowClear
-          onChange={onChangeDeliveryNote}
-          onClear={loadDataTable}
+          onChange={(value) => setParams({ ...params, delivery_note_id: value })}
+          style={{ width: "100%" }}
+          showSearch
+          optionFilterProp="label"
+          bordered={false}
+        />
+      ),
+    },
+    {
+      title: "Số xe",
+      dataIndex: "vehicle_id",
+      key: "vehicle_id",
+      align: "center",
+      width: '15%',
+      render: () => (
+        <Select
+          options={vehicleList}
+          allowClear
+          onChange={(value) => setParams({ ...params, vehicle_id: value })}
           style={{ width: "100%" }}
           showSearch
           optionFilterProp="label"
@@ -165,9 +184,9 @@ const Export = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "Số lượng xuất",
-      dataIndex: "so_luong",
-      key: "so_luong",
+      title: "Số lượng",
+      dataIndex: "so_luong_con_lai",
+      key: "so_luong_con_lai",
       align: "center",
       width: '25%',
       render: (value) => value || "-",
@@ -186,6 +205,13 @@ const Export = (props) => {
 
   const lsxColumns = [
     {
+      title: "Mã pallet",
+      dataIndex: "pallet_id",
+      key: "pallet_id",
+      align: "center",
+      render: (value) => value || "-",
+    },
+    {
       title: "Lô sản xuất",
       dataIndex: "lo_sx",
       key: "lo_sx",
@@ -194,8 +220,8 @@ const Export = (props) => {
     },
     {
       title: "Khách hàng",
-      dataIndex: "khach_hang",
-      key: "khach_hang",
+      dataIndex: "customer_id",
+      key: "customer_id",
       align: "center",
       render: (value) => value || "-",
     },
@@ -214,15 +240,22 @@ const Export = (props) => {
       render: (value) => value || "-",
     },
     {
-      title: "Số lượng",
+      title: "Số lượng ban đầu",
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
+      render: (value) => value || "-",
+    },
+    {
+      title: "Số lượng còn lại",
+      dataIndex: "remain_quantity",
+      key: "remain_quantity",
+      align: "center",
       render: (value, record, index) =>
-        <InputNumber value={value} onChange={(value) => setSelectedItem(
+        <InputNumber disabled={record.status === 2 && record.remain_quantity === 0} value={value} onChange={(value) => setSelectedItem(
             [...selectedItem].map((e, i) => {
               if (i === index) {
-                return { ...e, so_luong: value }
+                return { ...e, remain_quantity: value }
               }
               return e;
             })
@@ -239,13 +272,13 @@ const Export = (props) => {
     setDeliveryNoteID(value);
   }
 
-  const loadDataTable = async (deliveryNoteID) => {
+  const loadDataTable = async () => {
     setLoadingTable(true);
-    const res = await getWarehouseFGExportLogs({ ...params, delivery_note_id: deliveryNoteID });
+    const res = await getWarehouseFGExportLogs({ ...params });
     if (res.success) {
       setData(res.data.data);
       setDeliveryNote((res.data.delivery_notes ?? []).map(e=>({label: e.id, value: e.id})));
-      onSelectItem(palletId);
+      setVehicle((res.data.vehicles ?? []).map(e=>({label: e.id, value: e.id})));
     }
     setLoadingTable(false);
   }
@@ -259,17 +292,8 @@ const Export = (props) => {
     setIsOpenQRScanner(false);
   };
   const [data, setData] = useState([]);
-  const onSelectItem = (pallet_id) => {
-    const val = data.find((element) => element.pallet_id == pallet_id );
-    setSelectedItem(val?.lo_sx ?? []);
-  };
-
-  const [palletId, setPalletId] = useState();
-  useEffect(()=>{
-    onSelectItem(palletId);
-  }, [palletId, data]);
   const onScan = async (result) => {
-    setPalletId(result);
+    setSelectedExportPlan(data.find((element) => element.id == result));
   };
   const loadData = async () => {
     var res2 = await getWarehouseFGOverall(params);
@@ -323,7 +347,7 @@ const Export = (props) => {
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
             columns={columnDetail}
-            dataSource={[data.find((element) => element.pallet_id == palletId)]}
+            dataSource={[selectedExportPlan]}
           />
         </Col>
         <Col span={8}>
@@ -375,7 +399,7 @@ const Export = (props) => {
         <Col span={24}>
           <Table
             rowClassName={(record, index) =>
-              'no-hover ' + (record?.pallet_id === palletId ? "table-row-green" : "")
+              'no-hover ' + (record?.id === selectedExportPlan?.id ? "table-row-green" : "")
             }
             loading={loadingTable}
             pagination={false}
@@ -383,11 +407,12 @@ const Export = (props) => {
             scroll={{ y: '30vh' }}
             className="mb-4"
             size="small"
+            rowHoverable={false}
             columns={exportColumns}
             dataSource={data}
             onRow={(record) => {
               return {
-                onClick: () => setPalletId(record?.pallet_id),
+                onClick: () => {setSelectedExportPlan(record); setSelectedItem(record?.lsxpallets ?? [])},
               };
             }}
           />
@@ -416,13 +441,11 @@ const Export = (props) => {
           onCancel={() => setVisible(false)}
           okText={"Lưu"}
           onOk={() => saveExportPallet()}
-          width={600}
+          width={800}
         >
           <Table
             rowClassName={(record, index) =>
-              record.status === 1
-                ? "table-row-yellow"
-                : record.status === 2
+                record.status === 2
                   ? "table-row-grey"
                   : ""
             }
@@ -434,6 +457,23 @@ const Export = (props) => {
             className="mb-4"
             columns={lsxColumns}
             dataSource={selectedItem}
+            summary={() => {
+              const totalQuantity = selectedItem.reduce((acc, curr) => acc + (curr.so_luong ?? 0), 0);
+              const totalRemainQuantity = selectedItem.reduce((acc, curr) => acc + (curr.remain_quantity ?? 0), 0);
+              return (
+                <Table.Summary>
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell index={0} children={"Tổng SL:"} align="center"/>
+                    <Table.Summary.Cell index={1} />
+                    <Table.Summary.Cell index={2} />
+                    <Table.Summary.Cell index={3} />
+                    <Table.Summary.Cell index={4} />
+                    <Table.Summary.Cell index={5} children={totalQuantity} align="center"/>
+                    <Table.Summary.Cell index={6} children={totalRemainQuantity} align="center"/>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )
+            }}
           />
         </Modal>
       )}

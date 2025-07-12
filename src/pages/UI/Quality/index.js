@@ -18,6 +18,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { getLines, getUIItemMenu } from "../../../api/ui/main";
 import {
+  exportPQCHistory,
   exportQCHistory,
   getQCHistory,
   recheckQC,
@@ -220,6 +221,16 @@ const QualityPQC = (props) => {
     setExportLoading(false);
   };
 
+  const [exportLoading2, setExportLoading2] = useState(false);
+  const exportQCTable = async () => {
+    setExportLoading2(true);
+    const res = await exportPQCHistory(params);
+    if (res.success) {
+      window.location.href = baseURL + res.data;
+    }
+    setExportLoading2(false);
+  };
+
   const [loading, setLoading] = useState(false);
   const [itemsMenu, setItemMenu] = useState([]);
   const onCheck = (selectedKeys, e) => {
@@ -413,6 +424,13 @@ const QualityPQC = (props) => {
                 style={{ height: "100%", padding: "0px" }}
                 extra={
                   <Space>
+                    <Button
+                      type="primary"
+                      loading={exportLoading2}
+                      onClick={exportQCTable}
+                    >
+                      Bảng kiểm tra
+                    </Button>
                     <Button
                       type="primary"
                       loading={exportLoading}
