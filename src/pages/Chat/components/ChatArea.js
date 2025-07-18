@@ -53,7 +53,7 @@ const formatDateDivider = (timestamp) => {
 /**
  * ChatArea with message grouping and username displayed above each group
  */
-function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
+function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
   const { userProfile } = useProfile();
   const [messages, setMessages] = useState([]);
   const [incomingMessage, setIncomingMessage] = useState();
@@ -104,14 +104,43 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
     setLoadingOlder(false);
   };
 
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [totalImages, setTotalImages] = useState(0);
+  useEffect(() => {
+    if (totalImages === 0) return;
+    const container = containerRef.current;
+    if (!container) return;
+    const imgs = container.querySelectorAll('img');
+    imgs.forEach(img => {
+      img.onload = () => {
+        setImagesLoaded(prev => prev + 1);
+      };
+      // Nếu ảnh đã cache sẵn
+      if (img.complete) {
+        setImagesLoaded(prev => prev + 1);
+      }
+    });
+  }, [totalImages]);
+
+  useEffect(() => {
+    if (totalImages > 0 && imagesLoaded >= totalImages) {
+      const container = containerRef.current;
+      if (!container) return;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [imagesLoaded, totalImages]);
+
   // ⏳ Chờ ảnh load xong rồi mới scroll
   useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    const imgs = container.querySelectorAll('img');
     if (!hasRefresh.current) {
       const deltaHeight = container.scrollHeight - prevScrollHeightRef.current;
       container.scrollTop = prevScrollTopRef.current + deltaHeight;
     } else {
+      setTotalImages(imgs.length);
+      setImagesLoaded(0);
       container.scrollTop = container.scrollHeight;
     }
     hasRefresh.current = false;
@@ -122,13 +151,14 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
     if (e.currentTarget.scrollTop === 0) {
       loadMoreMessages();
     }
-    const atBottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight + 50;
+    const atBottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight + 200;
     setShowScrollBtn(!atBottom);
   };
 
   const scrollToBottom = () => {
     const el = containerRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    setChat({...chat, unread_count: 0})
     setShowScrollBtn(false);
   };
 
@@ -173,14 +203,14 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
     //Listen Event Message Sent
     channel.listen('MessageSent', msg => {
       console.log(msg);
-      
+
       if (msg.sender_id == userProfile.id) return;
       if (msg.chat_id === chatId) {
         setIncomingMessage(msg);
       }
     });
     channel.listen('MessageRecall', msg => {
-      setMessages(prev => prev.map(e => e.id === msg.id ? {...msg, isMine: msg.sender_id == userProfile?.id} : e));
+      setMessages(prev => prev.map(e => e.id === msg.id ? { ...msg, isMine: msg.sender_id == userProfile?.id } : e));
     });
     return () => {
       channel.stopListening('MessageSent');
@@ -196,7 +226,7 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
       if (prev.some(e => e.id === incomingMessage.id)) {
         return prev;
       }
-      return [...prev, {...incomingMessage, isMine: incomingMessage.sender_id == userProfile?.id}];
+      return [...prev, { ...incomingMessage, isMine: incomingMessage.sender_id == userProfile?.id }];
     });
   }, [incomingMessage, userProfile?.id]);
 
@@ -206,7 +236,7 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
       if (prev.some(e => e.id === sentMessage.id)) {
         return prev;
       }
-      return [...prev, {...sentMessage, isMine: sentMessage.sender_id == userProfile?.id}];
+      return [...prev, { ...sentMessage, isMine: sentMessage.sender_id == userProfile?.id }];
     });
   }, [sentMessage]);
 
@@ -241,7 +271,7 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
         const res = await recallMessage(id, chatId);
-        setMessages(prev => prev.map(e => e.id === id ? {...res.data, isMine: res.data.sender_id == userProfile?.id} : e));
+        setMessages(prev => prev.map(e => e.id === id ? { ...res.data, isMine: res.data.sender_id == userProfile?.id } : e));
       },
       centered: true,
     });
@@ -349,7 +379,7 @@ function ChatArea({ chatId, chat, sentMessage, onReplyMessage }) {
                     }}
                   >
                     <span style={{ fontSize: "12px", color: "#888" }}>
-                      {group.sender.name}
+                      {group?.sender?.name}
                     </span>
                   </div>
                   <div

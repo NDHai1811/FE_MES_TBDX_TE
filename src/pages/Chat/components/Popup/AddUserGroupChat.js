@@ -39,7 +39,7 @@ const AddUserGroupChat = ({ users = [], open, setOpen, chat }) => {
             width={700}
         >
             <Form form={form} onFinish={handleSubmit} initialValues={{
-                user_chat: (chat.participants ?? []).filter(e => e.username !== userProfile.username).map(e => e.id),
+                user_chat: (chat.participants ?? []).map(e => e.id),
                 name: '',
                 user_search: ''
             }}>
@@ -65,7 +65,7 @@ const AddUserGroupChat = ({ users = [], open, setOpen, chat }) => {
                                     }}
                                 >
                                     {filterUsersByName(users, userSearch).map(user => {
-                                        return <Checkbox value={user.id}>
+                                        return <Checkbox value={user.id} disabled={user.disabled}>
                                             {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
                                                 {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
                                             </Avatar>} <span style={{ marginLeft: 8 }}>{user?.name}</span>
@@ -89,7 +89,7 @@ const AddUserGroupChat = ({ users = [], open, setOpen, chat }) => {
                             <p>Đã chọn</p>
                             {users.filter(e => userChat.includes(e.id)).map(user => {
                                 return (
-                                    <Checkbox value={user.id} checked onClick={() => form.setFieldValue('user_chat', userChat.filter(e => e !== user.id))}>
+                                    <Checkbox value={user.id} disabled={user.disabled} checked onClick={() => form.setFieldValue('user_chat', userChat.filter(e => e !== user.id))}>
                                         {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
                                             {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
                                         </Avatar>}<span style={{ marginLeft: 8 }}>{user?.name}</span>

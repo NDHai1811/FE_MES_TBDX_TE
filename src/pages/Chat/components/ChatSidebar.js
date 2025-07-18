@@ -123,11 +123,11 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
         echo.leave(`user.${userProfile?.id}`);
       };
     }
-  }, [userProfile?.id, chat_id]);
+  }, [userProfile?.id, chat_id, chatList]);
 
   return (
     <React.Fragment>
-      <Layout style={{ width: "100%", borderRight: "1px solid #d9d9d9", height: "100%" }}>
+      <Layout style={{ width: "100%", borderRight: "1px solid #d9d9d9", height: "100%", backgroundColor: "#fff" }}>
         <Header style={{ background: "#fff", padding: "0 8px", borderBottom: "1px solid #f0f0f0", display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', whiteSpace: 'break-spaces' }}>
             <MessageTwoTone style={{ fontSize: 30 }} /> Đoạn chat
@@ -145,6 +145,7 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
             placeholder="Tìm kiếm chat..."
             prefix={<SearchOutlined />}
             value={searchQuery}
+            allowClear
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ marginBottom: "12px", borderRadius: "20px" }}
           />
@@ -227,7 +228,7 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
         okButtonProps={{ disabled: chatName === '' || userChat.length <= 0 }}
         width={700}
       >
-        <Form form={formPublicChat} onFinish={handleCreatePublicChat} initialValues={{ user_chat: [], name: '', user_search: '' }}>
+        <Form form={formPublicChat} onFinish={handleCreatePublicChat} initialValues={{ user_chat: [userProfile.id], name: '', user_search: '' }}>
           <Form.Item name="name" rules={[{ required: true, message: 'Vui lòng nhập tên phòng chat' }]}>
             <Input placeholder="Nhập tên phòng chat" />
           </Form.Item>
@@ -255,7 +256,7 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
                     }}
                   >
                     {filterUsersByName(users, userSearch).map(user => {
-                      return <Checkbox {...user}>
+                      return <Checkbox {...user} disabled={user.id == userProfile.id}>
                         {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
                           {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
                         </Avatar>}
@@ -295,7 +296,7 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
                 }}>
                   {users.filter(e => userChat.includes(e.id)).map(user => {
                     return (
-                      <Checkbox value={user.id} checked onClick={() => formPublicChat.setFieldValue('user_chat', userChat.filter(e => e !== user.id))}>
+                      <Checkbox value={user.id} disabled={user.id == userProfile.id} checked onClick={() => formPublicChat.setFieldValue('user_chat', userChat.filter(e => e !== user.id))}>
                         {isLargeScreen && <Avatar size={40} src={user?.avatar} style={{ backgroundColor: fullNameToColor(user?.name) }}>
                           {user?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
                         </Avatar>}

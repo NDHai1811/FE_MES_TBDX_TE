@@ -10,7 +10,7 @@ import { ArrowLeftOutlined, InfoCircleOutlined, InfoCircleTwoTone, InfoOutlined,
 import { getUsers } from "../../api"
 import { getChatList, getFiles, sendMessage, uploadFiles } from "../../api/ui/chat"
 import { useProfile } from "../../components/hooks/UserHooks"
-import { useParams, withRouter } from "react-router-dom/cjs/react-router-dom.min"
+import { useHistory, useParams, withRouter } from "react-router-dom/cjs/react-router-dom.min"
 import echo from "../../helpers/echo"
 import ChatInfo from "./components/ChatInfo"
 import { fullNameToColor } from "./chat_helper"
@@ -20,6 +20,7 @@ const { Header, Sider, Content } = Layout
 function Chat() {
   document.title = "Chat - MES UI";
   const { chat_id } = useParams();
+  const history = useHistory();
   const { userProfile } = useProfile();
   const [activeRoom, setActiveRoom] = useState()
 
@@ -50,7 +51,7 @@ function Chat() {
   const [users, setUsers] = useState([]);
   const fecthUser = async () => {
     var res = await getUsers();
-    setUsers(res.filter(e => e.username !== userProfile?.username).map((e, i) => ({ ...e, value: e.id, label: (`${e.name} - ID: ${e.username}`), key: i })))
+    setUsers(res.map((e, i) => ({ ...e, value: e.id, label: (`${e.name} - ID: ${e.username}`), key: i })))
   }
 
   const [chatList, setChatList] = useState([]);
@@ -59,6 +60,9 @@ function Chat() {
     setLoadingChatList(true);
     var res = await getChatList();
     setChatList(res.data);
+    if(!(res.data ?? []).find(e=>e.id === chat_id)){
+      history.push('/ui/chat');
+    }
     setLoadingChatList(false);
   }
 
@@ -71,9 +75,12 @@ function Chat() {
     const room = chatList.find(e => e.id === chat_id);
     if (room) {
       setActiveRoom(room);
-      fetchFilesInChat();
     }
   }, [chat_id, chatList]);
+
+  useEffect(()=>{
+    activeRoom && fetchFilesInChat();
+  }, [activeRoom])
 
   const [mediaChat, setMediaChat] = useState();
   const fetchFilesInChat = async () => {
@@ -179,6 +186,19 @@ function Chat() {
     setReplyMessage(msg);
   }
 
+  useEffect(()=>{
+    const channel = echo.private(`user.${userProfile?.id}`)
+    //Listen Event Message Sent
+    channel.listen('ChatUpdated', chat => {
+      console.log(chat);
+      refreshSidebar();
+    });
+    return () => {
+      channel.stopListening('ChatUpdated');
+      echo.leave(`user.${userProfile?.id}`);  // hoặc echo.leaveChannel(...) tùy phiên bản
+    };
+  }, [userProfile])
+
   return (
     <Layout style={{ height: "100%" }}>
       <Sider width={320} style={{
@@ -263,7 +283,7 @@ function Chat() {
           </Content>
           :
           <Content style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-            <ChatArea chatId={activeRoom?.id} chat={activeRoom} sentMessage={sentMessage} onReplyMessage={onReplyMessage}/>
+            <ChatArea chatId={activeRoom?.id} chat={activeRoom} setChat={setActiveRoom} sentMessage={sentMessage} onReplyMessage={onReplyMessage}/>
             <ChatInput chat={activeRoom} onSendMessage={handleSendMessage} onSendFileMessage={handleSendFileMessage} chatUsers={activeRoom.participants ?? []} replyMessage={replyMessage} setReplyMessage={setReplyMessage} />
           </Content>
         }

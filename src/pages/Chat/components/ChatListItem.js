@@ -1,18 +1,13 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Layout, Menu, Button, Modal, Input, Typography, Select, Form, Tabs, Badge, Avatar, Divider } from "antd"
-import { TeamOutlined, MessageOutlined, PlusOutlined, GroupOutlined, SearchOutlined, MoreOutlined } from "@ant-design/icons"
-import { getUsers } from "../../../api"
-import { createChat, getChatList } from "../../../api/ui/chat"
-import { useProfile } from "../../../components/hooks/UserHooks"
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min"
+import { TeamOutlined } from "@ant-design/icons"
 import { fullNameToColor, getDescriptionMessage } from "../chat_helper"
 
 const { Sider, Header } = Layout
 const { Title, Text } = Typography
 
 const ChatListItem = ({ chat, isSelected, onClick }) => {
-    const [isHovered, setIsHovered] = useState(false)
-    const { userProfile } = useProfile();
+    const [isHovered, setIsHovered] = useState(false);
     const getItemStyle = () => {
         if (isSelected) {
             return {

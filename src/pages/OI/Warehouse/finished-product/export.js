@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker, InputNumber } from "antd";
+import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker, InputNumber, Space, Checkbox } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -25,6 +25,7 @@ const exportColumns = [
     dataIndex: "delivery_note_id",
     key: "delivery_note_id",
     align: "center",
+    width: 120,
     render: (value) => value || "-",
   },
   {
@@ -32,28 +33,40 @@ const exportColumns = [
     dataIndex: "vehicle_id",
     key: "vehicle_id",
     align: "center",
+    width: 120,
     render: (value) => value || "-",
   },
   {
-    title: "Order ID",
-    dataIndex: "order_id",
-    key: "order_id",
+    title: "Mã pallet",
+    dataIndex: "pallet_id",
+    key: "pallet_id",
     align: "center",
     render: (value) => value || "-",
+    width: 150,
   },
   {
-    title: "Số lượng xuất KH",
+    title: "Số lượng của pallet",
     dataIndex: "so_luong",
     key: "so_luong",
     align: "center",
     render: (value) => value || "-",
+    width: 100,
   },
   {
-    title: "Thời gian xuất KH",
-    dataIndex: "thoi_gian_xuat",
-    key: "thoi_gian_xuat",
+    title: "Số lượng có thể xuất",
+    dataIndex: "so_luong_ton",
+    key: "so_luong_ton",
+    align: "center",
+    render: (value, record) => (record.lsx_pallets ?? []).reduce((acc, curr) => acc + (curr.remain_quantity ?? 0), 0) || "-",
+    width: 100,
+  },
+  {
+    title: "Vị trí",
+    dataIndex: "locator_id",
+    key: "locator_id",
     align: "center",
     render: (value) => value || "-",
+    width: 100,
   },
   {
     title: "Khách hàng",
@@ -61,6 +74,7 @@ const exportColumns = [
     key: "customer_id",
     align: "center",
     render: (value) => value || "-",
+    width: 150,
   },
 ];
 
@@ -132,29 +146,11 @@ const Export = (props) => {
   ];
   const columnDetail = [
     {
-      title: "Lệnh xuất kho",
-      dataIndex: "lenh_xuat_kho",
-      key: "lenh_xuat_kho",
-      align: "center",
-      width: '15%',
-      render: () => (
-        <Select
-          options={deliveryNoteList}
-          allowClear
-          onChange={(value) => setParams({ ...params, delivery_note_id: value })}
-          style={{ width: "100%" }}
-          showSearch
-          optionFilterProp="label"
-          bordered={false}
-        />
-      ),
-    },
-    {
       title: "Số xe",
       dataIndex: "vehicle_id",
       key: "vehicle_id",
       align: "center",
-      width: '15%',
+      width: 150,
       render: () => (
         <Select
           options={vehicleList}
@@ -168,11 +164,29 @@ const Export = (props) => {
       ),
     },
     {
+      title: "Lệnh xuất kho",
+      dataIndex: "lenh_xuat_kho",
+      key: "lenh_xuat_kho",
+      align: "center",
+      width: 150,
+      render: () => (
+        <Select
+          options={deliveryNoteList}
+          allowClear
+          onChange={(value) => setParams({ ...params, delivery_note_id: value })}
+          style={{ width: "100%" }}
+          showSearch
+          optionFilterProp="label"
+          bordered={false}
+        />
+      ),
+    },
+    {
       title: "Vị trí",
       dataIndex: "locator_id",
       key: "locator_id",
       align: "center",
-      width: '25%',
+      width: 100,
       render: (value) => value || "-",
     },
     {
@@ -180,7 +194,7 @@ const Export = (props) => {
       dataIndex: "pallet_id",
       key: "pallet_id",
       align: "center",
-      width: '25%',
+      width: 150,
       render: (value) => value || "-",
     },
     {
@@ -188,7 +202,8 @@ const Export = (props) => {
       dataIndex: "so_luong_con_lai",
       key: "so_luong_con_lai",
       align: "center",
-      width: '25%',
+      fixed: 'right',
+      width: 100,
       render: (value) => value || "-",
       onHeaderCell: (column) => {
         return {
@@ -204,18 +219,20 @@ const Export = (props) => {
   ];
 
   const lsxColumns = [
-    {
-      title: "Mã pallet",
-      dataIndex: "pallet_id",
-      key: "pallet_id",
-      align: "center",
-      render: (value) => value || "-",
-    },
+    // {
+    //   title: "Mã pallet",
+    //   dataIndex: "pallet_id",
+    //   key: "pallet_id",
+    //   align: "center",
+    //   width: 150,
+    //   render: (value) => value || "-",
+    // },
     {
       title: "Lô sản xuất",
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
+      width: 150,
       render: (value) => value || "-",
     },
     {
@@ -223,6 +240,7 @@ const Export = (props) => {
       dataIndex: "customer_id",
       key: "customer_id",
       align: "center",
+      width: 120,
       render: (value) => value || "-",
     },
     {
@@ -230,6 +248,7 @@ const Export = (props) => {
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
+      width: 120,
       render: (value) => value || "-",
     },
     {
@@ -237,6 +256,7 @@ const Export = (props) => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
+      width: 80,
       render: (value) => value || "-",
     },
     {
@@ -244,12 +264,14 @@ const Export = (props) => {
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
+      width: 150,
       render: (value) => value || "-",
     },
     {
-      title: "Số lượng còn lại",
+      title: "Số lượng xuất",
       dataIndex: "remain_quantity",
       key: "remain_quantity",
+      width: 150,
       align: "center",
       render: (value, record, index) =>
         <InputNumber disabled={record.status === 2 && record.remain_quantity === 0} value={value} onChange={(value) => setSelectedItem(
@@ -292,6 +314,15 @@ const Export = (props) => {
     setIsOpenQRScanner(false);
   };
   const [data, setData] = useState([]);
+  useEffect(()=>{
+    if(data.length){
+      const result = data.find((element) => element.pallet_id == selectedExportPlan?.pallet_id);
+      setSelectedExportPlan(result);
+      setSelectedItem(result?.lsx_pallets ?? []);
+    } else {
+      setSelectedItem([]);
+    }
+  }, [data])
   const onScan = async (result) => {
     setSelectedExportPlan(data.find((element) => element.id == result));
   };
@@ -300,22 +331,23 @@ const Export = (props) => {
     setOverall([res2.data]);
   }
   const saveExportPallet = async () => {
-    var res = await exportPallet(selectedItem);
+    var res = await exportPallet(selectedItem.filter((e) => selectedRowKeys.includes(e.id)));
     if (res.success) {
       setVisible(false);
       form.resetFields();
       // loadData();
       loadDataTable(deliveryNoteID);
+      setSelectedRowKeys([]);
     }
   }
   const [isDownloading, setIsDownloading] = useState(false)
   const onDownloadDeliveryNote = async () => {
-    if (!deliveryNoteID) {
+    if (!params?.delivery_note_id) {
       message.warning('Chưa chọn lệnh xuất kho')
       return 0;
     }
     setIsDownloading(true);
-    var res = await downloadDeliveryNote({ delivery_note_id: deliveryNoteID });
+    var res = await downloadDeliveryNote({ delivery_note_id: params?.delivery_note_id });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -325,6 +357,8 @@ const Export = (props) => {
     loadData();
     loadDataTable(deliveryNoteID);
   }, [params])
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   return (
     <React.Fragment>
       <Row className="mt-1" gutter={[4, 12]}>
@@ -346,6 +380,7 @@ const Export = (props) => {
             size="small"
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
+            scroll={{ x: '100%' }}
             columns={columnDetail}
             dataSource={[selectedExportPlan]}
           />
@@ -388,6 +423,8 @@ const Export = (props) => {
         <Col span={4}>
           <Button
             block
+            disabled={!params?.delivery_note_id}
+            title={!params?.delivery_note_id ? 'Chưa chọn lệnh xuất kho' : 'Tải xuống lệnh xuất kho'}
             className="h-100 w-100"
             icon={<DownloadOutlined style={{ fontSize: "20px" }} />}
             type="primary"
@@ -399,12 +436,12 @@ const Export = (props) => {
         <Col span={24}>
           <Table
             rowClassName={(record, index) =>
-              'no-hover ' + (record?.id === selectedExportPlan?.id ? "table-row-green" : "")
+              'no-hover ' + (record?.pallet_id === selectedExportPlan?.pallet_id ? "table-row-green" : "")
             }
             loading={loadingTable}
             pagination={false}
             bordered
-            scroll={{ y: '30vh' }}
+            scroll={{ y: 'calc(100vh - 50vh)', x: '100%' }}
             className="mb-4"
             size="small"
             rowHoverable={false}
@@ -412,7 +449,7 @@ const Export = (props) => {
             dataSource={data}
             onRow={(record) => {
               return {
-                onClick: () => {setSelectedExportPlan(record); setSelectedItem(record?.lsxpallets ?? [])},
+                onClick: () => {setSelectedExportPlan(record); setSelectedItem(record?.lsx_pallets ?? [])},
               };
             }}
           />
@@ -438,43 +475,51 @@ const Export = (props) => {
         <Modal
           title="Danh sách lô cần xuất"
           open={visible}
-          onCancel={() => setVisible(false)}
+          onCancel={() => {
+            setVisible(false);
+            setSelectedRowKeys([]);
+            setSelectedItem(data.find((e) => e.pallet_id === selectedExportPlan?.pallet_id)?.lsx_pallets ?? []);
+          }}
+          okButtonProps={{
+            disabled: selectedRowKeys.length <= 0
+          }}
           okText={"Lưu"}
           onOk={() => saveExportPallet()}
-          width={800}
+          width={1000}
         >
           <Table
             rowClassName={(record, index) =>
-                record.status === 2
+                record.status === 2 && record.remain_quantity === 0
                   ? "table-row-grey"
                   : ""
             }
             scroll={{
-              x: '100%'
+              x: '100%',
+              y: 'calc(100vh - 50vh)'
             }}
             pagination={false}
             bordered
             className="mb-4"
             columns={lsxColumns}
             dataSource={selectedItem}
-            summary={() => {
-              const totalQuantity = selectedItem.reduce((acc, curr) => acc + (curr.so_luong ?? 0), 0);
-              const totalRemainQuantity = selectedItem.reduce((acc, curr) => acc + (curr.remain_quantity ?? 0), 0);
-              return (
-                <Table.Summary>
-                  <Table.Summary.Row>
-                    <Table.Summary.Cell index={0} children={"Tổng SL:"} align="center"/>
-                    <Table.Summary.Cell index={1} />
-                    <Table.Summary.Cell index={2} />
-                    <Table.Summary.Cell index={3} />
-                    <Table.Summary.Cell index={4} />
-                    <Table.Summary.Cell index={5} children={totalQuantity} align="center"/>
-                    <Table.Summary.Cell index={6} children={totalRemainQuantity} align="center"/>
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )
+            rowKey={(record) => record.id}
+            rowSelection={{
+              type: 'checkbox',
+              columnTitle: <span><Checkbox disabled={selectedItem.every((e) => e.status === 2 && e.remain_quantity === 0)} indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < selectedItem.length} checked={selectedRowKeys.length === selectedItem.length} onChange={(e) => setSelectedRowKeys(e.target.checked ? selectedItem.filter((e) => !(e.status === 2 && e.remain_quantity === 0)).map((e) => e.id) : [])}/> Chọn để xuất</span>,
+              columnWidth: 70,
+              selectedRowKeys,
+              getCheckboxProps: (record) => ({
+                disabled: record.status === 2 && record.remain_quantity === 0,
+              }),
+              onChange: (selectedRowKeys, selectedRows) => {
+                setSelectedRowKeys(selectedRowKeys);
+              },
             }}
           />
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <strong>Tổng số lô đã chọn để xuất: {selectedRowKeys.length}</strong>
+            <strong>Tổng số lượng xuất: {selectedItem.filter((e) => selectedRowKeys.includes(e.id)).reduce((acc, curr) => acc + (curr.remain_quantity ?? 0), 0)}</strong>
+          </Space>
         </Modal>
       )}
     </React.Fragment>

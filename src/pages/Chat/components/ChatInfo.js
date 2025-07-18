@@ -1,5 +1,5 @@
 import { CalendarOutlined, CaretRightOutlined, CloseOutlined, DeleteOutlined, DownloadOutlined, FileImageOutlined, FileOutlined, LeftOutlined, LinkOutlined, LogoutOutlined, PhoneOutlined, PlayCircleOutlined, RightOutlined, SearchOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Col, Collapse, Divider, Image, Layout, List, Modal, Popconfirm, Row, Space } from "antd";
+import { Avatar, Badge, Button, Col, Collapse, Divider, Image, Layout, List, Modal, Popconfirm, Row, Space, Tabs } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import Title from "antd/es/typography/Title";
@@ -18,13 +18,6 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
     const history = useHistory();
     const MAX_PREVIEW = 3;
     const nameChat = useRef(chat?.name)
-
-    useEffect(() => {
-        setAttachmentsHistory({ items: [], type: '', isShow: false });
-        setChatUserList({ usersInChat: [], type: '', isShow: false });
-        nameChat.current = chat?.name
-    }, [chat])
-
     const images = mediaChat?.images ?? [];
     const files = mediaChat?.files ?? [];
     const links = mediaChat?.links ?? [];
@@ -38,6 +31,10 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
         usersInChat: [],
         isShow: false,
     });
+
+    useEffect(() => {
+        nameChat.current = chat?.name
+    }, [chat])
 
     const onChangeNameChat = async () => {
         if (!chat?.id || !nameChat.current || nameChat.current === chat.name) return;
@@ -76,26 +73,31 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                 theme="light"
             >
                 <Layout style={{ borderLeft: "1px solid #d9d9d9", height: "100%", width: '100%' }}>
-                    <Header style={{ background: "#fff", padding: "0 16px", borderBottom: "1px solid #f0f0f0", display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        {chatUserList.isShow || attachmentsHistory.isShow ?
-                            <LeftOutlined style={{ fontSize: 18 }} onClick={() => {
-                                setAttachmentsHistory({ items: [], type: '', isShow: false });
-                                setChatUserList({ usersInChat: [], type: '', isShow: false });
-                            }} />
-                            :
+                    <Header style={{ background: "#fff", padding: "0 8px", borderBottom: "1px solid #f0f0f0", display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{display: 'flex', flexDirection:'row'}}> 
+                            {chatUserList.isShow || attachmentsHistory.isShow ?
+                                <LeftOutlined style={{ fontSize: 18 }} onClick={() => {
+                                    setAttachmentsHistory({ items: [], type: '', isShow: false });
+                                    setChatUserList({ usersInChat: [], type: '', isShow: false });
+                                }} />
+                                : null}
+
                             <Title level={4} style={{ margin: 0 }}>
-                                Thông tin đoạn chat
+                                {chatUserList.isShow ? "Danh sách thành viên" :
+                                    attachmentsHistory.isShow ? "Kho lưu trữ" :
+                                        "Thông tin đoạn chat"
+                                }
                             </Title>
-                        }
+                        </div>
                         <CloseOutlined style={{ fontSize: 18 }} onClick={() => handleClose()} />
                     </Header>
                     <Divider style={{ margin: 0 }} />
                     {/* Header với ảnh đại diện lớn */}
                     <div style={{ height: chatUserList.isShow ? '100%' : 0, overflowY: "auto" }}>
-                        <ChatUserList {...chatUserList} chat={chat} />
+                        <ChatUserList chat={chat} />
                     </div>
                     <div style={{ height: attachmentsHistory.isShow ? '100%' : 0, overflowY: "auto" }}>
-                        <AttachmentsHistory {...attachmentsHistory} />
+                        <AttachmentsHistory {...attachmentsHistory} mediaFiles={mediaChat} />
                     </div>
                     <div style={{ height: '100%', overflowY: "auto", display: (chatUserList.isShow || attachmentsHistory.isShow) ? 'none' : '', padding: '16px 0' }}>
                         <div style={{ margin: 0, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
@@ -110,10 +112,10 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                             </Badge> <Title editable={chat?.type === "group" ? {
                                 onChange: (value) => nameChat.current = value,
                                 onEnd: onChangeNameChat
-                            } : false} level={4} style={{ margin: 0 }}>{nameChat.current}</Title></>}
+                            } : false} level={4} style={{ margin: 8 }}>{nameChat.current}</Title></>}
                         </div>
                         <Divider style={{ margin: 0 }} />
-                        {chat?.type === 'group' && <div style={{ padding: 16, cursor: 'pointer' }} onClick={() => setChatUserList({ usersInChat: chat?.participants ?? [], isShow: true })}><TeamOutlined style={{ fontSize: 18 }} /> {chat?.participants?.length ?? 0} Thành viên</div>}
+                        {chat?.type === 'group' && <div style={{ padding: 16, cursor: 'pointer' }} onClick={() => setChatUserList({ ...chatUserList, isShow: true })}><TeamOutlined style={{ fontSize: 18 }} /> {chat?.participants?.length ?? 0} Thành viên</div>}
                         <Divider style={{ margin: 0 }} />
                         <Collapse defaultActiveKey={['1', '2', '3']} bordered={false} expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} expandIconPosition={"end"}>
                             {/* Images Panel */}
@@ -152,16 +154,17 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                                         ))}
                                     </Image.PreviewGroup>
                                 </div>
-                                {images.length > MAX_PREVIEW ? (
+                                {images.length > 0 && (
                                     <Button
                                         type="dashed"
                                         block
                                         style={{ height: '100%', marginTop: 8 }}
                                         onClick={() => { setAttachmentsHistory({ items: images, type: 'image', isShow: true }) }}
                                     >
-                                        {`Xem thêm (+${images.length - MAX_PREVIEW})`}
+                                        {`Xem thêm`}
                                     </Button>
-                                ) : <div style={{textAlign: 'center', padding: 4}}>Không có ảnh</div>}
+                                )}
+                                {images.length === 0 && <div style={{ textAlign: 'center', padding: 4 }}>Không có ảnh</div>}
                             </Panel>
 
                             {/* Files Panel */}
@@ -194,16 +197,17 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                                         <Button type="default" icon={<DownloadOutlined style={{ fontSize: 18 }} />} size="small" style={{ marginLeft: 8 }} onClick={() => downloadFile(file)}></Button>
                                     </div>
                                 ))}
-                                {files.length > MAX_PREVIEW ? (
+                                {files.length > 0 && (
                                     <Button
                                         type="dashed"
                                         block
                                         style={{ height: '100%', marginTop: 8 }}
                                         onClick={() => { setAttachmentsHistory({ items: files, type: 'file', isShow: true }) }}
                                     >
-                                        {`Xem thêm (+${files.length - MAX_PREVIEW})`}
+                                        {`Xem thêm`}
                                     </Button>
-                                ) : <div style={{textAlign: 'center', padding: 4}}>Không có file</div>}
+                                )}
+                                {files.length === 0 && <div style={{ textAlign: 'center', padding: 4 }}>Không có file</div>}
                             </Panel>
 
                             {/* Links Panel */}
@@ -213,16 +217,17 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                                         <a href={link.file_path}>{link.file_path}</a>
                                     </div>
                                 ))}
-                                {links.length > MAX_PREVIEW ? (
+                                {links.length > 0 && (
                                     <Button
                                         type="dashed"
                                         block
                                         style={{ height: '100%', marginTop: 8 }}
                                         onClick={() => { setAttachmentsHistory({ items: links, type: 'link', isShow: true }) }}
                                     >
-                                        {`Xem thêm (+${links.length - MAX_PREVIEW})`}
+                                        {`Xem thêm`}
                                     </Button>
-                                ) : <div style={{textAlign: 'center', padding: 4}}>Không có link</div>}
+                                )}
+                                {links.length === 0 && <div style={{ textAlign: 'center', padding: 4 }}>Không có link</div>}
                             </Panel>
                         </Collapse>
                         <Divider style={{ margin: 0 }} />
