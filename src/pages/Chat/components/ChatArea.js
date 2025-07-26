@@ -64,6 +64,7 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
   const endRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const hasRefresh = useRef(false);
+  const [hoveredMsgId, setHoveredMsgId] = useState(null);
 
   // Fetch history messages
   useEffect(() => {
@@ -158,7 +159,7 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
   const scrollToBottom = () => {
     const el = containerRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-    setChat({...chat, unread_count: 0})
+    setChat({ ...chat, unread_count: 0 })
     setShowScrollBtn(false);
   };
 
@@ -407,201 +408,197 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                     </div>
                     {/* Messages */}
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: '100%' }}>
-                      {group.items.map((msg, i) => (
-                        <div key={msg.id} style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', alignItems: msg.isMine ? 'flex-end' : 'flex-start' }}>
-                          {!msg.deleted_at ?
-                            <Tooltip
-                              // open={false}
-                              title={
-                                <Space direction="horizontal">
-                                  <Button shape="circle" onClick={() => onReplyMessage(msg)} icon={<CommentOutlined style={{ fontSize: 16 }} />} />
-                                  {msg.content_text && <Button shape="circle" onClick={() => {
-                                    navigator.clipboard.writeText(msg.content_text);
-                                    message.success('Copied to clipboard');
-                                  }}
-                                    icon={<CopyOutlined style={{ fontSize: 18 }} />}
-                                  />}
-                                  <Dropdown menu={contentMenu(msg)} trigger={['click']} placement={"bottomRight"}>
-                                    <Button shape="circle" icon={<EllipsisOutlined style={{ fontSize: 18 }} />} />
-                                  </Dropdown>
-                                </Space>
-                              }
-                              trigger={['click']}
-                              arrow={false}
-                              placement={msg.isMine ? "left" : "right"}
-                              mouseLeaveDelay={0}
-                              mouseEnterDelay={0.2}
-                              overlayInnerStyle={{ borderRadius: '50%', color: '#00000073', backgroundColor: 'transparent', boxShadow: 'none' }}
-                              getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                            >
-                              <div style={{ maxWidth: '70%' }}>
-                                {/* Text content */}
-                                {msg?.reply_to && (
-                                  <div style={{
-                                    background: '#e6f4ff',
-                                    border: '1px solid #91d5ff',
-                                    borderRadius: 6,
-                                    padding: 8,
+                      {group.items.map((msg, i) => {
+                        const isHovered = hoveredMsgId === msg.id;
+                        return (
+                          <div
+                            key={msg.id}
+                            style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', alignItems: msg.isMine ? 'flex-end' : 'flex-start', position: 'relative' }}
+                            onMouseEnter={() => setHoveredMsgId(msg.id)}
+                            onMouseLeave={() => setHoveredMsgId(null)}
+                          >
+                            {!msg.deleted_at ?
+                              <div style={{ maxWidth: '70%', position: 'relative', display: 'flex', flexDirection: msg.isMine ? 'row-reverse' : 'row', alignItems: 'center' }}>
+                                {/* Message bubble */}
+                                <div
+                                  style={{
+                                    background: msg.content_text ? (msg.isMine ? '#1890ff' : '#f0f0f0'): '',
+                                    color: msg.isMine ? '#fff' : '#000',
+                                    padding: '8px 12px',
+                                    borderRadius: 8,
+                                    marginBottom: 0,
+                                    width: '100%',
                                     position: 'relative',
-                                    maxWidth: '100%',
-                                    justifySelf: msg.isMine ? 'flex-end' : 'flex-start',
-                                  }}>
-                                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    minWidth: 60,
+                                    boxSizing: 'border-box',
+                                    wordBreak: 'break-word',
+                                  }}
+                                >
+                                  {/* Reply preview */}
+                                  {msg?.reply_to && (
+                                    <div style={{
+                                      background: '#e6f4ff',
+                                      border: '1px solid #91d5ff',
+                                      borderRadius: 6,
+                                      padding: 8,
+                                      position: 'relative',
+                                      maxWidth: '100%',
+                                      justifySelf: msg.isMine ? 'flex-end' : 'flex-start',
+                                      marginBottom: 6,
+                                    }}>
                                       <div style={{ fontSize: 13, color: '#1890ff', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap' }}>
                                         Trả lời {msg?.reply_to?.sender?.name || ''}
                                       </div>
-                                    </div>
-                                    <div style={{
-                                      color: '#00000087',
-                                      fontSize: 14,
-                                      marginBottom: 2,
-                                      whiteSpace: 'nowrap',
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
-                                    }}>
-                                      {msg?.reply_to?.type === 'image' ? <><PictureOutlined />Hình ảnh</> : msg?.reply_to?.type === 'file' ? <><PaperClipOutlined />{(msg.reply_to.attachments[0].file_name ?? '')}</> : msg.reply_to.content_text}
-                                    </div>
-                                  </div>
-                                )}
-                                {msg.content_text && (
-                                  <div
-                                    style={{
-                                      background: msg.isMine ? '#1890ff' : '#f0f0f0',
-                                      color: msg.isMine ? '#fff' : '#000',
-                                      padding: '8px 12px',
-                                      borderRadius: 8,
-                                      marginBottom: 0,
-                                      width: '100%',
-                                    }}
-                                  >
-                                    <div className={`message ${msg.isMine ? 'mine' : ''}`}>
-                                      <MessageViewer contentJson={msg.content_json} />
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Image attachments */}
-                                {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).length > 0 &&
-                                  <div style={{
-                                    marginBottom: 8,
-                                    // border: "1px solid #0000005e",
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                                    gap: 2,
-                                  }}>
-                                    <Image.PreviewGroup
-                                      preview={{
-                                        toolbarRender: (
-                                          _,
-                                          {
-                                            transform: { scale },
-                                            actions: {
-                                              onActive,
-                                              onFlipY,
-                                              onFlipX,
-                                              onRotateLeft,
-                                              onRotateRight,
-                                              onZoomOut,
-                                              onZoomIn,
-                                              onReset,
-                                            },
-                                          },
-                                        ) => (
-                                          <Space size={12} className="toolbar-wrapper">
-                                            {/* <LeftOutlined
-                                          onClick={() => (onActive === null || onActive === void 0 ? void 0 : onActive(-1))}
-                                        />
-                                        <RightOutlined
-                                          onClick={() => (onActive === null || onActive === void 0 ? void 0 : onActive(1))}
-                                        /> */}
-                                            {/* <DownloadOutlined onClick={onDownload} /> */}
-                                            <SwapOutlined rotate={90} onClick={onFlipY} />
-                                            <SwapOutlined onClick={onFlipX} />
-                                            <RotateLeftOutlined onClick={onRotateLeft} />
-                                            <RotateRightOutlined onClick={onRotateRight} />
-                                            <ZoomOutOutlined disabled={scale === 1} onClick={onZoomOut} />
-                                            <ZoomInOutlined disabled={scale === 50} onClick={onZoomIn} />
-                                            {/* <UndoOutlined onClick={onReset} /> */}
-                                          </Space>
-                                        ),
-                                        // onChange: index => {
-                                        //   setCurrent(index);
-                                        // },
+                                      <div style={{
+                                        color: '#00000087',
+                                        fontSize: 14,
+                                        marginBottom: 2,
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        maxWidth: '100%'
                                       }}>
-                                      {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).map((att, index) => (
-                                        <Image
-                                          key={index}
-                                          src={`${baseURL}/storage/${att.file_path}`}
-                                          alt={att.file_name}
-                                          style={{ maxWidth: '100%', border: '1px solid #00000020', borderRadius: 8 }}
-                                        />
-                                      ))}
-                                    </Image.PreviewGroup>
-                                  </div>
-                                }
-                                {(msg.attachments ?? []).filter(e => !e.file_type.includes('image/') && !e.file_type.includes('text/link')).length > 0 &&
-                                  (msg.attachments ?? []).filter(e => !e.file_type.includes('image/') && !e.file_type.includes('text/link')).map(file =>
-                                  (
+                                        {msg?.reply_to?.type === 'image' ? <><PictureOutlined />Hình ảnh</> : msg?.reply_to?.type === 'file' ? <><PaperClipOutlined />{(msg.reply_to.attachments[0].file_name ?? '')}</> : msg.reply_to.content_text}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {/* Text content */}
+                                  {msg.content_text && (
+                                    <div className={`message ${msg.isMine ? 'mine' : ''}`}> <MessageViewer contentJson={msg.content_json} /> </div>
+                                  )}
+                                  {/* Image attachments */}
+                                  {(msg.attachments ?? []).filter(e => e.type === 'image').length > 0 &&
+                                    <div style={{
+                                      marginBottom: 8,
+                                      display: 'grid',
+                                      gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+                                      gap: 2,
+                                    }}>
+                                      <Image.PreviewGroup
+                                        preview={{
+                                          toolbarRender: (
+                                            _,
+                                            {
+                                              transform: { scale },
+                                              actions: {
+                                                onActive,
+                                                onFlipY,
+                                                onFlipX,
+                                                onRotateLeft,
+                                                onRotateRight,
+                                                onZoomOut,
+                                                onZoomIn,
+                                                onReset,
+                                              },
+                                            },
+                                          ) => (
+                                            <Space size={12} className="toolbar-wrapper">
+                                              <SwapOutlined rotate={90} onClick={onFlipY} />
+                                              <SwapOutlined onClick={onFlipX} />
+                                              <RotateLeftOutlined onClick={onRotateLeft} />
+                                              <RotateRightOutlined onClick={onRotateRight} />
+                                              <ZoomOutOutlined disabled={scale === 1} onClick={onZoomOut} />
+                                              <ZoomInOutlined disabled={scale === 50} onClick={onZoomIn} />
+                                            </Space>
+                                          ),
+                                        }}>
+                                        {(msg.attachments ?? []).filter(e => e.file_type.includes('image/')).map((att, index) => (
+                                          <Image
+                                            key={index}
+                                            src={`${baseURL}/storage/${att.file_path}`}
+                                            alt={att.file_name}
+                                            style={{ maxWidth: '100%', border: '1px solid #00000020', borderRadius: 8 }}
+                                          />
+                                        ))}
+                                      </Image.PreviewGroup>
+                                    </div>
+                                  }
+                                  {/* File attachments */}
+                                  {(msg.attachments ?? []).filter(e => e.type === 'link').length > 0 &&
+                                    (msg.attachments ?? []).filter(e => e.type === 'file').map(file => (
+                                      <div
+                                        style={{
+                                          background: msg.isMine ? '#1890ff' : '#f0f0f0',
+                                          color: msg.isMine ? '#fff' : '#000',
+                                          padding: '8px 12px',
+                                          borderRadius: 8,
+                                          marginBottom: 0,
+                                          whiteSpace: 'pre-wrap',
+                                          wordBreak: 'break-word',
+                                          width: '100%',
+                                          display: 'flex',
+                                          alignItems: 'flex-end',
+                                        }}
+                                      >
+                                        {displayIconFileType(file?.file_type)}
+                                        <span
+                                          style={{
+                                            color: msg.isMine ? '#ffffff' : '#1890ff',
+                                            textDecoration: 'underline',
+                                            cursor: 'pointer',
+                                            display: 'inline-block',
+                                            maxWidth: '100%',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            verticalAlign: 'middle',
+                                          }}
+                                          title={file?.file_name}
+                                        >
+                                          {file?.file_name}
+                                        </span>
+                                        <Button type="default" icon={<DownloadOutlined style={{ fontSize: 18 }} />} size="small" style={{ marginLeft: 8 }} onClick={() => downloadFile(file)}></Button>
+                                      </div>
+                                    ))
+                                  }
+                                  {/* Action buttons on hover */}
+                                  {isHovered && (
                                     <div
                                       style={{
-                                        background: msg.isMine ? '#1890ff' : '#f0f0f0',
-                                        color: msg.isMine ? '#fff' : '#000',
-                                        padding: '8px 12px',
-                                        borderRadius: 8,
-                                        marginBottom: 0,
-                                        whiteSpace: 'pre-wrap',
-                                        wordBreak: 'break-word',
-                                        width: '100%',
+                                        position: 'absolute',
+                                        top: 8,
+                                        right: msg.isMine ? 'calc(100% + 8px)' : undefined,
+                                        left: !msg.isMine ? 'calc(100% + 8px)' : undefined,
                                         display: 'flex',
-                                        alignItems: 'flex-end'
+                                        gap: 4,
+                                        zIndex: 10,
                                       }}
                                     >
-                                      {displayIconFileType(file?.file_type)}
-                                      <span
-                                        style={{
-                                          color: msg.isMine ? '#ffffff' : '#1890ff',
-                                          textDecoration: 'underline',
-                                          cursor: 'pointer',
-                                          display: 'inline-block',
-                                          maxWidth: '100%',           // hoặc giá trị phù hợp với giao diện của bạn
-                                          whiteSpace: 'nowrap',
-                                          overflow: 'hidden',
-                                          textOverflow: 'ellipsis',
-                                          verticalAlign: 'middle'
-                                        }}
-                                        title={file?.file_name}
-                                      >
-                                        {file?.file_name}
-                                      </span>
-                                      <Button type="default" icon={<DownloadOutlined style={{ fontSize: 18 }} />} size="small" style={{ marginLeft: 8 }} onClick={() => downloadFile(file)}></Button>
+                                      <Button shape="circle" size="small" onClick={() => onReplyMessage(msg)} icon={<CommentOutlined style={{ fontSize: 16 }} />} />
+                                      {msg.content_text && <Button shape="circle" size="small" onClick={() => {
+                                        navigator.clipboard.writeText(msg.content_text);
+                                        message.success('Copied to clipboard');
+                                      }} icon={<CopyOutlined style={{ fontSize: 16 }} />} />}
+                                      <Dropdown menu={contentMenu(msg)} trigger={['click']} placement={msg.isMine ? 'bottomRight' : 'bottomLeft'}>
+                                        <Button shape="circle" size="small" icon={<EllipsisOutlined style={{ fontSize: 16 }} />} />
+                                      </Dropdown>
                                     </div>
-                                  )
                                   )}
+                                </div>
                               </div>
-                            </Tooltip>
-                            :
-                            <div style={{ maxWidth: '70%' }}>
-                              <div
-                                style={{
-                                  background: msg.isMine ? '#1890ff' : '#f0f0f0',
-                                  color: msg.isMine ? '#fff' : '#000',
-                                  padding: '8px 12px',
-                                  borderRadius: 8,
-                                  marginBottom: 0,
-                                  width: '100%',
-                                }}
-                              >
-                                <div className={`message ${msg.isMine ? 'mine' : ''}`} style={{ color: msg.isMine ? '#dbcece' : '#00000087' }}>Tin nhắn đã bị thu hồi</div>
+                              :
+                              <div style={{ maxWidth: '70%' }}>
+                                <div
+                                  style={{
+                                    background: msg.isMine ? '#1890ff' : '#f0f0f0',
+                                    color: msg.isMine ? '#fff' : '#000',
+                                    padding: '8px 12px',
+                                    borderRadius: 8,
+                                    marginBottom: 0,
+                                    width: '100%',
+                                  }}
+                                >
+                                  <div className={`message ${msg.isMine ? 'mine' : ''}`} style={{ color: msg.isMine ? '#dbcece' : '#00000087' }}>Tin nhắn đã bị thu hồi</div>
+                                </div>
                               </div>
-                            </div>
-                          }
-                          {/* Timestamp */}
-                          {i === group.items.length - 1 && <span style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
-                            {formatTimestamp(msg.created_at)}
-                          </span>}
-                        </div>
-                      ))}
+                            }
+                            {/* Timestamp */}
+                            {i === group.items.length - 1 && <span style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>
+                              {formatTimestamp(msg.created_at)}
+                            </span>}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

@@ -161,7 +161,7 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                                         style={{ height: '100%', marginTop: 8 }}
                                         onClick={() => { setAttachmentsHistory({ items: images, type: 'image', isShow: true }) }}
                                     >
-                                        {`Xem thêm`}
+                                        {`Xem tất cả`}
                                     </Button>
                                 )}
                                 {images.length === 0 && <div style={{ textAlign: 'center', padding: 4 }}>Không có ảnh</div>}
@@ -204,7 +204,7 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                                         style={{ height: '100%', marginTop: 8 }}
                                         onClick={() => { setAttachmentsHistory({ items: files, type: 'file', isShow: true }) }}
                                     >
-                                        {`Xem thêm`}
+                                        {`Xem tất cả`}
                                     </Button>
                                 )}
                                 {files.length === 0 && <div style={{ textAlign: 'center', padding: 4 }}>Không có file</div>}
@@ -224,7 +224,7 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                                         style={{ height: '100%', marginTop: 8 }}
                                         onClick={() => { setAttachmentsHistory({ items: links, type: 'link', isShow: true }) }}
                                     >
-                                        {`Xem thêm`}
+                                        {`Xem tất cả`}
                                     </Button>
                                 )}
                                 {links.length === 0 && <div style={{ textAlign: 'center', padding: 4 }}>Không có link</div>}

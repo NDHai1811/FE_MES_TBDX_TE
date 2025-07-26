@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Image as PreviewImage, Upload } from "antd"
+import { Button, Image, Image as PreviewImage, Upload } from "antd"
 import { CloseCircleFilled, CloseOutlined, LoadingOutlined, PaperClipOutlined, PictureOutlined, SendOutlined } from "@ant-design/icons"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import StarterKit from '@tiptap/starter-kit'
@@ -14,25 +14,23 @@ import { MentionList } from "./Mentions/MentionList"
 import echo from "../../../helpers/echo"
 import { useProfile } from "../../../components/hooks/UserHooks"
 
-function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], replyMessage = null, setReplyMessage = () => { } }) {
+function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, setReplyMessage = () => { }, pendingFiles = [], setPendingFiles, handleRemoveFile }) {
   const { userProfile } = useProfile();
   const [isSending, setIsSending] = useState(false);
-
-  const [images, setImages] = useState([]);
-  const [previews, setPreviews] = useState([]);
-
-  const handleRemove = (indexToRemove) => {
-    setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-    setPreviews((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-  };
 
   const [uploading, setUploading] = useState(false);
   const uploadProps = {
     showUploadList: false,
-    customRequest: async ({ file, onSuccess, onError }) => {
-      setUploading(true);
-      await onSendFileMessage(file);
-      setUploading(false);
+    beforeUpload: (file) => {
+      const newFile = {
+        uid: file.uid,
+        name: file.name,
+        status: 'done',      // để AntD hiển thị luôn
+        originFileObj: file,
+        url: URL.createObjectURL(file), // preview ảnh
+      }
+      setPendingFiles(prev=>[...prev, newFile]);
+      return false;
     },
     multiple: true,
   }
@@ -151,19 +149,24 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
       },
       handlePaste: (view, event, slice) => {
         const items = event.clipboardData.items;
-        let imagePasted = false;
-        for (const item of items) {
-          if (item.type.indexOf("image") !== -1) {
+        const files = [];
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.kind === 'file') {
             const file = item.getAsFile();
             if (file) {
-              setImages(prev => [...prev, file]);
-              const url = URL.createObjectURL(file);
-              setPreviews(prev => [...prev, url]);
-              imagePasted = true;
+              files.push({
+                uid: `${Date.now()}-${i}`,
+                name: file.name || `clipboard-file-${i}`,
+                status: 'done',
+                originFileObj: file,
+                url: URL.createObjectURL(file),
+              });
             }
           }
         }
-        if (imagePasted) {
+        if (files.length > 0) {
+          setPendingFiles((prev) => [...prev, ...files]);
           return true; // Ngăn Tiptap xử lý tiếp (chèn base64)
         }
         return false; // Để Tiptap xử lý mặc định (dán text)
@@ -206,7 +209,7 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
 
       const json = editor.getJSON();
       const text = editor.getText();
-      if (!text.trim() && images.length === 0) {
+      if (!text.trim() && pendingFiles.length === 0) {
         return;
       }
       const mentions = extractMentionIds(json);
@@ -216,12 +219,11 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
         content_json: json,
         content_text: text,
         mentions: mentions,
-        images: images,
         links: links,
+        files: pendingFiles,
         reply_to_message_id: replyMessage?.id,
       };
-      setImages([]);
-      setPreviews([]);
+      setPendingFiles([]);
       setIsSending(true);
       await onSendMessage(payload);
       setIsSending(false);
@@ -232,8 +234,7 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
   };
 
   useEffect(() => {
-    setImages([]);
-    setPreviews([]);
+    setPendingFiles([]);
     setIsSending(false);
     setReplyMessage();
     editor.commands.clearContent();
@@ -303,7 +304,7 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
   return (
     <div
       style={{
-        padding: "16px 20px",
+        padding: 12,
         borderTop: "1px solid #f0f0f0",
         backgroundColor: "white",
         position: 'relative'
@@ -344,53 +345,19 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
 
           </div>
         )}
-        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 8, alignItems: 'end' }}>
           <Upload {...uploadProps} style={{ width: '10%' }}><Button size="large" icon={<PaperClipOutlined />} loading={uploading} tabIndex={-1} shape="circle" style={{ color: "#1677ff", flexShrink: 0 }} /></Upload>
           <div style={{ flex: 1, position: "relative", width: '80%' }}>
+            <div style={{ marginBottom: pendingFiles.length > 0 ? 8 : 0, display: 'flex' }}>
+              <PendingFilesPreview
+                fileList={pendingFiles}
+                onRemove={handleRemoveFile}
+                chat={chat}
+              />
+            </div>
             <div className="custom-antd-textarea">
               <EditorContent editor={editor} />
             </div>
-            {previews.length > 0 && <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap", maxHeight: 400, overflowY: 'auto', paddingTop: 8 }}>
-              {previews.map((src, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    position: "relative",
-                    width: 100,
-                    height: 100,
-                  }}
-                  className="image-wrapper"
-                >
-                  <PreviewImage
-                    src={src}
-                    alt={`Pasted ${idx}`}
-                    width={100}
-                    height={100}
-                    style={{
-                      border: "1px solid #d9d9d9",
-                      borderRadius: 8,
-                      objectFit: "contain",
-                    }}
-                    preview={{ mask: "Nhấn để xem" }} // vẫn giữ chức năng preview
-                  />
-                  <CloseCircleFilled
-                    onClick={() => handleRemove(idx)}
-                    style={{
-                      position: "absolute",
-                      top: -6,
-                      right: -6,
-                      fontSize: 18,
-                      color: "#ff0000cc",
-                      background: "white",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      zIndex: 99
-                    }}
-                    className="remove-icon"
-                  />
-                </div>
-              ))}
-            </div>}
           </div>
           <Button
             type="primary"
@@ -408,3 +375,55 @@ function ChatInput({ chat, onSendMessage, onSendFileMessage, chatUsers = [], rep
 }
 
 export default ChatInput
+
+const PendingFilesPreview = ({ fileList, onRemove, chat }) => {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  useEffect(()=>{
+    setPreviewOpen(false);
+    setPreviewImage('');
+  }, [chat])
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  const handlePreview = async (file) => {
+    if (file.originFileObj.type && file.originFileObj.type.startsWith('image/')) {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
+      }
+      setPreviewImage(file.url || file.preview);
+      setPreviewOpen(true);
+    } else {
+      return false;
+    }
+  };
+  return (
+    <>
+      <Upload
+        listType="picture-card"
+        fileList={fileList}
+        showUploadList={true}
+        isImageUrl={(file)=>file.originFileObj.type && file.originFileObj.type.startsWith('image/') ? true : false}
+        onRemove={onRemove}
+        beforeUpload={() => false} // không cho upload mới
+        openFileDialogOnClick={false} // không mở chọn file khi click
+        onPreview={handlePreview}
+      />
+      {previewImage && (
+        <Image
+          wrapperStyle={{ display: 'none' }}
+          preview={{
+            visible: previewOpen,
+            onVisibleChange: (visible) => setPreviewOpen(visible),
+            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+          }}
+          src={previewImage}
+        />
+      )}
+    </>
+  );
+};

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Avatar, Badge, Button, Divider, Drawer, Empty, Layout, notification } from "antd"
+import { Avatar, Badge, Button, Divider, Drawer, Empty, Layout, notification, Upload } from "antd"
 import ChatSidebar from "./components/ChatSidebar"
 import ChatArea from "./components/ChatArea"
 import ChatInput from "./components/ChatInput"
@@ -14,6 +14,7 @@ import { useHistory, useParams, withRouter } from "react-router-dom/cjs/react-ro
 import echo from "../../helpers/echo"
 import ChatInfo from "./components/ChatInfo"
 import { fullNameToColor } from "./chat_helper"
+import ChatWithDragDrop from "./components/ChatWithDragDrop"
 
 const { Header, Sider, Content } = Layout
 
@@ -60,7 +61,7 @@ function Chat() {
     setLoadingChatList(true);
     var res = await getChatList();
     setChatList(res.data);
-    if(!(res.data ?? []).find(e=>e.id === chat_id)){
+    if (!(res.data ?? []).find(e => e.id === chat_id)) {
       history.push('/ui/chat');
     }
     setLoadingChatList(false);
@@ -78,7 +79,7 @@ function Chat() {
     }
   }, [chat_id, chatList]);
 
-  useEffect(()=>{
+  useEffect(() => {
     activeRoom && fetchFilesInChat();
   }, [activeRoom])
 
@@ -103,57 +104,55 @@ function Chat() {
     formData.append("chat_id", activeRoom?.id);
     formData.append("content_json", JSON.stringify(message.content_json));
     formData.append("content_text", message.content_text);
-    (message.images ?? []).forEach((img, idx) => {
-      formData.append(`files[${idx}]`, img);
-    });
     (message.mentions ?? []).forEach((user, idx) => {
       formData.append(`mentions[${idx}]`, user);
     });
     (message.links ?? []).forEach(link => {
-      formData.append('links[]', link)
+      formData.append('links[]', link);
     });
-    if(message?.reply_to_message_id){
+    if (message?.reply_to_message_id) {
       formData.append('reply_to_message_id', message?.reply_to_message_id);
     }
-    var res = await sendMessage(formData, activeRoom?.id);
-    if(res.success && res.data){
-      const msg = res.data;
-      setSentMessage(msg);
-      setChatList(prev => {
-        const updated = prev.filter(e => e.id !== msg.chat_id);
-        const updatedChat = prev.find(e => e.id === msg.chat_id);
-        if (updatedChat) {
-          return [
-            { ...updatedChat, last_message: msg },
-            ...updated
-          ];
-        }
-        return prev;
-      })
+    if(message.content_text){
+      var res = await sendMessage(formData, activeRoom?.id);
+      if (res.success && res.data) {
+        const msg = res.data;
+        setSentMessage(msg);
+        setChatList(prev => {
+          const updated = prev.filter(e => e.id !== msg.chat_id);
+          const updatedChat = prev.find(e => e.id === msg.chat_id);
+          if (updatedChat) {
+            return [
+              { ...updatedChat, last_message: msg },
+              ...updated
+            ];
+          }
+          return prev;
+        })
+      }
     }
-  }
-
-  const handleSendFileMessage = async (file) => {
-    // Tạo form data để gửi
-    const formData = new FormData();
-    formData.append("chat_id", activeRoom?.id);
-    formData.append(`files[0]`, file);
-    var res = await sendMessage(formData, activeRoom?.id);
-    if(res.success && res.data){
-      const msg = res.data;
-      setSentMessage(msg);
-      setChatList(prev => {
-        const updated = prev.filter(e => e.id !== msg.chat_id);
-        const updatedChat = prev.find(e => e.id === msg.chat_id);
-        if (updatedChat) {
-          return [
-            { ...updatedChat, last_message: msg },
-            ...updated
-          ];
-        }
-        return prev;
-      })
-    }
+    
+    (message.files ?? []).forEach(async (file, idx) => {
+      const formData = new FormData();
+      formData.append("chat_id", activeRoom?.id);
+      formData.append(`files[]`, file.originFileObj);
+      var res = await sendMessage(formData, activeRoom?.id);
+      if (res.success && res.data) {
+        const msg = res.data;
+        setSentMessage(msg);
+        setChatList(prev => {
+          const updated = prev.filter(e => e.id !== msg.chat_id);
+          const updatedChat = prev.find(e => e.id === msg.chat_id);
+          if (updatedChat) {
+            return [
+              { ...updatedChat, last_message: msg },
+              ...updated
+            ];
+          }
+          return prev;
+        })
+      }
+    });
   }
 
   let localInfoChat = JSON.parse(localStorage.getItem('infoChat')) ?? {};
@@ -163,7 +162,7 @@ function Chat() {
     setShowChatInfo(!showChatInfo);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     let localInfoChat = JSON.parse(localStorage.getItem('infoChat')) ?? {};
     localInfoChat['open'] = showChatInfo;
     localStorage.setItem('infoChat', JSON.stringify(localInfoChat))
@@ -186,7 +185,7 @@ function Chat() {
     setReplyMessage(msg);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     const channel = echo.private(`user.${userProfile?.id}`)
     //Listen Event Message Sent
     channel.listen('ChatUpdated', chat => {
@@ -197,8 +196,26 @@ function Chat() {
       channel.stopListening('ChatUpdated');
       echo.leave(`user.${userProfile?.id}`);  // hoặc echo.leaveChannel(...) tùy phiên bản
     };
-  }, [userProfile])
+  }, [userProfile]);
 
+  const [pendingFiles, setPendingFiles] = useState([]);
+  const handleFilesDropped = (files) => {
+    const newFiles = Array.from(files).map((file, index) => ({
+      uid: `${Date.now()}-${index}`,
+      name: file.name,
+      status: 'done',      // để AntD hiển thị luôn
+      originFileObj: file,
+      url: URL.createObjectURL(file), // preview ảnh
+    }));
+    setPendingFiles((prev) => [...prev, ...newFiles]);
+  };
+  const handleRemoveFile = (file) => {
+    setPendingFiles((prev) => prev.filter((f) => f.uid !== file.uid));
+  };
+
+  useEffect(() => {
+    console.log(pendingFiles)
+  }, [pendingFiles])
   return (
     <Layout style={{ height: "100%" }}>
       <Sider width={320} style={{
@@ -282,13 +299,24 @@ function Chat() {
             />
           </Content>
           :
-          <Content style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-            <ChatArea chatId={activeRoom?.id} chat={activeRoom} setChat={setActiveRoom} sentMessage={sentMessage} onReplyMessage={onReplyMessage}/>
-            <ChatInput chat={activeRoom} onSendMessage={handleSendMessage} onSendFileMessage={handleSendFileMessage} chatUsers={activeRoom.participants ?? []} replyMessage={replyMessage} setReplyMessage={setReplyMessage} />
+          <Content style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
+            <ChatWithDragDrop onFilesDropped={handleFilesDropped}>
+              <ChatArea chatId={activeRoom?.id} chat={activeRoom} setChat={setActiveRoom} sentMessage={sentMessage} onReplyMessage={onReplyMessage} />
+              <ChatInput
+                chat={activeRoom}
+                onSendMessage={handleSendMessage}
+                chatUsers={activeRoom.participants ?? []}
+                replyMessage={replyMessage}
+                setReplyMessage={setReplyMessage}
+                pendingFiles={pendingFiles}
+                setPendingFiles={setPendingFiles}
+                handleRemoveFile={handleRemoveFile}
+              />
+            </ChatWithDragDrop>
           </Content>
         }
       </Layout>
-      { activeRoom && (isMobile ?
+      {activeRoom && (isMobile ?
         (
           <Drawer
             placement="right"
@@ -304,7 +332,7 @@ function Chat() {
         )
         :
         (
-          <ChatInfo chat={activeRoom} setChat={setActiveRoom} isOpen={showChatInfo} setIsOpen={setShowChatInfo} mediaChat={mediaChat}/>
+          <ChatInfo chat={activeRoom} setChat={setActiveRoom} isOpen={showChatInfo} setIsOpen={setShowChatInfo} mediaChat={mediaChat} />
         )
       )}
     </Layout>
