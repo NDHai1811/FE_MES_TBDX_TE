@@ -13,12 +13,21 @@ import tippy from 'tippy.js';
 import { MentionList } from "./Mentions/MentionList"
 import echo from "../../../helpers/echo"
 import { useProfile } from "../../../components/hooks/UserHooks"
+import { useDispatch, useSelector } from "react-redux"
+import { getFiles, sendMessage } from "../../../api/ui/chat"
+import { addMessage, setChats, setFilesInActiveChat } from "../../../store/chat/chatSlice"
 
-function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, setReplyMessage = () => { }, pendingFiles = [], setPendingFiles, handleRemoveFile }) {
+function ChatInput({ chatUsers = [], replyMessage = null, setReplyMessage = () => { }, pendingFiles = [], setPendingFiles, handleRemoveFile }) {
   const { userProfile } = useProfile();
+  const dispatch = useDispatch();
   const [isSending, setIsSending] = useState(false);
+  const { chats, activeChat, activeChatId } = useSelector(state => state.chatSlice);
 
-  const [uploading, setUploading] = useState(false);
+  const chatRef = useRef(null);
+  useEffect(()=>{
+    chatRef.current = activeChat
+  }, [activeChat])
+
   const uploadProps = {
     showUploadList: false,
     beforeUpload: (file) => {
@@ -29,7 +38,8 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
         originFileObj: file,
         url: URL.createObjectURL(file), // preview ảnh
       }
-      setPendingFiles(prev=>[...prev, newFile]);
+      setPendingFiles(prev => [...prev, newFile]);
+      editor.commands.focus();
       return false;
     },
     multiple: true,
@@ -98,10 +108,75 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
   };
 
   const editor = useEditor({
+    editorProps: {
+      handleKeyDown: (view, event) => {
+        handleTyping();
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          const allLinks = new Set() // dùng Set để tránh trùng lặp
+          editor.state.doc.descendants((node) => {
+            if (node.marks) {
+              node.marks.forEach((mark) => {
+                if (mark.type.name === 'link' && mark.attrs?.href) {
+                  allLinks.add(mark.attrs.href)
+                }
+              })
+            }
+          })
+
+          const json = editor.getJSON();
+          const text = editor.getText();
+          const mentions = extractMentionIds(json);
+          const links = Array.from(allLinks);
+
+          const payload = {
+            content_json: json,
+            content_text: text,
+            mentions: mentions,
+            links: links,
+            files: pendingFiles,
+            reply_to_message_id: replyMessage?.id,
+          };
+          setPendingFiles([]);
+          setReplyMessage();
+          if (text.trim() || pendingFiles.length === 0) {
+            handleSendMessage(payload);
+          }
+          editor.commands.clearContent();
+          editor.commands.unsetLink();
+          editor.commands.focus();
+          return true; // Ngăn không cho Tiptap xử lý tiếp
+        }
+        return false; // Để Tiptap xử lý (vd: Shift+Enter)
+      },
+      handlePaste: (view, event, slice) => {
+        const items = event.clipboardData.items;
+        const files = [];
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.kind === 'file') {
+            const file = item.getAsFile();
+            if (file) {
+              files.push({
+                uid: `${Date.now()}-${i}`,
+                name: file.name || `clipboard-file-${i}`,
+                status: 'done',
+                originFileObj: file,
+                url: URL.createObjectURL(file),
+              });
+            }
+          }
+        }
+        if (files.length > 0) {
+          setPendingFiles((prev) => [...prev, ...files]);
+          return true; // Ngăn Tiptap xử lý tiếp (chèn base64)
+        }
+        return false; // Để Tiptap xử lý mặc định (dán text)
+      },
+    },
+    content: '',
     extensions: [
       StarterKit.configure({
-        // Tắt chức năng hard break mặc định (Shift+Enter) nếu không muốn
-        // hardBreak: false, 
       }),
       Mention.configure({
         HTMLAttributes: { class: 'mention' },
@@ -137,42 +212,6 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
       }),
       SmilieReplacer,
     ],
-    editorProps: {
-      handleKeyDown: (view, event) => {
-        handleTyping()
-        if (event.key === 'Enter' && !event.shiftKey) {
-          event.preventDefault();
-          handleSend();
-          return true; // Ngăn không cho Tiptap xử lý tiếp
-        }
-        return false; // Để Tiptap xử lý (vd: Shift+Enter)
-      },
-      handlePaste: (view, event, slice) => {
-        const items = event.clipboardData.items;
-        const files = [];
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-          if (item.kind === 'file') {
-            const file = item.getAsFile();
-            if (file) {
-              files.push({
-                uid: `${Date.now()}-${i}`,
-                name: file.name || `clipboard-file-${i}`,
-                status: 'done',
-                originFileObj: file,
-                url: URL.createObjectURL(file),
-              });
-            }
-          }
-        }
-        if (files.length > 0) {
-          setPendingFiles((prev) => [...prev, ...files]);
-          return true; // Ngăn Tiptap xử lý tiếp (chèn base64)
-        }
-        return false; // Để Tiptap xử lý mặc định (dán text)
-      },
-    },
-    content: '',
   })
 
   function extractMentionIds(json) {
@@ -225,13 +264,91 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
       };
       setPendingFiles([]);
       setIsSending(true);
-      await onSendMessage(payload);
       setIsSending(false);
       setReplyMessage();
       editor.commands.clearContent();
       editor.commands.unsetLink();
+      await handleSendMessage(payload);
+      editor.commands.focus();
     }
   };
+
+  const handleSendMessage = async (message) => {
+    // Tạo form data để gửi
+    const formData = new FormData();
+    formData.append("chat_id", activeChat?.id);
+    formData.append("content_json", JSON.stringify(message.content_json));
+    formData.append("content_text", message.content_text);
+    (message.mentions ?? []).forEach((user, idx) => {
+      formData.append(`mentions[${idx}]`, user);
+    });
+    (message.links ?? []).forEach(link => {
+      formData.append('links[]', link);
+    });
+    if (message?.reply_to_message_id) {
+      formData.append('reply_to_message_id', message?.reply_to_message_id);
+    }
+
+    // Gửi text message trước
+    if (message.content_text) {
+      var res = await sendMessage(formData, activeChat?.id);
+      if (res.success && res.data) {
+        const msg = res.data;
+        dispatch(addMessage({ ...msg, isMine: msg.sender_id == userProfile?.id }));
+        dispatch(setChats(chats.map(e => e.id === msg.chat_id ? { ...e, last_message: msg } : e)));
+        fetchFilesInChat(activeChatId);
+      }
+    }
+
+    // Nhóm files liền kề theo loại
+    const fileGroups = [];
+    let currentGroup = [];
+    let currentType = null;
+
+    (message.files ?? []).forEach(file => {
+      const isImage = file.originFileObj.type.startsWith('image/');
+
+      if (currentType === null) {
+        // Nhóm đầu tiên
+        currentType = isImage ? 'image' : 'file';
+        currentGroup = [file];
+      } else if (currentType === 'image' && isImage) {
+        // Tiếp tục nhóm ảnh
+        currentGroup.push(file);
+      } else if (currentType === 'file' && !isImage) {
+        // Tiếp tục nhóm file
+        currentGroup.push(file);
+      } else {
+        // Thay đổi loại, lưu nhóm cũ và tạo nhóm mới
+        fileGroups.push({ type: currentType, files: currentGroup });
+        currentType = isImage ? 'image' : 'file';
+        currentGroup = [file];
+      }
+    });
+
+    // Thêm nhóm cuối cùng
+    if (currentGroup.length > 0) {
+      fileGroups.push({ type: currentType, files: currentGroup });
+    }
+
+    // Gửi từng nhóm
+    for (const group of fileGroups) {
+      const formData = new FormData();
+      formData.append("chat_id", activeChat?.id);
+
+      group.files.forEach(file => {
+        formData.append(`files[]`, file.originFileObj);
+      });
+
+      var res = await sendMessage(formData, activeChat?.id);
+      if (res.success && res.data) {
+        const msg = res.data;
+        dispatch(addMessage({ ...msg, isMine: msg.sender_id == userProfile?.id }));
+        dispatch(setChats(chats.map(e => e.id === msg.chat_id ? { ...e, last_message: msg } : e)));
+        fetchFilesInChat(activeChatId);
+      }
+    }
+  }
 
   useEffect(() => {
     setPendingFiles([]);
@@ -239,13 +356,14 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
     setReplyMessage();
     editor.commands.clearContent();
     editor.commands.unsetLink();
-  }, [chat]);
+    editor.commands.focus();
+  }, [activeChat, editor]);
 
   const typingTimeoutRef = useRef(null);
 
   const handleTyping = () => {
     // Gửi whisper "typing"
-    echo.join(`presence-chat.${chat?.id}`)
+    echo.join(`presence-chat.${activeChatId}`)
       .whisper('typing', {
         user_id: userProfile.id,
         user_name: userProfile.name,
@@ -254,7 +372,7 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
     // Xoá trạng thái sau 3 giây nếu không gõ tiếp
     clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(() => {
-      echo.join(`presence-chat.${chat?.id}`)
+      echo.join(`presence-chat.${activeChatId}`)
         .whisper('typing', {
           user_id: null,
         });
@@ -264,7 +382,7 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
   const [typingUser, setTypingUser] = useState(null);
 
   useEffect(() => {
-    const channel = echo.join(`presence-chat.${chat?.id}`);
+    const channel = echo.join(`presence-chat.${activeChatId}`);
 
     channel.listenForWhisper('typing', (payload) => {
       if (payload.user_id) {
@@ -293,13 +411,17 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
         clearTimeout(typingTimeoutRef.current);
       }
     };
-  }, [chat?.id]);
+  }, [activeChatId]);
 
-  useEffect(() => {
-    if (replyMessage) {
-      console.log(replyMessage);
+  const fetchFilesInChat = async (chat_id) => {
+    console.log('prepare get files');
+    if (!window.location.pathname.includes('ui/chat/' + chat_id)) return;
+    const res = await getFiles({}, chat_id);
+    if (res.success) {
+      dispatch(setFilesInActiveChat(res.data))
     }
-  }, [replyMessage]);
+    console.log('got files');
+  }
 
   return (
     <div
@@ -340,19 +462,26 @@ function ChatInput({ chat, onSendMessage, chatUsers = [], replyMessage = null, s
               textOverflow: 'ellipsis',
               maxWidth: '100%' // hoặc giá trị phù hợp với giao diện của bạn
             }}>
-              {replyMessage?.type === 'image' ? <><PictureOutlined />Hình ảnh</> : replyMessage?.type === 'file' ? <><PaperClipOutlined />{(replyMessage.attachments[0].file_name ?? '')}</> : replyMessage.content_text}
+              {replyMessage?.attachments?.length > 0
+                ? (
+                  replyMessage.attachments[0].file_type?.includes('image/')
+                    ? <><PictureOutlined /> Hình ảnh</>
+                    : <><PaperClipOutlined />{replyMessage.attachments[0].file_name ?? ''}</>
+                )
+                : replyMessage?.content_text
+              }
             </div>
 
           </div>
         )}
         <div style={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 8, alignItems: 'end' }}>
-          <Upload {...uploadProps} style={{ width: '10%' }}><Button size="large" icon={<PaperClipOutlined />} loading={uploading} tabIndex={-1} shape="circle" style={{ color: "#1677ff", flexShrink: 0 }} /></Upload>
+          <Upload {...uploadProps} style={{ width: '10%' }}><Button size="large" icon={<PaperClipOutlined />} tabIndex={-1} shape="circle" style={{ color: "#1677ff", flexShrink: 0 }} /></Upload>
           <div style={{ flex: 1, position: "relative", width: '80%' }}>
             <div style={{ marginBottom: pendingFiles.length > 0 ? 8 : 0, display: 'flex' }}>
               <PendingFilesPreview
                 fileList={pendingFiles}
                 onRemove={handleRemoveFile}
-                chat={chat}
+                chat={activeChat}
               />
             </div>
             <div className="custom-antd-textarea">
@@ -379,7 +508,7 @@ export default ChatInput
 const PendingFilesPreview = ({ fileList, onRemove, chat }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
-  useEffect(()=>{
+  useEffect(() => {
     setPreviewOpen(false);
     setPreviewImage('');
   }, [chat])
@@ -407,7 +536,7 @@ const PendingFilesPreview = ({ fileList, onRemove, chat }) => {
         listType="picture-card"
         fileList={fileList}
         showUploadList={true}
-        isImageUrl={(file)=>file.originFileObj.type && file.originFileObj.type.startsWith('image/') ? true : false}
+        isImageUrl={(file) => file.originFileObj.type && file.originFileObj.type.startsWith('image/') ? true : false}
         onRemove={onRemove}
         beforeUpload={() => false} // không cho upload mới
         openFileDialogOnClick={false} // không mở chọn file khi click

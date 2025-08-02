@@ -6,20 +6,15 @@ import { useEffect, useState } from "react"
 import { getUsers } from "../../../api"
 import { useProfile } from "../../../components/hooks/UserHooks"
 
-export default function ChatUserList({ chat }) {
+export default function ChatUserList({ chat, users = [] }) {
     const { userProfile } = useProfile();
     const [openPopupAddUser, setOpenPopupAddUser] = useState(false);
     const openPopup = () => {
         setOpenPopupAddUser(true);
     }
-    const [users, setUsers] = useState([]);
-    const fecthUser = async () => {
-        var res = await getUsers();
-        setUsers(res.map((e, i) => ({ ...e, value: e.id, label: (`${e.name} - ID: ${e.username}`), key: i, disabled: e.id == userProfile.id })))
-    }
     useEffect(() => {
-        fecthUser();
-    }, [])
+        users.map((e, i) => ({ ...e, value: e.id, label: (`${e.name} - ID: ${e.username}`), key: i, disabled: e.id == userProfile.id }))
+    }, [users])
     return (
         <div style={{
             padding: 16,

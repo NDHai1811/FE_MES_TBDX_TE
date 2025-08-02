@@ -19,7 +19,7 @@ const echo = new Echo({
   },
   transports: ['websocket','polling','flashsocket'],
   reconnectionAttempts: 1,
-  reconnection: false,
+  reconnection: true,
   autoConnect: true,
 })
 

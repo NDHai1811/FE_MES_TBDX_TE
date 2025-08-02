@@ -9,9 +9,9 @@ import { displayIconFileType, downloadFile } from '../../chat_helper';
 const { Title, Text } = Typography;
 
 export default function AttachmentsHistory({ type = '', mediaFiles }) {
-    const images = mediaFiles?.images ?? [];
-    const files = mediaFiles?.files ?? [];
-    const links = mediaFiles?.links ?? [];
+    const images = mediaFiles?.image ?? [];
+    const files = mediaFiles?.file ?? [];
+    const links = mediaFiles?.link ?? [];
     const [selectedSegment, setSelectedSegment] = useState(type);
     const [selectedItems, setSelectedItems] = useState([]);
 
@@ -38,7 +38,8 @@ export default function AttachmentsHistory({ type = '', mediaFiles }) {
 
     const groups = useMemo(() => {
         const result = {};
-        selectedItems.sort((a, b) =>{
+        const newValues = [...selectedItems];
+        newValues.sort((a, b) =>{
             if(!b?.created_at || !a?.created_at) return 0;
             return dayjs(b?.created_at).valueOf() - dayjs(a?.created_at).valueOf();
         }).forEach(msg => {
@@ -56,8 +57,6 @@ export default function AttachmentsHistory({ type = '', mediaFiles }) {
             }
         });
     }, [selectedItems]);
-
-    console.log(groups);
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Segmented value={selectedSegment} block className="custom-equal-tabs" options={[
@@ -181,7 +180,7 @@ export default function AttachmentsHistory({ type = '', mediaFiles }) {
                             </div>
                         })}
                         {selectedSegment === 'link' && (e?.items ?? []).map(link => {
-                            return <div>
+                            return <div style={{margin: '8px 0px'}}>
                                 <div>
                                     <a href={link.file_path}>{link.file_path}</a>
                                 </div>

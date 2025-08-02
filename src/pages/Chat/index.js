@@ -14,16 +14,19 @@ import { useHistory, useParams, withRouter } from "react-router-dom/cjs/react-ro
 import echo from "../../helpers/echo"
 import ChatInfo from "./components/ChatInfo"
 import { fullNameToColor } from "./chat_helper"
-import ChatWithDragDrop from "./components/ChatWithDragDrop"
+import ChatWithDragDrop from "./components/ChatWithDragDrop";
+import { useDispatch, useSelector } from 'react-redux';
+import { resetUnread, setActiveChat, setChats, setMessagesInActiveChat } from "../../store/chat/chatSlice"
 
 const { Header, Sider, Content } = Layout
 
 function Chat() {
+  const dispatch = useDispatch();
+  const {chats, activeChat} = useSelector(state => state.chatSlice);
   document.title = "Chat - MES UI";
   const { chat_id } = useParams();
   const history = useHistory();
   const { userProfile } = useProfile();
-  const [activeRoom, setActiveRoom] = useState()
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 992);
@@ -55,105 +58,71 @@ function Chat() {
     setUsers(res.map((e, i) => ({ ...e, value: e.id, label: (`${e.name} - ID: ${e.username}`), key: i })))
   }
 
-  const [chatList, setChatList] = useState([]);
   const [loadingChatList, setLoadingChatList] = useState(false);
   const fetchChatList = async () => {
+    if(loadingChatList) return;
     setLoadingChatList(true);
     var res = await getChatList();
-    setChatList(res.data);
-    if (!(res.data ?? []).find(e => e.id === chat_id)) {
-      history.push('/ui/chat');
-    }
+    dispatch(setChats(res.data ?? []));
     setLoadingChatList(false);
   }
 
+  // Fetch users và chat list lần đầu
   useEffect(() => {
     fecthUser();
     fetchChatList();
-  }, []);
+  }, [dispatch]);
 
+  // Fetch chat list khi chat_id thay đổi
   useEffect(() => {
-    const room = chatList.find(e => e.id === chat_id);
-    if (room) {
-      setActiveRoom(room);
-    }
-  }, [chat_id, chatList]);
-
-  useEffect(() => {
-    activeRoom && fetchFilesInChat();
-  }, [activeRoom])
-
-  const [mediaChat, setMediaChat] = useState();
-  const fetchFilesInChat = async () => {
-    if (chat_id) {
-      var res = await getFiles({}, chat_id);
-      if (res.success) {
-        setMediaChat(res.data);
-      }
-    }
-  }
-
-  const refreshSidebar = async () => {
+    // Luôn fetch chat list khi chat_id thay đổi, kể cả khi chat_id là null
     fetchChatList();
-  }
+  }, [chat_id]);
 
-  const [sentMessage, setSentMessage] = useState();
-  const handleSendMessage = async (message) => {
-    // Tạo form data để gửi
-    const formData = new FormData();
-    formData.append("chat_id", activeRoom?.id);
-    formData.append("content_json", JSON.stringify(message.content_json));
-    formData.append("content_text", message.content_text);
-    (message.mentions ?? []).forEach((user, idx) => {
-      formData.append(`mentions[${idx}]`, user);
-    });
-    (message.links ?? []).forEach(link => {
-      formData.append('links[]', link);
-    });
-    if (message?.reply_to_message_id) {
-      formData.append('reply_to_message_id', message?.reply_to_message_id);
-    }
-    if(message.content_text){
-      var res = await sendMessage(formData, activeRoom?.id);
-      if (res.success && res.data) {
-        const msg = res.data;
-        setSentMessage(msg);
-        setChatList(prev => {
-          const updated = prev.filter(e => e.id !== msg.chat_id);
-          const updatedChat = prev.find(e => e.id === msg.chat_id);
-          if (updatedChat) {
-            return [
-              { ...updatedChat, last_message: msg },
-              ...updated
-            ];
-          }
-          return prev;
-        })
+  // Kiểm tra và điều hướng sau khi có chat list
+  useEffect(() => {
+    if (chats.length > 0 && chat_id) {
+      const chatExists = chats.find(e => e.id === chat_id);
+      if (!chatExists) {
+        // Nếu chat_id không tồn tại, reset activeChat và messages, chuyển về trang chat chính
+        dispatch(setActiveChat(null));
+        dispatch(setMessagesInActiveChat([]));
+        history.push('/ui/chat');
       }
+    }
+  }, [chats, chat_id, history, dispatch]);
+
+  useEffect(() => {
+    if(chat_id === activeChat?.id) return;
+    
+    // Nếu không có chat_id, reset activeChat và messages
+    if (!chat_id) {
+      dispatch(setActiveChat(null));
+      dispatch(setMessagesInActiveChat([]));
+      return;
     }
     
-    (message.files ?? []).forEach(async (file, idx) => {
-      const formData = new FormData();
-      formData.append("chat_id", activeRoom?.id);
-      formData.append(`files[]`, file.originFileObj);
-      var res = await sendMessage(formData, activeRoom?.id);
-      if (res.success && res.data) {
-        const msg = res.data;
-        setSentMessage(msg);
-        setChatList(prev => {
-          const updated = prev.filter(e => e.id !== msg.chat_id);
-          const updatedChat = prev.find(e => e.id === msg.chat_id);
-          if (updatedChat) {
-            return [
-              { ...updatedChat, last_message: msg },
-              ...updated
-            ];
-          }
-          return prev;
-        })
-      }
-    });
-  }
+    const room = chats.find(e => e.id === chat_id);
+    if (room) {
+      dispatch(setActiveChat(room));
+      dispatch(resetUnread(room));
+    } else {
+      // Nếu không tìm thấy room trong chats, reset activeChat và messages
+      dispatch(setActiveChat(null));
+      dispatch(setMessagesInActiveChat([]));
+    }
+  }, [chat_id, chats, dispatch]);
+
+  // Cập nhật activeChat ngay khi chat_id thay đổi và có chats
+  useEffect(() => {
+    if (!chat_id || chats.length === 0) return;
+    
+    const room = chats.find(e => e.id === chat_id);
+    if (room && room.id !== activeChat?.id) {
+      dispatch(setActiveChat(room));
+      dispatch(resetUnread(room));
+    }
+  }, [chat_id, chats, activeChat, dispatch]);
 
   let localInfoChat = JSON.parse(localStorage.getItem('infoChat')) ?? {};
   const [showChatInfo, setShowChatInfo] = useState(localInfoChat?.open ?? false);
@@ -185,18 +154,29 @@ function Chat() {
     setReplyMessage(msg);
   }
 
+  const [lastMessage, setLastMessage] = useState(null);
+  const [lastRecalledMessage, setLastRecalledMessage] = useState(null);
+
+  // Reset lastMessage and lastRecalledMessage after processing
   useEffect(() => {
-    const channel = echo.private(`user.${userProfile?.id}`)
-    //Listen Event Message Sent
-    channel.listen('ChatUpdated', chat => {
-      console.log(chat);
-      refreshSidebar();
-    });
-    return () => {
-      channel.stopListening('ChatUpdated');
-      echo.leave(`user.${userProfile?.id}`);  // hoặc echo.leaveChannel(...) tùy phiên bản
-    };
-  }, [userProfile]);
+    if (lastMessage) {
+      // Reset after a short delay to ensure all components have processed it
+      const timer = setTimeout(() => {
+        setLastMessage(null);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [lastMessage]);
+
+  useEffect(() => {
+    if (lastRecalledMessage) {
+      // Reset after a short delay to ensure all components have processed it
+      const timer = setTimeout(() => {
+        setLastRecalledMessage(null);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [lastRecalledMessage]);
 
   const [pendingFiles, setPendingFiles] = useState([]);
   const handleFilesDropped = (files) => {
@@ -212,10 +192,6 @@ function Chat() {
   const handleRemoveFile = (file) => {
     setPendingFiles((prev) => prev.filter((f) => f.uid !== file.uid));
   };
-
-  useEffect(() => {
-    console.log(pendingFiles)
-  }, [pendingFiles])
   return (
     <Layout style={{ height: "100%" }}>
       <Sider width={320} style={{
@@ -239,12 +215,9 @@ function Chat() {
             >
               <ChatSidebar
                 users={users}
-                chatList={chatList}
-                refresh={refreshSidebar}
                 isShowingDrawer={openDrawer}
                 onClose={() => setOpenDrawer(false)}
                 loading={loadingChatList}
-                setChatList={setChatList}
               />
             </Drawer>
           )
@@ -252,12 +225,9 @@ function Chat() {
           (
             <ChatSidebar
               users={users}
-              chatList={chatList}
-              refresh={refreshSidebar}
               isShowingDrawer={openDrawer}
               onClose={() => setOpenDrawer(false)}
               loading={loadingChatList}
-              setChatList={setChatList}
             />
           )}
       </Sider>
@@ -266,21 +236,21 @@ function Chat() {
           {isMobile &&
             <MenuOutlined style={{ fontSize: 18, marginRight: 8 }} onClick={() => setOpenDrawer(true)} />
           }
-          {activeRoom && <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          {activeChat && <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
             <h1 style={{ margin: 0, fontSize: "18px", display: 'flex', alignItems: 'center' }}>
               <Badge
-                dot={activeRoom.type === "private" && activeRoom.isOnline}
-                status={activeRoom.type === "private" && activeRoom.isOnline ? "success" : "default"}
+                dot={activeChat.type === "private" && activeChat.isOnline}
+                status={activeChat.type === "private" && activeChat.isOnline ? "success" : "default"}
                 offset={[-8, 32]}
               >
-                <Avatar size={48} src={activeRoom.avatar} icon={activeRoom.type === "group" ? <TeamOutlined /> : undefined} style={{ backgroundColor: fullNameToColor(activeRoom?.name) }}>
-                  {activeRoom.type === "group" ? <TeamOutlined /> : activeRoom?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
+                <Avatar size={48} src={activeChat.avatar} icon={activeChat.type === "group" ? <TeamOutlined /> : undefined} style={{ backgroundColor: fullNameToColor(activeChat?.name) }}>
+                  {activeChat.type === "group" ? <TeamOutlined /> : activeChat?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
                 </Avatar>
               </Badge>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ marginLeft: 8 }}>{activeRoom?.name}</span>
-                {activeRoom.type === "group" && <span style={{ fontSize: '13px', color: '#888', marginLeft: 8 }}>
-                  {(activeRoom.participants?.length ?? 0)} thành viên
+                <span style={{ marginLeft: 8 }}>{activeChat?.name}</span>
+                {activeChat.type === "group" && <span style={{ fontSize: '13px', color: '#888', marginLeft: 8 }}>
+                  {(activeChat.participants?.length ?? 0)} thành viên
                 </span>}
               </div>
             </h1>
@@ -290,7 +260,7 @@ function Chat() {
           </div>}
         </Header>
         <Divider style={{ margin: 0 }} />
-        {!activeRoom?.id ?
+        {!activeChat ?
           <Content style={{ display: "flex", flexDirection: "column", height: "100%" }}>
             <Empty
               description="No chat selected yet. Start a conversation!"
@@ -301,11 +271,11 @@ function Chat() {
           :
           <Content style={{ display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
             <ChatWithDragDrop onFilesDropped={handleFilesDropped}>
-              <ChatArea chatId={activeRoom?.id} chat={activeRoom} setChat={setActiveRoom} sentMessage={sentMessage} onReplyMessage={onReplyMessage} />
+              <ChatArea onReplyMessage={onReplyMessage} />
               <ChatInput
-                chat={activeRoom}
-                onSendMessage={handleSendMessage}
-                chatUsers={activeRoom.participants ?? []}
+                chat={activeChat}
+                // onSendMessage={handleSendMessage}
+                chatUsers={activeChat.participants ?? []}
                 replyMessage={replyMessage}
                 setReplyMessage={setReplyMessage}
                 pendingFiles={pendingFiles}
@@ -316,7 +286,7 @@ function Chat() {
           </Content>
         }
       </Layout>
-      {activeRoom && (isMobile ?
+      {activeChat && (isMobile ?
         (
           <Drawer
             placement="right"
@@ -327,12 +297,12 @@ function Chat() {
             styles={{ body: { padding: 0 }, header: { display: 'none' } }}
             onClose={() => setShowChatInfo(false)}
           >
-            <ChatInfo chat={activeRoom} setChat={setActiveRoom} isOpen={showChatInfo} setIsOpen={setShowChatInfo} mediaChat={mediaChat} />
+            <ChatInfo isOpen={showChatInfo} setIsOpen={setShowChatInfo} users={users} />
           </Drawer>
         )
         :
         (
-          <ChatInfo chat={activeRoom} setChat={setActiveRoom} isOpen={showChatInfo} setIsOpen={setShowChatInfo} mediaChat={mediaChat} />
+          <ChatInfo isOpen={showChatInfo} setIsOpen={setShowChatInfo} users={users}/>
         )
       )}
     </Layout>

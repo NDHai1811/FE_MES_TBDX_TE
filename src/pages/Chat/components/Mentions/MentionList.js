@@ -1,5 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import './MentionList.scss'
+import { Avatar } from 'antd'
+import { fullNameToColor } from '../../chat_helper'
 
 export const MentionList = forwardRef((props, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
@@ -59,7 +61,12 @@ export const MentionList = forwardRef((props, ref) => {
                         >
                             {item.avatar && <img src={item.avatar} className="avatar" alt='' />}
                             <div className="info" style={{ alignContent: 'center' }}>
-                                <div className="name">@{item.label}</div>
+                                <div className="name d-flex gap-2 align-items-center">
+                                    <Avatar size={33} src={item.avatar} style={{ backgroundColor: fullNameToColor(item?.name) }}>
+                                        {item?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
+                                    </Avatar>
+                                    {item?.name}
+                                </div>
                                 {/* <div className="desc">{item.description}</div> */}
                             </div>
                         </div>

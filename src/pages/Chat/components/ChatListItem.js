@@ -1,15 +1,20 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Layout, Menu, Button, Modal, Input, Typography, Select, Form, Tabs, Badge, Avatar, Divider } from "antd"
 import { TeamOutlined } from "@ant-design/icons"
-import { fullNameToColor, getDescriptionMessage } from "../chat_helper"
-
-const { Sider, Header } = Layout
+import { formatTimeFromNow, fullNameToColor, getDescriptionMessage } from "../chat_helper"
+import { useProfile } from "../../../components/hooks/UserHooks"
+import { useDispatch, useSelector } from "react-redux"
+import { resetUnread, setActiveChat } from "../../../store/chat/chatSlice"
 const { Title, Text } = Typography
 
-const ChatListItem = ({ chat, isSelected, onClick }) => {
+const ChatListItem = ({ chat, onClick }) => {
+    const dispatch = useDispatch();
+    const activeChatId = useSelector(state => state.chatSlice.activeChatId);
+    const {userProfile} = useProfile();
     const [isHovered, setIsHovered] = useState(false);
+    
     const getItemStyle = () => {
-        if (isSelected) {
+        if (activeChatId === chat.id) {
             return {
                 backgroundColor: "#e6f4ff",
                 borderLeft: "4px solid #1677ff",
@@ -33,9 +38,15 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
         }
     }
 
+    const onClickChat = (chat) => {
+        onClick(chat);
+        dispatch(setActiveChat(chat));
+        dispatch(resetUnread(chat));
+    }
+
     return <div
         key={chat.id}
-        onClick={() => onClick(chat)}
+        onClick={() => onClickChat(chat)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
@@ -67,11 +78,11 @@ const ChatListItem = ({ chat, isSelected, onClick }) => {
                         {chat.name}
                     </Text>
                     <Text type="secondary" style={{ fontSize: "12px" }}>
-                        {chat?.last_message?.from_now}
+                        {formatTimeFromNow(chat?.last_message?.created_at)}
                     </Text>
                 </div>
                 <Text type="secondary" style={{ fontSize: "13px", width: chat?.unread_count ? "85%" : "100%" }} ellipsis>
-                    {getDescriptionMessage(chat?.last_message, chat)}
+                    {getDescriptionMessage(chat?.last_message, chat, userProfile)}
                 </Text>
                 {chat.unread_count ? (
                 <Badge

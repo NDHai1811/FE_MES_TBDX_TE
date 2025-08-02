@@ -17,3 +17,11 @@ code {
 .ant-table-cell{
   white-space: pre-line;
 }
+.custom-message-notification .ant-notification-notice-message{
+  display: none;
+}
+.ant-notification-stack > .ant-notification-notice-wrapper {
+  transition:
+    transform 0.3s,
+    backdrop-filter 0s !important;
+}

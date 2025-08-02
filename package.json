@@ -13,6 +13,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@react-three/drei": "^9.89.0",
     "@react-three/fiber": "^8.15.11",
+    "@reduxjs/toolkit": "^2.8.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",

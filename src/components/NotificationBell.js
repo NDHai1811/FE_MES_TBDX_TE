@@ -1,189 +1,125 @@
 // NotificationBell.tsx
 import React, { useEffect, useState } from 'react';
-import { Badge, Drawer, Tabs, List, Button, Popover, Divider, notification, Avatar } from 'antd';
-import { BellOutlined, TeamOutlined } from '@ant-design/icons';
+import { Badge, Drawer, Tabs, List, Button, Popover, Divider, notification, Avatar, Typography } from 'antd';
+import { BellOutlined, CloseOutlined, TeamOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { getNotifications, readNotifications } from '../api/ui/notifications';
 import { useProfile } from './hooks/UserHooks';
 import echo from '../helpers/echo';
-import { fullNameToColor } from '../pages/Chat/chat_helper';
+import { formatTimeFromNow, fullNameToColor, getDescriptionMessage } from '../pages/Chat/chat_helper';
 import { useHistory, useLocation, useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { markAsRead } from '../api/ui/chat';
+import { getChatList, markAsRead } from '../api/ui/chat';
+import { useDispatch, useSelector } from 'react-redux';
+import { setChats } from '../store/chat/chatSlice';
+
+const { Text } = Typography;
 
 export default function NotificationBell({ color = '#fff', size = 28 }) {
+    const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
     const [open, setOpen] = useState(false);
-    const [unread, setUnread] = useState([]);
-    const [read, setRead] = useState([]);
+    const [unreadMessage, setUnreadMessage] = useState([]);
+    const [notifications, setNotifications] = useState([]);
 
-    const lastMessage = (last_message = null, chat = null) => {
-        let lastMsgPreview = '';
-        if (last_message) {
-            let otherMessage = '';
-            if (last_message?.attachments) {
-                if (last_message?.attachments[0]?.file_type?.includes('image/')) {
-                    otherMessage = 'Đã gửi hình ảnh';
-                } else {
-                    otherMessage = 'Đã gửi file';
-                }
-            }
-            if (last_message.sender?.username === userProfile?.username) {
-                lastMsgPreview = `Bạn: ${last_message.content_text ?? otherMessage ?? ''}`;
-            } else {
-                if (chat?.type === "group") {
-                    // Hiển thị tên người gửi: nội dung
-                    lastMsgPreview = `${last_message.sender?.name || ''}: ${last_message.content_text ?? otherMessage ?? ''}`;
-                } else if (chat?.type === "private") {
-                    lastMsgPreview = last_message.content_text ?? otherMessage ?? '';
-                }
-            }
-        }
-        return lastMsgPreview;
+    const chats = useSelector(state => state.chatSlice.chats);
+
+    useEffect(()=>{
+        setUnreadMessage(chats.filter(e => e.unread_count > 0 && (e.muted === 'N' || e.muted === null)));
+    }, [chats])
+
+    const fetchChatList = async () => {
+        var res = await getChatList();
+        dispatch(setChats(res.data ?? []));
     }
-
-    function groupReadNotifications(notis) {
-        const groups = {};
-        notis.forEach(noti => {
-            const isChat = noti.type === 'App\\Notifications\\NewMessageNotification';
-            if (isChat) {
-                const key = isChat ? `chat_${noti.data?.chat_id}` : noti.type;
-                if (!groups[key]) {
-                    groups[key] = {
-                        name: isChat ? (noti.data?.chat?.type === 'private' ? (noti.data?.sender?.name ?? '') : noti.data?.chat?.name) : noti.type,
-                        type: noti.type,
-                        content: lastMessage(noti.data, noti.data?.chat),
-                        created_at: noti.created_at,
-                        id: isChat ? noti.data?.chat_id : noti.id,
-                        count: 1,
-                        message_id: noti.data?.id,
-                        notification_ids: [noti.id],
-                    };
-                } else {
-                    // Nếu thông báo này mới hơn, cập nhật content và created_at
-                    if (new Date(noti.created_at) > new Date(groups[key].created_at)) {
-                        groups[key].content = lastMessage(noti.data, noti.data?.chat);
-                        groups[key].message_id = noti.data?.id;
-                        groups[key].created_at = noti.created_at;
-                    }
-                    groups[key].count += 1;
-                    groups[key].notification_ids.push(noti.id);
-                }
-            }
-        });
-        return Object.values(groups);
-    }
-
-    const fetchNotifications = async () => {
-        var res = await getNotifications();
-        // console.log(groupReadNotifications(res.data.unread ?? []))
-        setUnread(res.data.unread ?? []);
-        setRead(res.data.read ?? []);
-    }
-
     useEffect(() => {
-        fetchNotifications();
-    }, []);
-
-    const readNotification = async (noti) => {
-        if (noti?.type === 'App\\Notifications\\NewMessageNotification') {
-            const params = {
-                chat_id: noti?.id,
-                user_id: userProfile?.id,
-                message_id: noti?.message_id
-            };
-            await markAsRead(params, noti?.id);
-            await readNotifications({ ids: noti?.notification_ids });
-            await fetchNotifications();
-            history.push(`/ui/chat/${noti?.id}`);
-        } else {
-            return;
+        if (!location.pathname.includes('ui/chat')) {
+            fetchChatList();
         }
-    };
+    }, [dispatch, location]);
 
     const { userProfile } = useProfile();
-    const [api, contextHolder] = notification.useNotification({
-        stack: { threshold: 3 }
-    });
-    const openMessageNotification = (message) => {
-        api.open({
-            key: message?.id ?? new Date(),
-            message: <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Avatar size={35} src={message?.sender?.avatar} icon={message?.chat?.type === "group" ? <TeamOutlined /> : undefined} style={{ backgroundColor: fullNameToColor(message?.chat?.name) }}>
-                    {message?.chat?.type === "group" ? <TeamOutlined /> : message?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
-                </Avatar>{message?.chat?.name ?? 'AAA'}
-            </div>,
-            description: message?.chat?.type === "group" ? `${message?.sender?.name}: ${message?.content_text}` : (message?.content_text ?? 'BBBB'),
-            // duration: 0,
-            showProgress: true,
-            style: {
-                padding: 8
-            }
-        });
-    };
-    // useEffect(() => {
-    //     openMessageNotification();
-    // }, [])
 
-    useEffect(() => {
-        if (userProfile?.id) {
-            echo.private(`App.Models.CustomUser.${userProfile.id}`)
-                .notification(notif => {
-                    // notif.payload.data hoặc notif.data tùy version
-                    console.log('New notification:', notif);
-                    if (notif?.type === 'App\\Notifications\\NewMessageNotification') {
-                        if (!location?.pathname?.includes('/ui/chat')) {
-                            // openMessageNotification(notif.data);
-                            fetchNotifications();
-                        }
-                    }
-                });
-
-            return () => {
-                echo.leave(`App.Models.CustomUser.${userProfile?.id}`);
-            };
-        }
-    }, [userProfile?.id, location]);
+    const onClickMessageNoti = (chat) => {
+        history.push('/ui/chat/' + chat.id);
+        setOpen(false);
+    }
 
     const content = (
         <div>
             <Tabs defaultActiveKey="unread" size="small" style={{ width: 320 }}>
-                <Tabs.TabPane key="unread" tab={<span>Chưa đọc <Badge count={unread.length} /></span>}>
+                <Tabs.TabPane key="unread" tab={"Tin nhắn"}>
                     <List
-                        dataSource={groupReadNotifications(unread)}
+                        dataSource={unreadMessage}
                         locale={{ emptyText: 'Không có thông báo' }}
                         style={{ maxHeight: 300, overflowY: 'auto' }}
                         size='small'
-                        renderItem={item => (
-                            <List.Item
-                                actions={[
-                                    <Button
-                                        size="small"
-                                        type="link"
-                                        onClick={() => readNotification(item)}
-                                    >
-                                        Xem
-                                    </Button>,
-                                ]}
+                        renderItem={chat => (
+                            <div
+                                key={chat.id}
+                                onClick={() => onClickMessageNoti(chat)}
+                                // onMouseEnter={() => setIsHovered(true)}
+                                // onMouseLeave={() => setIsHovered(false)}
+                                style={{
+                                    cursor: "pointer",
+                                    // padding: 5,
+                                    borderRadius: "8px",
+                                    // margin: "4px 8px",
+                                    position: "relative",
+                                    lineHeight: 0,
+                                    // ...getItemStyle(),
+                                }}
                             >
-                                <List.Item.Meta
-                                    title={<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>{item?.name} <Badge count={item.count}></Badge></div>}
-                                    description={
-                                        <>
-                                            <div>{item?.content}</div>
-                                            <small>{dayjs(item?.created_at).format('HH:mm DD/MM/YYYY')}</small>
-                                        </>
-                                    }
-                                />
-                            </List.Item>
+                                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                    <div style={{ position: "relative" }}>
+                                        <Badge
+                                            dot={chat.type === "private" && chat.isOnline}
+                                            status={chat.type === "private" && chat.isOnline ? "success" : "default"}
+                                            offset={[-8, 32]}
+                                        >
+                                            <Avatar size={48} src={chat.avatar} icon={chat.type === "group" ? <TeamOutlined /> : undefined} style={{ backgroundColor: fullNameToColor(chat?.name) }}>
+                                                {chat.type === "group" ? <TeamOutlined /> : chat?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}
+                                            </Avatar>
+                                        </Badge>
+                                    </div>
+
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                                            <Text strong style={{ fontSize: "14px" }} ellipsis>
+                                                {chat.name}
+                                            </Text>
+                                            <Text type="secondary" style={{ fontSize: "12px" }}>
+                                                {formatTimeFromNow(chat?.last_message?.created_at)}
+                                            </Text>
+                                        </div>
+                                        <Text type="secondary" style={{ fontSize: "13px", width: chat?.unread_count ? "85%" : "100%" }} ellipsis>
+                                            {getDescriptionMessage(chat?.last_message, chat, userProfile)}
+                                        </Text>
+                                        {chat.unread_count ? (
+                                            <Badge
+                                                count={chat.unread_count}
+                                                style={{
+                                                    position: "absolute",
+                                                    right: "0",
+                                                    bottom: "0",
+                                                }}
+                                                overflowCount={9}
+                                                styles={{ root: { width: "100%" } }}
+                                            />
+                                        ) : null}
+                                    </div>
+
+
+                                </div>
+                            </div>
                         )}
                     />
                 </Tabs.TabPane>
 
-                <Tabs.TabPane key="read" tab="Đã đọc">
+                <Tabs.TabPane key="read" tab="Thông báo khác">
                     <List
-                        dataSource={groupReadNotifications(read)}
-                        locale={{ emptyText: 'Không có thông báo đã đọc' }}
+                        dataSource={notifications}
+                        locale={{ emptyText: 'Không có thông báo' }}
                         style={{ maxHeight: 300, overflowY: 'auto' }}
                         renderItem={item => (
                             <List.Item actions={[
@@ -217,18 +153,15 @@ export default function NotificationBell({ color = '#fff', size = 28 }) {
     );
 
     return (
-        <>
-            {contextHolder}
-            <Popover
-                content={content}
-                trigger="click"
-                open={open}
-                onOpenChange={setOpen}
-            >
-                <Badge count={unread.length} offset={[-5, 5]} size="small">
-                    <BellOutlined style={{ fontSize: size, cursor: 'pointer', color: color }} />
-                </Badge>
-            </Popover>
-        </>
+        <Popover
+            content={content}
+            trigger="click"
+            open={open}
+            onOpenChange={setOpen}
+        >
+            <Badge count={unreadMessage.reduce((sum, chat) => sum + (chat.unread_count || 0), 0)} offset={[-5, 5]} size="small">
+                <BellOutlined style={{ fontSize: size, cursor: 'pointer', color: color }} />
+            </Badge>
+        </Popover>
     );
 }

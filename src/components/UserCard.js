@@ -15,12 +15,6 @@ const UserCard = () => {
   const tick = () => {
     setClock(new Date());
   };
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
   const logout = () => {
     window.location.href = "/logout";
   };
@@ -32,7 +26,6 @@ const UserCard = () => {
       onClick: () => logout(),
     },
   ];
-  var interval;
   return (
     <React.Fragment>
       <div className="justify-content-between d-flex w-100 mt-1 align-content-center flex-wrap">
@@ -52,8 +45,8 @@ const UserCard = () => {
             </Space>
           </Button>
         </Dropdown>
-        <div className="align-content-center d-flex flex-wrap gap-2 align-items-center">
-          <NotificationBell color="#000" size={20}/>
+        <div className="align-content-center d-flex flex-wrap gap-3 align-items-center">
+          <NotificationBell color="#000" size={26}/>
           {clock.toLocaleString(["en-GB"], { hour12: false })}{" "}
         </div>
       </div>

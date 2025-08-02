@@ -1,26 +1,42 @@
-import { CalendarOutlined, CaretRightOutlined, CloseOutlined, DeleteOutlined, DownloadOutlined, FileImageOutlined, FileOutlined, LeftOutlined, LinkOutlined, LogoutOutlined, PhoneOutlined, PlayCircleOutlined, RightOutlined, SearchOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Col, Collapse, Divider, Image, Layout, List, Modal, Popconfirm, Row, Space, Tabs } from "antd";
+import { BellOutlined, CalendarOutlined, CaretRightOutlined, CloseOutlined, DeleteOutlined, DownloadOutlined, FileImageOutlined, FileOutlined, LeftOutlined, LinkOutlined, LogoutOutlined, PhoneOutlined, PlayCircleOutlined, RightOutlined, SearchOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Badge, Button, Col, Collapse, Divider, Image, Layout, List, Modal, Popconfirm, Row, Space, Switch, Tabs } from "antd";
 import { Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import Title from "antd/es/typography/Title";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { deleteChat, getFiles, updateChat } from "../../../api/ui/chat";
+import { deleteChat, deleteChatHistory, getFiles, mutedChat, updateChat } from "../../../api/ui/chat";
 import { baseURL } from "../../../config";
 import AttachmentsHistory from "./Attachments/AttachmentsHistory";
 import { displayIconFileType, downloadFile, fullNameToColor } from "../chat_helper";
 import ChatUserList from "./ChatUserList";
 import { useProfile } from "../../../components/hooks/UserHooks";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveChat, setChats, setFilesInActiveChat, setMessagesInActiveChat } from "../../../store/chat/chatSlice";
 const { Panel } = Collapse;
 
-export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
+export function ChatInfo({ isOpen, setIsOpen, users = [] }) {
+    const dispatch = useDispatch();
+    const { activeChat, filesInActiveChat, chats } = useSelector(state => state.chatSlice)
     const { userProfile } = useProfile();
     const history = useHistory();
     const MAX_PREVIEW = 3;
-    const nameChat = useRef(chat?.name)
-    const images = mediaChat?.images ?? [];
-    const files = mediaChat?.files ?? [];
-    const links = mediaChat?.links ?? [];
+    const nameChat = useRef(activeChat?.name)
+    useEffect(() => {
+        activeChat && fetchFilesInChat();
+    }, [activeChat]);
+    const fetchFilesInChat = async () => {
+        console.log('prepare get files');
+        if (!window.location.pathname.includes('ui/chat/' + activeChat.id)) return;
+        const res = await getFiles({}, activeChat.id);
+        if (res.success) {
+            dispatch(setFilesInActiveChat(res.data))
+        }
+        console.log('got files');
+    }
+    const images = filesInActiveChat?.image ?? [];
+    const files = filesInActiveChat?.file ?? [];
+    const links = filesInActiveChat?.link ?? [];
 
     const [attachmentsHistory, setAttachmentsHistory] = useState({
         items: [],
@@ -32,16 +48,12 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
         isShow: false,
     });
 
-    useEffect(() => {
-        nameChat.current = chat?.name
-    }, [chat])
-
     const onChangeNameChat = async () => {
-        if (!chat?.id || !nameChat.current || nameChat.current === chat.name) return;
-        const res = await updateChat({ name: nameChat.current }, chat.id);
+        if (!activeChat?.id || !nameChat.current || nameChat.current === activeChat.name) return;
+        const res = await updateChat({ name: nameChat.current }, activeChat.id);
         // Có thể reload lại thông tin chat nếu cần
         if (res?.success) {
-            setChat(res.data);
+            dispatch(setActiveChat(res.data));
         }
     }
 
@@ -49,20 +61,36 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
         setIsOpen(false);
     }
 
-    const deleteGroupChat = async () => {
-        const res = await deleteChat(chat.id);
+    const deleteHistory = async () => {
+    const res = await deleteChatHistory(activeChat.id);
         if (res?.success) {
-            window.location.href = '/ui/chat';
+            dispatch(setMessagesInActiveChat([]));
         }
     }
 
     const leaveGroupChat = async () => {
-        const res = await leaveGroupChat(chat.id);
+        const res = await leaveGroupChat(activeChat.id);
         if (res?.success) {
-            window.location.href = '/ui/chat';
+            // dispatch(setActiveChat());
+            // dispatch(setChats(chats.filter(c => c.id !== res.data.id)));
+            // dispatch(setMessagesInActiveChat([]));
+            history.push('/ui/chat');
         }
     }
 
+    const onChangeNotifiable = async (checked) => {
+        const params = {
+            is_muted: checked ? 'Y' : 'N',
+        }
+        const res = await mutedChat(params, activeChat.id, userProfile.id);
+        if (res?.success) {
+            dispatch(setActiveChat(res.data));
+            dispatch(setChats(chats.map(c => c.id === res.data.id ? res.data : c)))
+        }
+    }
+    if(!activeChat){
+        return null;
+    }
     return (
         <React.Fragment>
             <Sider width={isOpen ? 320 : 0} style={{
@@ -74,7 +102,7 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
             >
                 <Layout style={{ borderLeft: "1px solid #d9d9d9", height: "100%", width: '100%' }}>
                     <Header style={{ background: "#fff", padding: "0 8px", borderBottom: "1px solid #f0f0f0", display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{display: 'flex', flexDirection:'row'}}> 
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
                             {chatUserList.isShow || attachmentsHistory.isShow ?
                                 <LeftOutlined style={{ fontSize: 18 }} onClick={() => {
                                     setAttachmentsHistory({ items: [], type: '', isShow: false });
@@ -94,30 +122,30 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                     <Divider style={{ margin: 0 }} />
                     {/* Header với ảnh đại diện lớn */}
                     <div style={{ height: chatUserList.isShow ? '100%' : 0, overflowY: "auto" }}>
-                        <ChatUserList chat={chat} />
+                        <ChatUserList chat={activeChat} users={users} />
                     </div>
                     <div style={{ height: attachmentsHistory.isShow ? '100%' : 0, overflowY: "auto" }}>
-                        <AttachmentsHistory {...attachmentsHistory} mediaFiles={mediaChat} />
+                        <AttachmentsHistory {...attachmentsHistory} mediaFiles={filesInActiveChat} />
                     </div>
                     <div style={{ height: '100%', overflowY: "auto", display: (chatUserList.isShow || attachmentsHistory.isShow) ? 'none' : '', padding: '16px 0' }}>
                         <div style={{ margin: 0, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                            {chat && <><Badge
-                                dot={chat.type === "private" && chat.isOnline}
-                                status={chat.type === "private" && chat.isOnline ? "success" : "default"}
+                            {activeChat && <><Badge
+                                dot={activeChat.type === "private" && activeChat.isOnline}
+                                status={activeChat.type === "private" && activeChat.isOnline ? "success" : "default"}
                                 offset={[-8, 32]}
                             >
-                                <Avatar size={48} src={chat.avatar} icon={chat.type === "group" ? <TeamOutlined /> : undefined} style={{ backgroundColor: fullNameToColor(chat?.name) }}>
-                                    {chat.type === "group" ? <TeamOutlined /> : chat?.name?.charAt(0)}
+                                <Avatar size={48} src={activeChat.avatar} icon={activeChat.type === "group" ? <TeamOutlined /> : undefined} style={{ backgroundColor: fullNameToColor(activeChat?.name) }}>
+                                    {activeChat.type === "group" ? <TeamOutlined /> : activeChat?.name?.charAt(0)}
                                 </Avatar>
-                            </Badge> <Title editable={chat?.type === "group" ? {
+                            </Badge> <Title editable={activeChat?.type === "group" ? {
                                 onChange: (value) => nameChat.current = value,
                                 onEnd: onChangeNameChat
-                            } : false} level={4} style={{ margin: 8 }}>{nameChat.current}</Title></>}
+                            } : false} level={4} style={{ margin: 8 }}>{activeChat?.name}</Title></>}
                         </div>
                         <Divider style={{ margin: 0 }} />
-                        {chat?.type === 'group' && <div style={{ padding: 16, cursor: 'pointer' }} onClick={() => setChatUserList({ ...chatUserList, isShow: true })}><TeamOutlined style={{ fontSize: 18 }} /> {chat?.participants?.length ?? 0} Thành viên</div>}
+                        {activeChat?.type === 'group' && <div style={{ padding: 16, cursor: 'pointer' }} onClick={() => setChatUserList({ ...chatUserList, isShow: true })}><TeamOutlined style={{ fontSize: 18 }} /> {activeChat?.participants?.length ?? 0} Thành viên</div>}
                         <Divider style={{ margin: 0 }} />
-                        <Collapse defaultActiveKey={['1', '2', '3']} bordered={false} expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} expandIconPosition={"end"}>
+                        <Collapse defaultActiveKey={['1', '2', '3']} bordered={false} expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />} expandIconPosition={"end"} style={{ backgroundColor: '#f5f5f5' }}>
                             {/* Images Panel */}
                             <Panel header={<strong>{`Ảnh (${images.length})`}</strong>} key="1">
                                 <div
@@ -213,7 +241,7 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                             {/* Links Panel */}
                             <Panel header={<strong>{`Link (${links.length})`}</strong>} key="3">
                                 {links.slice(0, MAX_PREVIEW).map((link, i) => (
-                                    <div key={i}>
+                                    <div key={i} style={{ margin: '8px 0px' }}>
                                         <a href={link.file_path}>{link.file_path}</a>
                                     </div>
                                 ))}
@@ -232,15 +260,19 @@ export function ChatInfo({ chat, setChat, isOpen, setIsOpen, mediaChat }) {
                         </Collapse>
                         <Divider style={{ margin: 0 }} />
                         <Space direction="vertical" style={{ width: '100%', padding: 16 }}>
-                            {chat.type === "group" &&
-                                <Popconfirm title="Bạn có chắc chắn muốn rời nhóm chat này không?" onConfirm={() => leaveGroupChat(chat.id)}>
+                            <div className="d-flex justify-content-between"><div className="d-flex gap-1"><BellOutlined style={{ fontSize: 20 }} /> Tắt thông báo</div> <Switch checked={!(activeChat?.muted === 'N' || activeChat?.muted === null)} onChange={onChangeNotifiable} /></div>
+                        </Space>
+                        <Divider style={{ margin: 0 }} />
+                        <Space direction="vertical" style={{ width: '100%', padding: 16 }}>
+                            {activeChat.type === "group" &&
+                                <Popconfirm title="Bạn có chắc chắn muốn rời nhóm chat này không?" onConfirm={() => leaveGroupChat()}>
                                     <Button danger style={{ display: 'flex', alignItems: 'center', color: 'red' }}>
                                         <LogoutOutlined className="delete-btn" /> Rời đoạn chat
                                     </Button>
                                 </Popconfirm>
                             }
-                            {((chat.type === "group" && chat.creator.id == userProfile?.id) || (chat.type === "private")) &&
-                                <Popconfirm title="Bạn có chắc chắn muốn xóa đoạn chat này không?" onConfirm={() => deleteGroupChat(chat.id)}>
+                            {((activeChat.type === "group" && activeChat?.creator?.id == userProfile?.id) || (activeChat.type === "private")) &&
+                                <Popconfirm title="Bạn có chắc chắn muốn xóa đoạn chat này không?" onConfirm={() => deleteHistory()}>
                                     <Button danger style={{ display: 'flex', alignItems: 'center', color: 'red' }}>
                                         <DeleteOutlined className="delete-btn" /> Xóa lịch sử trò chuyện
                                     </Button>

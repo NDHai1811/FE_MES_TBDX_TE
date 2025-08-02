@@ -15,7 +15,7 @@ export async function updateChat(params, chatId) {
     const res = await axios.patch("/chats/" + chatId, params);
     return res;
 }
-export async function deleteChat(chatId) {
+export async function deleteChatHistory(chatId) {
     if (!chatId) {
         return;
     }
@@ -27,6 +27,13 @@ export async function leaveChat(chatId) {
         return;
     }
     const res = await axios.post("/chats/" + chatId + "/leave");
+    return res;
+}
+export async function mutedChat(params, chatId, userId) {
+    if (!chatId || !userId) {
+        return;
+    }
+    const res = await axios.post("/chats/" + chatId + "/muted/" + userId, params);
     return res;
 }
 export async function sendMessage(params, chatId) {
@@ -69,7 +76,7 @@ export async function getFiles(params, chatId) {
     const res = await axios.get('/files/' + chatId, { params });
     return res;
 }
-export async function recallMessage(messageId, chatId) {
+export async function recallMsg(messageId, chatId) {
     const res = await axios.post("/chats/" + chatId + "/messages/" + messageId + "/recall");
     return res;
 }

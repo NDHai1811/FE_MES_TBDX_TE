@@ -1,20 +1,23 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react"
-import { Layout, Menu, Button, Modal, Input, Typography, Select, Form, Tabs, Badge, Avatar, Divider, Radio, Checkbox, Col, Row, Skeleton } from "antd"
-import { TeamOutlined, MessageOutlined, PlusOutlined, GroupOutlined, SearchOutlined, MoreOutlined, UserOutlined, UserAddOutlined, UsergroupAddOutlined, LeftOutlined, CloseOutlined, MessageTwoTone } from "@ant-design/icons"
-import { getUsers } from "../../../api"
+import { Layout, Button, Modal, Input, Typography, Form, Avatar, Divider, Radio, Checkbox, Col, Row, Skeleton } from "antd"
+import { SearchOutlined, UserAddOutlined, UsergroupAddOutlined, CloseOutlined, MessageTwoTone } from "@ant-design/icons"
 import { createChat, getChatList } from "../../../api/ui/chat"
 import { useProfile } from "../../../components/hooks/UserHooks"
 import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min"
 import ChatListItem from "./ChatListItem"
 import { filterUsersByName, fullNameToColor } from "../chat_helper"
 import echo from "../../../helpers/echo"
+import { useDispatch, useSelector } from "react-redux"
+import { setChats } from "../../../store/chat/chatSlice"
 
 const { Sider, Header } = Layout
 const { Title, Text } = Typography
 
-function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = false, onClose, loading = false }) {
+function ChatSidebar({ users, isShowingDrawer = false, onClose, loading = false}) {
+  const dispatch = useDispatch();
+  const { chats, activeChat } = useSelector(state => state.chatSlice);
   const { userProfile } = useProfile();
   const history = useHistory();
   const { chat_id } = useParams();
@@ -25,8 +28,13 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
     const params = { ...values, type: 'private', recipient_id: values.user_chat }
     var res = await createChat(params);
     if (res.success && res?.data?.id) {
-      await refresh();
-      history.push('/ui/chat/' + res.data.id);
+      var resChatList = await getChatList();
+      if ((resChatList.data ?? []).find(e => e.id === res?.data?.id)) {
+        history.push('/ui/chat/' + res.data.id);
+      }else{
+        history.push('/ui/chat');
+      }
+      dispatch(setChats(resChatList.data ?? []));
     }
     formPrivateChat.resetFields();
     setIsModalCreatePrivateChatOpen(false);
@@ -38,8 +46,13 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
     const params = { ...values, type: 'group', members: values.user_chat }
     var res = await createChat(params);
     if (res.success && res?.data?.id) {
-      await refresh();
-      history.push('/ui/chat/' + res.data.id);
+      var resChatList = await getChatList();
+      if ((resChatList.data ?? []).find(e => e.id === res?.data?.id)) {
+        history.push('/ui/chat/' + res.data.id);
+      }else{
+        history.push('/ui/chat');
+      }
+      dispatch(setChats(resChatList.data ?? []));
     }
     formPublicChat.resetFields();
     setIsModalCreatePublicChatOpen(false);
@@ -52,24 +65,9 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
   const [isModalCreatePrivateChatOpen, setIsModalCreatePrivateChatOpen] = useState(false);
   const [isModalCreatePublicChatOpen, setIsModalCreatePublicChatOpen] = useState(false);
 
-  const [activeRoom, setActiveRoom] = useState();
-
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const room = chatList.find(e => e.id === chat_id);
-    if (room) {
-      setActiveRoom(room);
-    }
-  }, [chat_id, chatList]);
-
-  const onSelectChat = (chat) => {
-    setChatList(prev => prev.map(e => {
-      if (e.id === chat.id) {
-        return { ...e, unread_count: 0 }; // Đặt số lượng tin nhắn chưa đọc về 0 khi chọn chat
-      }
-      return e;
-    }));
+  const clearSearchField = (chat) => {
     setSearchQuery('');
     history.push('/ui/chat/' + chat.id);
   }
@@ -86,44 +84,6 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  useEffect(() => {
-    if (userProfile?.id) {
-      const channel = echo.private(`user.${userProfile?.id}`)
-      channel.listen('MessageSent', msg => {
-        if (msg?.sender_id == userProfile?.id) return;
-        setChatList(prev => {
-          const updated = prev.filter(e => e.id !== msg.chat_id);
-          const updatedChat = prev.find(e => e.id === msg.chat_id);
-          if (updatedChat) {
-            const newChat = { ...updatedChat, last_message: msg, isMine: msg.sender_id == userProfile?.id };
-            if (newChat.id !== chat_id) {
-              console.log('update unread count', msg);
-              newChat.unread_count = (newChat.unread_count ?? 0) + 1;
-            }
-            return [
-              newChat,
-              ...updated
-            ];
-          }
-          return prev;
-        })
-      });
-      channel.listen('MessageRecall', msg => {
-        setChatList(prev => {
-          return prev.map(e => {
-            if (e.id === msg.chat_id && e.last_message?.id == msg?.id) {
-              return { ...e, last_message: { ...msg, isMine: msg.sender_id == userProfile?.id } };
-            }
-            return e;
-          });
-        })
-      });
-      return () => {
-        echo.leave(`user.${userProfile?.id}`);
-      };
-    }
-  }, [userProfile?.id, chat_id, chatList]);
 
   return (
     <React.Fragment>
@@ -152,9 +112,9 @@ function ChatSidebar({ users, chatList, setChatList, refresh, isShowingDrawer = 
           {/* Danh sách cuộc trò chuyện */}
         </div>
         <div style={{ height: '100%', overflowY: "auto" }}>
-          {filterUsersByName(chatList, searchQuery).map((e) => <ChatListItem chat={e} isSelected={e.id === activeRoom?.id} onClick={onSelectChat} />)}
+          {filterUsersByName(chats, searchQuery).map((e) => <ChatListItem chat={e} isSelected={e.id === activeChat?.id} onClick={clearSearchField} />)}
           {
-            chatList.length === 0 && loading && (
+            loading && (
               <>
                 <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} /></Skeleton>
                 <Skeleton loading={loading} active avatar style={{ padding: 12 }}><ChatListItem chat={null} /></Skeleton>

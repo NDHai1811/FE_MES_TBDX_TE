@@ -89,18 +89,22 @@ export function filterUsersByName(users, keyword) {
     );
 }
 
-export function getDescriptionMessage(message, chat) {
+export function getDescriptionMessage(message, chat, user ) {
     if (!message) return '';
     let prefix = '';
-    if (message.isMine) {
+    if (message.sender_id == user.id) {
         prefix = 'Bạn: ';
-    } else if (message.sender && chat.type === 'group') {
-        prefix = `${message.sender?.name || ''}: `;
-    }
+    } else {
+        if(message.reply_to && message.reply_to.sender_id == user.id){
+            return message.sender?.name + ' đã trả lời bạn: ' + message.content_text
+        } else if (message.sender && chat.type === 'group') {
+            prefix = `${message.sender?.name || ''}: `;
+        }
+    } 
     let content = '';
     if (message) {
         if(message.deleted_at){
-            content = 'Tin nhắn đã bị thu hồi';
+            content = 'Tin nhắn đã bị thu hồi.';
         }else{
             if (message?.type === 'image') {
                 content = <><PictureOutlined />Hình ảnh</>;
@@ -111,5 +115,46 @@ export function getDescriptionMessage(message, chat) {
             }
         }
     }
-    return <span>{prefix} {content}</span>;
+    return <span style={{fontWeight: (chat.unread_count && !message.deleted_at) ? 'bold' : 'normal'}}>{prefix} {content}</span>;
 }
+
+// Utility function để format thời gian dạng "from now"
+export const formatTimeFromNow = (dateString) => {
+    if (!dateString) return '';
+    
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+        return 'Vừa xong';
+    }
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} phút trước`;
+    }
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+        return `${diffInHours} giờ trước`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) {
+        return `${diffInDays} ngày trước`;
+    }
+    
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    if (diffInWeeks < 4) {
+        return `${diffInWeeks} tuần trước`;
+    }
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) {
+        return `${diffInMonths} tháng trước`;
+    }
+    
+    const diffInYears = Math.floor(diffInDays / 365);
+    return `${diffInYears} năm trước`;
+};

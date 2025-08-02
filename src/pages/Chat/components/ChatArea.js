@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState, useMemo, useLayoutEffect } from "react";
-import { Avatar, Button, Dropdown, Empty, Image, Menu, message, Modal, Popconfirm, Space, Spin, Tooltip, Typography } from "antd";
+import { Avatar, Button, Dropdown, Empty, FloatButton, Image, Menu, message, Modal, Popconfirm, Space, Spin, Tooltip, Typography } from "antd";
 import { CommentOutlined, CopyOutlined, DeleteOutlined, DownloadOutlined, DownOutlined, EllipsisOutlined, ExclamationCircleOutlined, FileExcelOutlined, FileGifOutlined, FileImageOutlined, FileJpgOutlined, FileOutlined, FilePdfOutlined, FilePptOutlined, FileWordOutlined, FileZipOutlined, LeftOutlined, PaperClipOutlined, PictureOutlined, RetweetOutlined, RightOutlined, RotateLeftOutlined, RotateRightOutlined, SwapOutlined, UndoOutlined, UserOutlined, ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
-import { deleteMessage, downloadFileMsg, getMessages, markAsRead, recallMessage } from "../../../api/ui/chat";
+import { deleteMessage, downloadFileMsg, getMessages, markAsRead, recallMsg } from "../../../api/ui/chat";
 import { useProfile } from "../../../components/hooks/UserHooks";
 import { baseURL } from "../../../config";
 import MessageViewer from "./MessageViewer";
 import { displayIconFileType, downloadFile, fullNameToColor } from "../chat_helper";
 import echo from "../../../helpers/echo";
+import { useDispatch, useSelector } from "react-redux";
+import { recallMessage, resetUnread, setMessagesInActiveChat } from "../../../store/chat/chatSlice";
 
 /**
  * Format timestamp based on whether it's today or not
@@ -53,57 +55,95 @@ const formatDateDivider = (timestamp) => {
 /**
  * ChatArea with message grouping and username displayed above each group
  */
-function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
-  const { userProfile } = useProfile();
-  const [messages, setMessages] = useState([]);
-  const [incomingMessage, setIncomingMessage] = useState();
+function ChatArea({ onReplyMessage }) {
+  const dispatch = useDispatch();
+  const {userProfile} = useProfile();
+  const messages = useSelector(state => state.chatSlice.messagesInActiveChat ?? []);
+  const {activeChat} = useSelector(state => state.chatSlice);
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const containerRef = useRef(null);
-  const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const showScrollBtn = useRef(false);
+  const [isShowScrollBtn, setIsShowScrollBtn] = useState(false);
   const endRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const hasRefresh = useRef(false);
   const [hoveredMsgId, setHoveredMsgId] = useState(null);
+  const mustFixedAtCurrentPosition = useRef(false);
+  const prevScrollHeightRef = useRef(0);
+  const prevScrollTopRef = useRef(0);
+  const isLoadPreviousMessages = useRef(false);
+
+  // useEffect(()=>{
+  //   console.log(messages);
+  // }, [messages])
+
+  useEffect(()=>{
+    mustFixedAtCurrentPosition.current = isShowScrollBtn;
+  }, [isShowScrollBtn])
 
   // Fetch history messages
   useEffect(() => {
-    setMessages([]);
+    // setMessages([]);
     async function fetchMessages() {
       setLoading(true);
-      const res = await getMessages({ chat_id: chatId, limit: 20 });
-      setMessages(res.data);
-      if (res.data.length) {
-        setHasMore(res.data.length === 20);
-      } else {
-        setHasMore(false);
+      const res = await getMessages({ chat_id: activeChat?.id, limit: 20 });
+      if(res.success){
+        dispatch(setMessagesInActiveChat(res.data));
+        if (res.data.length) {
+          setHasMore(res.data.length === 20);
+        } else {
+          setHasMore(false);
+        }
+        mustFixedAtCurrentPosition.current = false;
       }
-      hasRefresh.current = true;
       setLoading(false);
     }
-    fetchMessages();
-  }, [chatId]);
+    if(activeChat?.id) fetchMessages();
+  }, [activeChat, dispatch]);
 
-  // Load older messages when scrolling to top
-  const prevScrollHeightRef = useRef(0);
-  const prevScrollTopRef = useRef(0);
   const loadMoreMessages = async () => {
     if (loadingOlder || !hasMore) return;
     const container = containerRef.current;
     if (!container) return;
     setLoadingOlder(true);
     prevScrollHeightRef.current = container.scrollHeight;
-    prevScrollTopRef.current = container.scrollTop;
-    const res = await getMessages({ chat_id: chatId, before: messages[0].id ?? '', limit: 20 });
+    // prevScrollTopRef.current = container.scrollTop;
+    const res = await getMessages({ chat_id: activeChat?.id, before: messages[0].id ?? '', limit: 20 });
     const older = (res.data ?? [])
     if (older.length) {
-      setMessages(prev => [...older, ...prev]);
+      dispatch(setMessagesInActiveChat([...older, ...messages]));
       setHasMore(older.length === 20);
     } else {
       setHasMore(false);
     }
     setLoadingOlder(false);
+    mustFixedAtCurrentPosition.current = true;
+    isLoadPreviousMessages.current = true;
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      prevScrollHeightRef.current = container.scrollHeight;
+      prevScrollTopRef.current = container.scrollTop;
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const [reading, setReading] = useState(false);
+  const handleReadMessage = async () => {
+    let lastMessage = messages[messages.length - 1] ?? null;
+    if(!reading && lastMessage){
+      setReading(true);
+      var res = await markAsRead({message_id: lastMessage.id, chat_id: activeChat?.id}, activeChat?.id);
+      if(res.success){
+        dispatch(resetUnread(activeChat?.id))
+      }
+      setReading(false);
+    }
+  }
 
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [totalImages, setTotalImages] = useState(0);
@@ -136,37 +176,56 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
     const container = containerRef.current;
     if (!container) return;
     const imgs = container.querySelectorAll('img');
-    if (!hasRefresh.current) {
+    if (mustFixedAtCurrentPosition.current) {
+      console.log('fixed position');
       const deltaHeight = container.scrollHeight - prevScrollHeightRef.current;
-      container.scrollTop = prevScrollTopRef.current + deltaHeight;
+      container.scrollTop = prevScrollTopRef.current + (isLoadPreviousMessages.current ? deltaHeight : 0);
     } else {
+      console.log('scoll to bottom at first')
+      container.scrollTop = container.scrollHeight;
       setTotalImages(imgs.length);
       setImagesLoaded(0);
-      container.scrollTop = container.scrollHeight;
+      handleReadMessage();
     }
-    hasRefresh.current = false;
+    isLoadPreviousMessages.current = false;
   }, [messages]);
 
   // Scroll handler
+  const isAtBottomRef = useRef(false);
   const handleScroll = (e) => {
-    if (e.currentTarget.scrollTop === 0) {
+    if (e.currentTarget.scrollTop < 100) {
       loadMoreMessages();
     }
-    const atBottom = e.currentTarget.scrollHeight - e.currentTarget.scrollTop <= e.currentTarget.clientHeight + 200;
-    setShowScrollBtn(!atBottom);
+    const atBottom = e.currentTarget.scrollTop + e.currentTarget.clientHeight >= e.currentTarget.scrollHeight - 2;
+    // Chỉ log khi vừa chạm đáy (trước đó chưa ở đáy)
+    if (atBottom && !isAtBottomRef.current) {
+      handleReadMessage();
+    }
+    isAtBottomRef.current = atBottom;
+    const showBtn = e.currentTarget.scrollHeight - e.currentTarget.scrollTop > e.currentTarget.clientHeight + 200;
+    showScrollBtn.current = showBtn;
+    setIsShowScrollBtn(showBtn);
+    prevScrollHeightRef.current = e.currentTarget.scrollHeight;
+    prevScrollTopRef.current = e.currentTarget.scrollTop;
+    // console.log('prevScrollHeightRef', prevScrollHeightRef.current);
+    // console.log('prevScrollTopRef', prevScrollTopRef.current);
   };
 
   const scrollToBottom = () => {
     const el = containerRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-    setChat({ ...chat, unread_count: 0 })
-    setShowScrollBtn(false);
+    dispatch(resetUnread(activeChat?.id))
+    showScrollBtn.current = false;
+    setIsShowScrollBtn(false);
+    // handleReadMessage();
   };
 
   // Nhóm tin nhắn theo ngày rồi nhóm theo người gửi
   const groups = useMemo(() => {
+    if(!messages || !messages?.length) return {};
+    console.log(messages);
     const result = {};
-    messages.forEach(msg => {
+    messages?.forEach(msg => {
       const dateKey = new Date(msg.created_at).toDateString();
       if (!result[dateKey]) {
         result[dateKey] = [];
@@ -197,82 +256,15 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
     });
   }, [messages]);
 
-  // Nhận tin nhắn mới từ Echo
-  useEffect(() => {
-    if (!chatId) return;
-    const channel = echo.private(`user.${userProfile?.id}`)
-    //Listen Event Message Sent
-    channel.listen('MessageSent', msg => {
-      console.log(msg);
-
-      if (msg.sender_id == userProfile.id) return;
-      if (msg.chat_id === chatId) {
-        setIncomingMessage(msg);
-      }
-    });
-    channel.listen('MessageRecall', msg => {
-      setMessages(prev => prev.map(e => e.id === msg.id ? { ...msg, isMine: msg.sender_id == userProfile?.id } : e));
-    });
-    return () => {
-      channel.stopListening('MessageSent');
-      channel.stopListening('MessageRecall');
-      echo.leave(`chat.${chatId}`);  // hoặc echo.leaveChannel(...) tùy phiên bản
-    };
-  }, [chatId, userProfile?.id]);
-
-  //Update messages when receiving new message
-  useEffect(() => {
-    if (!incomingMessage) return;
-    setMessages(prev => {
-      if (prev.some(e => e.id === incomingMessage.id)) {
-        return prev;
-      }
-      return [...prev, { ...incomingMessage, isMine: incomingMessage.sender_id == userProfile?.id }];
-    });
-  }, [incomingMessage, userProfile?.id]);
-
-  useEffect(() => {
-    if (!sentMessage) return;
-    setMessages(prev => {
-      if (prev.some(e => e.id === sentMessage.id)) {
-        return prev;
-      }
-      return [...prev, { ...sentMessage, isMine: sentMessage.sender_id == userProfile?.id }];
-    });
-  }, [sentMessage]);
-
-  // Mark last message as read when user is focused and last message is not read
-  useEffect(() => {
-    if (messages.length === 0 || !userProfile?.id) return;
-    const lastMsg = messages[messages.length - 1];
-    if (
-      document.hasFocus() &&
-      lastMsg?.sender_id !== userProfile?.id &&
-      !lastMsg?.read // optional check
-    ) {
-      const params = {
-        chat_id: chat.id,
-        user_id: userProfile?.id,
-        message_id: lastMsg.id
-      };
-      markAsRead(params, params.chat_id);
-    }
-  }, [messages, userProfile?.id]);
-
-  const deleteMsg = async (id, chatId) => {
-    const res = await deleteMessage(id, chatId);
-    if (res.success) {
-      setMessages(prev => prev.filter(e => e.id !== id));
-    }
-  }
-
-  const recall = async (id, chatId) => {
+  const recall = async (id) => {
     Modal.confirm({
       title: 'Bạn có chắc muốn thu hồi tin nhắn này?',
       icon: <ExclamationCircleOutlined />,
       onOk: async () => {
-        const res = await recallMessage(id, chatId);
-        setMessages(prev => prev.map(e => e.id === id ? { ...res.data, isMine: res.data.sender_id == userProfile?.id } : e));
+        const res = await recallMsg(id, activeChat?.id);
+        if(res.success){
+          dispatch(recallMessage({...res.data, isMine: res.data.sender_id == userProfile?.id}));
+        }
       },
       centered: true,
     });
@@ -306,17 +298,9 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
         style: {
           color: 'red'
         },
-        onClick: () => recall(msg.id, chatId),
+        onClick: () => recall(msg.id),
         hidden: !msg.isMine
       },
-      // {
-      //   key: "delete",
-      //   label: <Popconfirm title="Bạn có chắc muốn xoá tin nhắn này?" arrow={false} onConfirm={() => deleteMsg(msg.id)}><span style={{ width: '100%', display: 'flex' }}><DeleteOutlined /> Xoá</span></Popconfirm>,
-      //   style: {
-      //     color: 'red'
-      //   },
-      //   hidden: !msg.isMine
-      // },
     ].filter(e => !e.hidden)
   });
 
@@ -395,8 +379,8 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                     <div
                       style={{
                         width: 48,
-                        marginRight: isMineGroup ? 0 : 8,
-                        marginLeft: isMineGroup ? 8 : 0,
+                        // marginRight: isMineGroup ? 0 : 8,
+                        // marginLeft: isMineGroup ? 8 : 0,
                         textAlign: "center",
                       }}
                     >
@@ -407,13 +391,13 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                       >{group.items[0]?.sender?.name?.trim().split(/\s+/).pop()[0].toUpperCase()}</Avatar>
                     </div>
                     {/* Messages */}
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: '100%' }}>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", maxWidth: '100%', gap: 6 }}>
                       {group.items.map((msg, i) => {
                         const isHovered = hoveredMsgId === msg.id;
                         return (
                           <div
                             key={msg.id}
-                            style={{ marginBottom: 4, display: 'flex', flexDirection: 'column', alignItems: msg.isMine ? 'flex-end' : 'flex-start', position: 'relative' }}
+                            style={{ display: 'flex', flexDirection: 'column', alignItems: msg.isMine ? 'flex-end' : 'flex-start', position: 'relative' }}
                             onMouseEnter={() => setHoveredMsgId(msg.id)}
                             onMouseLeave={() => setHoveredMsgId(null)}
                           >
@@ -422,14 +406,14 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                                 {/* Message bubble */}
                                 <div
                                   style={{
-                                    background: msg.content_text ? (msg.isMine ? '#1890ff' : '#f0f0f0'): '',
+                                    background: msg.content_text ? (msg.isMine ? '#1890ff' : '#f8f9fa') : '',
                                     color: msg.isMine ? '#fff' : '#000',
-                                    padding: '8px 12px',
+                                    padding: msg.content_text ? '8px 12px' : '',
                                     borderRadius: 8,
                                     marginBottom: 0,
                                     width: '100%',
                                     position: 'relative',
-                                    minWidth: 60,
+                                    // minWidth: 60,
                                     boxSizing: 'border-box',
                                     wordBreak: 'break-word',
                                   }}
@@ -458,7 +442,14 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                                         textOverflow: 'ellipsis',
                                         maxWidth: '100%'
                                       }}>
-                                        {msg?.reply_to?.type === 'image' ? <><PictureOutlined />Hình ảnh</> : msg?.reply_to?.type === 'file' ? <><PaperClipOutlined />{(msg.reply_to.attachments[0].file_name ?? '')}</> : msg.reply_to.content_text}
+                                        {msg?.reply_to?.attachments?.length > 0
+                                          ? (
+                                            msg?.reply_to.attachments[0].type === 'image'
+                                              ? <><PictureOutlined /> Hình ảnh</>
+                                              : <><PaperClipOutlined />{msg?.reply_to.attachments[0].file_name ?? ''}</>
+                                          )
+                                          : msg?.reply_to?.content_text
+                                        }
                                       </div>
                                     </div>
                                   )}
@@ -469,9 +460,9 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                                   {/* Image attachments */}
                                   {(msg.attachments ?? []).filter(e => e.type === 'image').length > 0 &&
                                     <div style={{
-                                      marginBottom: 8,
+                                      // marginBottom: 8,
                                       display: 'grid',
-                                      gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+                                      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 2fr))',
                                       gap: 2,
                                     }}>
                                       <Image.PreviewGroup
@@ -507,14 +498,14 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
                                             key={index}
                                             src={`${baseURL}/storage/${att.file_path}`}
                                             alt={att.file_name}
-                                            style={{ maxWidth: '100%', border: '1px solid #00000020', borderRadius: 8 }}
+                                            style={{ maxWidth: '100%', border: '1px solid #00000020', borderRadius: 8, height: '100%', aspectRatio: '4/3', objectFit: 'cover' }}
                                           />
                                         ))}
                                       </Image.PreviewGroup>
                                     </div>
                                   }
                                   {/* File attachments */}
-                                  {(msg.attachments ?? []).filter(e => e.type === 'link').length > 0 &&
+                                  {(msg.attachments ?? []).filter(e => e.type === 'file').length > 0 &&
                                     (msg.attachments ?? []).filter(e => e.type === 'file').map(file => (
                                       <div
                                         style={{
@@ -608,16 +599,16 @@ function ChatArea({ chatId, chat, setChat, sentMessage, onReplyMessage }) {
         }
         )}
         {/* Floating Scroll Button */}
-        {showScrollBtn && (
-          <Button
+        {isShowScrollBtn && (
+          <FloatButton
             size="large"
             shape="circle"
             icon={<DownOutlined />}
             onClick={scrollToBottom}
             style={{
-              position: 'sticky',
-              bottom: 0,
-              float: 'right',
+              position: 'fixed',
+              right: 24,
+              bottom: 80,
               zIndex: 1000
             }}
           />
