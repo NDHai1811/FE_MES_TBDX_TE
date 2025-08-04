@@ -12,5 +12,5 @@ module.exports = {
   },
   baseURL: "https://backtbdx-te.ors.vn",
   baseHost: "https://backtbdx-te.ors.vn",
-  echoPort: '6007'
+  echoPort: '6008'
 }
