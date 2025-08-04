@@ -51,7 +51,7 @@ export default function useChatRealtime() {
         // Lắng nghe sự kiện đánh dấu đã đọc
         currentChannel.current.listen('MessageRead', (e) => {
             console.log('read message');
-            dispatch(resetUnread(e.chat_id));
+            // dispatch(resetUnread(e.chat_id));
         });
 
         // Lắng nghe sự kiện thu hồi tin nhắn
@@ -70,7 +70,9 @@ export default function useChatRealtime() {
         // Lắng nghe sự kiện đánh dấu đã đọc
         currentChannel.current.listen('ChatUpdated', (e) => {
             console.log(e);
-            dispatch(setActiveChat(e))
+            if(activeChatId === e.id){
+                dispatch(setActiveChat(e))
+            }
             fetchChatList();
         });
 

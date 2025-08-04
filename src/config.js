@@ -8,8 +8,8 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "http://127.0.0.1:8001/api",
+    API_URL: "https://backtbdx-te.ors.vn/api",
   },
-  baseURL: "http://127.0.0.1:8001",
-  baseHost: "http://127.0.0.1"
+  baseURL: "https://backtbdx-te.ors.vn",
+  baseHost: "https://backtbdx-te.ors.vn"
 }

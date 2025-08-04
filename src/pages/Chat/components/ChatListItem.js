@@ -41,7 +41,7 @@ const ChatListItem = ({ chat, onClick }) => {
     const onClickChat = (chat) => {
         onClick(chat);
         dispatch(setActiveChat(chat));
-        dispatch(resetUnread(chat));
+        dispatch(resetUnread(chat.id));
     }
 
     return <div

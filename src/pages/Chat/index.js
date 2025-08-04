@@ -105,7 +105,7 @@ function Chat() {
     const room = chats.find(e => e.id === chat_id);
     if (room) {
       dispatch(setActiveChat(room));
-      dispatch(resetUnread(room));
+      dispatch(resetUnread(room.id));
     } else {
       // Nếu không tìm thấy room trong chats, reset activeChat và messages
       dispatch(setActiveChat(null));
@@ -120,7 +120,7 @@ function Chat() {
     const room = chats.find(e => e.id === chat_id);
     if (room && room.id !== activeChat?.id) {
       dispatch(setActiveChat(room));
-      dispatch(resetUnread(room));
+      dispatch(resetUnread(room.id));
     }
   }, [chat_id, chats, activeChat, dispatch]);
 

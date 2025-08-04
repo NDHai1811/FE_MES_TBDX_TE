@@ -36,7 +36,7 @@ const chatSlice = createSlice({
       }
     },
     resetUnread(state, action) {
-      const chatId = action.payload?.id;
+      const chatId = action.payload;
       const chat = state.chats.find(c => c.id === chatId);
       if (chat) chat.unread_count = 0;
     },

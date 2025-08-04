@@ -5,7 +5,7 @@ import Sider from "antd/es/layout/Sider";
 import Title from "antd/es/typography/Title";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { deleteChat, deleteChatHistory, getFiles, mutedChat, updateChat } from "../../../api/ui/chat";
+import { deleteChat, deleteChatHistory, getFiles, leaveChat, mutedChat, updateChat } from "../../../api/ui/chat";
 import { baseURL } from "../../../config";
 import AttachmentsHistory from "./Attachments/AttachmentsHistory";
 import { displayIconFileType, downloadFile, fullNameToColor } from "../chat_helper";
@@ -69,7 +69,7 @@ export function ChatInfo({ isOpen, setIsOpen, users = [] }) {
     }
 
     const leaveGroupChat = async () => {
-        const res = await leaveGroupChat(activeChat.id);
+        const res = await leaveChat(activeChat.id);
         if (res?.success) {
             // dispatch(setActiveChat());
             // dispatch(setChats(chats.filter(c => c.id !== res.data.id)));
