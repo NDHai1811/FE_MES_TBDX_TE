@@ -1,13 +1,13 @@
 // src/services/echo.js
 import Echo from 'laravel-echo';
 import io from 'socket.io-client';
-import { api, baseHost, baseURL } from '../config';
+import { api, baseHost, baseURL, echoPort } from '../config';
 
 window.io = io;
 
 const echo = new Echo({
   broadcaster: 'socket.io',
-  host: `${baseHost}:6001`,
+  host: `${baseHost}:${echoPort}`,
   // client: io,
   authHost: baseURL,      // -> http://127.0.0.1:8001/api
   authEndpoint: '/broadcasting/auth',// -> /broadcasting/auth
