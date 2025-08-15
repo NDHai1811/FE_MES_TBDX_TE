@@ -5,7 +5,6 @@ import Route from "./routes";
 import useChatRealtime from "./hooks/useChatRealtime";
 
 function App() {
-  useChatRealtime();
   return (
     <React.Fragment>
       <Route />

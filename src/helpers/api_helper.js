@@ -1,7 +1,7 @@
 import axios from "axios";
 import { api } from "../config";
 import { message as messAPI } from "antd";
-import echo from "./echo";
+// import echo from "./echo";
 // default
 axios.defaults.baseURL = api.API_URL;
 // content type
@@ -10,8 +10,6 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 // content type
 const token = JSON.parse(localStorage.getItem("authUser"))?.token;
 axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-console.log(token);
-
 
 // intercepting to capture errors
 const msgKey = Math.random().toString();
@@ -24,8 +22,8 @@ axios.interceptors.request.use(
     if (config.url !== "/notification/list") {
       // messAPI.loading(conf);
     }
-    const socketId = echo.connector.socket.id;
-    if (socketId) config.headers['X-Socket-Id'] = socketId;
+    // const socketId = echo.connector.socket.id;
+    // if (socketId) config.headers['X-Socket-Id'] = socketId;
     return config;
   },
   function (error) {

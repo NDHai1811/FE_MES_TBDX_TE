@@ -100,18 +100,21 @@ export function getDescriptionMessage(message, chat, user ) {
         } else if (message.sender && chat.type === 'group') {
             prefix = `${message.sender?.name || ''}: `;
         }
-    } 
+    }
     let content = '';
     if (message) {
         if(message.deleted_at){
             content = 'Tin nhắn đã bị thu hồi.';
         }else{
-            if (message?.type === 'image') {
-                content = <><PictureOutlined />Hình ảnh</>;
-            } else if (message?.type === 'file') {
-                content = <><PaperClipOutlined />{(message.attachments[0].file_name ?? '')}</>;
+            if((message?.attachments ?? []).length > 0){
+                const sentFile = message?.attachments[0];
+                if (sentFile.type === 'image') {
+                    content = <><PictureOutlined />Hình ảnh</>;
+                } else if (sentFile.type === 'file') {
+                    content = <><PaperClipOutlined />{(sentFile.file_name ?? '')}</>;
+                } 
             } else {
-                content = message.content_text;
+                content = message.content_text ?? 'Đã gửi một tin nhắn';
             }
         }
     }
@@ -146,7 +149,7 @@ export const formatTimeFromNow = (dateString) => {
     }
     
     const diffInWeeks = Math.floor(diffInDays / 7);
-    if (diffInWeeks < 4) {
+    if (diffInWeeks < 4 || Math.floor(diffInDays / 30) < 1) {
         return `${diffInWeeks} tuần trước`;
     }
     
