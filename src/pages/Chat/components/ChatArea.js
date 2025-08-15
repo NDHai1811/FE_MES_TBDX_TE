@@ -6,7 +6,6 @@ import { useProfile } from "../../../components/hooks/UserHooks";
 import { baseURL } from "../../../config";
 import MessageViewer from "./MessageViewer";
 import { displayIconFileType, downloadFile, fullNameToColor } from "../chat_helper";
-import echo from "../../../helpers/echo";
 import { useDispatch, useSelector } from "react-redux";
 import { recallMessage, resetUnread, setMessagesInActiveChat } from "../../../store/chat/chatSlice";
 
@@ -600,16 +599,17 @@ function ChatArea({ onReplyMessage }) {
         )}
         {/* Floating Scroll Button */}
         {isShowScrollBtn && (
-          <FloatButton
+          <Button
             size="large"
             shape="circle"
             icon={<DownOutlined />}
             onClick={scrollToBottom}
             style={{
-              position: 'fixed',
-              right: 24,
-              bottom: 80,
-              zIndex: 1000
+              position: 'sticky',
+              right: 0,
+              bottom: 0,
+              zIndex: 1000,
+              float: 'inline-end'
             }}
           />
         )}

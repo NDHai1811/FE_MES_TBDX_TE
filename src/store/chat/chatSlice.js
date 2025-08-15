@@ -23,7 +23,7 @@ const chatSlice = createSlice({
     incrementUnread(state, action) {
       const chatId = action.payload.chat_id;
       const chat = state.chats.find(c => c.id === chatId);
-      if (chat && state.activeChatId !== chatId) {
+      if (chat) {
         chat.unread_count = (chat.unread_count || 0) + 1;
         chat.last_message = action.payload;
 

@@ -35,6 +35,7 @@ import TemThanhPham from "../../OI/Manufacture/TemThanhPham";
 import dayjs from "dayjs";
 import EditableTable from "../../../components/Table/EditableTable";
 import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
+import { format } from "highcharts";
 
 const EditableCell = ({
     editing,
@@ -104,7 +105,7 @@ const TaoTem = () => {
     const [totalPage, setTotalPage] = useState(1);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
-    const [params, setParams] = useState({ show: 'new' });
+    const [params, setParams] = useState({ show: 'new', start_date: dayjs(), end_date: dayjs() });
     const optionsDisplay = [
         { value: 'new', label: 'Mới' },
         { value: 'all', label: 'Tất cả' },
@@ -266,29 +267,34 @@ const TaoTem = () => {
             render: (value) => listUsers.find(e => value == e?.value)?.label
         },
         {
+            title: "Thời gian tạo",
+            dataIndex: "created_at",
+            key: "created_at",
+            align: "center",
+            width: 170,
+            render: (value) => dayjs(value).format('DD/MM/YYYY HH:mm:ss')
+        },
+        {
             title: "Tác vụ",
             dataIndex: "action",
             key: "action",
             checked: true,
             align: "center",
             fixed: "right",
-            width: 50,
+            width: 70,
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
-                    <Space wrap>
+                    <div style={{display: 'flex', justifyContent:'space-evenly', gap: 8, flexFlow:'wrap'}}>
                         <Typography.Link
                             onClick={() => onUpdate(record)}
-                            style={{
-                                marginRight: 8,
-                            }}
                         >
                             Lưu
                         </Typography.Link>
-                        <a onClick={cancel}>Hủy</a>
-                    </Space>
+                        <span onClick={cancel} style={{cursor:'pointer'}}>Hủy</span>
+                    </div>
                 ) : (
-                    <Space wrap>
+                    <div style={{display: 'flex', justifyContent:'space-evenly', gap: 8, flexFlow:'wrap'}}>
                         <EditOutlined
                             style={{ color: "#1677ff", fontSize: 18 }}
                             disabled={editingKey !== ""}
@@ -300,7 +306,7 @@ const TaoTem = () => {
                                 disabled={editingKey !== ""}
                             />
                         </Popconfirm>
-                    </Space>
+                    </div>
                 );
             },
         },
@@ -728,6 +734,31 @@ const TaoTem = () => {
                                 </div>
                             ]}
                         >
+                            <Divider>Thời gian truy vấn</Divider>
+                            <div className="mb-3">
+                                <Form style={{ margin: "0 15px" }} layout="vertical">
+                                    <Space direction="vertical" style={{ width: "100%" }}>
+                                        <DatePicker
+                                            allowClear={false}
+                                            placeholder="Bắt đầu"
+                                            style={{ width: "100%" }}
+                                            onChange={(value) =>
+                                                setParams({ ...params, start_date: value })
+                                            }
+                                            value={params.start_date}
+                                        />
+                                        <DatePicker
+                                            allowClear={false}
+                                            placeholder="Kết thúc"
+                                            style={{ width: "100%" }}
+                                            onChange={(value) =>
+                                                setParams({ ...params, end_date: value })
+                                            }
+                                            value={params.end_date}
+                                        />
+                                    </Space>
+                                </Form>
+                            </div>
                             <Divider>Điều kiện truy vấn</Divider>
                             <div className="mb-3">
                                 <Form style={{ margin: "0 15px" }} layout="vertical" onFinish={loadListTable}>

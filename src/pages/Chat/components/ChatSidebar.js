@@ -8,7 +8,6 @@ import { useProfile } from "../../../components/hooks/UserHooks"
 import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min"
 import ChatListItem from "./ChatListItem"
 import { filterUsersByName, fullNameToColor } from "../chat_helper"
-import echo from "../../../helpers/echo"
 import { useDispatch, useSelector } from "react-redux"
 import { setChats } from "../../../store/chat/chatSlice"
 

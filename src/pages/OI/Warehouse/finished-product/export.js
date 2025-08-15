@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker, InputNumber, Space, Checkbox } from "antd";
+import { Row, Col, Table, Modal, Select, Input, Form, Button, message, DatePicker, InputNumber } from "antd";
 import "../../style.scss";
 import {
   useHistory,
@@ -25,40 +25,28 @@ const exportColumns = [
     dataIndex: "delivery_note_id",
     key: "delivery_note_id",
     align: "center",
-    width: 120,
     render: (value) => value || "-",
   },
   {
-    title: "Số xe",
-    dataIndex: "vehicle_id",
-    key: "vehicle_id",
-    align: "center",
-    width: 120,
-    render: (value) => value || "-",
-  },
-  {
-    title: "Mã pallet",
+    title: "Mã tem (pallet)",
     dataIndex: "pallet_id",
     key: "pallet_id",
     align: "center",
     render: (value) => value || "-",
-    width: 150,
   },
   {
-    title: "Số lượng của pallet",
+    title: "Số lượng",
     dataIndex: "so_luong",
     key: "so_luong",
     align: "center",
     render: (value) => value || "-",
-    width: 100,
   },
   {
-    title: "Số lượng có thể xuất",
-    dataIndex: "so_luong_ton",
-    key: "so_luong_ton",
+    title: "Thời gian xuất KH",
+    dataIndex: "thoi_gian_xuat",
+    key: "thoi_gian_xuat",
     align: "center",
-    render: (value, record) => (record.lsx_pallets ?? []).reduce((acc, curr) => acc + (curr.remain_quantity ?? 0), 0) || "-",
-    width: 100,
+    render: (value) => value || "-",
   },
   {
     title: "Vị trí",
@@ -66,15 +54,13 @@ const exportColumns = [
     key: "locator_id",
     align: "center",
     render: (value) => value || "-",
-    width: 100,
   },
   {
     title: "Khách hàng",
-    dataIndex: "customer_id",
-    key: "customer_id",
+    dataIndex: "khach_hang",
+    key: "khach_hang",
     align: "center",
     render: (value) => value || "-",
-    width: 150,
   },
 ];
 
@@ -99,13 +85,11 @@ const Export = (props) => {
   const [visible, setVisible] = useState(false);
   const [isOpenQRScanner, setIsOpenQRScanner] = useState();
   const [deliveryNoteList, setDeliveryNote] = useState([]);
-  const [vehicleList, setVehicle] = useState([]);
   const [deliveryNoteID, setDeliveryNoteID] = useState();
   const [loadingTable, setLoadingTable] = useState(false);
   const [form] = Form.useForm();
   const scanRef = useRef();
-  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() });
-  const [selectedExportPlan, setSelectedExportPlan] = useState();
+  const [params, setParams] = useState({ start_date: dayjs(), end_date: dayjs() })
   const column2 = [
     {
       title: "Kho",
@@ -146,34 +130,17 @@ const Export = (props) => {
   ];
   const columnDetail = [
     {
-      title: "Số xe",
-      dataIndex: "vehicle_id",
-      key: "vehicle_id",
-      align: "center",
-      width: 150,
-      render: () => (
-        <Select
-          options={vehicleList}
-          allowClear
-          onChange={(value) => setParams({ ...params, vehicle_id: value })}
-          style={{ width: "100%" }}
-          showSearch
-          optionFilterProp="label"
-          bordered={false}
-        />
-      ),
-    },
-    {
       title: "Lệnh xuất kho",
       dataIndex: "lenh_xuat_kho",
       key: "lenh_xuat_kho",
       align: "center",
-      width: 150,
+      width: '25%',
       render: () => (
         <Select
           options={deliveryNoteList}
           allowClear
-          onChange={(value) => setParams({ ...params, delivery_note_id: value })}
+          onChange={onChangeDeliveryNote}
+          onClear={loadDataTable}
           style={{ width: "100%" }}
           showSearch
           optionFilterProp="label"
@@ -186,7 +153,7 @@ const Export = (props) => {
       dataIndex: "locator_id",
       key: "locator_id",
       align: "center",
-      width: 100,
+      width: '25%',
       render: (value) => value || "-",
     },
     {
@@ -194,16 +161,15 @@ const Export = (props) => {
       dataIndex: "pallet_id",
       key: "pallet_id",
       align: "center",
-      width: 150,
+      width: '25%',
       render: (value) => value || "-",
     },
     {
-      title: "Số lượng",
-      dataIndex: "so_luong_con_lai",
-      key: "so_luong_con_lai",
+      title: "Số lượng xuất",
+      dataIndex: "so_luong",
+      key: "so_luong",
       align: "center",
-      fixed: 'right',
-      width: 100,
+      width: '25%',
       render: (value) => value || "-",
       onHeaderCell: (column) => {
         return {
@@ -219,28 +185,18 @@ const Export = (props) => {
   ];
 
   const lsxColumns = [
-    // {
-    //   title: "Mã pallet",
-    //   dataIndex: "pallet_id",
-    //   key: "pallet_id",
-    //   align: "center",
-    //   width: 150,
-    //   render: (value) => value || "-",
-    // },
     {
       title: "Lô sản xuất",
       dataIndex: "lo_sx",
       key: "lo_sx",
       align: "center",
-      width: 150,
       render: (value) => value || "-",
     },
     {
       title: "Khách hàng",
-      dataIndex: "customer_id",
-      key: "customer_id",
+      dataIndex: "khach_hang",
+      key: "khach_hang",
       align: "center",
-      width: 120,
       render: (value) => value || "-",
     },
     {
@@ -248,7 +204,6 @@ const Export = (props) => {
       dataIndex: "mdh",
       key: "mdh",
       align: "center",
-      width: 120,
       render: (value) => value || "-",
     },
     {
@@ -256,28 +211,18 @@ const Export = (props) => {
       dataIndex: "mql",
       key: "mql",
       align: "center",
-      width: 80,
       render: (value) => value || "-",
     },
     {
-      title: "Số lượng ban đầu",
+      title: "Số lượng",
       dataIndex: "so_luong",
       key: "so_luong",
       align: "center",
-      width: 150,
-      render: (value) => value || "-",
-    },
-    {
-      title: "Số lượng xuất",
-      dataIndex: "remain_quantity",
-      key: "remain_quantity",
-      width: 150,
-      align: "center",
       render: (value, record, index) =>
-        <InputNumber disabled={record.status === 2 && record.remain_quantity === 0} value={value} onChange={(value) => setSelectedItem(
+        <InputNumber value={value} onChange={(value) => setSelectedItem(
             [...selectedItem].map((e, i) => {
               if (i === index) {
-                return { ...e, remain_quantity: value }
+                return { ...e, so_luong: value }
               }
               return e;
             })
@@ -294,13 +239,13 @@ const Export = (props) => {
     setDeliveryNoteID(value);
   }
 
-  const loadDataTable = async () => {
+  const loadDataTable = async (deliveryNoteID) => {
     setLoadingTable(true);
-    const res = await getWarehouseFGExportLogs({ ...params });
+    const res = await getWarehouseFGExportLogs({ ...params, delivery_note_id: deliveryNoteID });
     if (res.success) {
       setData(res.data.data);
       setDeliveryNote((res.data.delivery_notes ?? []).map(e=>({label: e.id, value: e.id})));
-      setVehicle((res.data.vehicles ?? []).map(e=>({label: e.id, value: e.id})));
+      onSelectItem(palletId);
     }
     setLoadingTable(false);
   }
@@ -314,40 +259,39 @@ const Export = (props) => {
     setIsOpenQRScanner(false);
   };
   const [data, setData] = useState([]);
+  const onSelectItem = (pallet_id) => {
+    const val = data.find((element) => element.pallet_id == pallet_id );
+    setSelectedItem(val?.lo_sx ?? []);
+  };
+
+  const [palletId, setPalletId] = useState();
   useEffect(()=>{
-    if(data.length){
-      const result = data.find((element) => element.pallet_id == selectedExportPlan?.pallet_id);
-      setSelectedExportPlan(result);
-      setSelectedItem(result?.lsx_pallets ?? []);
-    } else {
-      setSelectedItem([]);
-    }
-  }, [data])
+    onSelectItem(palletId);
+  }, [palletId, data]);
   const onScan = async (result) => {
-    setSelectedExportPlan(data.find((element) => element.id == result));
+    setPalletId(result);
   };
   const loadData = async () => {
     var res2 = await getWarehouseFGOverall(params);
     setOverall([res2.data]);
   }
   const saveExportPallet = async () => {
-    var res = await exportPallet(selectedItem.filter((e) => selectedRowKeys.includes(e.id)));
+    var res = await exportPallet(selectedItem);
     if (res.success) {
       setVisible(false);
       form.resetFields();
       // loadData();
       loadDataTable(deliveryNoteID);
-      setSelectedRowKeys([]);
     }
   }
   const [isDownloading, setIsDownloading] = useState(false)
   const onDownloadDeliveryNote = async () => {
-    if (!params?.delivery_note_id) {
+    if (!deliveryNoteID) {
       message.warning('Chưa chọn lệnh xuất kho')
       return 0;
     }
     setIsDownloading(true);
-    var res = await downloadDeliveryNote({ delivery_note_id: params?.delivery_note_id });
+    var res = await downloadDeliveryNote({ delivery_note_id: deliveryNoteID });
     if (res.success) {
       window.location.href = baseURL + res.data;
     }
@@ -357,8 +301,6 @@ const Export = (props) => {
     loadData();
     loadDataTable(deliveryNoteID);
   }, [params])
-
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   return (
     <React.Fragment>
       <Row className="mt-1" gutter={[4, 12]}>
@@ -380,9 +322,8 @@ const Export = (props) => {
             size="small"
             className="mb-1"
             locale={{ emptyText: 'Trống' }}
-            scroll={{ x: '100%' }}
             columns={columnDetail}
-            dataSource={[selectedExportPlan]}
+            dataSource={[data.find((element) => element.pallet_id == palletId)]}
           />
         </Col>
         <Col span={8}>
@@ -423,8 +364,6 @@ const Export = (props) => {
         <Col span={4}>
           <Button
             block
-            disabled={!params?.delivery_note_id}
-            title={!params?.delivery_note_id ? 'Chưa chọn lệnh xuất kho' : 'Tải xuống lệnh xuất kho'}
             className="h-100 w-100"
             icon={<DownloadOutlined style={{ fontSize: "20px" }} />}
             type="primary"
@@ -436,20 +375,19 @@ const Export = (props) => {
         <Col span={24}>
           <Table
             rowClassName={(record, index) =>
-              'no-hover ' + (record?.pallet_id === selectedExportPlan?.pallet_id ? "table-row-green" : "")
+              'no-hover ' + (record?.pallet_id === palletId ? "table-row-green" : "")
             }
             loading={loadingTable}
             pagination={false}
             bordered
-            scroll={{ y: 'calc(100vh - 50vh)', x: '100%' }}
+            scroll={{ y: '30vh' }}
             className="mb-4"
             size="small"
-            rowHoverable={false}
             columns={exportColumns}
             dataSource={data}
             onRow={(record) => {
               return {
-                onClick: () => {setSelectedExportPlan(record); setSelectedItem(record?.lsx_pallets ?? [])},
+                onClick: () => setPalletId(record?.pallet_id),
               };
             }}
           />
@@ -475,51 +413,28 @@ const Export = (props) => {
         <Modal
           title="Danh sách lô cần xuất"
           open={visible}
-          onCancel={() => {
-            setVisible(false);
-            setSelectedRowKeys([]);
-            setSelectedItem(data.find((e) => e.pallet_id === selectedExportPlan?.pallet_id)?.lsx_pallets ?? []);
-          }}
-          okButtonProps={{
-            disabled: selectedRowKeys.length <= 0
-          }}
+          onCancel={() => setVisible(false)}
           okText={"Lưu"}
           onOk={() => saveExportPallet()}
-          width={1000}
+          width={600}
         >
           <Table
             rowClassName={(record, index) =>
-                record.status === 2 && record.remain_quantity === 0
+              record.status === 1
+                ? "table-row-yellow"
+                : record.status === 2
                   ? "table-row-grey"
                   : ""
             }
             scroll={{
-              x: '100%',
-              y: 'calc(100vh - 50vh)'
+              x: '100%'
             }}
             pagination={false}
             bordered
             className="mb-4"
             columns={lsxColumns}
             dataSource={selectedItem}
-            rowKey={(record) => record.id}
-            rowSelection={{
-              type: 'checkbox',
-              columnTitle: <span><Checkbox disabled={selectedItem.every((e) => e.status === 2 && e.remain_quantity === 0)} indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < selectedItem.length} checked={selectedRowKeys.length === selectedItem.length} onChange={(e) => setSelectedRowKeys(e.target.checked ? selectedItem.filter((e) => !(e.status === 2 && e.remain_quantity === 0)).map((e) => e.id) : [])}/> Chọn để xuất</span>,
-              columnWidth: 70,
-              selectedRowKeys,
-              getCheckboxProps: (record) => ({
-                disabled: record.status === 2 && record.remain_quantity === 0,
-              }),
-              onChange: (selectedRowKeys, selectedRows) => {
-                setSelectedRowKeys(selectedRowKeys);
-              },
-            }}
           />
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <strong>Tổng số lô đã chọn để xuất: {selectedRowKeys.length}</strong>
-            <strong>Tổng số lượng xuất: {selectedItem.filter((e) => selectedRowKeys.includes(e.id)).reduce((acc, curr) => acc + (curr.remain_quantity ?? 0), 0)}</strong>
-          </Space>
         </Modal>
       )}
     </React.Fragment>

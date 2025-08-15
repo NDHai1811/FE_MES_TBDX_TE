@@ -11,7 +11,7 @@ import { useEditor, EditorContent, ReactRenderer } from '@tiptap/react';
 import tippy from 'tippy.js';
 // import 'tippy.js/dist/tippy.css';
 import { MentionList } from "./Mentions/MentionList"
-import echo from "../../../helpers/echo"
+import echo, { getEcho } from "../../../helpers/echo"
 import { useProfile } from "../../../components/hooks/UserHooks"
 import { useDispatch, useSelector } from "react-redux"
 import { getFiles, sendMessage } from "../../../api/ui/chat"
@@ -19,6 +19,7 @@ import { addMessage, setChats, setFilesInActiveChat } from "../../../store/chat/
 
 function ChatInput({ chatUsers = [], replyMessage = null, setReplyMessage = () => { }, pendingFiles = [], setPendingFiles, handleRemoveFile }) {
   const { userProfile } = useProfile();
+  const echo = getEcho();
   const dispatch = useDispatch();
   const [isSending, setIsSending] = useState(false);
   const { chats, activeChat, activeChatId } = useSelector(state => state.chatSlice);

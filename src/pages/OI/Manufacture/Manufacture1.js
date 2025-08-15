@@ -52,7 +52,7 @@ import TemGiayTam from "./TemGiayTam";
 import TemThanhPham from "./TemThanhPham";
 import { getTem } from "../../../api";
 import TemTest from "./TemTest";
-import { baseHost, baseURL } from "../../../config";
+import { baseHost, baseURL, echoPort } from "../../../config";
 import { DndContext, MouseSensor, useSensor, useSensors, TouchSensor, rectIntersection, DragOverlay } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
@@ -65,6 +65,7 @@ import { CSS } from '@dnd-kit/utilities';
 import "./Manufacture1.css"
 import debounce from "lodash/debounce";
 import OISearchBox from "../../../components/Popup/OISearchBox";
+import { getEcho } from "../../../helpers/echo";
 
 const RowContext = React.createContext({});
 
@@ -192,6 +193,9 @@ const Manufacture1 = (props) => {
   ]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [inputValues, setInputValues] = useState({});
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+  const [total, setTotal] = useState(1);
   useEffect(() => {
     // Khi thay đổi vị trí hàng, cập nhật lại giá trị của InputNumber
     let values = {};
@@ -658,28 +662,28 @@ const Manufacture1 = (props) => {
       );
     }
   };
-
+  const echo = getEcho();
   useEffect(() => {
-    if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
+    if (!(location.pathname.indexOf('/oi/manufacture') > -1) || !echo) {
       return 0;
     }
-    window.io = socketio;
-    window.Echo = new Echo({
-      broadcaster: 'socket.io',
-      host: baseHost + ':6001', // Laravel Echo Server host
-      transports: ['websocket', 'polling', 'flashsocket']
-    });
-    window.Echo.connector.socket.on('connect', () => {
-      console.log('WebSocket connected!');
-    });
-    window.Echo.connector.socket.on('connect_error', (error) => {
-      // console.error('WebSocket connection error:', error);
-    });
+    // window.io = socketio;
+    // window.Echo = new Echo({
+    //   broadcaster: 'socket.io',
+    //   host: `${baseHost}:${echoPort}`, // Laravel Echo Server host
+    //   transports: ['websocket', 'polling', 'flashsocket']
+    // });
+    // window.Echo.connector.socket.on('connect', () => {
+    //   console.log('WebSocket connected!');
+    // });
+    // window.Echo.connector.socket.on('connect_error', (error) => {
+    //   // console.error('WebSocket connection error:', error);
+    // });
 
-    window.Echo.connector.socket.on('disconnect', () => {
-      console.log('WebSocket disconnected!');
-    });
-    window.Echo.channel('mychannel')
+    // window.Echo.connector.socket.on('disconnect', () => {
+    //   console.log('WebSocket disconnected!');
+    // });
+    echo.channel('mychannel')
       .listen('.my-event', (e) => {
         if (e.data.info_cong_doan?.machine_id !== machine_id) {
           return;
@@ -688,7 +692,7 @@ const Manufacture1 = (props) => {
         processEventQueue(); // Gọi xử lý hàng đợi
       });
     return () => {
-      window.Echo.leaveChannel('mychannel');
+      echo.leaveChannel('mychannel');
     };
   }, [location]);
 

@@ -8,9 +8,9 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "https://backtbdx-te.ors.vn/api",
+    API_URL: "http://127.0.0.1:8001/api",
   },
-  baseURL: "https://backtbdx-te.ors.vn",
-  baseHost: "https://backtbdx-te.ors.vn",
-  echoPort: '6008'
+  baseURL: "http://127.0.0.1:8001",
+  baseHost: "http://127.0.0.1",
+  echoPort: '6001'
 }

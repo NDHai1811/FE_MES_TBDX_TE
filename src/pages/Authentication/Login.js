@@ -17,6 +17,7 @@ import background1 from "../../assets/images/bg2.jpg";
 import { login } from "../../api";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import axios from "axios";
+import echo, { initEcho } from "../../helpers/echo";
 
 const Login = (props) => {
   const history = useHistory();
@@ -37,6 +38,7 @@ const Login = (props) => {
     if (res.success) {
       localStorage.setItem("authUser", JSON.stringify(res.data));
       axios.defaults.headers.common["Authorization"] = "Bearer " + res?.data?.token;
+      initEcho(res?.data?.token);
       const searchParams = new URLSearchParams(history.location.search);
       const redirect = searchParams.get("redirect") || "/";
       history.push(redirect ?? "/screen");

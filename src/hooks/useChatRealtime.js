@@ -2,13 +2,14 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementUnread, resetUnread, addMessage, recallMessage, setFilesInActiveChat, setChats, setActiveChat } from '../store/chat/chatSlice';
-import echo from '../helpers/echo';
+// import echo from '../helpers/echo';
 import { useProfile } from '../components/hooks/UserHooks';
 import { fullNameToColor, getDescriptionMessage } from '../pages/Chat/chat_helper';
 import { CloseOutlined, TeamOutlined } from '@ant-design/icons';
 import { Avatar, Badge, Button, notification, Typography } from 'antd';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { getChatList, getFiles } from '../api/ui/chat';
+import { getEcho } from '../helpers/echo';
 const {Text} = Typography;
 
 export default function useChatRealtime() {
@@ -16,11 +17,12 @@ export default function useChatRealtime() {
     const { userProfile } = useProfile();
     const {activeChatId, chats} = useSelector(state => state.chatSlice);
     const history = useHistory();
-
+    const echo = getEcho();
     // Dùng ref để lưu trữ channel hiện tại
     const currentChannel = useRef(null);
 
     useEffect(() => {
+        console.log('start useEffect')
         console.log('joined channel', !!currentChannel.current);
         console.log('chat id', activeChatId);
         if (!userProfile?.id) return;
@@ -44,13 +46,15 @@ export default function useChatRealtime() {
             if (activeChatId === msg.chat_id) {
                 dispatch(addMessage({ ...msg, isMine: msg.sender_id == userProfile?.id }));
             }
+            console.log('dispatch incrementUnread');
+            
             dispatch(incrementUnread(msg));
             fetchFilesInChat(activeChatId);
         });
 
         // Lắng nghe sự kiện đánh dấu đã đọc
         currentChannel.current.listen('MessageRead', (e) => {
-            console.log('read message');
+            // console.log('read message');
             // dispatch(resetUnread(e.chat_id));
         });
 
@@ -87,7 +91,7 @@ export default function useChatRealtime() {
                 currentChannel.current = null;
             }
         };
-    }, [userProfile?.id, activeChatId, dispatch]);
+    }, [userProfile?.id, activeChatId, dispatch, chats]);
 
     notification.config({
         stack: {
@@ -96,6 +100,7 @@ export default function useChatRealtime() {
     })
     const openMessageNotification = (message) => {
         const chat = chats.find(e=>message.chat_id === e.id);
+        console.log(chat);
         if(chat?.muted !== 'N' && chat?.muted !== null) return;
         if(window.location.pathname.includes('ui/chat')) return;
         notification.open({

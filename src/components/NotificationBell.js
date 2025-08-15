@@ -5,16 +5,17 @@ import { BellOutlined, CloseOutlined, TeamOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { getNotifications, readNotifications } from '../api/ui/notifications';
 import { useProfile } from './hooks/UserHooks';
-import echo from '../helpers/echo';
 import { formatTimeFromNow, fullNameToColor, getDescriptionMessage } from '../pages/Chat/chat_helper';
 import { useHistory, useLocation, useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { getChatList, markAsRead } from '../api/ui/chat';
 import { useDispatch, useSelector } from 'react-redux';
 import { setChats } from '../store/chat/chatSlice';
+import useChatRealtime from '../hooks/useChatRealtime';
 
 const { Text } = Typography;
 
 export default function NotificationBell({ color = '#fff', size = 28 }) {
+    useChatRealtime();
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();

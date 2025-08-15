@@ -11,7 +11,7 @@ import { getUsers } from "../../api"
 import { getChatList, getFiles, sendMessage, uploadFiles } from "../../api/ui/chat"
 import { useProfile } from "../../components/hooks/UserHooks"
 import { useHistory, useParams, withRouter } from "react-router-dom/cjs/react-router-dom.min"
-import echo from "../../helpers/echo"
+import echo, { getEcho } from "../../helpers/echo"
 import ChatInfo from "./components/ChatInfo"
 import { fullNameToColor } from "./chat_helper"
 import ChatWithDragDrop from "./components/ChatWithDragDrop";
@@ -22,6 +22,7 @@ const { Header, Sider, Content } = Layout
 
 function Chat() {
   const dispatch = useDispatch();
+  const echo = getEcho();
   const {chats, activeChat} = useSelector(state => state.chatSlice);
   document.title = "Chat - MES UI";
   const { chat_id } = useParams();
