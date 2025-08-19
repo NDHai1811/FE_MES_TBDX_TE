@@ -853,7 +853,7 @@ const Orders = () => {
       key: "ngay_kh",
       align: "center",
       width: 150,
-      render: (value, item, index) => item.group_plan_order ? dayjs(item.group_plan_order.plan?.thoi_gian_bat_dau).format('DD-MM-YYYY') : '',
+      render: (value, item, index) => (item.plan ?? []).length > 0 ? item.plan[0]?.ngay_sx : '',
     },
     {
       title: "Người tạo",
