@@ -853,7 +853,6 @@ const Orders = () => {
       key: "ngay_kh",
       align: "center",
       width: 150,
-      render: (value, item, index) => (item.plan ?? []).length > 0 ? item.plan[0]?.ngay_sx : '',
     },
     {
       title: "Người tạo",

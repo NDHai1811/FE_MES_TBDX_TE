@@ -46,6 +46,7 @@ import TemThanhPham from "./TemThanhPham";
 import { baseHost } from "../../../config";
 import Echo from 'laravel-echo';
 import socketio from 'socket.io-client';
+import { getEcho } from "../../../helpers/echo";
 
 const InDan = (props) => {
   document.title = "Sản xuất máy tự động";
@@ -414,28 +415,28 @@ const InDan = (props) => {
         return state;
     }
   };
-
+  const echo = getEcho();
   useEffect(() => {
-    if (!(location.pathname.indexOf('/oi/manufacture') > -1)) {
+    if (!(location.pathname.indexOf('/oi/manufacture') > -1) || !echo) {
       return 0;
     }
-    window.io = socketio;
-    window.Echo = new Echo({
-      broadcaster: 'socket.io',
-      host: baseHost + ':6001', // Laravel Echo Server host
-      transports: ['websocket', 'polling', 'flashsocket']
-    });
-    window.Echo.connector.socket.on('connect', () => {
-      console.log('WebSocket connected!');
-    });
-    window.Echo.connector.socket.on('connect_error', (error) => {
-      // console.error('WebSocket connection error:', error);
-    });
+    // window.io = socketio;
+    // window.Echo = new Echo({
+    //   broadcaster: 'socket.io',
+    //   host: baseHost + ':6001', // Laravel Echo Server host
+    //   transports: ['websocket', 'polling', 'flashsocket']
+    // });
+    // window.Echo.connector.socket.on('connect', () => {
+    //   console.log('WebSocket connected!');
+    // });
+    // window.Echo.connector.socket.on('connect_error', (error) => {
+    //   // console.error('WebSocket connection error:', error);
+    // });
 
-    window.Echo.connector.socket.on('disconnect', () => {
-      console.log('WebSocket disconnected!');
-    });
-    window.Echo.channel('laravel_database_mychannel')
+    // window.Echo.connector.socket.on('disconnect', () => {
+    //   console.log('WebSocket disconnected!');
+    // });
+    echo.channel('mychannel')
       .listen('.my-event', (e) => {
         if (e.data?.info_cong_doan?.machine_id !== machine_id) {
           return;
@@ -460,7 +461,7 @@ const InDan = (props) => {
         }
       });
     return () => {
-      window.Echo.leaveChannel('laravel_database_mychannel');
+      echo.leaveChannel('mychannel');
     };
   }, [location]);
   const [specifiedRowKey, setSpecifiedRowKey] = useState(null);
